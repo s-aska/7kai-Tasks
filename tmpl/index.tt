@@ -1,0 +1,24 @@
+[% WRAPPER 'include/layout.tt' %]
+
+<hr class="space">
+
+<div class="span-15 colborder">
+    <h1>Hello, Amon2 world!</h1>
+
+    <h2>For benchmarkers...</h2>
+    <p>If you want to benchmarking between Plack based web application frameworks, you should use <B>Amon2::Setup::Flavor::Minimum</B> instead.</p>
+    <p>You can use it as following one liner:</p>
+    <pre>% amon2-setup.pl --flavor Minimum Tasks</pre>
+</div>
+<div class="span-8 last">
+    <p>Amon2 is right for you if ...</p>
+    <ul>
+    <li>You need exceptional performance.</li>
+    <li>You want a framework with a small footprint.</li>
+    <li>You want a framework that requires nearly zero configuration.</li>
+    </ul>
+</div>
+
+<hr class="space">
+
+[% END %]

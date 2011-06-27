@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="[% lang(c) %]">
+<head>
+<meta charset="utf-8">
+<title>7kai Tasks</title>
+<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css" media="all">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
+<script type="text/javascript" src="/static/js/jquery.autogrow-textarea.js"></script>
+<script type="text/javascript" src="/static/js/h5utils.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/css/chrome.css" media="all">
+<script type="text/javascript" src="/static/js/chrome.js"></script>
+<script type="text/javascript" src="/static/js/localizer.js"></script>
+[% IF is_ff(c) %]
+<link rel="stylesheet" type="text/css" href="/static/css/firefox.css" media="all">
+[% END %]
+<script>
+var tasks;
+$(document).ready(function() {
+    var localizer = new Localizer();
+    if (localizer.lang != 'en') {
+      localizer.localize();
+    }
+    tasks = new Tasks();
+    tasks.localizer = localizer;
+    tasks.run();
+});
+</script>
+</head>
+<body>
+<header>
+<h1>7kai Tasks <span class="version">ver 1.0 Bare Born</span></h1>
+<p></p>
+<nav>
+<ul class="clearfix">
+<li class="member-name">
+<button
+  id="guide-switch"
+  class="on"
+  style="line-height: 0.8; font-size: 10px"
+  data-val="0"
+  data-method="guideSwitch"
+  data-guide-en="Toggle Show Guide"
+  data-guide-ja="ガイド表示切り替え"
+  data-text-on="Guide ON"
+  data-text-off="Guide OFF"
+>guide on</button>
+</li>
+<li class="member-name">[% screen_name %]</li>
+<li class="sign-out">
+<a
+  href="http://www.facebook.com/pages/7kai-Tasks/189391624444427?sk=wall"
+  target="_blank"
+  data-guide-en="Facebook Pages"
+  data-guide-ja="Facebook Pagesにてご意見・ご要望を受付中!!"
+>Feedback</a></li>
+<li class="settings">
+<a
+  href="javascript:void(0)"
+  data-method="open"
+  data-id="account-settings-window"
+  data-guide-en="Account Settings"
+  data-guide-ja="Twitterのアカウント追加やフレンドの再同期が出来ます"
+>Settings</a></li>
+<li class="sign-out">
+<a
+  href="/signout"
+  data-guide-en="Cheers for good work day today."
+  data-guide-ja="今日も一日 お疲れ様でした"
+>Sign Out</a></li>
+</ul>
+</nav>
+</header>
+<div class="box">
+<aside>
+<header>
+<nav>
+<ul class="clearfix">
+<li>
+<button
+  data-method="open"
+  data-id="create-list-window"
+  data-callback="createList"
+  data-guide-en="Let's Create New List!"
+  data-guide-ja="リスト作成"
+>
+<div class="icon-with icon-create">New...</div>
+</button>
+</li>
+<li class="right">
+<button
+  data-method="open"
+  data-id="list-settings-window"
+  data-guide-en="List display on/off, sort, delete"
+  data-guide-ja="リストの表示on/off, 並び替え, 削除"
+>
+<div class="icon icon-settings"></div>
+</button>
+</li>
+<li class="right">
+<button
+  data-method="refresh"
+  data-id=""
+  data-guide-en="Refresh Data"
+  data-guide-ja="再同期（壊れたら押す事）"
+>
+<div class="icon icon-refresh"></div>
+</button>
+</li>
+</ul>
+</nav>
+</header>
+<nav>
+<ul>
+<li class="timeline"
+    data-list-id="list-timeline"
+    data-text-ja="タイムライン"
+>Timeline</li>
+<li class="filter"
+  data-list-id="list-all"
+  data-text-ja="すべて"
+>All</li>
+<li class="filter"
+  data-list-id="list-todo"
+  data-text-ja="やるべき事"
+>Something to do</li>
+<li class="filter"
+  data-list-id="list-request"
+  data-text-ja="頼んだ事"
+>Requested by me</li>
+<li class="filter"
+  data-list-id="list-watch"
+  data-text-ja="関心のあるタスク"
+>Watch</li>
+<li class="project">リストA</li>
+<li class="project">プロジェクトX</li>
+<li class="project">&nbsp;&nbsp;サブプロジェクト <span class="badge">10</span></li>
+<li class="project">[B] Project</li>
+</ul>
+<div class="icon icon-prev"></div>
+<div class="icon icon-next"></div>
+</nav>
+</aside>
+<article>
+<header>
+<nav>
+<ul class="clearfix">
+<li>
+<button
+  id="create-task-button"
+  data-method="open"
+  data-id="create-task-window"
+  data-callback="createTask"
+  data-guide-en="Let's Create New Task!"
+  data-guide-ja="タスク作成"
+>
+<div class="icon-with icon-create">New...</div>
+</button>
+</li>
+<li class="label"
+  data-guide-en="Task Sort Menu"
+  data-guide-ja="タスクを並び替えるメニュー"
+><span class="icon icon-sort"></span></li>
+<li>
+<button
+  id="free-sort-task-button"
+  data-method="taskmenuSort"
+  data-id="sort"
+  data-guide-en="Sort Free"
+  data-guide-ja="D&Dでソート"
+>
+<div class="icon icon-openhand"></div>
+</button>
+</li>
+<li>
+<button class="on"
+  data-method="taskmenuSort"
+  data-id="updated"
+  data-guide-en="Sort Updated"
+  data-guide-ja="更新日でソート"
+>
+<div class="icon icon-calendar"></div>
+</button>
+</li>
+<li>
+<button
+  data-method="taskmenuSort"
+  data-id="due"
+  data-guide-en="Sort Due"
+  data-guide-ja="期日でソート"
+>
+<div class="icon icon-hourglass"></div>
+</button>
+</li>
+<li class="label"
+  data-guide-en="Task Filter Menu"
+  data-guide-ja="タスクの表示を絞り込むメニュー"
+><span class="icon icon-switch"></span></li>
+<li>
+<button
+  id="mainmenu-switch-description"
+  data-method="taskmenuSwitch"
+  data-id="description"
+  data-val="1"
+  data-guide-en="toggle description and comments."
+  data-guide-ja="詳細及びコメントの表示を切り替えます。"
+>
+<div class="icon icon-description"></div>
+</button>
+</li>
+<li class="label"
+    data-guide-en="Task Filter Menu"
+    data-guide-ja="タスクの表示を絞り込むメニュー"
+><span class="icon icon-filter"></span></li>
+<li>
+<button
+  data-method="taskmenuFilter"
+  data-id="my"
+  data-val="1"
+  data-guide-en="Show only My Task"
+  data-guide-ja="自分が担当しているタスクのみ表示します。"
+>
+<div class="icon my" data-url="[% profile_image_url %]"></div>
+</button>
+</li>
+<li>
+<button
+  data-method="taskmenuFilter"
+  data-id="star"
+  data-val="1"
+  data-guide-en="Show only Star Task."
+  data-guide-ja="スターのみ表示します。"
+>
+<div class="icon icon-star-on"></div>
+</button>
+</li>
+<li>
+<button
+  data-method="taskmenuFilter"
+  data-id="tasksOff"
+  data-val="1"
+  data-guide-en="Show only open Task."
+  data-guide-ja="未着手のタスクのみ表示します。"
+>
+<div class="icon icon-tasks-off"></div>
+</button>
+</li>
+<li>
+<button
+  data-method="taskmenuFilter"
+  data-id="progress"
+  data-val="1"
+  data-guide-en="Show only In Progress Task."
+  data-guide-ja="処理中のタスクのみ表示します。"
+>
+<div class="icon icon-progress"></div>
+</button>
+</li>
+<li>
+<button
+  data-method="taskmenuFilter"
+  data-id="tasksOn"
+  data-val="1"
+  data-guide-en="Show only Fixed Task."
+  data-guide-ja="処理済のタスクのみ表示します。"
+>
+<div class="icon icon-tasks-on"></div>
+</button>
+</li>
+<!-- <li class=""><input type="text" class="icon-search"></li> -->
+<!-- <li class="right">
+<button class="" data-method="open" data-id="create-list-window" data-callback="editList">
+<div class="icon icon-settings"></div>
+</button>
+</li> -->
+<li class="right">
+<button
+  id="recycle-button"
+  data-method="taskmenuFilter"
+  data-id="recycle"
+  data-val="1"
+  data-guide-en="Show closed Task."
+  data-guide-ja="完了済のタスクを表示します。"
+>
+<div class="icon icon-recycle"></div>
+</button>
+</li>
+<li class="right">
+<button
+  id="clear-trash-button"
+  data-method="open"
+  data-id="clear-trash-window"
+  data-callback="clearTrash"
+  data-guide-en="Delete Closed Task."
+  data-guide-ja="完了済のタスクを削除します。"
+>
+<div class="icon icon-trash"></div>
+</button>
+</li>
+</ul>
+</nav>
+</header>
+<section>
+<header class="clearfix">
+<h1>プロジェクトX</h1>
+<ul></ul>
+</header>
+<ul class="task">
+<li class="clearfix">
+<div class="grip icon-grip"
+  data-guide-en="hand sort grip"
+  data-guide-ja="手動ソートグリップ（手動ソート時のみ使用可）"
+></div>
+<div class="action icon-tasks-off"
+  data-guide-en="status rotation"
+  data-guide-ja="ステータス変更"
+></div>
+<div class="action icon icon-address-off assignee"
+  data-method="open"
+  data-id="create-task-window"
+  data-callback="editTask"
+  data-guide-en="assignee"
+  data-guide-ja="担当者"
+></div>
+<div class="action icon-star-off"
+  data-guide-en="star toggle"
+  data-guide-ja="関心 on/off"
+></div>
+<div class="action icon-edit"
+  data-method="open"
+  data-id="create-task-window"
+  data-callback="editTask"
+  data-guide-en="edit"
+  data-guide-ja="編集"
+></div>
+<div class="title">名前を決める</div>
+<div class="action icon-delete right"
+  data-guide-en="closed"
+  data-guide-ja="完了（ごみ箱へ）"
+></div>
+<div class="due"></div>
+</li>
+</ul>
+<ul
+    class="timeline"
+    data-text-create-task-en="create the task of the"
+    data-text-create-task-ja="タスクを作成"
+    data-text-update-task-en="update the task of the"
+    data-text-update-task-ja="タスクを更新"
+    data-text-clear-task-en="clear the task of the"
+    data-text-clear-task-ja="完了済タスクを削除"
+    data-text-create-list-en="create a list called"
+    data-text-create-list-ja="リストを作成"
+    data-text-update-list-en="updated a task in"
+    data-text-update-list-ja="リストを更新"
+    data-text-create-comment-en="commented on a task in"
+    data-text-create-comment-ja="コメント"
+    data-text-delete-comment-en="remove the comment of the"
+    data-text-delete-comment-ja="コメントを削除"
+>
+</ul>
+</section>
+</article>
+</div>
+<footer>
+<div class="icon icon-prev"></div>
+<ul>
+</ul>
+</footer>
+
+<!-- parts -->
+<form id="create-task-window" class="modal" data-submit="submitCreateTask" data-reset="resetCreateTask">
+<header>
+<h1
+  data-text-default="Create Task"
+  data-text-edit="Edit Task"
+>Create Task</h1>
+</header>
+<article class="box">
+<ul>
+<li>Title: <strong style="color: red;">*</strong></li>
+<li><input type="text" name="title" value="" placeholder="Write a title..." data-no-keep="1"></li>
+<li>Description:</li>
+<li><textarea name="description" placeholder="Write a description..." data-no-keep="1"></textarea></li>
+<li>Due:</li>
+<li>
+<input type="text" id="create-task-date" name="due" placeholder="5/21/2011">
+<span
+  class="action icon icon-create"
+  data-method="createTaskDuePlus"
+  data-guide-en="+1 day"
+  data-guide-ja="+1日"
+></span>
+<span
+  class="action icon icon-minus"
+  data-method="createTaskDueMinus"
+  data-guide-en="-1 day"
+  data-guide-ja="-1日"
+></span>
+<span
+  class="action icon icon-delete"
+  data-method="createTaskDueDelete"
+  data-guide-en="clear"
+  data-guide-ja="クリア"
+></span>
+<span
+  class="action icon icon-today"
+  data-method="createTaskDueToday"
+  data-guide-en="today"
+  data-guide-ja="今日"
+>TODAY</span>
+</li>
+</ul>
+<ul id="create-task-assignee">
+<li data-text-ja="担当者:">Assignee:</li>
+<li><input type="checkbox" name="" value="1" checked="checked"> <img src="/static/img/su_aska.png"> su_aska</li>
+<li><input type="checkbox" name="" value="1" checked="checked"> <img src="/static/img/su_aska.png"> dw90000</li>
+<li><input type="checkbox" name="" value="1" checked="checked"> <img src="/static/img/su_aska.png"> yksk</li>
+</ul>
+</article>
+<footer>
+<nav>
+<ul>
+<li
+  data-guide-en="Not close after registration."
+  data-guide-ja="登録後ウィンドウを閉じない。"
+>
+<input id="create-task-window-continue" type="checkbox" name="continue" value="1">
+<label for="create-task-window-continue">Continue</label>
+</li>
+<li
+  data-guide-en="Not clear after registration."
+  data-guide-ja="登録後内容を消さない。"
+>
+<input id="create-task-window-keep" type="checkbox" name="keep" value="1">
+<label for="create-task-window-keep">Keep</label>
+</li>
+<li><button id="">Save</button></li>
+<li><button class="cancel">Cancel</button></li>
+</ul>
+</nav>
+</footer>
+</form>
+
+<form id="create-list-window" class="modal" data-submit="submitCreateList" data-reset="resetCreateList">
+<header>
+<h1
+  data-text-default="Create List"
+  data-text-edit="Edit List"
+>Create List</h1>
+</header>
+<article>
+<ul>
+<li>List Name: <strong style="color: red;">*</strong></li>
+<li><input type="text" name="name" value="" placeholder="Write a name..." data-no-keep="1"></li>
+<li>Owner:</li>
+<li>
+<select name="owner"></select>
+</li>
+<li>Members:</li>
+<li>
+<input type="text" id="create-list-assignee" name="" value="" placeholder="su_aska">
+<ul id="create-list-members">
+</ul>
+</li>
+<!-- <li>Privacy: <strong style="color: red;">*</strong></li>
+<li>
+<select name="privacy">
+<option>Open</option>
+<option selected="selected">Closed</option>
+<option>Secret</option>
+</select>
+</li> -->
+</ul>
+</article>
+<footer>
+<nav>
+<ul>
+<li
+  data-guide-en="Not close after registration."
+  data-guide-ja="登録後ウィンドウを閉じない。"
+>
+<input id="create-list-window-continue" type="checkbox" name="continue" value="1">
+<label for="create-list-window-continue">Continue</label>
+</li>
+<li
+  data-guide-en="Not clear after registration."
+  data-guide-ja="登録後内容を消さない。"
+>
+<input id="create-list-window-keep" type="checkbox" name="keep" value="1">
+<label for="create-list-window-keep">Keep</label>
+</li>
+<li><button>Save</button></li>
+<li><button class="cancel">Cancel</button></li>
+</ul>
+</nav>
+</footer>
+</form>
+
+<form id="delete-list-window" class="modal confirm" data-submit="submitDeleteList">
+<header>
+<h1>Delete List</h1>
+</header>
+<article>
+<ul>
+<li>List [<span id="delete-list-name"></span>] Delete OK?</li>
+</ul>
+</article>
+<footer>
+<nav>
+<ul>
+<li><button>Delete</button></li>
+<li><button class="cancel">Cancel</button></li>
+</ul>
+</nav>
+</footer>
+</form>
+
+<form id="list-settings-window" class="modal">
+<header><h1>List Settings</h1></header>
+<article>
+<table>
+  <tr>
+    <td data->Name</td>
+    <td><span class="icon icon-switch"></span></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr data-list-id="list-timeline">
+    <td data-text-ja="タイムライン">Timeline</td>
+    <td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>
+    <td><span class="icon icon-next"></span></td>
+    <td><span class="icon icon-prev"></span></td>
+    <td></td>
+  </tr>
+  <tr data-list-id="list-all">
+    <td data-text-ja="すべて">All</td>
+    <td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>
+    <td><span class="icon icon-next"></span></td>
+    <td><span class="icon icon-prev"></span></td>
+    <td></td>
+  </tr>
+  <tr data-list-id="list-todo">
+    <td data-text-ja="やるべき事">Something to do</td>
+    <td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>
+    <td><span class="icon icon-next"></span></td>
+    <td><span class="icon icon-prev"></span></td>
+    <td></td>
+  </tr>
+  <tr data-list-id="list-request">
+    <td data-text-ja="頼んだ事">Requested by me</td>
+    <td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>
+    <td><span class="icon icon-next"></span></td>
+    <td><span class="icon icon-prev"></span></td>
+    <td></td>
+  </tr>
+  <tr data-list-id="list-watch">
+    <td data-text-ja="関心のあるタスク">Watch</td>
+    <td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>
+    <td><span class="icon icon-next"></span></td>
+    <td><span class="icon icon-prev"></span></td>
+    <td></td>
+  </tr>
+  <tr class="project">
+    <td>リストA</td>
+    <td><input type="checkbox"></td>
+    <td><span class="icon icon-next"></span></td>
+    <td><span class="icon icon-prev"></span></td>
+    <td><span class="icon icon-delete"></span></td>
+  </tr>
+  <tr class="project">
+    <td>プロジェクトX</td>
+    <td><input type="checkbox"></td>
+    <td><span class="icon icon-next"></span></td>
+    <td><span class="icon icon-prev"></span></td>
+    <td><span class="icon icon-delete"></span></td>
+  </tr>
+  <tr class="project">
+    <td>サブプロジェクトX</td>
+    <td><input type="checkbox"></td>
+    <td><span class="icon icon-next"></span></td>
+    <td><span class="icon icon-prev"></span></td>
+    <td><span class="icon icon-delete"></span></td>
+  </tr>
+  <tr class="project">
+    <td>[B] Project</td>
+    <td><input type="checkbox"></td>
+    <td><span class="icon icon-next"></span></td>
+    <td><span class="icon icon-prev"></span></td>
+    <td><span class="icon icon-delete"></span></td>
+  </tr>
+  <tr class="project">
+    <td>[G] Aska's Liste</td>
+    <td><input type="checkbox"></td>
+    <td><span class="icon icon-next"></span></td>
+    <td><span class="icon icon-prev"></span></td>
+    <td><span class="icon icon-delete"></span></td>
+  </tr>
+</table>
+</article>
+<footer>
+<nav>
+<ul>
+<li><button class="cancel">Close</button></li>
+</ul>
+</nav>
+</footer>
+</form>
+
+<form id="account-settings-window" class="modal">
+<header>
+<h1>My Account</h1>
+<!-- <nav class="tabgroup">
+<ul class="clearfix">
+<li data-tab="account-settings-general">General</li>
+<li data-tab="account-settings-networks">Networks</li>
+<li data-tab="account-settings-contacts">Contacts</li>
+<li data-tab="account-settings-notifications">Notifications</li>
+</ul>
+</nav> -->
+</header>
+<!-- <article id="account-settings-general">
+<div>Name: <input type="" name="" value="" placeholder="Write a name..."></div>
+</article> -->
+<article id="account-settings-networks">
+<button
+  data-method="signinTwitter"
+  data-guide-en="Sing Out from pre Twitter please."
+  data-guide-ja="事前にTwitterからSing Outして下さい。"
+><div class="icon-with icon-create">Add Twitter Account</div></button>
+<!-- <button
+  data-method=""
+  data-guide-en="comming soon..."
+  data-guide-ja="まだ見せられないよ！"
+><div class="icon-with icon-create">Add Facebook Account</div></button> -->
+<ul id="connect-accounts">
+<li>Twitter: <a href="#">su_aska</a> <span class="icon icon-delete"></span></li>
+<li>Facebook: <a href="#">s.aska.org</a> <span class="icon icon-delete"></span></li>
+</ul>
+</article>
+<article id="account-settings-contacts">
+<button
+  data-method="syncTwitterContact"
+  data-guide-en="Sync Twitter's friends"
+  data-guide-ja="Twitterのフレンドを同期します"
+><div class="icon-with icon-import">Sync Twitter Contacts</div></button>
+<!-- <button
+  data-method="accountSync"
+  data-guide-en="comming soon..."
+  data-guide-ja="まだ見せられないよ！"
+><div class="icon-with icon-import">Sync Account</div></button> -->
+</article>
+<!-- <article id="account-settings-notifications">
+
+</article> -->
+<footer>
+<nav>
+<ul>
+<li><button class="cancel">Close</button></li>
+</ul>
+</nav>
+</footer>
+</form>
+
+<form id="clear-trash-window" class="modal confirm" data-submit="submitClearTrash">
+<header>
+<h1>Clear Trash</h1>
+</header>
+<article>
+<ul>
+<li data-text-ja="完了済みタスクを削除して宜しいですか？">Clear Trash Task OK?</li>
+</ul>
+</article>
+<footer>
+<nav>
+<ul>
+<li><button>Clear</button></li>
+<li><button class="cancel">Cancel</button></li>
+</ul>
+</nav>
+</footer>
+</form>
+
+<div id="guide"></div>
+
+</body>
+</html>

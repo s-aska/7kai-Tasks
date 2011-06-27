@@ -1,0 +1,706 @@
+/*****************************************************
+1. reset
+2. base
+3. header
+4. footer
+5. aside
+6. article
+*****************************************************/
+
+/********** reset **********/
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, dialog, figure, footer, header, 
+hgroup, menu, nav, section, menu,
+time, mark, audio, video, button {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    vertical-align: baseline;
+    background: transparent;
+    font-size: 100%;
+    outline: 0;
+}
+
+/********** base **********/
+html, body {
+    line-height: 1;
+    overflow: hidden;
+}
+html, body, button {
+    font-family:  "Hiragino Kaku Gothic Pro",Vernada,arial,sans-serif;
+}
+ul {
+    list-style: none;
+}
+textarea {
+    overflow: hidden;
+    height: auto;
+}
+button {
+    margin: 0;
+    padding: 4px;
+    border: 1px solid gray;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    background: -moz-linear-gradient(top, #ffffff, #e1e1e1);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
+    cursor: pointer;
+    font-size: 12px;
+    text-shadow: rgba(255, 255, 255, 0.4) 0 1px;
+    line-height: 1.4;
+    min-height: 16px;
+}
+button.on {
+    background: #fcea6c;
+}
+button:hover, button:focus {
+    border: 1px solid #cca905;
+    text-shadow: 0 1px 0 #ffef97;
+    background: -moz-linear-gradient(top, #fcea6c, #f7d208);
+    background: -webkit-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));
+}
+button:disabled {
+    opacity: 0.25;
+    background: -moz-linear-gradient(top, #ffffff, #e1e1e1);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
+}
+.right {
+    float: right;
+}
+.clearfix:before,
+.clearfix:after {
+    content:"";
+    display:table;
+}
+.clearfix:after {
+    clear:both;
+}
+.clearfix {
+    zoom:1;
+} /* IE6, IE7 */
+.box {
+    display: -moz-box;
+    display: -webkit-box;
+}
+.icon {
+    width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+}
+.icon-with {
+    min-width: 16px;
+    height: 16px;
+    padding-left: 18px;
+    padding-right: 2px;
+    background-repeat: no-repeat;
+}
+span.icon {
+    display: inline-block;
+    vertical-align: bottom;
+}
+.action {
+    cursor: pointer;
+}
+.icon-create {
+    background-image: url(/static/img/create.png);
+}
+.icon-minus {
+    background-image: url(/static/img/minus.png);
+}
+.icon-description {
+    background-image: url(/static/img/description.png);
+}
+.icon-right {
+    background-image: url(/static/img/right.png);
+}
+.icon-star-on {
+    background-image: url(/static/img/star_on.png);
+}
+.icon-star-off {
+    background-image: url(/static/img/star_off.png);
+}
+.icon-tasks-on {
+    background-image: url(/static/img/tasks_on.png);
+}
+.icon-tasks-off {
+    background-image: url(/static/img/tasks_off.png);
+}
+.icon-comment-on {
+    background-image: url(/static/img/comment_on.png);
+}
+.icon-comment-off {
+    background-image: url(/static/img/comment_off.png);
+}
+.icon-comment-harf {
+    background-image: url(/static/img/comment_harf.png);
+}
+.icon-trash {
+    background-image: url(/static/img/trash.png);
+}
+.icon-settings {
+    background-image: url(/static/img/settings.png);
+}
+.icon-grip {
+    background-image: url(/static/img/grip.png);
+}
+.icon-address-off {
+    background-image: url(/static/img/address_off.png);
+}
+.icon-edit {
+    background-image: url(/static/img/edit.png);
+}
+.icon-search {
+    background-image: url(/static/img/search.png);
+}
+.icon-delete {
+    background-image: url(/static/img/delete.png);
+}
+.icon-next {
+    background-image: url(/static/img/next.png);
+}
+.icon-prev {
+    background-image: url(/static/img/prev.png);
+}
+.icon-hourglass {
+    background-image: url(/static/img/hourglass.png);
+}
+.icon-calendar {
+    background-image: url(/static/img/calendar.png);
+}
+.icon-openhand {
+    background-image: url(/static/img/openhand.png);
+}
+.icon-sort {
+    background-image: url(/static/img/sort.png);
+}
+.icon-switch {
+    background-image: url(/static/img/switch.png);
+}
+.icon-filter {
+    background-image: url(/static/img/filter.png);
+}
+.icon-import {
+    background-image: url(/static/img/import.png);
+}
+.icon-refresh {
+    background-image: url(/static/img/refresh.png);
+}
+.icon-recycle {
+    background-image: url(/static/img/recycle.png);
+}
+.icon-progress {
+    background-image: url(/static/img/check_half.png);
+}
+.icon-progress-off {
+    background-image: url(/static/img/progress_off.png);
+}
+.twitter_profile_image {
+    width: 16px;
+}
+
+/********** header **********/
+body > header {
+    padding: 2px;
+    height: 24px;
+    background-color: #e1e1e1;
+    border-bottom: 1px solid gray;
+    _background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
+    font-size: 12px;
+    line-height: 1.6;
+}
+body > header h1 {
+    padding: 4px 0px 0px 8px;
+}
+body > header h1 span.version {
+    padding-left: 4px;
+    font-size: 10px;
+}
+body > header p {
+    position: absolute;
+    top: 6px;
+    left: 246px;
+}
+body > header nav {
+    position: absolute;
+    top: 4px;
+    right: 10px;
+}
+body > header nav ul li {
+    float: left;
+    margin: 0px 0px 0px 10px;
+}
+body > header nav ul li img {
+    margin-right: 4px;
+    vertical-align: middle;
+}
+body > header nav ul li a {
+    color: #1e57ff;
+    font-weight: bold;
+    text-decoration: none;
+}
+body > header nav ul li.member-name {
+    font-weight: bold;
+}
+
+/********** aside **********/
+body > div > aside {
+    width: 240px;
+    border-right: 1px solid gray;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    font-size: 16px;
+}
+body > div > aside header nav ul {
+    padding: 8px 4px 8px 8px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #cecece;
+}
+body > div > aside header nav ul li {
+    float: left;
+    font-size: 12px;
+    line-height: 0.8; /* ハックぽくでいやだけど.. */
+    margin-right: 4px;
+}
+body > div > aside > nav {
+    position: relative;
+    overflow-y: auto;
+    line-height: 1.6;
+}
+body > div > aside > nav ul li {
+    position: relative;
+    padding: 8px 0px 8px 32px;
+    border-bottom: 1px solid #cecece;
+}
+body > div > aside > nav ul li:hover {
+    background-color: #fcea6c;
+    /*background: -webkit-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));*/
+    cursor: pointer;
+}
+body > div > aside > nav ul li.selected {
+    background-color: #f7d208;
+    /*background: -webkit-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));*/
+}
+body > div > aside > nav ul li.updated {
+    background-color: #c1c1c1;
+}
+body > div > aside > nav ul li.filter {
+    background-image: url(/static/img/search.png);
+    background-repeat: no-repeat;
+    background-position: 10px 12px;
+}
+body > div > aside > nav ul li.icon {
+    background-repeat: no-repeat;
+    background-position: 10px 12px;
+}
+body > div > aside > nav ul li .badge {
+    position: absolute;
+    right: 12px;
+    margin-top: 2px;
+    padding: 4px 8px 2px 8px;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    background-color: red;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+}
+body > div > aside > nav ul li.project .icon-settings {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+body > div > aside > nav ul li.project:hover .badge {
+    display: none !important;
+}
+body > div > aside > nav ul li.project:hover .icon-settings {
+    display: block;
+}
+body > div > aside > nav .icon-prev {
+    position: fixed;
+    top: 78px;
+    left: 215px;
+}
+body > div > aside > nav .icon-next {
+    position: fixed;
+    bottom: 31px;
+    left: 215px;
+}
+
+/********** article **********/
+body > div > article {
+}
+body > div > article nav {
+    padding: 8px 4px 8px 8px;
+    border-bottom: 1px solid #cecece;
+    font-size: 12px;
+    background-color: #f9f9f9;
+    width: 700px;
+}
+body > div > article nav ul {
+}
+body > div > article nav ul li {
+    float: left;
+    margin: 0px 4px 0px 0px;
+    line-height: 0.8; /* ハックぽくでいやだけど.. */
+}
+body > div > article nav ul li.label {
+    padding: 4px 4px 4px 4px;
+}
+body > div > article nav ul li.action {
+    padding: 4px 4px 4px 4px;
+    min-height: 16px;
+    background-position: 6px 4px;
+    border: 1px solid gray;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    text-shadow: rgba(255, 255, 255, 0.4) 0 1px;
+    background: -moz-linear-gradient(top, #ffffff, #e1e1e1);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
+}
+body > div > article nav ul li.action span {
+}
+body > div > article nav ul li span.icon,
+body > div > article nav ul li span.icon-with {
+    display: block;
+    min-width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+body > div > article nav ul li span.icon-with {
+    padding-left: 18px;
+    padding-right: 2px;
+}
+body > div > article nav ul li input.icon-search {
+    margin: 0;
+    padding: 2px 2px 0px 22px;
+    height: 20px;
+    width: 80px;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    font-size: 14px;
+    background-repeat: no-repeat;
+    background-position: 4px 4px;
+}
+
+/********** article section **********/
+body > div > article section {
+    overflow-y: auto;
+    width: 700px;
+    padding: 10px 10px 10px 10px;
+    font-size: 14px;
+}
+body > div > article section header li {
+    float: left;
+    padding-left: 10px;
+}
+body > div > article section header li.twitter_profile_image {
+    width: 32px;
+}
+body > div > article section header li.twitter_profile_image img {
+    width: 32px;
+    vertical-align: bottom;
+    border: 2px solid gray;
+}
+body > div > article section h1 {
+    float: left;
+    margin-bottom: 4px;
+    font-size: 16px;
+}
+body > div > article section > ul li {
+    border-bottom: 1px solid gray;
+    line-height: 1;
+}
+body > div > article section > ul li.delete {
+    background-color: gray;
+}
+body > div > article section > ul li.clearfix {
+    padding: 2px 0;
+}
+body > div > article section > ul li.clearfix:hover {
+    background-color: #FFFFCC;
+}
+body > div > article section > ul li.clearfix > div {
+    float: left;
+}
+body > div > article section > ul li.clearfix > div.right {
+    float: right;
+    margin-right: 5px;
+}
+body > div > article section > ul li div.grip {
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+}
+body > div > article section > ul li div.action {
+    margin-top: 3px;
+    margin-left: 2px;
+    margin-bottom: 3px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+body > div > article section > ul li div.action:hover {
+    -webkit-transform: rotate(-25deg);
+}
+body > div > article section > ul li div.title {
+    padding-top: 5px;
+    padding-left: 4px;
+}
+body > div > article section > ul li.clearfix div.due {
+    float: right;
+    padding-top: 5px;
+    /*padding-right: 5px;*/
+}
+body > div > article section > ul li.clearfix div.icon-delete {
+    
+}
+body > div > article section > ul li div.assignee {
+}
+body > div > article section > ul li div.assignee img {
+    width: 16px;
+}
+body > div > article section > ul li .content {
+    clear: both;
+    margin-left: 90px;
+    width: 300px;
+}
+body > div > article section > ul li .description {
+    margin: 0px 0px 4px 0px;
+    padding: 6px;
+    border: 1px dotted gray;
+}
+body > div > article section > ul li ul.comments {
+    margin: 0px 0px 0px 0px;
+}
+body > div > article section > ul li ul.comments li {
+    position: relative;
+    padding-bottom: 4px;
+    border: none;
+    font-size: 12px;
+}
+body > div > article section > ul li ul.comments li img {
+    float: left;
+    width: 32px;
+    margin-right: 4px;
+}
+body > div > article section > ul li ul.comments li span.name,
+body > div > article section > ul li ul.comments li span.date,
+body > div > article section > ul li ul.comments li span.change {
+    color: gray;
+}
+body > div > article section > ul li ul.comments li span.name {
+    padding-right: 6px;
+}
+body > div > article section > ul li ul.comments li span.comment {
+    white-space: pre-wrap;
+}
+body > div > article section > ul li ul.comments li input[type=text] {
+    /*width: 300px;*/
+}
+body > div > article section > ul li ul.comments li span.icon-delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+body > div > article section > ul li ul.comments li.unread {
+    background-color: #fcea6c;
+}
+body > div > article section > ul li .commentBox {
+    clear: both;
+}
+body > div > article section > ul li .commentBox textarea {
+    height: 14px;
+    width: 100%;
+    resize: none;
+}
+body > div > article section > ul.timeline li {
+    line-height: 1.6;
+}
+body > div > article section > ul.timeline li span {
+    display: block;
+    float: left;
+    margin-right: 6px;
+}
+body > div > article section > ul.timeline li span.list {
+    color: #1E57FF;
+    cursor: pointer;
+}
+body > div > article section > ul.timeline li span.list:hover {
+    text-decoration: underline;
+}
+body > div > article section > ul.timeline li span.date {
+    color: gray;
+    font-size: 10px;
+}
+body > div > article section > ul.timeline li span.action {
+    cursor: default;
+}
+body > div > article section > ul.timeline li span.code {
+    height: 16px;
+    width: 16px;
+    margin-top: 3px;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    -moz-background-size:  16px 16px;
+    -webkit-background-size: 16px 16px;
+}
+/********** footer **********/
+body > footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 16px;
+    padding: 4px;
+    border-top: 1px solid gray;
+    overflow: hidden;
+    background-color: #e1e1e1;
+    font-size: 12px;
+}
+body > footer ul {
+    position: absolute;
+    top: 2px;
+    left: 20px;
+    padding: 4px;
+    background-color: #e1e1e1;
+}
+body > footer div {
+    position: fixed;
+    bottom: 4px;
+    -webkit-transition: 0.5s linear;
+}
+body > footer div.disp {
+    -webkit-transform: rotate(-180deg);
+}
+
+/********** parts **********/
+form.modal {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    margin-top: -130px;
+    margin-left: -300px;
+    z-index: 1000;
+    font-size: 12px;
+    border: 1px solid #8f8f8f;
+    background: #ededed;
+    -moz-box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
+    -webkit-box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
+}
+form.modal article {
+    margin: 10px 10px 10px 10px;
+    padding: 10px;
+    -moz-box-shadow: inset 0px 1px 3px rgba(0,0,0,0.4);
+    -webkit-box-shadow: inset 0px 1px 3px rgba(0,0,0,0.4);
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background: #e1e1e1;
+}
+form.modal h1 {
+    padding: 8px;
+    background: #bababa;
+    border-bottom: 1px solid gray;
+    background: -moz-linear-gradient(top, #ffffff, #e1e1e1);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
+    cursor: move;
+}
+form.modal input {
+    font-size: 16px;
+}
+form.modal footer nav {
+    text-align: right;
+}
+form.modal footer nav ul {
+    padding: 0px 10px 10px 10px;
+}
+form.modal footer nav ul li {
+    display: inline-block;
+    margin: 0 0px;
+}
+form.modal footer nav ul li button#save {
+    background: #B5B5B5;
+    -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 -5px 12px, inset rgba(0, 0, 0, 1) 0 1px 3px, rgba(255, 255, 255, 0.4) 0 1px;
+    -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 -5px 12px, inset rgba(0, 0, 0, 1) 0 1px 3px, rgba(255, 255, 255, 0.4) 0 1px;
+}
+form nav.tabgroup {
+    border-bottom: 1px solid gray;
+}
+form nav.tabgroup ul {
+    margin-top: 10px;
+    margin-left: 10px;
+    border-left: 1px solid gray;
+}
+form nav.tabgroup li {
+    float: left;
+    padding: 4px;
+    border-top: 1px solid gray;
+    border-right: 1px solid gray;
+}
+form nav.tabgroup li:hover {
+    cursor: pointer;
+    background: -moz-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));
+    background: -webkit-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));
+}
+form.confirm {
+    z-index: 1001;
+}
+
+/********** create-task **********/
+#create-task-window textarea,
+#create-task-window input[name=title] {
+    width: 90%;
+}
+#create-list-window .icon {
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+}
+#create-task-window div {
+    display: -webkit-box;
+    
+}
+#create-task-window div ul {
+    width: 50%;
+}
+#create-list-window {
+    width: 300px;
+}
+#create-list-members {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/********** guide **********/
+#guide {
+    display: none;
+    position: absolute;
+    margin: 20px 0 0 0;
+    padding: 6px;
+    border: 1px solid gray;
+    background: white;
+    color: gray;
+    font-size: 12px;
+    z-index: 9999;
+}
+
+/********** .ui **********/
+.ui-widget {
+    font-size: 0.5em;
+}
+.ui-datepicker {
+    line-height: 1.2;
+}
+
+

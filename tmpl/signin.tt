@@ -1,0 +1,30 @@
+[% WRAPPER 'include/layout_pc.tt' %]
+<nav>
+<p data-text-ja="このサービスは作りかけです。">This service is unfinished.</p>
+<ul>
+<li><a href="/signin/twitter/oauth">Sign in with Twitter</a></li>
+<li><del><a href="/signin/facebook/oauth">Sign in with Facebook</a></del></li>
+<li><del><a href="/easy/">Sign in with Gmail</a></del></li>
+</ul>
+<p><a href="https://chrome.google.com/webstore/detail/nglhckhieofejlekibpkmflikcdegfce">Chrome Extensions</a> (New!!)</p>
+</nav>
+
+<form>
+<div id="fb-root"></div>
+<script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script>
+<fb:like-box href="http://www.facebook.com/pages/7kai-Tasks/189391624444427?sk=wall" width="292" show_faces="true" border_color="" stream="true" header="true"></fb:like-box>
+<fb:comments href="tasks.7kai.org" num_posts="5" width="500"></fb:comments>
+</form>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/localizer.js"></script>
+<script>
+console.log('Connection init');
+$(document).ready(function() {
+    var localizer = new Localizer();
+    if (localizer.lang != 'en') {
+        localizer.localize();
+    }
+});
+</script>
+[% END %]

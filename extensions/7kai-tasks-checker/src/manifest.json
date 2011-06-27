@@ -1,0 +1,20 @@
+{
+	"name":"7kai Tasks Checker",
+	"version":"0.1",
+	"description": "7kai Tasks Checker",
+	"browser_action":{
+		"default_icon":"icon-19.png",
+		"default_title":"7kai Tasks Checker"
+	},
+	"icons": { 
+      "19": "icon-19.png",
+      "32": "icon-32.png",
+	  "128": "icon-128.png"
+	},
+	"background_page": "background.html",
+	"permissions": [
+		"tabs",
+		"notifications",
+		"http://tasks.7kai.org/"
+	]
+}
