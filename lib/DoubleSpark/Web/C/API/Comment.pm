@@ -35,7 +35,7 @@ sub create {
     }
     push @{$doc->{history}}, {
         code    => $owner,
-        action  => 'create-commnet',
+        action  => 'create-comment',
         task_id => $task_id,
         date    => time
     };
@@ -74,7 +74,7 @@ sub delete {
     }
     push @{$doc->{history}}, {
         code    => $owner,
-        action  => 'delete-commnet',
+        action  => 'delete-comment',
         task_id => $task_id,
         date    => time
     };

@@ -2,7 +2,7 @@ package DoubleSpark;
 use strict;
 use warnings;
 use parent qw/Amon2/;
-our $VERSION='1.00';
+our $VERSION='1.01';
 use 5.008001;
 
 use AnyEvent::CouchDB ();
@@ -16,6 +16,8 @@ use Teng;
 use Teng::Schema::Loader;
 
 __PACKAGE__->load_plugin(qw/Web::JSON/);
+
+sub version { $VERSION }
 
 sub db {
     my $self = shift;

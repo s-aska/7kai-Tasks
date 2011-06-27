@@ -12,6 +12,7 @@ my $lists = $c->db->search('list');
 for my $list ($lists->all) {
     # warn $list->list_id;
     my $doc = $c->open_doc('list-' . $list->list_id);
+    say $list->list_id, ' ', $doc->{name};
     # if (!$doc->{name}) {
     #     say $doc->{owner};
     # }
@@ -30,19 +31,19 @@ for my $list ($lists->all) {
         # $task->{assignee} ||= [];
         # $task->{registrant} ||= $doc->{owner};
     # }
-    for my $history (@{$doc->{history}}) {
-        $history->{action}=~s|\.|-|g;
-        say $history->{action};
-    	# delete $task->{sort};
-    	# $task->{sort} = $task->{id};
-        # delete $task->{created_on};
-        # delete $task->{updated_on};
-        # $task->{created} ||= time;
-        # $task->{updated} ||= time;
-        # $task->{assignee} ||= [];
-        # $task->{registrant} ||= $doc->{owner};
-    }
-    $c->save_doc($doc);
+    # for my $history (@{$doc->{history}}) {
+    #     $history->{action}=~s|\.|-|g;
+    #     say $history->{action};
+    #   # delete $task->{sort};
+    #   # $task->{sort} = $task->{id};
+    #     # delete $task->{created_on};
+    #     # delete $task->{updated_on};
+    #     # $task->{created} ||= time;
+    #     # $task->{updated} ||= time;
+    #     # $task->{assignee} ||= [];
+    #     # $task->{registrant} ||= $doc->{owner};
+    # }
+    # $c->save_doc($doc);
 }
 
 exit(0);

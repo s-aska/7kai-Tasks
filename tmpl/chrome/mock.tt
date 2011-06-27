@@ -29,7 +29,7 @@ $(document).ready(function() {
 </head>
 <body>
 <header>
-<h1>7kai Tasks <span class="version">ver 1.0 Bare Born</span></h1>
+<h1>7kai Tasks <span class="version">ver [% c().version() %] Bare Born</span></h1>
 <p></p>
 <nav>
 <ul class="clearfix">

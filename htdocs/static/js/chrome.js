@@ -74,6 +74,7 @@ ns.Tasks.prototype = {
     readComment: readComment,
     isMe: isMe,
     findMe: findMe,
+    findMeByList: findMeByList,
     listReadLastRev: listReadLastRev,
     listReadLastTime: listReadLastTime,
     clickStatebleCheckbox: clickStatebleCheckbox,
@@ -172,7 +173,7 @@ function initParts() {
     this.template.task     = this.parts.tasks.html();
 }
 function initEvent() {
-    var self = this;
+    var that = this;
     
     /* window */
     w.resize($.proxy(this.windowResizeEvent, this));
@@ -191,7 +192,7 @@ function initEvent() {
     /* article */
     /* article nav */
     $('button, a, span.action, input[data-method]').each(function(i, ele){
-        ele.addEventListener("click", self, false);
+        ele.addEventListener("click", that, false);
     });
     
     var f_disp = false;
@@ -229,7 +230,7 @@ function initEvent() {
         handle: 'div.grip',
         cursor: 'url(/static/img/openhand.cur), move',
         update: function(e, ui) {
-            self.sortUpdateTask();
+            that.sortUpdateTask();
         }
     });
     
@@ -237,7 +238,7 @@ function initEvent() {
     $('form.modal').each(function(i, ele){
         var form = $(ele);
         form.find('button.cancel').click(function(){
-            form.fadeOut(self.speed);
+            form.fadeOut(that.speed);
             return false;
         });
         form.bind('submit', function(){
@@ -245,27 +246,27 @@ function initEvent() {
             
             var submit = form.data('submit');
             if (submit) {
-                self[submit].call(self, form);
+                that[submit].call(that, form);
             }
             // FIXME: keep
             
             return false;
         });
-        self.modals[form.attr('id')] = form;
+        that.modals[form.attr('id')] = form;
         // form.disableSelection();
         // form.draggable();
         form.draggable({ handle: 'h1' });
-        form.find('footer input[type=checkbox]').click($.proxy(self.clickStatebleCheckbox, self));
+        form.find('footer input[type=checkbox]').click($.proxy(that.clickStatebleCheckbox, that));
     });
     
     // Create Task Window
     $('#create-task-date').datepicker();
     $('#create-list-assignee').autocomplete({
 		source: function(request, response) {
-		    response($.ui.autocomplete.filter(self.assignee, request.term));
+		    response($.ui.autocomplete.filter(that.assignee, request.term));
 		},
 		select: function(event, ui) {
-		    self.createAssigneeList(self.friends[ui.item.value]).prependTo($('#create-list-members'));
+		    that.createAssigneeList(that.friends[ui.item.value]).prependTo($('#create-list-members'));
         }
 	}).data('autocomplete')._renderItem = function(ul, item) {
         return $(document.createElement('li'))
@@ -280,22 +281,22 @@ function initEvent() {
     
 }
 function initEventGuide(ele) {
-    var self = this;
-    ele.find('*[data-guide-' + self.lang + ']').each(function(i, ele){
+    var that = this;
+    ele.find('*[data-guide-' + that.lang + ']').each(function(i, ele){
         var ele = $(ele);
-        var msg = ele.data('guide-' + self.lang);
+        var msg = ele.data('guide-' + that.lang);
         ele.hover(function(){
-            if (self.guide == false) {
+            if (that.guide == false) {
                 return;
             }
             var top = ele.offset().top + ele.height();
             var left = ele.offset().left;
-            self.parts.guide.text(msg);
-            self.parts.guide.show();
-            self.parts.guide.css('top', top + 'px');
-            self.parts.guide.css('left', left + 'px');
+            that.parts.guide.text(msg);
+            that.parts.guide.show();
+            that.parts.guide.css('top', top + 'px');
+            that.parts.guide.css('left', left + 'px');
         }, function() {
-            self.parts.guide.hide();
+            that.parts.guide.hide();
         });
     });
 }
@@ -411,12 +412,12 @@ function getTwitterProfileImageUrl(screen_name) {
     }
 }
 function syncTwitterContact(user_id, cursor, screen_name) {
-    var self = this;
+    var that = this;
     if (!cursor || cursor == -1) {
-        if (user_id in self.account.tw) {
-            self.account.tw[user_id].friends = [];
+        if (user_id in that.account.tw) {
+            that.account.tw[user_id].friends = [];
         } else {
-            self.account.tw[user_id] = {friends: []};
+            that.account.tw[user_id] = {friends: []};
         }
     }
     this.ajax({
@@ -430,20 +431,20 @@ function syncTwitterContact(user_id, cursor, screen_name) {
     })
     .done(function(data){
         if (data.success) {
-            self.statusUpdate('sync contact list '
+            that.statusUpdate('sync contact list '
             + screen_name + ' ' + data.sync_count + '/' + data.friends_count);
-            self.registAssignee(data.friends);
-            $.merge(self.account.tw[user_id].friends, data.friends);
+            that.registAssignee(data.friends);
+            $.merge(that.account.tw[user_id].friends, data.friends);
             if (data.next_cursor) {
-                self.syncTwitterContact(user_id, data.next_cursor, screen_name);
+                that.syncTwitterContact(user_id, data.next_cursor, screen_name);
             } else {
-                self.statusUpdate('sync contact list ' + screen_name + ' fin.');
+                that.statusUpdate('sync contact list ' + screen_name + ' fin.');
             }
         }
     });
 }
 function updateAccount(params, refresh) {
-    var self = this;
+    var that = this;
     this.ajax({
         type: 'post',
         url: '/api/1/account/update',
@@ -452,15 +453,15 @@ function updateAccount(params, refresh) {
     })
     .done(function(data){
         if (data.success) {
-            self.statusUpdate('update a account.');
+            that.statusUpdate('update a account.');
             if (refresh) {
-                self.refresh();
+                that.refresh();
             }
         }
     });
 }
 function refresh() {
-    var self = this;
+    var that = this;
     return this.ajax({
         type: 'get',
         url: '/api/1/account/',
@@ -468,70 +469,70 @@ function refresh() {
     })
     .done(function(data){
         if (data.success) {
-            self.statusUpdate('refresh.');
-            self.account = data.account;
-            self.assignee = [];
-            self.parts.owners.empty();
-            self.parts.tasks.empty();
-            self.parts.connectacs.empty();
+            that.statusUpdate('refresh.');
+            that.account = data.account;
+            that.assignee = [];
+            that.parts.owners.empty();
+            that.parts.tasks.empty();
+            that.parts.connectacs.empty();
             var is_first = true;
             for (user_id in data.account.tw) {
                 var tw = data.account.tw[user_id];
-                self.registAssignee(tw.friends);
+                that.registAssignee(tw.friends);
                 $('<option/>')
                     .attr('value', '@' + tw.screen_name)
                     .text('@' + tw.screen_name)
-                    .appendTo(self.parts.owners);
+                    .appendTo(that.parts.owners);
                 $('<li>Twitter: '
                     + tw.screen_name
                     + ' <!-- span class="icon icon-delete"></span --></li>')
-                    .appendTo(self.parts.connectacs);
+                    .appendTo(that.parts.connectacs);
                 if (is_first) {
                     is_first = false;
                     $('#member-name').text(tw.screen_name);
                 }
             }
-            self.listmap = [];
-            self.parts.lists.find('.project').remove();
-            self.parts.lswt.find('.project').remove();
+            that.listmap = [];
+            that.parts.lists.find('.project').remove();
+            that.parts.lswt.find('.project').remove();
             
-            var lists = self.account.lists;
+            var lists = that.account.lists;
             for (var i = 0; i < lists.length; i++) {
                 var list = lists[i];
-                self.registList(list);
+                that.registList(list);
             }
-            self.renderTimeline();
+            that.renderTimeline();
             
-            if ("last_read_list" in self.account.state) {
-                var id = self.account.state.last_read_list;
-                self.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
+            if ("last_read_list" in that.account.state) {
+                var id = that.account.state.last_read_list;
+                that.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
             } else {
-                self.parts.lists.find('li.project:first').click();
+                that.parts.lists.find('li.project:first').click();
             }
-            self.sortTask('updated');
+            that.sortTask('updated');
             
-            if (self.assignee.length == 0) {
-                self.clickSyncTwitterContact();
+            if (that.assignee.length == 0) {
+                that.clickSyncTwitterContact();
             }
-            for (var i = 0; i < self.filters.length; i++) {
-                var filter = self.filters[i];
-                if (filter in self.account.state.hide_list) {
-                    self.parts.lswt.find('tr[data-list-id=' + filter + ']').each(function(i, ele){
+            for (var i = 0; i < that.filters.length; i++) {
+                var filter = that.filters[i];
+                if (filter in that.account.state.hide_list) {
+                    that.parts.lswt.find('tr[data-list-id=' + filter + ']').each(function(i, ele){
                         $(ele).find('input').attr('checked', false);
                     });
-                    self.parts.lists.find('li[data-list-id=' + filter + ']').hide();
+                    that.parts.lists.find('li[data-list-id=' + filter + ']').hide();
                 } else {
-                    self.parts.lists.find('li[data-list-id=' + filter + ']').show();
+                    that.parts.lists.find('li[data-list-id=' + filter + ']').show();
                 }
             }
             // checkox state 
-            for (id in self.account.state.checkbox) {
+            for (id in that.account.state.checkbox) {
                 document.getElementById(id).checked =
-                    self.account.state.checkbox[id] == 1 ? true : false;
+                    that.account.state.checkbox[id] == 1 ? true : false;
             }
-            for (id in self.account.state.button) {
+            for (id in that.account.state.button) {
                 var button = $(document.getElementById(id));
-                if (self.account.state.button[id] == 1) {
+                if (that.account.state.button[id] == 1) {
                     button.removeClass('on');
                     button.data('val', 1);
                 } else {
@@ -540,15 +541,15 @@ function refresh() {
                 }
             }
             if ($('#guide-switch').data('val') == 1) {
-                self.guide = false;
+                that.guide = false;
                 $('#guide-switch').text($('#guide-switch').data('text-off'));
             } else {
-                self.guide = true;
+                that.guide = true;
                 $('#guide-switch').text($('#guide-switch').data('text-on'));
             }
             
             // 
-            var my = self.parts.mainmenu.find('.my:first');
+            var my = that.parts.mainmenu.find('.my:first');
             var url = my.data('url');
             var img = $('<img/>').attr('src', url).attr('width', 16);
             my.empty().append(img);
@@ -620,7 +621,7 @@ function renderTimeline() {
     }
 }
 function switchList(e) {
-    var self = this;
+    var that = this;
     var li = $(e.currentTarget);
     var id = li.data('list-id');
     var list = this.listmap[id];
@@ -662,7 +663,7 @@ function switchList(e) {
     });
 }
 function switchFilterList(e) {
-    var self = this;
+    var that = this;
     var li = $(e.currentTarget);
     var id = li.data('list-id');
     this.current_list = null;
@@ -681,7 +682,7 @@ function switchFilterList(e) {
     });
 }
 function renderList(list) {
-    var self = this;
+    var that = this;
     var badge = $('<span class="badge"></span>');
     var li = $('<li data-list-id="' + list.id + '"></li>');
     li.attr('class', 'project');
@@ -692,12 +693,12 @@ function renderList(list) {
             + 'data-method="open" data-id="create-list-window" '
             + 'data-callback="editList"></span>');
         settings.data('list-id', list.id);
-        settings.get(0).addEventListener("click", self, false);
+        settings.get(0).addEventListener("click", that, false);
         li.append(settings);
     }
     this.listmap[list.id] = list;
     this.listli[list.id] = li;
-    li.click($.proxy(self.switchList, self));
+    li.click($.proxy(that.switchList, that));
     list.taskmap = {};
     for (var j = 0; j < list.doc.tasks.length; j++) {
         list.taskmap[list.doc.tasks[j].id] = list.doc.tasks[j];
@@ -742,11 +743,11 @@ function renderList(list) {
     }
     
     tr.find('span, input').each(function(i, ele){
-        ele.addEventListener("click", self, false);
+        ele.addEventListener("click", that, false);
     });
     
     // Task
-    if (list.id in self.account.state.hide_list) {
+    if (list.id in that.account.state.hide_list) {
         li.hide();
         tr.find('input').attr('checked', false);
     } else if (update == false) {
@@ -784,7 +785,7 @@ function createTask(params) {
     
 }
 function modifyTask(params) {
-    var self = this;
+    var that = this;
     return this.ajax({
         type: 'post',
         url: '/api/1/task/update',
@@ -794,10 +795,10 @@ function modifyTask(params) {
     .done(function(data){
         // console.log(data);
         if (data.success) {
-            self.statusUpdate('update a task.');
-            $.extend(self.listmap[params.list_id].taskmap[data.task.id], data.task);
-            self.renderBadge(self.listmap[params.list_id]);
-            self.taskli[params.list_id + '-' + data.task.id].data('updated', data.task.updated);
+            that.statusUpdate('update a task.');
+            $.extend(that.listmap[params.list_id].taskmap[data.task.id], data.task);
+            that.renderBadge(that.listmap[params.list_id]);
+            that.taskli[params.list_id + '-' + data.task.id].data('updated', data.task.updated);
         }
     });
 }
@@ -805,17 +806,17 @@ function deleteTask(params) {
     
 }
 function filterTask() {
-    var self = this;
+    var that = this;
     var filter = this.tasksFilterGenerate();
     this.parts.timeline.hide();
     this.parts.tasks.show();
     this.parts.tasks.find('> li').each(function(i, ele){
         var ele = $(ele);
         if (filter(ele) == true) {
-            ele.slideDown(self.speed);
-            self.readComment(ele);
+            ele.slideDown(that.speed);
+            that.readComment(ele);
         } else {
-            ele.slideUp(self.speed);
+            ele.slideUp(that.speed);
         }
     });
 }
@@ -968,7 +969,7 @@ function clickSignInTwitter(e, ele) {
     location.href = '/signin/twitter/oauth';
 }
 function clickSyncTwitterContact(e, ele) {
-    var self = this;
+    var that = this;
     
     // FIXME: statusbar update
     this.statusUpdate('sync contact list begin.');
@@ -981,13 +982,13 @@ function clickSyncTwitterContact(e, ele) {
     .done(function(data){
         for (var i = 0; i < data.account.tw_accounts.length; i++) {
             var tw = data.account.tw_accounts[i];
-            self.syncTwitterContact(tw.user_id, -1, tw.screen_name);
+            that.syncTwitterContact(tw.user_id, -1, tw.screen_name);
         }
     });
     
 }
 function clickAccountSync(e, ele) {
-    var self = this;
+    var that = this;
     
     return this.ajax({
         type: 'get',
@@ -996,13 +997,13 @@ function clickAccountSync(e, ele) {
     })
     .done(function(data){
         if (data.success) {
-            self.account = data.doc;
+            that.account = data.doc;
             
-            self.assignee = [];
+            that.assignee = [];
             for (user_id in data.doc.tw) {
-                self.registAssignee(data.doc.tw[user_id].friends);
+                that.registAssignee(data.doc.tw[user_id].friends);
             }
-            console.log(self.account);
+            console.log(that.account);
         }
     });
 }
@@ -1034,13 +1035,13 @@ function clickListDisplaySwitch(e, ele) {
     if (ele.attr('checked')) {
         this.parts.lists.find('li').each(function(i, ele){
             if (list_id == $(ele).data('list-id')) {
-                $(ele).slideDown(self.speed);
+                $(ele).slideDown(that.speed);
             }
         });
     } else {
         this.parts.lists.find('li').each(function(i, ele){
             if (list_id == $(ele).data('list-id')) {
-                $(ele).slideUp(self.speed);
+                $(ele).slideUp(that.speed);
             }
         });
     }
@@ -1101,7 +1102,7 @@ function openCallbackDeleteList(e, ele) {
     form.find('button').get(0).focus();
 }
 function submitCreateList(form) {
-    var self = this;
+    var that = this;
     
     var list_id = form.data('list-id');
     var url = (list_id == 0) ? '/api/1/list/create' : '/api/1/list/update';
@@ -1117,7 +1118,7 @@ function submitCreateList(form) {
        members.push($(ele).data('code'));
     });
     if (list_id == 0) {
-        self.submitFinalize(form);
+        that.submitFinalize(form);
     } else {
         form.fadeOut(this.speed);
     }
@@ -1135,8 +1136,8 @@ function submitCreateList(form) {
     })
     .pipe(function(data){
         if (data.success) {
-            self.statusUpdate('create list ' + data.list_id);
-            return self.ajax({
+            that.statusUpdate('create list ' + data.list_id);
+            return that.ajax({
                 type: 'get',
                 url: '/api/1/list/' + data.list_id,
                 dataType: 'json'
@@ -1145,13 +1146,13 @@ function submitCreateList(form) {
     })
     .done(function(data){
         if (data.success) {
-            self.statusUpdate('get list ' + data.list.doc.name);
-            self.registList(data.list);
+            that.statusUpdate('get list ' + data.list.doc.name);
+            that.registList(data.list);
         }
     });
 }
 function submitDeleteList(form) {
-    var self = this;
+    var that = this;
     var list_id = form.data('list-id');
     return this.ajax({
         type: 'post',
@@ -1163,8 +1164,8 @@ function submitDeleteList(form) {
     })
     .done(function(data){
         if (data.success) {
-            self.statusUpdate('delete list ' + data.list_id);
-            self.refresh();
+            that.statusUpdate('delete list ' + data.list_id);
+            that.refresh();
             form.fadeOut();
         }
     });
@@ -1179,7 +1180,7 @@ function registList(list) {
 
 // MainMenu
 function tasksFilterGenerate() {
-    var self = this;
+    var that = this;
     var my = this.parts.mainmenu.find('.my').parent().data('val');
     var star = this.parts.mainmenu.find('.icon-star-on').parent().data('val');
     var tasksOn = this.parts.mainmenu.find('.icon-tasks-on').parent().data('val');
@@ -1195,26 +1196,26 @@ function tasksFilterGenerate() {
         progress: '.icon-progress'
     };
     var func = function(ul){
-        if (self.current_list) {
-            if (ul.data('list-id') != self.current_list.id) {
+        if (that.current_list) {
+            if (ul.data('list-id') != that.current_list.id) {
                 return false;
             }
         }
-        else if (self.current_filter) {
+        else if (that.current_filter) {
             var list_id = ul.data('list-id');
             var task_id = ul.data('id');
-            var list = self.listmap[list_id];
-            var task = self.listmap[list_id].taskmap[task_id];
-            if (self.current_filter == "list-todo") {
-                if (self.tasksTodoFilter(list, task) == false) {
+            var list = that.listmap[list_id];
+            var task = that.listmap[list_id].taskmap[task_id];
+            if (that.current_filter == "list-todo") {
+                if (that.tasksTodoFilter(list, task) == false) {
                     return false;
                 }
-            } else if (self.current_filter == "list-request") {
-                if (self.tasksRequestFilter(list, task) == false) {
+            } else if (that.current_filter == "list-request") {
+                if (that.tasksRequestFilter(list, task) == false) {
                     return false;
                 }
             }
-            else if (self.current_filter == 'list-watch') {
+            else if (that.current_filter == 'list-watch') {
                 star = 0;
             }
         }
@@ -1307,13 +1308,13 @@ function clickTaskmenuSwitch(e, ele) {
     if (val == 1) {
         ele.data('val', 0);
         ele.addClass('on');
-        this.parts.tasks.find(selector).slideUp(self.speed);
+        this.parts.tasks.find(selector).slideUp(that.speed);
         this.account.state.button[id]++;
     }
     else {
         ele.data('val', 1);
         ele.removeClass('on');
-        this.parts.tasks.find(selector).slideDown(self.speed);
+        this.parts.tasks.find(selector).slideDown(that.speed);
         delete this.account.state.button[id];
     }
     this.updateAccount({
@@ -1324,7 +1325,7 @@ function clickTaskmenuSwitch(e, ele) {
     });
 }
 function clickTaskmenuFilter(e, ele) {
-    var self = this;
+    var that = this;
     var id = ele.data('id');
     var val = ele.data('val');
     var selectors = {
@@ -1369,9 +1370,9 @@ function clickTaskmenuFilter(e, ele) {
     // this.parts.tasks.find('li').each(function(i, ele){
     //     var ele = $(ele);
     //     if (filter(ele) == true) {
-    //         ele.slideDown(self.speed);
+    //         ele.slideDown(that.speed);
     //     } else {
-    //         ele.slideUp(self.speed);
+    //         ele.slideUp(that.speed);
     //     }
     // });
 }
@@ -1460,7 +1461,7 @@ function openCallbackClearTrash(e, ele) {
     form.find('button').get(0).focus();
 }
 function submitCreateTask(form) {
-    var self = this;
+    var that = this;
     
     var list = this.current_list;
     var task_id = form.data('task-id');
@@ -1484,7 +1485,7 @@ function submitCreateTask(form) {
     if (task_id > 0) {
         form.fadeOut(this.speed);
     } else {
-        self.submitFinalize(form);
+        that.submitFinalize(form);
     }
     console.log({
         list_id: list.id,
@@ -1513,31 +1514,31 @@ function submitCreateTask(form) {
         if (data.success) {
             // FIXME: 
             if (!task_id) {
-                self.statusUpdate('create a task.');
+                that.statusUpdate('create a task.');
                 var task = data.task;
                 list.taskmap[task.id] = task;
                 list.doc.tasks.push(task);
-                var li = self.renderTask(list, task);
-                self.taskli[list.id + '-' + task.id] = li;
-                var filter = self.tasksFilterGenerate();
+                var li = that.renderTask(list, task);
+                that.taskli[list.id + '-' + task.id] = li;
+                var filter = that.tasksFilterGenerate();
                 if (filter(li) == false) {
                     li.delay(500).slideUp('slow');
                 }
             }
             else {
-                self.statusUpdate('update a task.');
+                that.statusUpdate('update a task.');
                 // FIXME
                 var task = data.task;
-                $.extend(self.listmap[list.id].taskmap[task.id], data.task);
-                var li = self.taskli[list.id + '-' + task.id];
-                var li2 = self.createTaskElement(list, task);
+                $.extend(that.listmap[list.id].taskmap[task.id], data.task);
+                var li = that.taskli[list.id + '-' + task.id];
+                var li2 = that.createTaskElement(list, task);
                 li.replaceWith(li2);
             }
         }
     });
 }
 function submitClearTrash(form) {
-    var self = this;
+    var that = this;
     var list_id = form.data('list-id');
     var list = this.listmap[list_id];
     var owner = this.findMe([list.doc.owner]) || this.findMe(list.doc.members);
@@ -1552,13 +1553,13 @@ function submitClearTrash(form) {
     })
     .done(function(data){
         if (data.success) {
-            self.statusUpdate('clear trash ' + data.count + ' tasks remove.');
-            var list = self.listmap[list_id];
+            that.statusUpdate('clear trash ' + data.count + ' tasks remove.');
+            var list = that.listmap[list_id];
             var tasks = [];
             for (var i = 0; i < list.doc.tasks.length; i++) {
                 var task = list.doc.tasks[i];
                 if (task.closed == 1) {
-                    self.taskli[list.id + '-' + task.id].remove();
+                    that.taskli[list.id + '-' + task.id].remove();
                     delete list.taskmap[task.id];
                 } else {
                     tasks.push(task);
@@ -1566,7 +1567,7 @@ function submitClearTrash(form) {
             }
             list.doc.tasks = tasks;
         }
-        form.fadeOut(self.speed, function(){
+        form.fadeOut(that.speed, function(){
             $('#recycle-button').click();
         });
     });
@@ -1619,7 +1620,7 @@ function renderTask(list, task) {
     return li;
 }
 function createTaskElement(list, task) {
-    var self = this;
+    var that = this;
     var li = $(this.template.task);
     li.data('list-id', list.id);
     li.data('id', task.id);
@@ -1643,7 +1644,7 @@ function createTaskElement(list, task) {
     li.find('.due').text(task.due);
     if ("assignee" in task && task.assignee && task.assignee.length > 0) {
         var assignee = task.assignee[0];
-        var url = self.getTwitterProfileImageUrl(assignee.substring(1));
+        var url = that.getTwitterProfileImageUrl(assignee.substring(1));
         var img = $('<img/>').attr('src', url);
         li.find('.assignee')
             .removeClass('icon-address-off')
@@ -1688,7 +1689,7 @@ function createTaskElement(list, task) {
         if (e.keyCode == 13) {
             e.preventDefault();
             if (text.val().length > 0) {
-                self.submitComment(list.id, task.id, text, form, comments);
+                that.submitComment(list.id, task.id, text, form, comments);
             }
         } else {
             
@@ -1701,7 +1702,7 @@ function createTaskElement(list, task) {
     
     // form.bind('submit', function(){
     //     try {
-    //         self.submitComment(list.id, task.id, text, form, comments);
+    //         that.submitComment(list.id, task.id, text, form, comments);
     //     } catch(e) {
     //         console.log(e);
     //     }
@@ -1709,7 +1710,7 @@ function createTaskElement(list, task) {
     // });
     
     li.click(function(){
-        commentBox.slideToggle(self.speed, function(){
+        commentBox.slideToggle(that.speed, function(){
             if (commentBox.css('display') != 'none') {
                 text.get(0).focus();
             }
@@ -1753,13 +1754,13 @@ function createTaskElement(list, task) {
     return li;
 }
 function clickTaskAction(e) {
-    var self = this;
+    var that = this;
     e.stopPropagation();
     var div = $(e.currentTarget);
     var li = div.parent();
     var list_id = li.data('list-id');
     var task_id = li.data('id');
-    var list = self.listmap[list_id];
+    var list = that.listmap[list_id];
     var registrant = this.findMe([list.doc.owner]) || this.findMe(list.doc.members);
     if (!registrant) {
         alert("can't find registrant.");
@@ -1774,7 +1775,7 @@ function clickTaskAction(e) {
             task_id: task_id,
             closed: 1
         });
-        li.slideUp(self.speed);
+        li.slideUp(that.speed);
     }
     else if (div.hasClass('icon-recycle')) {
         li.removeClass('delete');
@@ -1785,7 +1786,7 @@ function clickTaskAction(e) {
             task_id: task_id,
             closed: 0
         });
-        li.slideUp(self.speed);
+        li.slideUp(that.speed);
     }
     else if (div.hasClass('icon-tasks-off')) {
         li.removeClass('delete');
@@ -1852,28 +1853,29 @@ function clickTaskAction(e) {
     
     var filter = this.tasksFilterGenerate();
     if (filter(li) == false) {
-        li.slideUp(self.speed);
+        li.slideUp(that.speed);
     }
 }
-function submitComment(list_id, task_id, text, form, comments) {
-    var self = this;
-    
-    var list = self.listmap[list_id];
-    var owner;
-    for (user_id in self.account.tw) {
-        var tw = self.account.tw[user_id];
+function findMeByList(list) {
+    for (user_id in this.account.tw) {
+        var tw = this.account.tw[user_id];
         var code = '@' + tw.screen_name;
         if (code == list.doc.owner) {
-            owner = code;
+            return code;
         } else {
             for (var i = 0; i < list.doc.members.length; i++) {
                 if (code == list.doc.members[i]) {
-                    owner = code;
-                    break;
+                    return code;
                 }
             }
         }
     }
+}
+function submitComment(list_id, task_id, text, form, comments) {
+    var that = this;
+    
+    var list = this.listmap[list_id];
+    var owner = this.findMeByList(list);
     var comment = text.val();
     return this.ajax({
         type: 'post',
@@ -1889,13 +1891,13 @@ function submitComment(list_id, task_id, text, form, comments) {
     .done(function(data){
         if (data.success) {
             // FIXME: 
-            self.statusUpdate('create a comment.');
+            that.statusUpdate('create a comment.');
             // FIXME
-            $.extend(self.listmap[list_id].taskmap[data.task.id], data.task);
-            self.taskli[list_id + '-' + data.task.id].data('updated', data.task.updated);
+            $.extend(that.listmap[list_id].taskmap[data.task.id], data.task);
+            that.taskli[list_id + '-' + data.task.id].data('updated', data.task.updated);
             var li = $('<li/>');
             li.text(comment);
-            self.renderComment(list_id, task_id, {
+            that.renderComment(list_id, task_id, {
                 id: data.comment_id,
                 time: (new Date()).getTime(),
                 owner: owner,
@@ -1906,7 +1908,7 @@ function submitComment(list_id, task_id, text, form, comments) {
     });
 }
 function renderComment(list_id, task_id, comment, comments) {
-    var self = this;
+    var that = this;
     var li = $('<li/>');
     var name = $('<span class="name"></span>').text(comment.owner);
     var date = $('<span class="date"></span>').text(this.timestamp(comment.time));
@@ -1914,7 +1916,7 @@ function renderComment(list_id, task_id, comment, comments) {
     var del = $('<span class="action icon icon-delete"></span>');
     del.click(function(e){
         e.stopPropagation();
-        self.deleteComment(list_id, task_id, comment);
+        that.deleteComment(list_id, task_id, comment);
         li.remove();
     });
     li.append(name);
@@ -1928,11 +1930,14 @@ function renderComment(list_id, task_id, comment, comments) {
     comments.append(li);
 }
 function deleteComment(list_id, task_id, comment) {
-    var self = this;
+    var that = this;
+    var list = this.listmap[list_id];
+    var owner = this.findMeByList(list);
     return this.ajax({
         type: 'post',
         url: '/api/1/comment/delete',
         data: {
+            owner: owner,
             list_id: list_id,
             task_id: task_id,
             comment_id: comment.id
@@ -1942,9 +1947,9 @@ function deleteComment(list_id, task_id, comment) {
     .done(function(data){
         if (data.success) {
             // FIXME: 
-            self.statusUpdate('delete a comment.');
+            that.statusUpdate('delete a comment.');
             // FIXME
-            $.extend(self.listmap[list_id].taskmap[data.task.id], data.task);
+            $.extend(that.listmap[list_id].taskmap[data.task.id], data.task);
         }
     });
 }
