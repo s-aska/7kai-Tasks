@@ -142,10 +142,6 @@ $(document).ready(function() {
   data-text-ja="関心のあるタスク"
   data-text-en="Watch"
 >Watch</li>
-<li class="project">リストA</li>
-<li class="project">プロジェクトX</li>
-<li class="project">&nbsp;&nbsp;サブプロジェクト <span class="badge">10</span></li>
-<li class="project">[B] Project</li>
 </ul>
 <!-- <div class="icon icon-prev"></div>
 <div class="icon icon-next"></div> -->
