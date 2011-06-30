@@ -401,6 +401,7 @@ function ajax(option) {
     option.error = $.proxy(this.ajaxFailure, this);
     if ("data" in option && "type" in option && option.type.toLowerCase() === 'post') {
         option.data[this.token_name] = this.token;
+        option.data["request_time"] = (new Date()).getTime();
     }
     return $.ajax(option);
 }
@@ -892,6 +893,7 @@ function modifyTask(params) {
             $.extend(that.listmap[params.list_id].taskmap[data.task.id], data.task);
             that.renderBadge(that.listmap[params.list_id]);
             that.taskli[params.list_id + '-' + data.task.id].data('updated', data.task.updated);
+            
         }
     });
 }
@@ -1503,29 +1505,32 @@ function clickCreateTaskDueToday(e, ele) {
     due.datepicker("setDate", new Date());
 }
 function openCallbackCreateTask(e, ele) {
+    var list_id = this.current_list
+                ? this.current_list.id
+                : $(ele).parent().data('list-id');
+    var list = this.listmap[list_id];
     var ul = $('#create-task-assignee');
     ul.html('<li>Assignee:</li>');
-    var member = false;
-    this.parts.listmembers.find('li').each(function(i, ele){
-        var li = $(ele);
-        var code = li.data('code');
-        var url = li.data('url');
-        var new_li = $('<li></li>');
+    var members = list.doc.members.concat(list.doc.owner);
+    for (var i = 0, max = members.length; i < max; i++) {
+        var code = members[i];
+        var url = this.getTwitterProfileImageUrl(code.substring(1));
+        var li = $('<li></li>');
         var input = $('<input type="checkbox" name="assignee" value="">');
         input.val(code);
-        new_li.append(input)
+        li.append(input)
         if (url) {
-            var img = $('<img>').attr('src', url).attr('class', 'twitter_profile_image');
-            new_li.append(img);
+            $('<img>')
+            .attr('src', url)
+            .attr('class', 'twitter_profile_image')
+            .appendTo(li);
         }
-        new_li.append($('<span></span>').text(code));
-        ul.append(new_li);
-        member = true;
-    });
-    if (!member) {
+        li.append($('<span></span>').text(code));
+        ul.append(li);
+    }
+    if (!members.length) {
         ul.append($('<li>no member.</li>'));
     }
-    
     var form = $('#create-task-window');
     form.find('footer input[type=checkbox], footer label').show();
     var h1 = form.find('h1:first');
@@ -1533,7 +1538,7 @@ function openCallbackCreateTask(e, ele) {
     this.resetCreateTask(form);
     form.find('input[type=text]:first').get(0).focus();
     form.find('input[type=text]').val('');
-    form.data('list-id', this.current_list.id);
+    form.data('list-id', list.id);
     form.data('task-id', 0);
 }
 function openCallbackCreateTaskWithMember(e, ele) {

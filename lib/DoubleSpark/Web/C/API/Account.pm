@@ -6,10 +6,12 @@ use JSON;
 sub get {
     my ($class, $c) = @_;
     
+    unless ($c->session->get('account')) {
+        return $c->render_json({success => 0});
+    }
     my $account = DoubleSpark::Account->new($c);
     $account->set_social_accounts($c);
     $account->set_lists($c);
-    
     $c->render_json({success => 1, account => $account->to_hashref});
 }
 

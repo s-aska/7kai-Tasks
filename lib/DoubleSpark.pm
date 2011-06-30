@@ -122,6 +122,19 @@ sub open_list_docs {
     return $docs;
 }
 
+sub save_list_doc {
+    my ($self, $account, $doc) = @_;
+    
+    my $res = $self->save_doc($doc);
+    my $rev = $res->{rev};
+    my $id = $res->{id};
+    my $time = $self->req->param('request_time');
+    my $account_doc = $account->to_hashref;
+    $account_doc->{state}->{read}->{list}->{$id} =
+        $rev . ',' . $time;
+    $self->save_doc($account_doc);
+}
+
 sub append_history {
     my ($self, $doc, $history) = @_;
     my $update;

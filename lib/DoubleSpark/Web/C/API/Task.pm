@@ -37,7 +37,7 @@ sub create {
         task_id => $task_id,
         date    => time
     });
-    $c->save_doc($doc);
+    $c->save_list_doc($account, $doc);
     $c->render_json({
         success => 1,
         task => $task
@@ -82,7 +82,7 @@ sub update {
         task_id => $task_id,
         date    => time
     });
-    $c->save_doc($doc);
+    $c->save_list_doc($account, $doc);
     $c->render_json({
         success => $success,
         task => $target_task

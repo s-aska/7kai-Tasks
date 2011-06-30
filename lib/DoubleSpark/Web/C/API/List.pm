@@ -85,7 +85,7 @@ sub update {
         action => 'update-list',
         date   => time
     });
-    $c->save_doc($doc);
+    $c->save_list_doc($account, $doc);
     
     my $members = {};
     for my $member (@members) {
@@ -160,7 +160,7 @@ sub clear {
         action  => 'clear-task',
         date    => time
     });
-    $c->save_doc($doc);
+    $c->save_list_doc($account, $doc);
     $c->render_json({
         success => $count ? 1 : 0,
         count => $count
