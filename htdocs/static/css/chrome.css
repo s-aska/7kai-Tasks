@@ -202,8 +202,13 @@ span.icon {
 .icon-progress-off {
     background-image: url(/static/img/progress_off.png);
 }
-.twitter_profile_image {
+li.twitter_profile_image img {
+    width: 32px;
+    height: 32px;
+}
+img.twitter_profile_image {
     width: 16px;
+    height: 16px;
 }
 
 /********** header **********/
@@ -401,15 +406,23 @@ body > div > article section {
 }
 body > div > article section header li {
     float: left;
+    padding-left: 4px;
+}
+body > div > article section header li:first-child {
     padding-left: 10px;
 }
 body > div > article section header li.twitter_profile_image {
-    width: 32px;
+    /*width: 32px;*/
+    cursor: pointer;
 }
 body > div > article section header li.twitter_profile_image img {
     width: 32px;
+    height: 32px;
     vertical-align: bottom;
     border: 2px solid gray;
+}
+body > div > article section header li.twitter_profile_image img:hover {
+    border: 2px solid #f7d208;
 }
 body > div > article section h1 {
     float: left;
@@ -441,6 +454,9 @@ body > div > article section > ul li div.grip {
     width: 16px;
     height: 16px;
 }
+body > div > article section > ul.sortable li div.grip {
+    cursor: url(/static/img/openhand.cur), move;
+}
 body > div > article section > ul li div.action {
     margin-top: 3px;
     margin-left: 2px;
@@ -465,6 +481,8 @@ body > div > article section > ul li.clearfix div.icon-delete {
     
 }
 body > div > article section > ul li div.assignee {
+    width: auto;
+    min-width: 16px;
 }
 body > div > article section > ul li div.assignee img {
     width: 16px;
@@ -681,7 +699,9 @@ form.confirm {
     max-height: 200px;
     overflow-y: auto;
 }
-
+#list-settings-window {
+    width: 300px;
+}
 /********** guide **********/
 #guide {
     display: none;

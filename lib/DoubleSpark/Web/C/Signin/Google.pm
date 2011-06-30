@@ -1,7 +1,7 @@
 package DoubleSpark::Web::C::Signin::Google;
 use strict;
 use warnings;
-use Net::OpenID::Consumer::Lite;
+# use Net::OpenID::Consumer::Lite;
 
 # sub auth {
 #     my( $self, $c ) = @_;

@@ -1,6 +1,6 @@
 [% WRAPPER 'include/layout_pc.tt' %]
 <nav>
-<p data-text-ja="このサービスは作りかけです。">This service is unfinished.</p>
+<p data-text-ja="ソーシャルタスク管理サービス">This service is unfinished.</p>
 <ul>
 <li><a href="/signin/twitter/oauth">Sign in with Twitter</a></li>
 <li><del><a href="/signin/facebook/oauth">Sign in with Facebook</a></del></li>
@@ -9,12 +9,13 @@
 <p><a href="https://chrome.google.com/webstore/detail/nglhckhieofejlekibpkmflikcdegfce">Chrome Extensions</a></p>
 <p><a href="http://tasks.7kai.org/doc/">Document</a></p>
 <p><a href="https://github.com/s-aska/7kai-Tasks">Source Code</a></p>
+<p>Support: Chrome, Safari, Firefox</p>
 </nav>
 
 <form>
 <div id="fb-root"></div>
 <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script>
-<fb:like-box href="http://www.facebook.com/pages/7kai-Tasks/189391624444427?sk=wall" width="500" show_faces="true" border_color="" stream="true" header="true"></fb:like-box>
+<fb:like-box href="http://www.facebook.com/pages/7kai-Tasks/189391624444427" width="500" show_faces="true" border_color="" stream="true" header="true"></fb:like-box>
 <fb:comments href="tasks.7kai.org" num_posts="5" width="500"></fb:comments>
 </form>
 

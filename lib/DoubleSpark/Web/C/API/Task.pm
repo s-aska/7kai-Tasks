@@ -31,13 +31,12 @@ sub create {
     };
     $task->{assignee} = \@assignee if scalar(@assignee);
     push @{$doc->{tasks}}, $task;
-    push @{$doc->{history}}, {
+    $c->append_history($doc, {
         code    => $registrant,
         action  => 'create-task',
         task_id => $task_id,
         date    => time
-    };
-    $c->splice_history($doc);
+    });
     $c->save_doc($doc);
     $c->render_json({
         success => 1,
@@ -60,8 +59,9 @@ sub update {
         if ($task->{id} == $task_id) {
             my @keys = qw(status closed title description due);
             for my $key (@keys) {
-                if (defined $c->req->param($key)) {
-                    $task->{$key} = $c->req->param($key);
+                my $val = $c->req->param($key);
+                if (defined $val) {
+                    $task->{$key} = $val=~/^\d+$/ ? int($val) : $val;
                 }
             }
             if ($c->req->param('assignee[]')) {
@@ -76,13 +76,12 @@ sub update {
         }
     }
     die 'NotFound' unless $success;
-    push @{$doc->{history}}, {
+    $c->append_history($doc, {
         code    => $registrant,
         action  => 'update-task',
         task_id => $task_id,
         date    => time
-    };
-    $c->splice_history($doc);
+    });
     $c->save_doc($doc);
     $c->render_json({
         success => $success,

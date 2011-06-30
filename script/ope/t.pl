@@ -12,38 +12,30 @@ my $lists = $c->db->search('list');
 for my $list ($lists->all) {
     # warn $list->list_id;
     my $doc = $c->open_doc('list-' . $list->list_id);
-    say $list->list_id, ' ', $doc->{name};
-    # if (!$doc->{name}) {
-    #     say $doc->{owner};
-    # }
-    # $doc->{history} ||= [];
-    # for my $task (@{$doc->{tasks}}) {
-    #     unless ($task->{assignee}) {
-    #         say $doc->{_id}, " ", $doc->{owner}, " ", $task->{id};
-    #         $task->{assignee} = [];
-    #     }
-    	# delete $task->{sort};
-    	# $task->{sort} = $task->{id};
-        # delete $task->{created_on};
-        # delete $task->{updated_on};
-        # $task->{created} ||= time;
-        # $task->{updated} ||= time;
-        # $task->{assignee} ||= [];
-        # $task->{registrant} ||= $doc->{owner};
-    # }
-    # for my $history (@{$doc->{history}}) {
-    #     $history->{action}=~s|\.|-|g;
-    #     say $history->{action};
-    #   # delete $task->{sort};
-    #   # $task->{sort} = $task->{id};
-    #     # delete $task->{created_on};
-    #     # delete $task->{updated_on};
-    #     # $task->{created} ||= time;
-    #     # $task->{updated} ||= time;
-    #     # $task->{assignee} ||= [];
-    #     # $task->{registrant} ||= $doc->{owner};
-    # }
-    # $c->save_doc($doc);
+    say $list->list_id, ' ', $doc->{name}, ' ', $doc->{owner};
+    for my $task (@{$doc->{tasks}}) {
+        say $task->{title};
+        say $task->{status};
+        say $task->{closed};
+        
+        $task->{status} = int($task->{status});
+        $task->{closed} = int($task->{closed});
+    }
+    say 'update';
+    $c->save_doc($doc);
 }
+# my $accounts = $c->db->search('account');
+# for my $account ($accounts->all) {
+#     # warn $list->list_id;
+#     my $doc = $c->open_doc('account-' . $account->account_id);
+#     say $account->account_id;
+#     for my $col (qw/checkbox button/) {
+#         for (keys %{$doc->{state}->{$col}}) {
+#             warn Dumper($doc->{state}->{$col}->{$_});
+#             # $doc->{state}->{$col}->{$_} = int($doc->{state}->{$col}->{$_});
+#         }
+#     }
+#     # $c->save_doc($doc);
+# }
 
 exit(0);

@@ -4,7 +4,6 @@
      * Auto-growing textareas; technique ripped from Facebook
      */
     $.fn.autogrow = function(options) {
-        
         this.filter('textarea').each(function() {
             
             var $this       = $(this),
@@ -38,14 +37,19 @@
                                     .replace(/\n/g, '<br/>')
                                     .replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
                 
+                var margin = val.length === 0 ? 2 : 0;
                 if (e && "keyCode" in e && e.keyCode == 13 && e.type == 'keydown') {
-                    e.preventDefault();
-                    shadow.html(val + "<br/>&nbsp;");
-                    $(this).css('height', Math.max(shadow.height() + 2, 14));
-                    $(this).val($(this).val()+"\n");
+                    if (options && options.single) {
+                        e.preventDefault();
+                    } else {
+                        e.preventDefault();
+                        shadow.html(val + "<br/>&nbsp;");
+                        $(this).css('height', Math.max(shadow.height() + margin, 16));
+                        $(this).val($(this).val()+"\n");
+                    }
                 } else {
                     shadow.html(val);
-                    $(this).css('height', Math.max(shadow.height() + 2, 14));
+                    $(this).css('height', Math.max(shadow.height() + margin, 16));
                 }
             }
             

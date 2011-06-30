@@ -46,13 +46,16 @@ use Text::Xslate;
 }
 
 # load plugins
+use HTTP::Session::State::Cookie;
 use HTTP::Session::Store::File;
 __PACKAGE__->load_plugins(
     'Web::FillInFormLite',
     'Web::NoCache', # do not cache the dynamic content by default
     'Web::CSRFDefender',
     'Web::HTTPSession' => {
-        state => 'Cookie',
+        state => HTTP::Session::State::Cookie->new(
+            expires => '+1M'
+        ),
         store => HTTP::Session::Store::File->new(
             dir => File::Spec->tmpdir(),
         )

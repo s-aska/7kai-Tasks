@@ -13,6 +13,7 @@ ns.Tasks.prototype = {
     speed: 'fast',
     filters: [
         'list-timeline',
+        'list-comment',
         'list-all',
         'list-todo',
         'list-request',
@@ -33,6 +34,7 @@ ns.Tasks.prototype = {
     friends: {},
     taskli: {},
     listli: {},
+    unread_comment_count: 0,
     
     // 初期化系
     run: run,
@@ -62,9 +64,12 @@ ns.Tasks.prototype = {
     switchFilterList: switchFilterList,
     renderList: renderList,
     renderBadge: renderBadge,
+    renderCommentBadge: renderCommentBadge,
     createList: createList,
     modifyList: modifyList,
     deleteList: deleteList,
+    sortList: sortList,
+    sortUpdateList: sortUpdateList,
     createTask: createTask,
     modifyTask: modifyTask,
     deleteTask: deleteTask,
@@ -91,6 +96,7 @@ ns.Tasks.prototype = {
     // SideMenu
     clickListDisplaySwitch: clickListDisplaySwitch,
     openCallbackCreateList: openCallbackCreateList,
+    openCallbackCreateTaskWithMember: openCallbackCreateTaskWithMember,
     openCallbackEditList: openCallbackEditList,
     openCallbackDeleteList: openCallbackDeleteList,
     submitCreateList: submitCreateList,
@@ -100,6 +106,7 @@ ns.Tasks.prototype = {
     
     // MainMenu
     tasksFilterGenerate: tasksFilterGenerate,
+    tasksCommentFilter: tasksCommentFilter,
     tasksTodoFilter: tasksTodoFilter,
     tasksRequestFilter: tasksRequestFilter,
     clickTaskmenuSort: clickTaskmenuSort,
@@ -147,7 +154,6 @@ function run() {
     this.initAccount();
 }
 function initParts() {
-
     this.parts.header      = $('body > header');
     this.parts.aside       = $('body > div > aside');
     this.parts.article     = $('body > div > article');
@@ -167,7 +173,7 @@ function initParts() {
     this.parts.owners      = $('#create-list-window select[name=owner]');
     this.parts.guide       = $('#guide');
     
-    this.parts.listonly    = $('#create-task-button, #free-sort-task-button');
+    this.parts.listonly    = $('#create-task-button, #free-sort-task-button, #clear-trash-button');
     this.parts.connectacs  = $('#connect-accounts');
     
     this.template.task     = this.parts.tasks.html();
@@ -234,6 +240,14 @@ function initEvent() {
         }
     });
     
+    
+    this.parts.lists.sortable({
+        cursor: 'url(/static/img/openhand.cur), move',
+        update: function(e, ui) {
+            that.sortUpdateList();
+        }
+    });
+    
     // Modal Window
     $('form.modal').each(function(i, ele){
         var form = $(ele);
@@ -286,7 +300,7 @@ function initEventGuide(ele) {
         var ele = $(ele);
         var msg = ele.data('guide-' + that.lang);
         ele.hover(function(){
-            if (that.guide == false) {
+            if (!that.guide) {
                 return;
             }
             var top = ele.offset().top + ele.height();
@@ -318,7 +332,7 @@ function initWindow() {
     
 }
 function initAccount() {
-    this.refresh();
+    this.refresh(true);
     this.parts.mainmenu.find('.icon-trash').parent().fadeOut('slow');
 }
 
@@ -385,7 +399,7 @@ function windowResizeEvent() {
 function ajax(option) {
     //this.statusUpdate('ajax: begin url=' + option.url);
     option.error = $.proxy(this.ajaxFailure, this);
-    if ("data" in option && "type" in option && option.type.toLowerCase() == 'post') {
+    if ("data" in option && "type" in option && option.type.toLowerCase() === 'post') {
         option.data[this.token_name] = this.token;
     }
     return $.ajax(option);
@@ -403,9 +417,7 @@ function statusUpdate(message) {
 }
 function getTwitterProfileImageUrl(screen_name) {
     var code = '@' + screen_name;
-    // console.log(code);
     if (code in this.friends) {
-        // console.log(this.friends[code]);
         return this.friends[code].profile_image_url;
     } else {
         return 'http://api.twitter.com/1/users/profile_image/' + screen_name;
@@ -413,7 +425,7 @@ function getTwitterProfileImageUrl(screen_name) {
 }
 function syncTwitterContact(user_id, cursor, screen_name) {
     var that = this;
-    if (!cursor || cursor == -1) {
+    if (!cursor || cursor === -1) {
         if (user_id in that.account.tw) {
             that.account.tw[user_id].friends = [];
         } else {
@@ -439,6 +451,7 @@ function syncTwitterContact(user_id, cursor, screen_name) {
                 that.syncTwitterContact(user_id, data.next_cursor, screen_name);
             } else {
                 that.statusUpdate('sync contact list ' + screen_name + ' fin.');
+                that.refresh();
             }
         }
     });
@@ -460,7 +473,7 @@ function updateAccount(params, refresh) {
         }
     });
 }
-function refresh() {
+function refresh(syncContact) {
     var that = this;
     return this.ajax({
         type: 'get',
@@ -476,7 +489,7 @@ function refresh() {
             that.parts.tasks.empty();
             that.parts.connectacs.empty();
             var is_first = true;
-            for (user_id in data.account.tw) {
+            for (var user_id in data.account.tw) {
                 var tw = data.account.tw[user_id];
                 that.registAssignee(tw.friends);
                 $('<option/>')
@@ -491,16 +504,20 @@ function refresh() {
                     is_first = false;
                     $('#member-name').text(tw.screen_name);
                 }
+                syncContact = false;
             }
             that.listmap = [];
             that.parts.lists.find('.project').remove();
             that.parts.lswt.find('.project').remove();
             
+            that.unread_comment_count = 0;
             var lists = that.account.lists;
             for (var i = 0; i < lists.length; i++) {
                 var list = lists[i];
                 that.registList(list);
             }
+            that.sortList();
+            that.renderCommentBadge();
             that.renderTimeline();
             
             if ("last_read_list" in that.account.state) {
@@ -511,10 +528,7 @@ function refresh() {
             }
             that.sortTask('updated');
             
-            if (that.assignee.length == 0) {
-                that.clickSyncTwitterContact();
-            }
-            for (var i = 0; i < that.filters.length; i++) {
+            for (var i = 0, max = that.filters.length; i < max; i++) {
                 var filter = that.filters[i];
                 if (filter in that.account.state.hide_list) {
                     that.parts.lswt.find('tr[data-list-id=' + filter + ']').each(function(i, ele){
@@ -526,13 +540,13 @@ function refresh() {
                 }
             }
             // checkox state 
-            for (id in that.account.state.checkbox) {
+            for (var id in that.account.state.checkbox) {
                 document.getElementById(id).checked =
-                    that.account.state.checkbox[id] == 1 ? true : false;
+                    that.account.state.checkbox[id] ? true : false;
             }
-            for (id in that.account.state.button) {
+            for (var id in that.account.state.button) {
                 var button = $(document.getElementById(id));
-                if (that.account.state.button[id] == 1) {
+                if (that.account.state.button[id]) {
                     button.removeClass('on');
                     button.data('val', 1);
                 } else {
@@ -554,18 +568,21 @@ function refresh() {
             var img = $('<img/>').attr('src', url).attr('width', 16);
             my.empty().append(img);
         }
+        if (syncContact) {
+            that.clickSyncTwitterContact();
+        }
     });
 }
 function submitFinalize(form) {
     // keep
-    if (form.find('input[name=keep]:checked').length > 0) {
+    if (form.find('input[name=keep]:checked').length) {
         form.find('*[data-no-keep=1]').val('');
         form.find('input[type=text]:first').get(0).focus();
     } else {
         var reset = form.data('reset');
         this[reset].call(this, form);
         // continue
-        if (form.find('input[name=continue]:checked').length > 0) {
+        if (form.find('input[name=continue]:checked').length) {
             form.find('input[type=text]:first').get(0).focus();
         } else {
             form.fadeOut(this.speed);
@@ -578,9 +595,15 @@ function showTimeline(e) {
     this.parts.lists.find('.selected').removeClass('selected');
     var li = $(e.currentTarget);
     li.addClass('selected');
-    this.parts.listonly.attr('disabled', true);
+    this.parts.mainmenu.find('button').attr('disabled', true);
     this.parts.listname.text(li.text());
     this.parts.listmembers.empty();
+    this.updateAccount({
+        ns: 'state',
+        method: 'set',
+        key: 'last_read_list',
+        val: 'list-timeline'
+    });
 }
 function renderTimeline() {
     var lists = this.account.lists;
@@ -629,21 +652,21 @@ function switchList(e) {
     this.current_filter = null;
     this.parts.lists.find('.selected').removeClass('selected');
     this.listli[list.id].addClass('selected');
-    this.parts.listonly.attr('disabled', false);
+    this.parts.mainmenu.find('button').attr('disabled', false);
     this.parts.listname.text(list.doc.name);
     this.parts.listmembers.empty();
     // FIXME: 最終的に消す
     if ("owner" in list.doc) {
         this.renderMember(list.doc.owner);
     }
-    if ('members' in list.doc && list.doc.members.length > 0) {
+    if ('members' in list.doc && list.doc.members.length) {
         var members = list.doc.members;
         members.sort();
         for (var i = 0; i < members.length; i++) {
             this.renderMember(members[i]);
         }
     }
-    this.filterTask();
+    this.filterTask(true);
     this.sortTask();
     // 未読があった場合更新
     if (li.hasClass('updated')) {
@@ -670,10 +693,11 @@ function switchFilterList(e) {
     this.current_filter = id;
     this.parts.lists.find('.selected').removeClass('selected');
     li.addClass('selected');
+    this.parts.mainmenu.find('button').attr('disabled', false);
     this.parts.listonly.attr('disabled', true);
-    this.parts.listname.text(li.text());
+    this.parts.listname.text(this.localizer.text(li));
     this.parts.listmembers.empty();
-    this.filterTask();
+    this.filterTask(true);
     this.updateAccount({
         ns: 'state',
         method: 'set',
@@ -711,7 +735,7 @@ function renderList(list) {
     }
     
     var old = this.parts.lists.find('li[data-list-id="' + list.id + '"]');
-    if (old.length > 0) {
+    if (old.length) {
         if (old.hasClass('selected')) {
             old.replaceWith(li);
             li.click();
@@ -727,15 +751,17 @@ function renderList(list) {
      + list.id
      + '">'
      + '<td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>'
-     + '<td><span class="icon icon-next"></span></td>'
-     + '<td><span class="icon icon-prev"></span></td>'
-     + '<td><span class="icon icon-delete" data-method="open" '
-     + 'data-id="delete-list-window" data-callback="deleteList"></span></td>'
      + '</tr>')
     .prepend($('<td></td>').text(list.doc.name));
+    if (this.findMe([list.doc.owner])) {
+        tr.append($(
+            '<td><span class="icon icon-delete" data-method="open" '
+            + 'data-id="delete-list-window" data-callback="deleteList"></span></td>'
+        ));
+    }
     var update = false;
     var old = this.parts.lswt.find('tr[data-list-id="' + list.id + '"]');
-    if (old.length > 0) {
+    if (old.length) {
         update = true;
         old.replaceWith(tr);
     } else {
@@ -750,7 +776,7 @@ function renderList(list) {
     if (list.id in that.account.state.hide_list) {
         li.hide();
         tr.find('input').attr('checked', false);
-    } else if (update == false) {
+    } else if (!update) {
         var tasks = list.doc.tasks;
         for (var i = 0; i < tasks.length; i++) {
             var li = this.renderTask(list, tasks[i]);
@@ -761,15 +787,30 @@ function renderList(list) {
 function renderBadge(list) {
     var count = 0;
     for (var j = 0; j < list.doc.tasks.length; j++) {
-        if (list.doc.tasks[j].closed == 0 && list.doc.tasks[j].status < 2) {
+        if (!list.doc.tasks[j].closed && list.doc.tasks[j].status < 2) {
             count++;
         }
     }
-    if (count == 0) {
-        list.badge.hide();
-    } else {
+    if (count) {
         list.badge.text(count);
         list.badge.css('display', 'inline');
+    } else {
+        list.badge.hide();
+    }
+}
+function renderCommentBadge() {
+    if (this.unread_comment_count) {
+        if (!this.commentbadge) {
+            this.commentbadge = 
+                $('<span id="comment-badge" class="badge">1</span>')
+                .appendTo($('#comment-filter'));
+        }
+        this.commentbadge.text(this.unread_comment_count);
+        this.commentbadge.css('display', 'inline');
+    } else {
+        if (this.commentbadge) {
+            this.commentbadge.hide();
+        }
     }
 }
 function createList(params) {
@@ -780,6 +821,58 @@ function modifyList(params) {
 }
 function deleteList(params) {
     
+}
+function sortList() {
+    var that = this;
+    
+    // sidebar
+    var lis = [];
+    this.parts.lists.find('> li').each(function(i, ele) {
+        lis.push($(ele));
+    });
+    var val = function(ele){
+        var list_id = ele.data('list-id');
+        if (list_id in that.account.state.sort.list) {
+            return parseInt(that.account.state.sort.list[list_id]);
+        } else {
+            return 0;
+        }
+    }
+    lis.sort(function(a, b) {
+        return val(b) - val(a);
+    });
+    for (var i = 0; i < lis.length; i++) {
+        lis[i].appendTo(this.parts.lists);
+    }
+    
+    // list setting window
+    var trs = [];
+    this.parts.lswt.find('tr[data-list-id]').each(function(i, ele) {
+        trs.push($(ele));
+    });
+    trs.sort(function(a, b) {
+        return val(b) - val(a);
+    });
+    for (var i = 0; i < trs.length; i++) {
+        trs[i].appendTo(this.parts.lswt);
+    }
+}
+function sortUpdateList() {
+    var sort = {};
+    var lists = this.parts.lists.find('> li');
+    var count = lists.length;
+    lists.each(function(i, ele) {
+        var li = $(ele);
+        sort[li.data('list-id')] = count;
+        count--;
+    });
+    this.updateAccount({
+        ns: 'state.sort',
+        method: 'set',
+        type: 'json',
+        key: 'list',
+        val: JSON.stringify(sort)
+    });
 }
 function createTask(params) {
     
@@ -805,22 +898,26 @@ function modifyTask(params) {
 function deleteTask(params) {
     
 }
-function filterTask() {
+function filterTask(readComment) {
     var that = this;
     var filter = this.tasksFilterGenerate();
     this.parts.timeline.hide();
     this.parts.tasks.show();
     this.parts.tasks.find('> li').each(function(i, ele){
         var ele = $(ele);
-        if (filter(ele) == true) {
+        if (filter(ele)) {
             ele.slideDown(that.speed);
-            that.readComment(ele);
+            if (readComment) {
+                that.readComment(ele);
+            }
         } else {
             ele.slideUp(that.speed);
         }
     });
+    this.renderCommentBadge();
 }
 function readComment(li) {
+    var that = this;
     li.find('ul.comments > li').each(function(i, ele){
         var comment = $(ele);
         if (comment.data('read')) {
@@ -829,6 +926,7 @@ function readComment(li) {
         }
         if (comment.hasClass('unread')) {
             comment.data('read', 1);
+            that.unread_comment_count--;
         }
     });
 }
@@ -838,23 +936,25 @@ function sortTask(id) {
     } else {
         this.parts.mainmenu.find('button[data-method=taskmenuSort]').each(function(i, ele){
             var button = $(ele);
-            if (button.data('id') == id) {
+            if (button.data('id') === id) {
                 button.addClass('on');
             } else {
                 button.removeClass('on');
             }
         });
     }
-    if (id == "sort") {
+    if (id === "sort") {
         this.parts.tasks.sortable("enable");
+        this.parts.tasks.addClass('sortable');
     } else {
         this.parts.tasks.sortable("disable");
+        this.parts.tasks.removeClass('sortable');
     }
     var lis = [];
     this.parts.tasks.find('> li').each(function(i, ele) {
         lis.push($(ele));
     });
-    lis = lis.sort(function(a, b) {
+    lis.sort(function(a, b) {
         var a_val = parseInt(a.data(id)) || 0;
         var b_val = parseInt(b.data(id)) || 0;
         if (a_val != b_val) {
@@ -874,7 +974,7 @@ function sortUpdateTask() {
     var sort = {};
     this.parts.tasks.find('> li').each(function(i, ele) {
         var li = $(ele);
-        if (li.data('list-id') == list_id) {
+        if (li.data('list-id') === list_id) {
             task_ids.push(li.data('id'));
             task_ids_sort.push(li.data('id'));
         }
@@ -897,7 +997,7 @@ function sortUpdateTask() {
 function isMe(code) {
     for (var i = 0; i < this.account.tw_accounts.length; i++) {
         var tw_account = this.account.tw_accounts[i];
-        if ('@' + tw_account.screen_name == code) {
+        if ('@' + tw_account.screen_name === code) {
             return true;
         }
     }
@@ -956,7 +1056,7 @@ function clickOpenButton(e, ele) {
     form.css('top', $(w).scrollTop() + ($(w).height() / 2) + 'px');
     form.show();
     var input = form.find('input');
-    if (input.length > 0) {
+    if (input.length) {
         input.get(0).focus();
     }
     var callback = ele.data('callback');
@@ -1011,7 +1111,7 @@ function clickRefresh(e, ele) {
     this.refresh();
 }
 function clickGuideSwitch(e, ele) {
-    if (this.guide == true) {
+    if (this.guide) {
         this.guide = false;
         ele.removeClass('on').text(ele.data('text-off'));
         this.parts.guide.fadeOut('slow');
@@ -1023,24 +1123,25 @@ function clickGuideSwitch(e, ele) {
         ns: 'state.button',
         method: 'set',
         key: ele.attr('id'),
-        val: (this.guide == true ? 0 : 1)
+        val: (this.guide ? 0 : 1)
     });
 }
 
 // SideMenu
 function clickListDisplaySwitch(e, ele) {
+    var that = this;
     var list_id = ele.parent().parent().data('list-id');
     var method = ele.attr('checked') ? '-' : '+';
     
     if (ele.attr('checked')) {
         this.parts.lists.find('li').each(function(i, ele){
-            if (list_id == $(ele).data('list-id')) {
+            if (list_id === $(ele).data('list-id')) {
                 $(ele).slideDown(that.speed);
             }
         });
     } else {
         this.parts.lists.find('li').each(function(i, ele){
-            if (list_id == $(ele).data('list-id')) {
+            if (list_id === $(ele).data('list-id')) {
                 $(ele).slideUp(that.speed);
             }
         });
@@ -1105,22 +1206,22 @@ function submitCreateList(form) {
     var that = this;
     
     var list_id = form.data('list-id');
-    var url = (list_id == 0) ? '/api/1/list/create' : '/api/1/list/update';
+    var url = list_id ? '/api/1/list/update' : '/api/1/list/create';
     var name = form.find('input[name=name]').val();
     var privacy = form.find('select[name=privacy]').val();
     var owner = form.find('select[name=owner]').val();
     var members = [];
-    if (name.length == 0) {
+    if (!name.length) {
         alert('please input list name.');
         return;
     }
     form.find('li.member').each(function(i, ele){
        members.push($(ele).data('code'));
     });
-    if (list_id == 0) {
-        that.submitFinalize(form);
-    } else {
+    if (list_id) {
         form.fadeOut(this.speed);
+    } else {
+        that.submitFinalize(form);
     }
     return this.ajax({
         type: 'post',
@@ -1197,7 +1298,7 @@ function tasksFilterGenerate() {
     };
     var func = function(ul){
         if (that.current_list) {
-            if (ul.data('list-id') != that.current_list.id) {
+            if (ul.data('list-id') !== that.current_list.id) {
                 return false;
             }
         }
@@ -1206,16 +1307,20 @@ function tasksFilterGenerate() {
             var task_id = ul.data('id');
             var list = that.listmap[list_id];
             var task = that.listmap[list_id].taskmap[task_id];
-            if (that.current_filter == "list-todo") {
-                if (that.tasksTodoFilter(list, task) == false) {
+            if (that.current_filter == "list-comment") {
+                if (!that.tasksCommentFilter(ul)) {
                     return false;
                 }
-            } else if (that.current_filter == "list-request") {
-                if (that.tasksRequestFilter(list, task) == false) {
+            } else if (that.current_filter === "list-todo") {
+                if (!that.tasksTodoFilter(list, task)) {
+                    return false;
+                }
+            } else if (that.current_filter === "list-request") {
+                if (!that.tasksRequestFilter(list, task)) {
                     return false;
                 }
             }
-            else if (that.current_filter == 'list-watch') {
+            else if (that.current_filter === 'list-watch') {
                 star = 0;
             }
         }
@@ -1223,34 +1328,44 @@ function tasksFilterGenerate() {
             // ERROR
         }
         
-        if (my == 0 && ul.find(selectors["my"]).length == 0) {
+        if (!my && ul.find(selectors["my"]).length === 0) {
             return false;
         }
-        if (star == 0 && ul.find(selectors["star"]).length == 0) {
+        if (!star && ul.find(selectors["star"]).length === 0) {
             return false;
         }
-        if (tasksOn == 0 && ul.find(selectors["tasksOn"]).length == 0) {
+        if (!tasksOn && ul.find(selectors["tasksOn"]).length === 0) {
             return false;
         }
-        if (tasksOff == 0 && ul.find(selectors["tasksOff"]).length == 0) {
+        if (!tasksOff && ul.find(selectors["tasksOff"]).length === 0) {
             return false;
         }
-        if (progress == 0 && ul.find(selectors["progress"]).length == 0) {
+        if (!progress && ul.find(selectors["progress"]).length === 0) {
             return false;
         }
-        if (recycle == 1 && ul.find(selectors["recycle"]).length > 0) {
+        if (recycle && ul.find(selectors["recycle"]).length > 0) {
             return false;
         }
-        if (recycle == 0 && ul.find(selectors["recycle"]).length == 0) {
+        if (!recycle && ul.find(selectors["recycle"]).length === 0) {
             return false;
         }
         return true;
     };
     return func;
 }
+function tasksCommentFilter(li) {
+    var comments = li.find('ul.comments > li');
+    for (var i = 0; i < comments.length; i++) {
+        var comment = $(comments[i]);
+        if (comment.hasClass('unread')) {
+            return true;
+        }
+    }
+    return false;
+}
 function tasksTodoFilter(list, task) {
     // fixed, closed
-    if (task.status == 2 || task.closed == 1) {
+    if (task.status === 2 || task.closed) {
         return false;
     }
     var isAssigneeMe = false;
@@ -1265,23 +1380,23 @@ function tasksTodoFilter(list, task) {
         }
     }
     // 自分以外が担当者
-    if (task.assignee.length > 0 && isAssigneeMe == false) {
+    if (task.assignee.length && !isAssigneeMe) {
         return false;
     }
     // 担当者未定で自分以外がオーナー
-    if (task.assignee.length == 0 && isOwnerMe == false) {
+    if (!task.assignee.length && !isOwnerMe) {
         return false;
     }
     return true;
 }
 function tasksRequestFilter(list, task) {
     // closed
-    if (task.closed == 1) {
+    if (task.closed) {
         return false;
     }
     // 自分以外が登録
     if ("registrant" in task) {
-        if (this.isMe(task.registrant) == false) {
+        if (!this.isMe(task.registrant)) {
             return false;
         }
     }
@@ -1305,17 +1420,15 @@ function clickTaskmenuSwitch(e, ele) {
         comment: 'ul.comments'
     };
     var selector = selectors[type];
-    if (val == 1) {
+    if (val) {
         ele.data('val', 0);
         ele.addClass('on');
-        this.parts.tasks.find(selector).slideUp(that.speed);
-        this.account.state.button[id]++;
+        this.parts.tasks.find(selector).slideUp(this.speed);
     }
     else {
         ele.data('val', 1);
         ele.removeClass('on');
-        this.parts.tasks.find(selector).slideDown(that.speed);
-        delete this.account.state.button[id];
+        this.parts.tasks.find(selector).slideDown(this.speed);
     }
     this.updateAccount({
         ns: 'state.button',
@@ -1337,28 +1450,28 @@ function clickTaskmenuFilter(e, ele) {
         recycle: '.icon-recycle'
     };
     var selector = selectors[id];
-    if (id == 'recycle') {
+    if (id === 'recycle') {
         this.parts.mainmenu.find('.icon-star-on').parent().removeClass('on').data('val', 1);
         this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
         this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
-        if (val == 1) {
+        if (val) {
             this.parts.mainmenu.find('.icon-trash').parent().fadeIn('slow');
         } else {
             this.parts.mainmenu.find('.icon-trash').parent().fadeOut('slow');
         }
     }
-    if (id == 'tasksOn') {
+    if (id === 'tasksOn') {
         this.parts.mainmenu.find('.icon-progress').parent().removeClass('on').data('val', 1);
         this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
-    } else if (id == 'tasksOff') {
+    } else if (id === 'tasksOff') {
         this.parts.mainmenu.find('.icon-progress').parent().removeClass('on').data('val', 1);
         this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
-    } else if (id == 'progress') {
+    } else if (id === 'progress') {
         this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
         this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
     }
-    if (val == 1) {
-            ele.data('val', 0);
+    if (val) {
+            ele.data('val', '');
             ele.addClass('on');
     }
     else {
@@ -1366,15 +1479,6 @@ function clickTaskmenuFilter(e, ele) {
             ele.removeClass('on');
     }
     this.filterTask();
-    // var filter = this.tasksFilterGenerate();
-    // this.parts.tasks.find('li').each(function(i, ele){
-    //     var ele = $(ele);
-    //     if (filter(ele) == true) {
-    //         ele.slideDown(that.speed);
-    //     } else {
-    //         ele.slideUp(that.speed);
-    //     }
-    // });
 }
 function clickTaskmenuTrash(e, ele) {
     
@@ -1418,7 +1522,7 @@ function openCallbackCreateTask(e, ele) {
         ul.append(new_li);
         member = true;
     });
-    if (member == false) {
+    if (!member) {
         ul.append($('<li>no member.</li>'));
     }
     
@@ -1431,6 +1535,12 @@ function openCallbackCreateTask(e, ele) {
     form.find('input[type=text]').val('');
     form.data('list-id', this.current_list.id);
     form.data('task-id', 0);
+}
+function openCallbackCreateTaskWithMember(e, ele) {
+    this.openCallbackCreateTask(e, ele);
+    var code = $(ele).data('code');
+    var ul = $('#create-task-assignee');
+    ul.find('input[value="' + code + '"]').attr('checked', true);
 }
 function openCallbackEditTask(e, ele) {
     this.openCallbackCreateTask(e, ele);
@@ -1465,11 +1575,11 @@ function submitCreateTask(form) {
     
     var list = this.current_list;
     var task_id = form.data('task-id');
-    var url = task_id > 0 ? '/api/1/task/update' : '/api/1/task/create';
+    var url = task_id ? '/api/1/task/update' : '/api/1/task/create';
     var title = form.find('input[name=title]').val();
     var description = form.find('textarea[name=description]').val();
     var due = form.find('input[name=due]').val();
-    if (title.length == 0) {
+    if (!title.length) {
         alert('please input task title.');
         return;
     }
@@ -1482,20 +1592,20 @@ function submitCreateTask(form) {
     form.find('input[name=assignee]:checked').each(function(i, ele){
         assignee.push(ele.value);
     });
-    if (task_id > 0) {
+    if (task_id) {
         form.fadeOut(this.speed);
     } else {
         that.submitFinalize(form);
     }
-    console.log({
-        list_id: list.id,
-        task_id: task_id,
-        registrant: registrant,
-        title: title,
-        description: description,
-        due: due,
-        assignee: (assignee.length ? assignee : 0)
-    });
+    // console.log({
+    //     list_id: list.id,
+    //     task_id: task_id,
+    //     registrant: registrant,
+    //     title: title,
+    //     description: description,
+    //     due: due,
+    //     assignee: (assignee.length ? assignee : 0)
+    // });
     return this.ajax({
         type: 'post',
         url: url,
@@ -1521,7 +1631,7 @@ function submitCreateTask(form) {
                 var li = that.renderTask(list, task);
                 that.taskli[list.id + '-' + task.id] = li;
                 var filter = that.tasksFilterGenerate();
-                if (filter(li) == false) {
+                if (!filter(li)) {
                     li.delay(500).slideUp('slow');
                 }
             }
@@ -1558,7 +1668,7 @@ function submitClearTrash(form) {
             var tasks = [];
             for (var i = 0; i < list.doc.tasks.length; i++) {
                 var task = list.doc.tasks[i];
-                if (task.closed == 1) {
+                if (task.closed) {
                     that.taskli[list.id + '-' + task.id].remove();
                     delete list.taskmap[task.id];
                 } else {
@@ -1642,15 +1752,17 @@ function createTaskElement(list, task) {
     this.taskli[list.id + '-' + task.id] = li;
     li.find('.title').text(task.title);
     li.find('.due').text(task.due);
-    if ("assignee" in task && task.assignee && task.assignee.length > 0) {
-        var assignee = task.assignee[0];
-        var url = that.getTwitterProfileImageUrl(assignee.substring(1));
-        var img = $('<img/>').attr('src', url);
-        li.find('.assignee')
-            .removeClass('icon-address-off')
-            .append(img);
-        if (this.findMe(task.assignee)) {
-            li.find('.assignee').addClass('my');
+    if ("assignee" in task && task.assignee && task.assignee.length) {
+        for (var i = 0; i < task.assignee.length; i++) {
+            var assignee = task.assignee[i];
+            var url = that.getTwitterProfileImageUrl(assignee.substring(1));
+            var img = $('<img/>').attr('src', url);
+            li.find('.assignee')
+                .removeClass('icon-address-off')
+                .append(img);
+            if (this.findMe(task.assignee)) {
+                li.find('.assignee').addClass('my');
+            }
         }
     }
     
@@ -1686,16 +1798,27 @@ function createTaskElement(list, task) {
     commentBox.append(form);
     commentBox.hide();
     text.keydown(function(e){
-        if (e.keyCode == 13) {
+        if (e.keyCode === 13) {
+            e.stopPropagation();
             e.preventDefault();
-            if (text.val().length > 0) {
+            if (text.val().length) {
                 that.submitComment(list.id, task.id, text, form, comments);
             }
         } else {
             
         }
     });
-    text.autogrow();
+    text.keypress(function(e){
+        if (e.keyCode === 13) {
+            e.preventDefault();
+        }
+    })
+    text.keyup(function(e){
+        if (e.keyCode === 13) {
+            e.preventDefault();
+        }
+    })
+    text.autogrow({single: true});
     text.click(function(e){
         e.stopPropagation();
     });
@@ -1710,8 +1833,11 @@ function createTaskElement(list, task) {
     // });
     
     li.click(function(){
+        if (content.css('display') === 'none') {
+            content.show();
+        }
         commentBox.slideToggle(that.speed, function(){
-            if (commentBox.css('display') != 'none') {
+            if (commentBox.css('display') !== 'none') {
                 text.get(0).focus();
             }
         });
@@ -1719,7 +1845,7 @@ function createTaskElement(list, task) {
     content.append(comments);
     content.append(commentBox);
     if ("mainmenu-switch-description" in this.account.state.button) {
-        if (this.account.state.button["mainmenu-switch-description"] == 0) {
+        if (!this.account.state.button["mainmenu-switch-description"]) {
             content.hide();
         }
     }
@@ -1728,17 +1854,17 @@ function createTaskElement(list, task) {
     li.find('.grip').click(function(e){
         e.stopPropagation();
     });
-    if (task.status == 1) {
+    if (task.status === 1) {
         li.find('.icon-tasks-off')
         .removeClass('icon-tasks-off')
         .addClass('icon-progress');
     }
-    else if (task.status == 2) {
+    else if (task.status === 2) {
         li.find('.icon-tasks-off')
         .removeClass('icon-tasks-off')
         .addClass('icon-tasks-on');
     }
-    if (task.closed == 1) {
+    if (task.closed) {
         li.addClass('delete');
         li.find('.icon-delete')
         .removeClass('icon-delete')
@@ -1852,7 +1978,7 @@ function clickTaskAction(e) {
     }
     
     var filter = this.tasksFilterGenerate();
-    if (filter(li) == false) {
+    if (!filter(li)) {
         li.slideUp(that.speed);
     }
 }
@@ -1860,11 +1986,11 @@ function findMeByList(list) {
     for (user_id in this.account.tw) {
         var tw = this.account.tw[user_id];
         var code = '@' + tw.screen_name;
-        if (code == list.doc.owner) {
+        if (code === list.doc.owner) {
             return code;
         } else {
             for (var i = 0; i < list.doc.members.length; i++) {
-                if (code == list.doc.members[i]) {
+                if (code === list.doc.members[i]) {
                     return code;
                 }
             }
@@ -1926,6 +2052,7 @@ function renderComment(list_id, task_id, comment, comments) {
     li.append(del);
     if (this.listReadLastTime(list_id) < comment.time) {
         li.addClass('unread');
+        this.unread_comment_count++;
     }
     comments.append(li);
 }
@@ -1962,6 +2089,11 @@ function renderMember(code) {
     li.append(img);
     li.data('code', code);
     li.data('url', url);
+    li.data('method', 'open');
+    li.data('id', 'create-task-window');
+    li.data('callback', 'createTaskWithMember');
+    li.data('code', code);
+    li.get(0).addEventListener("click", this, false);
     this.parts.listmembers.append(li);
 }
 

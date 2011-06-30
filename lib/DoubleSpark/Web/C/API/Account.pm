@@ -36,7 +36,7 @@ sub update {
         $data = $data->{$_};
     }
     if ($method eq 'set') {
-        $data->{$key} = $val;
+        $data->{$key} = $val=~/^\d+$/ ? int($val) : $val;
     } elsif ($method eq '+') {
         $data->{$key}->{$val}++;
     } elsif ($method eq '-') {

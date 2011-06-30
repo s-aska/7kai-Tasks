@@ -56,7 +56,11 @@ sub sync_from_twitter {
         my $couchdb = $c;
         my $doc_id = 'account-' . $account_id;
         my $doc = DoubleSpark::Account->new($c);
+        my $res = $nt->show_user($user_id);
         $doc->{tw}->{$user_id}->{friends} = $cache;
+        $doc->{tw}->{$user_id}->{name} = $res->{name};
+        $doc->{tw}->{$user_id}->{screen_name} = $res->{screen_name};
+        $doc->{tw}->{$user_id}->{profile_image_url} = $res->{profile_image_url};
         $couchdb->save_doc($doc->to_hashref);
         $c->session->remove($key);
     }

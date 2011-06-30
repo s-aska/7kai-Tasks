@@ -80,11 +80,11 @@ sub update {
     $doc->{name} = $name;
     $doc->{owner} = $owner;
     $doc->{members} = \@members;
-    push @{$doc->{history}}, {
+    $c->append_history($doc, {
         code   => $owner,
         action => 'update-list',
         date   => time
-    };
+    });
     $c->save_doc($doc);
     
     my $members = {};
@@ -155,12 +155,11 @@ sub clear {
     my $num = scalar(@{$doc->{tasks}});
     @{$doc->{tasks}} = grep { !$_->{closed} } @{$doc->{tasks}};
     my $count = $num - scalar(@{$doc->{tasks}});
-    push @{$doc->{history}}, {
+    $c->append_history($doc, {
         code    => $owner,
         action  => 'clear-task',
         date    => time
-    };
-    $c->splice_history($doc);
+    });
     $c->save_doc($doc);
     $c->render_json({
         success => $count ? 1 : 0,

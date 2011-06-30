@@ -9,7 +9,7 @@ sub index {
 }
 
 sub signout {
-    my ($self, $c) = @_;
+    my ($class, $c) = @_;
     $c->session->expire;
     $c->redirect('/');
 }
@@ -17,8 +17,11 @@ sub signout {
 sub viewer {
     my ($class, $c) = @_;
 
-    my $account = DoubleSpark::Account->new($c);
-    if ($account) {
+    if ($c->session->get('tw_account')) {
+        DoubleSpark::Account->new($c);
+    }
+
+    if ($c->session->get('account')) {
         $c->render('chrome/mock.tt', {
             screen_name => $c->session->get('screen_name'),
             profile_image_url => $c->session->get('profile_image_url')

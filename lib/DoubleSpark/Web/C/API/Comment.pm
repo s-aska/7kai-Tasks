@@ -33,13 +33,12 @@ sub create {
             last;
         }
     }
-    push @{$doc->{history}}, {
+    $c->append_history($doc, {
         code    => $owner,
         action  => 'create-comment',
         task_id => $task_id,
         date    => time
-    };
-    $c->splice_history($doc);
+    });
     $c->save_doc($doc);
     $c->render_json({
         success => 1,
@@ -72,13 +71,12 @@ sub delete {
             last;
         }
     }
-    push @{$doc->{history}}, {
+    $c->append_history($doc, {
         code    => $owner,
         action  => 'delete-comment',
         task_id => $task_id,
         date    => time
-    };
-    $c->splice_history($doc);
+    });
     $c->save_doc($doc);
     $c->render_json({
         success => $success,

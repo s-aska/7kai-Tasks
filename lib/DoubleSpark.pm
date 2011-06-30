@@ -2,7 +2,7 @@ package DoubleSpark;
 use strict;
 use warnings;
 use parent qw/Amon2/;
-our $VERSION='1.01';
+our $VERSION='1.02';
 use 5.008001;
 
 use AnyEvent::CouchDB ();
@@ -122,9 +122,24 @@ sub open_list_docs {
     return $docs;
 }
 
-sub splice_history {
-    my ($self, $doc) = @_;
-    my $max_history = $self->config->{max_history} || 10;
+sub append_history {
+    my ($self, $doc, $history) = @_;
+    my $update;
+    for (@{$doc->{history}}) {
+        if ($_->{code} eq $history->{code} && $_->{action} eq $history->{action}) {
+            $_->{date} = time;
+            $update++;
+            last;
+        }
+    }
+    if ($update) {
+        @{$doc->{history}} = sort {
+            $a->{date} <=> $b->{date}
+        } @{$doc->{history}};
+    } else {
+        push @{$doc->{history}}, $history;
+    }
+    my $max_history = $self->config->{max_history} || 20;
     if (scalar(@{$doc->{history}}) > $max_history) {
         @{$doc->{history}} =
             splice(@{$doc->{history}}, scalar(@{$doc->{history}}) - $max_history);

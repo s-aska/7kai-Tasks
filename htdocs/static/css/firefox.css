@@ -13,3 +13,6 @@ body > div.box > aside {
 body > div.box > article {
     float: left;
 }
+#guide-switch {
+    padding: 0px;
+}

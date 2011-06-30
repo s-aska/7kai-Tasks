@@ -11,6 +11,7 @@ if (navigator.userAgent.indexOf('Win') != -1) {
     document.write('<link rel="stylesheet" type="text/css" href="/static/css/win.css" media="all">')
 }
 </script>
+<link href='http://fonts.googleapis.com/css?family=Raleway:100' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="/static/css/signin.css" media="all">
 </head>
 <body>

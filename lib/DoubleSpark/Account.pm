@@ -61,7 +61,8 @@ sub new {
                     privacy => 'closed',
                     owner   => $owner,
                     members => [],
-                    tasks => []
+                    tasks => [],
+                    history => []
                 });
             }
             my $tw_account_db = $db->insert('tw_account', {
@@ -106,6 +107,7 @@ sub new {
     $doc->{state}->{button} ||= {};
     $doc->{state}->{hide_list} ||= {};
     $doc->{state}->{sort}->{task} ||= {};
+    $doc->{state}->{sort}->{list} ||= {};
     $doc->{state}->{read}->{list} ||= {};
     
     $doc->{account_id} = $account_id;
@@ -122,10 +124,12 @@ sub set_social_accounts {
     my $tws = $c->db->search('tw_account', {
         account_id => $self->{account_id}
     });
+    warn $self->{account_id};
     my @tw_accounts;
     for my $tw ($tws->all) {
         push @codes, '@' . $tw->screen_name;
         push @tw_accounts, $tw->get_columns;
+        warn $tw->screen_name;
     }
     $self->{tw_accounts} = \@tw_accounts;
     

@@ -38,6 +38,7 @@ sub callback {
         screen_name => $screen_name,
         profile_image_url => $res->{profile_image_url} || ''
     });
+    
     $c->session->regenerate_session_id(1);
     
     $c->redirect('/chrome/viewer');
