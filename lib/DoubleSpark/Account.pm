@@ -52,7 +52,6 @@ sub new {
                 $account_id = $account_db->account_id;
                 my $owner_id = 'tw-' . $tw_account->{user_id};
                 my $list = $db->insert('list', {
-                    account_id => $account_id,
                     owner => $owner_id,
                     created_on => \'now()'
                 });
