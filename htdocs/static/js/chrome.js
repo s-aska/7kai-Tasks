@@ -32,6 +32,7 @@ ns.Tasks.prototype = {
     modals: {},
     parts: {},
     friends: {},
+    friend_ids: {},
     taskli: {},
     listli: {},
     unread_comment_count: 0,
@@ -53,8 +54,10 @@ ns.Tasks.prototype = {
     ajaxFailure: ajaxFailure,
     message: message,
     statusUpdate: statusUpdate,
+    getProfileImageUrl: getProfileImageUrl,
     getTwitterProfileImageUrl: getTwitterProfileImageUrl,
     syncTwitterContact: syncTwitterContact,
+    lookupUnknownMembers: lookupUnknownMembers,
     updateAccount: updateAccount,
     refresh: refresh,
     submitFinalize: submitFinalize,
@@ -332,7 +335,7 @@ function initWindow() {
     
 }
 function initAccount() {
-    this.refresh(true);
+    this.refresh();
     this.parts.mainmenu.find('.icon-trash').parent().fadeOut('slow');
 }
 
@@ -416,6 +419,19 @@ function statusUpdate(message) {
     this.parts.console.prepend($(document.createElement('li')).text(message));
     // FIXME: 一定件数で消す
 }
+function getProfileImageUrl(user_id) {
+    var friend = this.friend_ids[user_id];
+    if (friend) {
+        if ("profile_image_url" in friend) {
+            return friend.profile_image_url;
+        }
+        if (/^tw-/.test(user_id)) {
+            return this.getTwitterProfileImageUrl(friend.screen_name);
+        }
+    } else {
+        // console.log(user_id);
+    }
+}
 function getTwitterProfileImageUrl(screen_name) {
     var code = '@' + screen_name;
     if (code in this.friends) {
@@ -457,6 +473,32 @@ function syncTwitterContact(user_id, cursor, screen_name) {
         }
     });
 }
+function lookupUnknownMembers(unknownMembers, callback) {
+    var that = this;
+    this.ajax({
+        type: 'get',
+        url: '/api/1/contact/lookup_twitter',
+        data: {
+            user_ids: unknownMembers
+        },
+        dataType: 'json'
+    })
+    .done(function(data){
+        if (data.success) {
+            for (var i = 0, max = data.friends.length; i < max; i++) {
+                var friend = data.friends[i];
+                var meta = {
+                    user_id: friend.id,
+                    screen_name: friend.screen_name,
+                    profile_image_url: friend.profile_image_url
+                };
+                that.friends["@" + friend.screen_name] = meta;
+                that.friend_ids["tw-" + friend.id] = meta;
+            }
+            callback.call();
+        }
+    });
+}
 function updateAccount(params, refresh) {
     var that = this;
     this.ajax({
@@ -474,8 +516,10 @@ function updateAccount(params, refresh) {
         }
     });
 }
-function refresh(syncContact) {
+function refresh() {
     var that = this;
+    var syncContact = false;
+    var unknownMembers = [];
     return this.ajax({
         type: 'get',
         url: '/api/1/account/',
@@ -489,24 +533,29 @@ function refresh(syncContact) {
             that.parts.owners.empty();
             that.parts.tasks.empty();
             that.parts.connectacs.empty();
-            var is_first = true;
             for (var user_id in data.account.tw) {
                 var tw = data.account.tw[user_id];
                 that.registAssignee(tw.friends);
                 $('<option/>')
-                    .attr('value', '@' + tw.screen_name)
+                    .attr('value', 'tw-' + user_id)
                     .text('@' + tw.screen_name)
                     .appendTo(that.parts.owners);
                 $('<li>Twitter: '
                     + tw.screen_name
                     + ' <!-- span class="icon icon-delete"></span --></li>')
                     .appendTo(that.parts.connectacs);
-                if (is_first) {
-                    is_first = false;
-                    $('#member-name').text(tw.screen_name);
+                if (!("user_id" in tw.friends[0])) {
+                    that.syncTwitterContact(user_id, -1, tw.screen_name);
                 }
-                syncContact = false;
             }
+            for (var i = 0; i < that.account.tw_accounts.length; i++) {
+                var tw_account = that.account.tw_accounts[i];
+                var user_id = tw_account.user_id;
+                if (!(user_id in data.account.tw)) {
+                    that.syncTwitterContact(user_id, -1, tw_account.screen_name);
+                }
+            }
+            // FIXME: 抜けたTwitterの情報を消す
             that.listmap = [];
             that.parts.lists.find('.project').remove();
             that.parts.lswt.find('.project').remove();
@@ -516,17 +565,32 @@ function refresh(syncContact) {
             for (var i = 0; i < lists.length; i++) {
                 var list = lists[i];
                 that.registList(list);
+                var humans = [list.doc.owner_id].concat(list.doc.member_ids);
+                for (var j = 0, max = humans.length; j < max; j++) {
+                    var human = humans[j];
+                    if (!(human in that.friend_ids)) {
+                        unknownMembers.push(human);
+                    }
+                }
             }
             that.sortList();
             that.renderCommentBadge();
-            that.renderTimeline();
-            
-            if ("last_read_list" in that.account.state) {
-                var id = that.account.state.last_read_list;
-                that.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
+            var showLastList = function(){
+                that.renderTimeline();
+                if ("last_read_list" in that.account.state) {
+                    var id = that.account.state.last_read_list;
+                    that.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
+                } else {
+                    that.parts.lists.find('li.project:first').click();
+                }
+            };
+            if (unknownMembers.length) {
+                that.lookupUnknownMembers(unknownMembers, showLastList);
             } else {
-                that.parts.lists.find('li.project:first').click();
+                showLastList.call();
             }
+            
+            
             that.sortTask('updated');
             
             for (var i = 0, max = that.filters.length; i < max; i++) {
@@ -568,9 +632,6 @@ function refresh(syncContact) {
             var url = my.data('url');
             var img = $('<img/>').attr('src', url).attr('width', 16);
             my.empty().append(img);
-        }
-        if (syncContact) {
-            that.clickSyncTwitterContact();
         }
     });
 }
@@ -621,12 +682,15 @@ function renderTimeline() {
     this.parts.timeline.empty();
     for (var i = 0; i < timeline_items.length; i++) {
         var item = timeline_items[i];
-        if (this.isMe(item.code)) continue;
+        if (this.isMe(item.id)) continue;
         var code = $('<span class="code"/>');
-        if (item.code) {
-            var url = this.getTwitterProfileImageUrl(item.code.substring(1));
-            code.css('background-image', 'url(' + url + ')');
-            code.attr('title', item.code);
+        if (item.id && /tw-./.test(item.id)) {
+            var url = this.getProfileImageUrl(item.id);
+            if (url) {
+                var screen_name = this.friend_ids[item.id].screen_name;
+                code.css('background-image', 'url(' + url + ')');
+                code.attr('title', screen_name);
+            }
         } else {
             
         }
@@ -657,14 +721,13 @@ function switchList(e) {
     this.parts.listname.text(list.doc.name);
     this.parts.listmembers.empty();
     // FIXME: 最終的に消す
-    if ("owner" in list.doc) {
-        this.renderMember(list.doc.owner);
+    if ("owner_id" in list.doc) {
+        this.renderMember(list.doc.owner_id);
     }
-    if ('members' in list.doc && list.doc.members.length) {
-        var members = list.doc.members;
-        members.sort();
-        for (var i = 0; i < members.length; i++) {
-            this.renderMember(members[i]);
+    if ('member_ids' in list.doc && list.doc.member_ids.length) {
+        var member_ids = list.doc.member_ids.sort();
+        for (var i = 0; i < member_ids.length; i++) {
+            this.renderMember(member_ids[i]);
         }
     }
     this.filterTask(true);
@@ -713,7 +776,7 @@ function renderList(list) {
     li.attr('class', 'project');
     li.text(list.doc.name);
     li.append(badge);
-    if (this.findMe([list.doc.owner])) {
+    if (this.isMe(list.doc.owner_id)) {
         var settings = $('<span class="icon icon-settings" '
             + 'data-method="open" data-id="create-list-window" '
             + 'data-callback="editList"></span>');
@@ -754,7 +817,7 @@ function renderList(list) {
      + '<td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>'
      + '</tr>')
     .prepend($('<td></td>').text(list.doc.name));
-    if (this.findMe([list.doc.owner])) {
+    if (this.isMe(list.doc.owner_id)) {
         tr.append($(
             '<td><span class="icon icon-delete" data-method="open" '
             + 'data-id="delete-list-window" data-callback="deleteList"></span></td>'
@@ -887,7 +950,6 @@ function modifyTask(params) {
         dataType: 'json'
     })
     .done(function(data){
-        // console.log(data);
         if (data.success) {
             that.statusUpdate('update a task.');
             $.extend(that.listmap[params.list_id].taskmap[data.task.id], data.task);
@@ -996,19 +1058,19 @@ function sortUpdateTask() {
         val: JSON.stringify(sort)
     });
 }
-function isMe(code) {
+function isMe(id) {
     for (var i = 0; i < this.account.tw_accounts.length; i++) {
         var tw_account = this.account.tw_accounts[i];
-        if ('@' + tw_account.screen_name === code) {
+        if ('tw-' + tw_account.user_id === id) {
             return true;
         }
     }
     return false;
 }
-function findMe(codes) {
-    for (var i = 0; i < codes.length; i++) {
-        if (this.isMe(codes[i])) {
-            return codes[i];
+function findMe(ids) {
+    for (var i = 0; i < ids.length; i++) {
+        if (this.isMe(ids[i])) {
+            return ids[i];
         }
     }
 }
@@ -1090,24 +1152,24 @@ function clickSyncTwitterContact(e, ele) {
     
 }
 function clickAccountSync(e, ele) {
-    var that = this;
-    
-    return this.ajax({
-        type: 'get',
-        url: '/api/1/account/',
-        dataType: 'json'
-    })
-    .done(function(data){
-        if (data.success) {
-            that.account = data.doc;
-            
-            that.assignee = [];
-            for (user_id in data.doc.tw) {
-                that.registAssignee(data.doc.tw[user_id].friends);
-            }
-            console.log(that.account);
-        }
-    });
+    // var that = this;
+    // 
+    // return this.ajax({
+    //     type: 'get',
+    //     url: '/api/1/account/',
+    //     dataType: 'json'
+    // })
+    // .done(function(data){
+    //     if (data.success) {
+    //         that.account = data.doc;
+    //         
+    //         that.assignee = [];
+    //         for (user_id in data.doc.tw) {
+    //             that.registAssignee(data.doc.tw[user_id].friends);
+    //         }
+    //         console.log(that.account);
+    //     }
+    // });
 }
 function clickRefresh(e, ele) {
     this.refresh();
@@ -1184,14 +1246,15 @@ function openCallbackEditList(e, ele) {
 
     var createListMembers = $('#create-list-members');
     createListMembers.empty();
-    if ("members" in list.doc) {
-        var members = list.doc.members;
-        for (var i = 0; i < members.length; i++) {
-            var code = members[i];
-            if (code in this.friends) {
-                createListMembers.append(this.createAssigneeList(this.friends[code]));
+    if ("member_ids" in list.doc) {
+        var member_ids = list.doc.member_ids;
+        for (var i = 0; i < member_ids.length; i++) {
+            var member_id = member_ids[i];
+            if (member_id in this.friend_ids) {
+                var member = this.friend_ids[member_id];
+                createListMembers.append(this.createAssigneeList(member));
             } else {
-                console.log(code);
+                // console.log(member_id);
             }
         }
     }
@@ -1211,14 +1274,18 @@ function submitCreateList(form) {
     var url = list_id ? '/api/1/list/update' : '/api/1/list/create';
     var name = form.find('input[name=name]').val();
     var privacy = form.find('select[name=privacy]').val();
-    var owner = form.find('select[name=owner]').val();
-    var members = [];
+    var owner_id = form.find('select[name=owner]').val();
+    var member_ids = [];
     if (!name.length) {
         alert('please input list name.');
         return;
     }
+    if (!owner_id) {
+        alert('please select owner.');
+        return;
+    }
     form.find('li.member').each(function(i, ele){
-       members.push($(ele).data('code'));
+        member_ids.push($(ele).data('id'));
     });
     if (list_id) {
         form.fadeOut(this.speed);
@@ -1232,8 +1299,8 @@ function submitCreateList(form) {
             list_id: list_id,
             name: name,
             privacy: privacy,
-            owner: owner,
-            members: members
+            owner_id: owner_id,
+            member_ids: member_ids
         },
         dataType: 'json'
     })
@@ -1371,22 +1438,22 @@ function tasksTodoFilter(list, task) {
         return false;
     }
     var isAssigneeMe = false;
-    var isOwnerMe = this.isMe(list.doc.owner);
+    var isOwnerMe = this.isMe(list.doc.owner_id);
     if ("assignee" in task) {
-        for (var i = 0; i < task.assignee.length; i++) {
-            var assignee = task.assignee[i];
-            if (this.isMe(assignee)) {
+        for (var i = 0; i < task.assignee_ids.length; i++) {
+            var assignee_id = task.assignee_ids[i];
+            if (this.isMe(assignee_id)) {
                 isAssigneeMe = true;
                 break;
             }
         }
     }
     // 自分以外が担当者
-    if (task.assignee.length && !isAssigneeMe) {
+    if (task.assignee_ids.length && !isAssigneeMe) {
         return false;
     }
     // 担当者未定で自分以外がオーナー
-    if (!task.assignee.length && !isOwnerMe) {
+    if (!task.assignee_ids.length && !isOwnerMe) {
         return false;
     }
     return true;
@@ -1398,13 +1465,13 @@ function tasksRequestFilter(list, task) {
     }
     // 自分以外が登録
     if ("registrant" in task) {
-        if (!this.isMe(task.registrant)) {
+        if (!this.isMe(task.registrant_id)) {
             return false;
         }
     }
     // 自分が担当
-    if (task.assignee) {
-        if (this.findMe(task.assignee)) {
+    if (task.assignee_ids) {
+        if (this.findMe(task.assignee_ids)) {
             return false;
         }
     }
@@ -1511,13 +1578,14 @@ function openCallbackCreateTask(e, ele) {
     var list = this.listmap[list_id];
     var ul = $('#create-task-assignee');
     ul.html('<li>Assignee:</li>');
-    var members = list.doc.members.concat(list.doc.owner);
-    for (var i = 0, max = members.length; i < max; i++) {
-        var code = members[i];
-        var url = this.getTwitterProfileImageUrl(code.substring(1));
+    var member_ids = [list.doc.owner_id].concat(list.doc.member_ids);
+    for (var i = 0, max = member_ids.length; i < max; i++) {
+        var id = member_ids[i];
+        var url = this.getProfileImageUrl(id);
+        var friend = this.friend_ids[id];
         var li = $('<li></li>');
         var input = $('<input type="checkbox" name="assignee" value="">');
-        input.val(code);
+        input.val(id);
         li.append(input)
         if (url) {
             $('<img>')
@@ -1525,10 +1593,10 @@ function openCallbackCreateTask(e, ele) {
             .attr('class', 'twitter_profile_image')
             .appendTo(li);
         }
-        li.append($('<span></span>').text(code));
+        li.append($('<span></span>').text(friend.screen_name));
         ul.append(li);
     }
-    if (!members.length) {
+    if (!member_ids.length) {
         ul.append($('<li>no member.</li>'));
     }
     var form = $('#create-task-window');
@@ -1543,9 +1611,9 @@ function openCallbackCreateTask(e, ele) {
 }
 function openCallbackCreateTaskWithMember(e, ele) {
     this.openCallbackCreateTask(e, ele);
-    var code = $(ele).data('code');
+    var id = $(ele).data('member-id');
     var ul = $('#create-task-assignee');
-    ul.find('input[value="' + code + '"]').attr('checked', true);
+    ul.find('input[value="' + id + '"]').attr('checked', true);
 }
 function openCallbackEditTask(e, ele) {
     this.openCallbackCreateTask(e, ele);
@@ -1563,10 +1631,10 @@ function openCallbackEditTask(e, ele) {
     form.find('input[name=title]').val(task.title || '');
     form.find('textarea[name=description]').val(task.description || '');
     form.find('input[name=due]').val(task.due || '');
-    if ('assignee' in task) {
-        for (var i = 0; i < task.assignee.length; i++) {
-            var code = task.assignee[i];
-            form.find('input[value="' + code + '"]').attr('checked', true);
+    if (task.assignee_ids) {
+        for (var i = 0; i < task.assignee_ids.length; i++) {
+            var id = task.assignee_ids[i];
+            form.find('input[value="' + id + '"]').attr('checked', true);
         }
     }
 }
@@ -1588,14 +1656,14 @@ function submitCreateTask(form) {
         alert('please input task title.');
         return;
     }
-    var assignee = [];
-    var registrant = this.findMe([list.doc.owner]) || this.findMe(list.doc.members);
-    if (!registrant) {
+    var assignee_ids = [];
+    var registrant_id = this.findMe([list.doc.owner_id].concat(list.doc.member_ids));
+    if (!registrant_id) {
         alert("can't find registrant.");
         return;
     }
     form.find('input[name=assignee]:checked').each(function(i, ele){
-        assignee.push(ele.value);
+        assignee_ids.push(ele.value);
     });
     if (task_id) {
         form.fadeOut(this.speed);
@@ -1617,11 +1685,11 @@ function submitCreateTask(form) {
         data: {
             list_id: list.id,
             task_id: task_id,
-            registrant: registrant,
+            registrant_id: registrant_id,
             title: title,
             description: description,
             due: due,
-            assignee: (assignee.length ? assignee : 0)
+            assignee_ids: (assignee_ids.length ? assignee_ids : 0)
         },
         dataType: 'json'
     })
@@ -1656,13 +1724,13 @@ function submitClearTrash(form) {
     var that = this;
     var list_id = form.data('list-id');
     var list = this.listmap[list_id];
-    var owner = this.findMe([list.doc.owner]) || this.findMe(list.doc.members);
+    var owner_id = this.findMe([list.doc.owner_id].concat(list.doc.member_ids));
     return this.ajax({
         type: 'post',
         url: '/api/1/list/clear',
         data: {
             list_id: list_id,
-            owner: owner
+            owner_id: owner_id
         },
         dataType: 'json'
     })
@@ -1694,11 +1762,13 @@ function resetCreateTask(form) {
 
 // MainContents
 function registAssignee(friends) {
-    for (var i = 0; i < friends.length; i++) {
-        this.friends['@' + friends[i].screen_name] = friends[i];
-        var label = this.createAssigneeLabel(friends[i]);
+    for (var i = 0, max = friends.length; i < max; i++) {
+        var friend = friends[i];
+        this.friends['@' + friend.screen_name] = friend;
+        this.friend_ids['tw-' + friend.user_id] = friend;
+        var label = this.createAssigneeLabel(friend);
         this.assignee.push({
-            value: '@' + friends[i].screen_name,
+            value: '@' + friend.screen_name,
             label: label
         });
     }
@@ -1711,11 +1781,6 @@ function createAssigneeLabel(friend) {
         + '">'
         + friend.name + '(' + friend.screen_name + ')'
         + '</span>';
-    // var html =
-    //     $('<span></span>')
-    //     .text(friend.name + '(' + friend.screen_name + ')')
-    //     .prepend($('<img class="twitter_profile_image">').attr('src', url))
-    //     .html();
     return html;
 }
 function createAssigneeList(friend) {
@@ -1723,6 +1788,7 @@ function createAssigneeList(friend) {
     var li =
         $('<li></li>')
         .append(this.createAssigneeLabel(friend))
+        .data('id', 'tw-' + friend.user_id)
         .data('code', '@' + friend.screen_name)
         .attr('class', 'member')
         .append(del);
@@ -1757,15 +1823,15 @@ function createTaskElement(list, task) {
     this.taskli[list.id + '-' + task.id] = li;
     li.find('.title').text(task.title);
     li.find('.due').text(task.due);
-    if ("assignee" in task && task.assignee && task.assignee.length) {
-        for (var i = 0; i < task.assignee.length; i++) {
-            var assignee = task.assignee[i];
-            var url = that.getTwitterProfileImageUrl(assignee.substring(1));
+    if ("assignee_ids" in task && task.assignee_ids && task.assignee_ids.length) {
+        for (var i = 0; i < task.assignee_ids.length; i++) {
+            var assignee_id = task.assignee_ids[i];
+            var url = that.getProfileImageUrl(assignee_id);
             var img = $('<img/>').attr('src', url);
             li.find('.assignee')
                 .removeClass('icon-address-off')
                 .append(img);
-            if (this.findMe(task.assignee)) {
+            if (this.isMe(assignee_id)) {
                 li.find('.assignee').addClass('my');
             }
         }
@@ -1892,16 +1958,16 @@ function clickTaskAction(e) {
     var list_id = li.data('list-id');
     var task_id = li.data('id');
     var list = that.listmap[list_id];
-    var registrant = this.findMe([list.doc.owner]) || this.findMe(list.doc.members);
-    if (!registrant) {
-        alert("can't find registrant.");
+    var registrant_id = this.findMe([list.doc.owner_id].concat(list.doc.member_ids));
+    if (!registrant_id) {
+        alert("can't find registrant_id.");
         return;
     }
     if (div.hasClass('icon-delete')) {
         li.addClass('delete');
         div.addClass('icon-recycle').removeClass('icon-delete');
         this.modifyTask({
-            registrant: registrant,
+            registrant_id: registrant_id,
             list_id: list_id,
             task_id: task_id,
             closed: 1
@@ -1912,7 +1978,7 @@ function clickTaskAction(e) {
         li.removeClass('delete');
         div.addClass('icon-delete').removeClass('icon-recycle');
         this.modifyTask({
-            registrant: registrant,
+            registrant_id: registrant_id,
             list_id: list_id,
             task_id: task_id,
             closed: 0
@@ -1925,7 +1991,7 @@ function clickTaskAction(e) {
         div.removeClass('icon-tasks-off');
         div.addClass('icon-progress');
         this.modifyTask({
-            registrant: registrant,
+            registrant_id: registrant_id,
             list_id: list_id,
             task_id: task_id,
             status: 1
@@ -1937,7 +2003,7 @@ function clickTaskAction(e) {
         div.removeClass('icon-progress');
         div.addClass('icon-tasks-on');
         this.modifyTask({
-            registrant: registrant,
+            registrant_id: registrant_id,
             list_id: list_id,
             task_id: task_id,
             status: 2
@@ -1949,7 +2015,7 @@ function clickTaskAction(e) {
         div.removeClass('icon-tasks-on');
         div.addClass('icon-tasks-off');
         this.modifyTask({
-            registrant: registrant,
+            registrant_id: registrant_id,
             list_id: list_id,
             task_id: task_id,
             status: 0
@@ -1989,13 +2055,12 @@ function clickTaskAction(e) {
 }
 function findMeByList(list) {
     for (user_id in this.account.tw) {
-        var tw = this.account.tw[user_id];
-        var code = '@' + tw.screen_name;
-        if (code === list.doc.owner) {
+        var code = 'tw-' + user_id;
+        if (code === list.doc.owner_id) {
             return code;
         } else {
-            for (var i = 0; i < list.doc.members.length; i++) {
-                if (code === list.doc.members[i]) {
+            for (var i = 0; i < list.doc.member_ids.length; i++) {
+                if (code === list.doc.member_ids[i]) {
                     return code;
                 }
             }
@@ -2006,7 +2071,7 @@ function submitComment(list_id, task_id, text, form, comments) {
     var that = this;
     
     var list = this.listmap[list_id];
-    var owner = this.findMeByList(list);
+    var owner_id = this.findMeByList(list);
     var comment = text.val();
     return this.ajax({
         type: 'post',
@@ -2014,7 +2079,7 @@ function submitComment(list_id, task_id, text, form, comments) {
         data: {
             list_id: list_id,
             task_id: task_id,
-            owner  : owner,
+            owner_id : owner_id,
             comment: comment
         },
         dataType: 'json'
@@ -2031,7 +2096,7 @@ function submitComment(list_id, task_id, text, form, comments) {
             that.renderComment(list_id, task_id, {
                 id: data.comment_id,
                 time: (new Date()).getTime(),
-                owner: owner,
+                owner_id: owner_id,
                 comment: comment
             }, comments);
             text.delay(500).val('');
@@ -2041,7 +2106,8 @@ function submitComment(list_id, task_id, text, form, comments) {
 function renderComment(list_id, task_id, comment, comments) {
     var that = this;
     var li = $('<li/>');
-    var name = $('<span class="name"></span>').text(comment.owner);
+    var friend = this.friend_ids[comment.owner_id];
+    var name = $('<span class="name"></span>').text(friend.screen_name);
     var date = $('<span class="date"></span>').text(this.timestamp(comment.time));
     var message = $('<span class="comment"/>').text(comment.comment);
     var del = $('<span class="action icon icon-delete"></span>');
@@ -2064,12 +2130,12 @@ function renderComment(list_id, task_id, comment, comments) {
 function deleteComment(list_id, task_id, comment) {
     var that = this;
     var list = this.listmap[list_id];
-    var owner = this.findMeByList(list);
+    var owner_id = this.findMeByList(list);
     return this.ajax({
         type: 'post',
         url: '/api/1/comment/delete',
         data: {
-            owner: owner,
+            owner_id: owner_id,
             list_id: list_id,
             task_id: task_id,
             comment_id: comment.id
@@ -2085,19 +2151,18 @@ function deleteComment(list_id, task_id, comment) {
         }
     });
 }
-function renderMember(code) {
-    var url = this.getTwitterProfileImageUrl(code.substring(1));
+function renderMember(id) {
+    var url = this.getProfileImageUrl(id);
     var li = $(document.createElement('li'));
     var img = $(document.createElement('img'));
     img.attr('src', url);
     li.attr('class', 'twitter_profile_image');
     li.append(img);
-    li.data('code', code);
+    li.data('member-id', id);
     li.data('url', url);
     li.data('method', 'open');
     li.data('id', 'create-task-window');
     li.data('callback', 'createTaskWithMember');
-    li.data('code', code);
     li.get(0).addEventListener("click", this, false);
     this.parts.listmembers.append(li);
 }

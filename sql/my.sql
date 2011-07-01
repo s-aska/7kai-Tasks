@@ -15,14 +15,14 @@ CREATE TABLE tw_account (
 ) ENGINE=InnoDB charset=utf8;
 CREATE TABLE list (
     list_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
-    , account_id BIGINT UNSIGNED NOT NULL
+    , owner VARCHAR(256) NOT NULL COMMENT 'tw-user_id, fb-id'
     , created_on DATETIME NOT NULL
-    , FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE
 ) ENGINE=InnoDB charset=utf8;
+CREATE INDEX list_owner ON list(owner);
 CREATE TABLE list_member (
     list_member_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
     , list_id BIGINT UNSIGNED NOT NULL
-    , code VARCHAR(256) NOT NULL COMMENT 'tw-user_id, fb-id'
+    , member VARCHAR(256) NOT NULL COMMENT 'tw-user_id, fb-id'
     , created_on DATETIME NOT NULL
     , FOREIGN KEY (list_id) REFERENCES list(list_id) ON DELETE CASCADE
 ) ENGINE=InnoDB charset=utf8;

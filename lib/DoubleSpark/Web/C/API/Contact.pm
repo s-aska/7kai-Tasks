@@ -2,14 +2,21 @@ package DoubleSpark::Web::C::API::Contact;
 use strict;
 use warnings;
 
-sub get {
+sub lookup_twitter {
     my ($class, $c) = @_;
     
-    my $doc = DoubleSpark::Account->new($c);
+    my $account_id = $c->session->get('account')->{account_id};
+    $c->res_403 unless $account_id;
     
+    my @user_ids = $c->req->param('user_ids[]');
+    for (@user_ids) {
+        $_=~s|^tw-||g;
+    }
+    my $nt = $c->twitter;
+    my $res = $nt->lookup_users({ user_id => \@user_ids });
     $c->render_json({
         success => 1,
-        doc => $doc
+        friends => $res
     });
 }
 
@@ -41,12 +48,16 @@ sub sync_from_twitter {
 #        push @{ $result->{users} }, $res;
     }
     my $next_cursor = $result->{'next_cursor'};
-    for my $friend ( @{ $result->{users} } ) {
-        push @$cache, {
-            screen_name => $friend->{screen_name},
-            name => $friend->{name},
-            profile_image_url => $friend->{profile_image_url}
+    my @friends;
+    for my $friend_ ( @{ $result->{users} } ) {
+        my $friend = {
+            user_id => $friend_->{id},
+            screen_name => $friend_->{screen_name},
+            name => $friend_->{name},
+            profile_image_url => $friend_->{profile_image_url}
         };
+        push @$cache, $friend;
+        push @friends, $friend;
     }
     if ($next_cursor) {
         $c->session->set($key, $cache);
@@ -57,6 +68,12 @@ sub sync_from_twitter {
         my $doc_id = 'account-' . $account_id;
         my $doc = DoubleSpark::Account->new($c);
         my $res = $nt->show_user($user_id);
+        push @$cache, {
+            user_id => $user_id,
+            screen_name => $res->{screen_name},
+            name => $res->{name},
+            profile_image_url => $res->{profile_image_url}
+        };
         $doc->{tw}->{$user_id}->{friends} = $cache;
         $doc->{tw}->{$user_id}->{name} = $res->{name};
         $doc->{tw}->{$user_id}->{screen_name} = $res->{screen_name};
@@ -67,7 +84,7 @@ sub sync_from_twitter {
     
     $c->render_json({
         success => 1,
-        friends => $result->{users},
+        friends => \@friends,
         friends_count => $friends_count,
         sync_count => scalar(@$cache),
         next_cursor => $next_cursor

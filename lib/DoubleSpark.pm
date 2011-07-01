@@ -2,7 +2,7 @@ package DoubleSpark;
 use strict;
 use warnings;
 use parent qw/Amon2/;
-our $VERSION='1.02';
+our $VERSION='1.03';
 use 5.008001;
 
 use AnyEvent::CouchDB ();
@@ -139,7 +139,7 @@ sub append_history {
     my ($self, $doc, $history) = @_;
     my $update;
     for (@{$doc->{history}}) {
-        if ($_->{code} eq $history->{code} && $_->{action} eq $history->{action}) {
+        if ($_->{id} eq $history->{id} && $_->{action} eq $history->{action}) {
             $_->{date} = time;
             $update++;
             last;

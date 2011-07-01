@@ -7,18 +7,18 @@ sub create {
     my ($class, $c) = @_;
     
     my $account = DoubleSpark::Account->new($c);
-    my $registrant = $c->req->param('registrant');
+    my $registrant_id = $c->req->param('registrant_id');
     my $title = $c->req->param('title');
     my $description = $c->req->param('description');
     my $due = $c->req->param('due');
     my $list_id = $c->req->param('list_id');
-    my @assignee = $c->req->param('assignee[]');
+    my @assignee_ids = $c->req->param('assignee_ids[]');
     my $doc = $c->open_list_doc($account, 'member', $list_id);
     my $task_id = ++$doc->{last_task_id};
     $doc->{tasks} = [] unless $doc->{tasks};
     my $task = {
         id => $task_id,
-        registrant => $registrant,
+        registrant_id => $registrant_id,
         title => $title,
         description => $description,
         due => $due,
@@ -29,10 +29,10 @@ sub create {
         updated => time,
         sort => $task_id
     };
-    $task->{assignee} = \@assignee if scalar(@assignee);
+    $task->{assignee_ids} = \@assignee_ids;
     push @{$doc->{tasks}}, $task;
     $c->append_history($doc, {
-        code    => $registrant,
+        id      => $registrant_id,
         action  => 'create-task',
         task_id => $task_id,
         date    => time
@@ -48,7 +48,7 @@ sub update {
     my ($class, $c) = @_;
     
     my $account = DoubleSpark::Account->new($c);
-    my $registrant = $c->req->param('registrant');
+    my $registrant_id = $c->req->param('registrant_id');
     my $list_id = $c->req->param('list_id');
     my $task_id = $c->req->param('task_id');
     
@@ -64,10 +64,11 @@ sub update {
                     $task->{$key} = $val=~/^\d+$/ ? int($val) : $val;
                 }
             }
-            if ($c->req->param('assignee[]')) {
-                $task->{assignee} = [ $c->req->param('assignee[]') ];
-            } elsif (defined $c->req->param('assignee')) {
-                $task->{assignee} = [];
+            if ($c->req->param('assignee_ids[]')) {
+                my @assignee_ids = $c->req->param('assignee_ids[]');
+                $task->{assignee_ids} = \@assignee_ids;
+            } elsif (defined $c->req->param('assignee_ids')) {
+                $task->{assignee_ids} = [];
             }
             $task->{updated} = time;
             $target_task = $task;
@@ -77,7 +78,7 @@ sub update {
     }
     die 'NotFound' unless $success;
     $c->append_history($doc, {
-        code    => $registrant,
+        id      => $registrant_id,
         action  => 'update-task',
         task_id => $task_id,
         date    => time

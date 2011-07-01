@@ -13,7 +13,7 @@ chrome.browserAction.onClicked.addListener(function(tab){
 });
 
 function isCount(task) {
-    if (task.closed == 0 && task.status < 2) {
+    if (!task.closed && task.status < 2) {
         return true;
     }
     return false;

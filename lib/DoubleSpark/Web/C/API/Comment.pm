@@ -8,7 +8,7 @@ sub create {
     
     my $account = DoubleSpark::Account->new($c);
     my $account_id = $account->{account_id};
-    my $owner   = $c->req->param('owner');
+    my $owner_id = $c->req->param('owner_id');
     my $list_id = $c->req->param('list_id');
     my $task_id = $c->req->param('task_id');
     my $comment = $c->req->param('comment');
@@ -22,7 +22,7 @@ sub create {
             $comment_id = ++$task->{last_comment_id};
             my $comment = {
                 id         => $comment_id,
-                owner      => $owner,
+                owner_id   => $owner_id,
                 comment    => $comment,
                 time       => time * 1000
             };
@@ -34,7 +34,7 @@ sub create {
         }
     }
     $c->append_history($doc, {
-        code    => $owner,
+        id      => $owner_id,
         action  => 'create-comment',
         task_id => $task_id,
         date    => time
@@ -51,7 +51,7 @@ sub delete {
     my ($class, $c) = @_;
     
     my $account = DoubleSpark::Account->new($c);
-    my $owner   = $c->req->param('owner');
+    my $owner_id = $c->req->param('owner_id');
     my $list_id = $c->req->param('list_id');
     my $task_id = $c->req->param('task_id');
     my $comment_id = $c->req->param('comment_id');
@@ -72,7 +72,7 @@ sub delete {
         }
     }
     $c->append_history($doc, {
-        code    => $owner,
+        id      => $owner_id,
         action  => 'delete-comment',
         task_id => $task_id,
         date    => time

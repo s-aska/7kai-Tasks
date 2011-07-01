@@ -30,7 +30,9 @@ sub new {
         my $account;
         # exists account
         if ($tw_account_db) {
-            unless ($account_id) {
+            if ($account_id) {
+                $tw_account_db->update({ account_id => $account_id });
+            } else {
                 my $account_db =
                     $db->single('account', { account_id => $tw_account_db->account_id });
                 $account_id = $account_db->account_id;
@@ -48,19 +50,20 @@ sub new {
                     updated_on => \'now()'
                 });
                 $account_id = $account_db->account_id;
+                my $owner_id = 'tw-' . $tw_account->{user_id};
                 my $list = $db->insert('list', {
                     account_id => $account_id,
+                    owner => $owner_id,
                     created_on => \'now()'
                 });
                 my $doc_id = 'list-' . $list->list_id;
                 my $name = $tw_account->{screen_name} . "'s List";
-                my $owner = '@' . $tw_account->{screen_name};
-                $c->save_doc({
+                my $res = $c->save_doc({
                     _id => $doc_id,
                     name => $name,
                     privacy => 'closed',
-                    owner   => $owner,
-                    members => [],
+                    owner_id   => $owner_id,
+                    member_ids => [],
                     tasks => [],
                     history => []
                 });
@@ -124,12 +127,10 @@ sub set_social_accounts {
     my $tws = $c->db->search('tw_account', {
         account_id => $self->{account_id}
     });
-    warn $self->{account_id};
     my @tw_accounts;
     for my $tw ($tws->all) {
-        push @codes, '@' . $tw->screen_name;
+        push @codes, 'tw-' . $tw->user_id;
         push @tw_accounts, $tw->get_columns;
-        warn $tw->screen_name;
     }
     $self->{tw_accounts} = \@tw_accounts;
     
@@ -144,13 +145,13 @@ sub set_lists {
     my @list_ids1 = map {
         'list-' . $_->list_id
     } $c->db->search('list', {
-        account_id => $self->{account_id}
+        owner => $self->{codes}
     })->all;
     
     my @list_ids2 = map {
         'list-' . $_->list_id
     } $c->db->search('list_member', {
-        code => $self->{codes}
+        member => $self->{codes}
     })->all;
     
     # unique
@@ -171,8 +172,7 @@ sub has_role_admin {
     my ($self, $list) = @_;
     
     for my $user_id (keys %{ $self->{tw} }) {
-        my $tw = $self->{tw}->{$user_id};
-        if ('@' . $tw->{screen_name} eq $list->{owner}) {
+        if ('tw-' . $user_id eq $list->{owner_id}) {
             return 1;
         }
     }
@@ -183,16 +183,34 @@ sub has_role_admin {
 sub has_role_member {
     my ($self, $list) = @_;
     
-    for my $code ($list->{owner}, @{$list->{members}}) {
+    for my $code ($list->{owner_id}, @{$list->{member_ids}}) {
         for my $user_id (keys %{ $self->{tw} }) {
-            my $tw = $self->{tw}->{$user_id};
-            if ('@' . $tw->{screen_name} eq $code) {
+            if ('tw-' . $user_id eq $code) {
                 return 1;
             }
         }
     }
     
     return ;
+}
+
+sub get_code_by_old {
+    my ($self, $old_code) = @_;
+    
+    for my $user_id (keys %{$self->{tw}}) {
+        my $tw = $self->{tw}->{$user_id};
+        if ($old_code eq '@' . $tw->{screen_name}) {
+            return 'tw-' . $user_id;
+        }
+        for my $friend (@{$tw->{friends}}) {
+            if ($friend->{user_id}) {
+                if ($old_code eq '@' . $friend->{screen_name}) {
+                    return 'tw-' . $friend->{user_id};
+                }
+            }
+        }
+    }
+    die 'NotFound Code';
 }
 
 1;

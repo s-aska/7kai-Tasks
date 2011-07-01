@@ -702,6 +702,10 @@ form.confirm {
 #list-settings-window {
     width: 300px;
 }
+#list-settings-window article {
+    max-height: 300px;
+    overflow-y: auto;
+}
 /********** guide **********/
 #guide {
     display: none;

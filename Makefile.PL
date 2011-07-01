@@ -14,6 +14,7 @@ WriteMakefile(
 
         'AnyEvent::CouchDB'               => '1.24',
         'Facebook::Graph'                 => '1.0300',
+        'Log::Minimal'                    => '0.08',
         'Net::Twitter::Lite'              => '0.10004',
         'Path::Class'                     => '0.24',
         'Sub::Retry'                      => '0.03',

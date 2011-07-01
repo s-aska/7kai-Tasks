@@ -20,22 +20,22 @@ sub create {
     
     my $account = DoubleSpark::Account->new($c);
     my $name = $c->req->param('name');
-    my $owner = $c->req->param('owner');
-    my @members = $c->req->param('members[]');
-    my $privacy = lc($c->req->param('privacy')) || 'closed';
+    my $owner_id = $c->req->param('owner_id');
+    my @member_ids = $c->req->param('member_ids[]');
+    my $privacy = $c->req->param('privacy') || 'closed';
     
     return $c->res_403 if ! length $name;
     return $c->res_403 if $privacy!~/^(open|closed|secret)$/;
     
     my $txn = $c->db->txn_scope;
     my $list = $c->db->insert('list', {
-        account_id => $account->{account_id},
+        owner => $owner_id,
         created_on => \'now()'
     });
-    for my $code (@members) {
+    for my $member_id (@member_ids) {
         $c->db->insert('list_member', {
             list_id => $list->list_id,
-            code => $code,
+            member => $member_id,
             created_on => \'now()'
         });
     }
@@ -44,12 +44,12 @@ sub create {
         _id => $doc_id,
         name => $name,
         privacy => $privacy,
-        owner   => $owner,
-        members => \@members,
+        owner_id => $owner_id,
+        member_ids => \@member_ids,
         tasks => [],
         history => [
             {
-                code   => $owner,
+                id     => $owner_id,
                 action => 'create-list',
                 date   => time
             }
@@ -69,26 +69,25 @@ sub update {
     my $account = DoubleSpark::Account->new($c);
     my $list_id = $c->req->param('list_id');
     my $name = $c->req->param('name');
-    my $owner = $c->req->param('owner');
-    my @members = $c->req->param('members[]');
-    # my $privacy = lc($c->req->param('privacy')) || 'closed';
+    my $owner_id = $c->req->param('owner_id');
+    my @member_ids = $c->req->param('member_ids[]');
     
     return $c->res_403 if ! length $name;
     
     my $doc_id = $list_id;
     my $doc = $c->open_list_doc($account, 'admin', $list_id);
     $doc->{name} = $name;
-    $doc->{owner} = $owner;
-    $doc->{members} = \@members;
+    $doc->{owner_id} = $owner_id;
+    $doc->{member_ids} = \@member_ids;
     $c->append_history($doc, {
-        code   => $owner,
+        id     => $owner_id,
         action => 'update-list',
         date   => time
     });
     $c->save_list_doc($account, $doc);
     
     my $members = {};
-    for my $member (@members) {
+    for my $member (@member_ids) {
         $members->{$member}++;
     }
     my ($id) = $list_id=~/(\d+)/;
@@ -96,17 +95,17 @@ sub update {
         list_id => $id
     });
     for my $member ($list_member->all) {
-        my $code = $member->code;
-        if (delete $members->{$code}) {
+        my $id = $member->member;
+        if (delete $members->{$id}) {
             
         } else {
             $member->delete;
         }
     }
-    for my $code (keys %$members) {
+    for my $member_id (keys %$members) {
         $c->db->insert('list_member', {
             list_id => $id,
-            code => $code,
+            member => $member_id,
             created_on => \'now()'
         });
     }
@@ -126,12 +125,14 @@ sub delete {
     $c->res_403 if $list_id!~/^list-\d+/;
     
     my ($id) = $list_id=~/(\d+)/;
+    my $doc = $c->open_list_doc($account, 'admin', $list_id);
     my $txn = $c->db->txn_scope;
-    my $list = $c->db->delete('list', {
-        account_id => $account->{account_id},
+    $c->db->delete('list', {
         list_id => $id
     });
-    my $doc = $c->open_list_doc($account, 'admin', $list_id);
+    # $c->db->delete('list_member', {
+    #     list_id => $id
+    # });
     $c->remove_doc($doc);
     $txn->commit;
     
@@ -145,7 +146,7 @@ sub clear {
     my ($class, $c) = @_;
     
     my $account = DoubleSpark::Account->new($c);
-    my $owner = $c->req->param('owner');
+    my $owner_id = $c->req->param('owner_id');
     my $list_id = $c->req->param('list_id');
     
     # FXIME: role check
@@ -156,7 +157,7 @@ sub clear {
     @{$doc->{tasks}} = grep { !$_->{closed} } @{$doc->{tasks}};
     my $count = $num - scalar(@{$doc->{tasks}});
     $c->append_history($doc, {
-        code    => $owner,
+        id      => $owner_id,
         action  => 'clear-task',
         date    => time
     });
