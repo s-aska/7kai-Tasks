@@ -232,23 +232,27 @@ function refreshPopupPage(popup) {
 function openOptionPage() {
     chrome.tabs.create({url: "options.html"});
 }
-function openServicePage(callback) {
+function openServicePage(e, ele, callback) {
     var that = this;
     this.findTab(this.VIEWER_URL, function(tab) {
         if (tab) {
             // Try to reuse an existing Reader tab
             chrome.tabs.update(tab.id, {selected: true}, callback);
         } else {
+            if (!callback) {
+                callback = function(tab){
+                    chrome.tabs.update(tab.id, {selected: true});
+                }
+            }
             chrome.tabs.create({url: that.VIEWER_URL}, callback);
         }
     });
 }
 function openListPage(e, ele) {
     var list_id = ele.data('list-id');
-    this.openServicePage(function(tab){
-        chrome.tabs.sendRequest(tab.id, {list_id: list_id}, function(response) {
-            // console.log(response.farewell);
-        });
+    this.openServicePage(e, ele, function(tab){
+        chrome.tabs.update(tab.id, {selected: true});
+        chrome.tabs.sendRequest(tab.id, {list_id: list_id});
     });
 }
 function loadOption() {
