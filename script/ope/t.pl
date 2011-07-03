@@ -8,20 +8,20 @@ use DoubleSpark;
 use Data::Dumper;
 
 my $c = DoubleSpark->bootstrap();
-my $accounts = $c->db->search('account');
-my $tw_map;
-for my $account ($accounts->all) {
-    my $doc = $c->open_doc('account-' . $account->account_id);
-    for my $user_id (keys %{$doc->{tw}}) {
-        my $tw = $doc->{tw}->{$user_id};
-        $tw_map->{ '@' . $tw->{screen_name} } = $user_id;
-        for my $friend (@{$tw->{friends}}) {
-            if ($friend->{user_id}) {
-                $tw_map->{ '@' . $friend->{screen_name} } = $friend->{user_id};
-            }
-        }
-    }
-}
+# my $accounts = $c->db->search('account');
+# my $tw_map;
+# for my $account ($accounts->all) {
+#     my $doc = $c->open_doc('account-' . $account->account_id);
+#     for my $user_id (keys %{$doc->{tw}}) {
+#         my $tw = $doc->{tw}->{$user_id};
+#         $tw_map->{ '@' . $tw->{screen_name} } = $user_id;
+#         for my $friend (@{$tw->{friends}}) {
+#             if ($friend->{user_id}) {
+#                 $tw_map->{ '@' . $friend->{screen_name} } = $friend->{user_id};
+#             }
+#         }
+#     }
+# }
 my $lists = $c->db->search('list');
 for my $list ($lists->all) {
     warn $list->list_id;
@@ -44,35 +44,28 @@ for my $list ($lists->all) {
     #     push @member_ids, 'tw-' . $tw_map->{ $member };
     # }
     # $doc->{member_ids} = \@member_ids;
-    # for my $task (@{$doc->{tasks}}) {
-    #     say 'task: ', $task->{registrant}, ' tw-', $tw_map->{ $task->{registrant} };
-    #     $task->{registrant_id} = 'tw-' . $tw_map->{ $task->{registrant} };
-    #     my @assignee_ids = ();
-    #     for my $assignee (@{$task->{assignee}}) {
-    #         say 'assignee: ', $assignee, ' tw-', $tw_map->{ $assignee };
-    #         push @assignee_ids, 'tw-' . $tw_map->{ $assignee };
+    for my $task (@{$doc->{tasks}}) {
+        $task->{assign_ids} = delete $task->{assignee_ids};
+    }
+    # my @history;
+    # my $history_map;
+    # @{$doc->{history}} = sort {
+    #     $b->{date} <=> $a->{date}
+    # } @{$doc->{history}};
+    # for (@{$doc->{history}}) {
+    #     my $key = $_->{id} . $_->{action};
+    #     unless ($history_map->{$key}) {
+    #         say $key;
+    #         push @history, $_;
+    #         $history_map->{$key}++;
     #     }
-    #     $task->{assignee_ids} = \@assignee_ids;
     # }
-    my @history;
-    my $history_map;
-    @{$doc->{history}} = sort {
-        $b->{date} <=> $a->{date}
-    } @{$doc->{history}};
-    for (@{$doc->{history}}) {
-        my $key = $_->{id} . $_->{action};
-        unless ($history_map->{$key}) {
-            say $key;
-            push @history, $_;
-            $history_map->{$key}++;
-        }
-    }
-    say scalar(@history);
-    if (scalar(@{$doc->{history}}) != scalar(@history)) {
-        @{$doc->{history}} = @history;
-        say 'update';
-        $c->save_doc($doc);
-    }
+    # say scalar(@history);
+    # if (scalar(@{$doc->{history}}) != scalar(@history)) {
+    #     @{$doc->{history}} = @history;
+    # }
+    say 'update';
+    $c->save_doc($doc);
 }
 # my $list_members = $c->db->search('list_member');
 # for my $list_member ($list_members->all) {

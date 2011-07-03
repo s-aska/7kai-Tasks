@@ -328,11 +328,11 @@ $(document).ready(function() {
   data-guide-en="status rotation"
   data-guide-ja="ステータス変更"
 ></div>
-<div class="action icon assignee"
+<div class="action icon assign"
   data-method="open"
   data-id="create-task-window"
   data-callback="editTask"
-  data-guide-en="assignee"
+  data-guide-en="assign"
   data-guide-ja="担当者"
 ></div>
 <div class="action icon-star-off"
@@ -440,8 +440,8 @@ $(document).ready(function() {
 >TODAY</span>
 </li>
 </ul>
-<ul id="create-task-assignee">
-<li data-text-ja="担当者:">Assignee:</li>
+<ul id="create-task-assign">
+<li data-text-ja="担当者:">Assign:</li>
 <li><input type="checkbox" name="" value="1" checked="checked"> <img src="/static/img/su_aska.png"> su_aska</li>
 <li><input type="checkbox" name="" value="1" checked="checked"> <img src="/static/img/su_aska.png"> dw90000</li>
 <li><input type="checkbox" name="" value="1" checked="checked"> <img src="/static/img/su_aska.png"> yksk</li>

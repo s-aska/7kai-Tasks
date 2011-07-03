@@ -28,7 +28,7 @@ ns.Tasks.prototype = {
     current_list: null,
     current_filter: null,
     account: null,
-    assignee: [],
+    assign: [],
     modals: {},
     parts: {},
     friends: {},
@@ -131,9 +131,9 @@ ns.Tasks.prototype = {
     resetCreateTask: resetCreateTask,
     
     // MainContents
-    registAssignee: registAssignee,
-    createAssigneeLabel: createAssigneeLabel,
-    createAssigneeList: createAssigneeList,
+    registAssign: registAssign,
+    createAssignLabel: createAssignLabel,
+    createAssignList: createAssignList,
     renderTask: renderTask,
     createTaskElement: createTaskElement,
     clickTaskAction: clickTaskAction,
@@ -285,10 +285,10 @@ function initEvent() {
     var bindAutocomplete = function(selector, prependTo){
         selector.autocomplete({
     		source: function(request, response) {
-    		    response($.ui.autocomplete.filter(that.assignee, request.term));
+    		    response($.ui.autocomplete.filter(that.assign, request.term));
     		},
     		select: function(event, ui) {
-    		    that.createAssigneeList(that.friends[ui.item.value])
+    		    that.createAssignList(that.friends[ui.item.value])
     		    .prependTo(prependTo);
             }
     	}).data('autocomplete')._renderItem = function(ul, item) {
@@ -478,7 +478,7 @@ function syncTwitterContact(user_id, cursor, screen_name) {
         if (data.success) {
             that.statusUpdate('sync contact list '
             + screen_name + ' ' + data.sync_count + '/' + data.friends_count);
-            that.registAssignee(data.friends);
+            that.registAssign(data.friends);
             $.merge(that.account.tw[user_id].friends, data.friends);
             if (data.next_cursor) {
                 that.syncTwitterContact(user_id, data.next_cursor, screen_name);
@@ -549,13 +549,13 @@ function refresh(option) {
         if (data.success) {
             that.statusUpdate('refresh.');
             that.account = data.account;
-            that.assignee = [];
+            that.assign = [];
             that.parts.owners.empty();
             that.parts.tasks.empty();
             that.parts.connectacs.empty();
             for (var user_id in data.account.tw) {
                 var tw = data.account.tw[user_id];
-                that.registAssignee(tw.friends);
+                that.registAssign(tw.friends);
                 $('<option/>')
                     .attr('value', 'tw-' + user_id)
                     .text('@' + tw.screen_name)
@@ -940,8 +940,8 @@ function needCount(task) {
             return false;
         }
     }
-    if (task.assignee_ids.length) {
-        return this.findMe(task.assignee_ids);
+    if (task.assign_ids.length) {
+        return this.findMe(task.assign_ids);
     }
     return my_order;
 }
@@ -1246,7 +1246,7 @@ function clickSyncTwitterContact(e, ele) {
     
     // FIXME: statusbar update
     this.statusUpdate('sync contact list begin.');
-    this.assignee = [];
+    this.assign = [];
     return this.ajax({
         type: 'get',
         url: '/api/1/account/',
@@ -1272,9 +1272,9 @@ function clickAccountSync(e, ele) {
     //     if (data.success) {
     //         that.account = data.doc;
     //         
-    //         that.assignee = [];
+    //         that.assign = [];
     //         for (user_id in data.doc.tw) {
-    //             that.registAssignee(data.doc.tw[user_id].friends);
+    //             that.registAssign(data.doc.tw[user_id].friends);
     //         }
     //         console.log(that.account);
     //     }
@@ -1383,7 +1383,7 @@ function openCallbackEditList(e, ele) {
         var member_id = list.doc.admin_ids[i];
         if (member_id in this.friend_ids) {
             var member = this.friend_ids[member_id];
-            createListAdmins.append(this.createAssigneeList(member));
+            createListAdmins.append(this.createAssignList(member));
         } else {
             // console.log(member_id);
         }
@@ -1395,7 +1395,7 @@ function openCallbackEditList(e, ele) {
         var member_id = list.doc.member_ids[i];
         if (member_id in this.friend_ids) {
             var member = this.friend_ids[member_id];
-            createListMembers.append(this.createAssigneeList(member));
+            createListMembers.append(this.createAssignList(member));
         } else {
             // console.log(member_id);
         }
@@ -1594,8 +1594,8 @@ function tasksRequestFilter(list, task) {
         }
     }
     // 自分が担当
-    if (task.assignee_ids) {
-        if (this.findMe(task.assignee_ids)) {
+    if (task.assign_ids) {
+        if (this.findMe(task.assign_ids)) {
             return false;
         }
     }
@@ -1700,15 +1700,15 @@ function openCallbackCreateTask(e, ele) {
                 ? this.current_list.id
                 : $(ele).parent().data('list-id');
     var list = this.listmap[list_id];
-    var ul = $('#create-task-assignee');
-    ul.html('<li>Assignee:</li>');
+    var ul = $('#create-task-assign');
+    ul.html('<li>Assign:</li>');
     var member_ids = [list.doc.owner_id].concat(list.doc.admin_ids).concat(list.doc.member_ids);
     for (var i = 0, max = member_ids.length; i < max; i++) {
         var id = member_ids[i];
         var url = this.getProfileImageUrl(id);
         var friend = this.friend_ids[id];
         var li = $('<li></li>');
-        var input = $('<input type="checkbox" name="assignee" value="">');
+        var input = $('<input type="checkbox" name="assign" value="">');
         input.val(id);
         li.append(input)
         if (url) {
@@ -1736,7 +1736,7 @@ function openCallbackCreateTask(e, ele) {
 function openCallbackCreateTaskWithMember(e, ele) {
     this.openCallbackCreateTask(e, ele);
     var id = $(ele).data('member-id');
-    var ul = $('#create-task-assignee');
+    var ul = $('#create-task-assign');
     ul.find('input[value="' + id + '"]').attr('checked', true);
 }
 function openCallbackEditTask(e, ele) {
@@ -1755,9 +1755,9 @@ function openCallbackEditTask(e, ele) {
     form.find('input[name=title]').val(task.title || '');
     form.find('textarea[name=description]').val(task.description || '');
     form.find('input[name=due]').val(task.due || '');
-    if (task.assignee_ids) {
-        for (var i = 0; i < task.assignee_ids.length; i++) {
-            var id = task.assignee_ids[i];
+    if (task.assign_ids) {
+        for (var i = 0; i < task.assign_ids.length; i++) {
+            var id = task.assign_ids[i];
             form.find('input[value="' + id + '"]').attr('checked', true);
         }
     }
@@ -1791,9 +1791,9 @@ function submitCreateTask(form) {
         alert("can't find registrant.");
         return;
     }
-    var assignee_ids = [];
-    form.find('input[name=assignee]:checked').each(function(i, ele){
-        assignee_ids.push(ele.value);
+    var assign_ids = [];
+    form.find('input[name=assign]:checked').each(function(i, ele){
+        assign_ids.push(ele.value);
     });
     if (task_id) {
         form.fadeOut(this.speed);
@@ -1810,7 +1810,7 @@ function submitCreateTask(form) {
             title: title,
             description: description,
             due: due,
-            assignee_ids: (assignee_ids.length ? assignee_ids : 0)
+            assign_ids: (assign_ids.length ? assign_ids : 0)
         },
         dataType: 'json'
     })
@@ -1879,23 +1879,23 @@ function submitClearTrash(form) {
 }
 function resetCreateTask(form) {
     form.find('input[type=text], textarea').val('');
-    $('#create-task-assignee').find('input[type=checkbox].').attr('checked', false);
+    $('#create-task-assign').find('input[type=checkbox].').attr('checked', false);
 }
 
 // MainContents
-function registAssignee(friends) {
+function registAssign(friends) {
     for (var i = 0, max = friends.length; i < max; i++) {
         var friend = friends[i];
         this.friends['@' + friend.screen_name] = friend;
         this.friend_ids['tw-' + friend.user_id] = friend;
-        var label = this.createAssigneeLabel(friend);
-        this.assignee.push({
+        var label = this.createAssignLabel(friend);
+        this.assign.push({
             value: '@' + friend.screen_name,
             label: label
         });
     }
 }
-function createAssigneeLabel(friend) {
+function createAssignLabel(friend) {
     var url = this.getTwitterProfileImageUrl(friend.screen_name);
     var html =
         '<span><img class="twitter_profile_image" src="'
@@ -1905,11 +1905,11 @@ function createAssigneeLabel(friend) {
         + '</span>';
     return html;
 }
-function createAssigneeList(friend) {
+function createAssignList(friend) {
     var del = $('<span class="icon icon-delete"></span>');
     var li =
         $('<li></li>')
-        .append(this.createAssigneeLabel(friend))
+        .append(this.createAssignLabel(friend))
         .data('id', 'tw-' + friend.user_id)
         .data('code', '@' + friend.screen_name)
         .attr('class', 'member')
@@ -1949,26 +1949,26 @@ function createTaskElement(list, task) {
         var url = that.getProfileImageUrl(task.registrant_id);
         var img = $('<img/>').attr('src', url);
         img.css('twitter_profile_image');
-        li.find('.assignee')
+        li.find('.assign')
             .append(img)
             .append($('<span class="icon icon-right"/>'));
         if (this.isMe(task.registrant_id)) {
-            li.find('.assignee').addClass('my');
+            li.find('.assign').addClass('my');
         }
     }
-    if ("assignee_ids" in task && task.assignee_ids && task.assignee_ids.length) {
-        for (var i = 0; i < task.assignee_ids.length; i++) {
-            var assignee_id = task.assignee_ids[i];
-            var url = that.getProfileImageUrl(assignee_id);
+    if ("assign_ids" in task && task.assign_ids && task.assign_ids.length) {
+        for (var i = 0; i < task.assign_ids.length; i++) {
+            var assign_id = task.assign_ids[i];
+            var url = that.getProfileImageUrl(assign_id);
             var img = $('<img/>').attr('src', url);
             img.css('twitter_profile_image');
-            li.find('.assignee').append(img);
-            if (this.isMe(assignee_id)) {
-                li.find('.assignee').addClass('my');
+            li.find('.assign').append(img);
+            if (this.isMe(assign_id)) {
+                li.find('.assign').addClass('my');
             }
         }
     } else {
-        li.find('.assignee').append($('<span class="icon icon-address-off"/>'));
+        li.find('.assign').append($('<span class="icon icon-address-off"/>'));
     }
     
     
@@ -2178,7 +2178,7 @@ function clickTaskAction(e) {
     else if (div.hasClass('icon-edit')) {
         this.clickOpenButton(e, div);
     }
-    else if (div.hasClass('assignee')) {
+    else if (div.hasClass('assign')) {
         this.clickOpenButton(e, div);
     }
     

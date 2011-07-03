@@ -12,7 +12,7 @@ sub create {
     my $description = $c->req->param('description');
     my $due = $c->req->param('due');
     my $list_id = $c->req->param('list_id');
-    my @assignee_ids = $c->req->param('assignee_ids[]');
+    my @assign_ids = $c->req->param('assign_ids[]');
     my $doc = $c->open_list_doc($account, 'member', $list_id);
     my $task_id = ++$doc->{last_task_id};
     $doc->{tasks} = [] unless $doc->{tasks};
@@ -29,7 +29,7 @@ sub create {
         updated => time,
         sort => $task_id
     };
-    $task->{assignee_ids} = \@assignee_ids;
+    $task->{assign_ids} = \@assign_ids;
     push @{$doc->{tasks}}, $task;
     $c->append_history($doc, {
         id      => $registrant_id,
@@ -77,11 +77,11 @@ sub update {
             } elsif (defined $closed) {
                 $action = $closed ? 'close-task' : 're' . $status_action_map->{$task->{status}};
             }
-            if ($c->req->param('assignee_ids[]')) {
-                my @assignee_ids = $c->req->param('assignee_ids[]');
-                $task->{assignee_ids} = \@assignee_ids;
-            } elsif (defined $c->req->param('assignee_ids')) {
-                $task->{assignee_ids} = [];
+            if ($c->req->param('assign_ids[]')) {
+                my @assign_ids = $c->req->param('assign_ids[]');
+                $task->{assign_ids} = \@assign_ids;
+            } elsif (defined $c->req->param('assign_ids')) {
+                $task->{assign_ids} = [];
             }
             $task->{updated} = time;
             $target_task = $task;

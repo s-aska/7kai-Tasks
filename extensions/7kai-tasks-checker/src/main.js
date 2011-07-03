@@ -27,8 +27,8 @@ ns.Tasks.prototype = {
     refreshPopupPage: refreshPopupPage,
     refreshBadgeTimer: refreshBadgeTimer,
     needCount: needCount,
-    needHistory: needHistory,
-    renderHistories: renderHistories,
+    needNotification: needNotification,
+    renderNotifications: renderNotifications,
     timestamp: timestamp,
     isMe: isMe,
     findMe: findMe,
@@ -128,19 +128,20 @@ function refreshBadge(popup) {
     return this
         .refresh()
         .done(function(data){
-            // console.log('refreshBadge done');
             that.localizer.lang = data.account.lang;
             var count = 0,
                 last_history_time = 0,
                 last_history,
                 lists = data.account.lists;
+            data.account.taskmap = {};
             for (var i = 0, max_i = lists.length; i < max_i; i++) {
                 var list = lists[i];
-                // badge count
-                if (!(list.id in data.account.state.ignore_badge_list)) {
-                    var tasks = list.doc.tasks;
-                    for (var j = 0, max_j = tasks.length; j < max_j; j++) {
-                        var task = tasks[j];
+                var tasks = list.doc.tasks;
+                for (var j = 0, max_j = tasks.length; j < max_j; j++) {
+                    var task = tasks[j];
+                    data.account.taskmap[list.id + '-' + task.id] = task;
+                    // badge count
+                    if (!(list.id in data.account.state.ignore_badge_list)) {
                         if (that.needCount(data.account, task)) {
                             count++;
                         }
@@ -149,10 +150,10 @@ function refreshBadge(popup) {
                 // notification check
                 for (var j = 0, max_j = list.doc.history.length; j < max_j; j++) {
                     var history = list.doc.history[j];
-                    if (that.needHistory(data.account, history)) {
+                    history.list_id = list.id;
+                    history.list_name = list.doc.name;
+                    if (that.needNotification(data.account, history)) {
                         if (history.date > last_history_time) {
-                            history.list_name = list.doc.name;
-                            history.list_id = list.id;
                             last_history = history;
                             last_history_time = history.date;
                         }
@@ -215,10 +216,8 @@ function refreshPopupPage(popup) {
             for (var i = 0, max_i = lists.length; i < max_i; i++) {
                 var list = lists[i];
                 for (var j = 0, max_j = list.doc.history.length; j < max_j; j++) {
-                    if (that.needHistory(data.account, list.doc.history[j])) {
-                        var history = list.doc.history[j];
-                        history.list_name = list.doc.name;
-                        history.list_id = list.id;
+                    var history = list.doc.history[j];
+                    if (that.needNotification(data.account, history)) {
                         histories.push(history);
                     }
                 }
@@ -226,7 +225,7 @@ function refreshPopupPage(popup) {
             histories.sort(function(a, b){
                 return b.date - a.date;
             });
-            that.renderHistories(data.account, histories);
+            that.renderNotifications(data.account, histories);
         });
 }
 function openOptionPage() {
@@ -309,15 +308,34 @@ function needCount(account, task) {
             return false;
         }
     }
-    if (task.assignee_ids.length) {
-        return this.findMe(account, task.assignee_ids);
+    if (task.assign_ids.length) {
+        return this.findMe(account, task.assign_ids);
     }
     return my_order;
 }
-function needHistory(account, history) {
-    return !(this.isMe(account, history.id));
+function needNotification(account, history) {
+    // my history
+    if (this.isMe(account, history.id)) {
+        return false;
+    }
+    if ("task_id" in history) {
+        var key = history.list_id + '-' + history.task_id;
+        var key_w = history.list_id + ':' + history.task_id;
+        if (key in account.taskmap) {
+            var task = account.taskmap[key];
+            if (key_w in account.state.watch) {
+                return true;
+            } else if (this.findMe(account, [task.registrant_id].concat(task.assign_ids))) {
+                return true;
+            }
+        }
+    } else if (history.action === "create-list") {
+        // new list assign.
+        return true;
+    }
+    // update list, clear task, ...
 }
-function renderHistories(account, histories) {
+function renderNotifications(account, histories) {
     var that = this;
     var users = {};
     var user_ids = [];
@@ -326,6 +344,10 @@ function renderHistories(account, histories) {
             user_ids.push(histories[i].id);
             users[histories[i].id] = true;
         }
+    }
+    if (!user_ids.length) {
+        that.parts.notifications.empty();
+        return;
     }
     $.ajax({
         type: 'get',
