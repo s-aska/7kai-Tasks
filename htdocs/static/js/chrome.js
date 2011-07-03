@@ -305,9 +305,10 @@ function initEvent() {
     bindAutocomplete.call(this, $('#create-list-admins-input'), $('#create-list-admins'));
     
     document.getElementById('extentionsEventDiv').addEventListener('extentionsEvent', function() {
-        var eventData = document.getElementById('extentionsEventDiv').innerText;
-        that.showList(eventData);
-    });
+        var eventText = document.getElementById('extentionsEventDiv').innerText;
+        var eventData = JSON.parse(eventText);
+        that[eventData.method].apply(that, eventData.arguments);
+    }, false);
 }
 function initEventGuide(ele) {
     var that = this;
@@ -532,10 +533,13 @@ function updateAccount(params, refresh) {
         }
     });
 }
-function refresh() {
+function refresh(option) {
     var that = this;
     var syncContact = false;
     var unknownMembers = [];
+    if (!option) {
+        option = {};
+    }
     return this.ajax({
         type: 'get',
         url: '/api/1/account/',
@@ -596,7 +600,16 @@ function refresh() {
                 that.sortList();
                 that.sortTask('updated');
                 that.renderCommentBadge();
-                if ("last_read_list" in that.account.state) {
+                if ("select_list_id" in option) {
+                    var id = option.select_list_id;
+                    that.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
+                    if (option.select_task_id) {
+                        var taskli = that.taskli[id + '-' + option.select_task_id];
+                        if (taskli) {
+                            taskli.effect("highlight", {}, 3000);
+                        }
+                    }
+                } else if ("last_read_list" in that.account.state) {
                     var id = that.account.state.last_read_list;
                     that.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
                 } else {
@@ -684,6 +697,7 @@ function showTimeline(e) {
     });
 }
 function renderTimeline() {
+    var that = this;
     var lists = this.account.lists;
     var timeline_items = [];
     for (var i = 0; i < lists.length; i++) {
@@ -713,18 +727,22 @@ function renderTimeline() {
         var action_msg = this.localizer.text(this.parts.timeline, item.action);
         var action = $('<span class="action"/>').text(action_msg);
         var list = $('<span class="list"/>').text(item.list.doc.name);
-        list.data('list-id', item.list.id);
-        list.click($.proxy(this.switchList, this));
         var date = $('<span class="date"/>').text(this.timestamp(item.date));
         var li = $('<li class="clearfix"/>')
             .append(code)
             .append(action)
             .append(list)
-            .append(date);
-        this.parts.timeline.append(li);
+            .append(date)
+            .appendTo(this.parts.timeline)
+            .data('list-id', item.list.id)
+            .data('task-id', (item.task_id || 0))
+            .click(function(e){
+                var ele = $(e.currentTarget);
+                that.showList(ele.data('list-id'), ele.data('task-id'));
+            });
     }
 }
-function showList(id) {
+function showList(id, task_id) {
     var that = this;
     var li = this.listli[id];
     var list = this.listmap[id];
@@ -753,6 +771,12 @@ function showList(id) {
     }
     this.filterTask(true);
     this.sortTask();
+    if (task_id) {
+        var taskli = that.taskli[id + '-' + task_id];
+        if (taskli) {
+            taskli.effect("highlight", {}, 3000);
+        }
+    }
     // 未読があった場合更新
     if (li.hasClass('updated')) {
         li.removeClass('updated');
@@ -897,8 +921,16 @@ function renderBadge(list) {
     }
 }
 function needCount(task) {
-    if (task.closed || task.status > 1) {
+    if (task.closed) {
         return false;
+    }
+    var my_order = this.isMe(task.registrant_id);
+    if (task.status === 2) {
+        if (my_order) {
+            return true;
+        } else {
+            return false;
+        }
     }
     if (task.due) {
         var mdy = task.due.split('/');
@@ -907,13 +939,11 @@ function needCount(task) {
         if (date.getTime() > now.getTime()) {
             return false;
         }
-    } else if (0) {
-        return false;
     }
     if (task.assignee_ids.length) {
         return this.findMe(task.assignee_ids);
     }
-    return this.isMe(task.registrant_id);
+    return my_order;
 }
 function renderCommentBadge() {
     if (this.unread_comment_count) {
@@ -1355,7 +1385,7 @@ function openCallbackEditList(e, ele) {
             var member = this.friend_ids[member_id];
             createListAdmins.append(this.createAssigneeList(member));
         } else {
-            console.log(member_id);
+            // console.log(member_id);
         }
     }
 
@@ -1367,7 +1397,7 @@ function openCallbackEditList(e, ele) {
             var member = this.friend_ids[member_id];
             createListMembers.append(this.createAssigneeList(member));
         } else {
-            console.log(member_id);
+            // console.log(member_id);
         }
     }
 }
@@ -1550,30 +1580,7 @@ function tasksCommentFilter(li) {
     return false;
 }
 function tasksTodoFilter(list, task) {
-    // fixed, closed
-    if (task.status === 2 || task.closed) {
-        return false;
-    }
-    var isAssigneeMe = false;
-    var isOwnerMe = this.isMe(list.doc.owner_id);
-    if ("assignee" in task) {
-        for (var i = 0; i < task.assignee_ids.length; i++) {
-            var assignee_id = task.assignee_ids[i];
-            if (this.isMe(assignee_id)) {
-                isAssigneeMe = true;
-                break;
-            }
-        }
-    }
-    // 自分以外が担当者
-    if (task.assignee_ids.length && !isAssigneeMe) {
-        return false;
-    }
-    // 担当者未定で自分以外がオーナー
-    if (!task.assignee_ids.length && !isOwnerMe) {
-        return false;
-    }
-    return true;
+    return this.needCount(task);
 }
 function tasksRequestFilter(list, task) {
     // closed
@@ -1763,8 +1770,14 @@ function openCallbackClearTrash(e, ele) {
 function submitCreateTask(form) {
     var that = this;
     
-    var list = this.current_list;
     var task_id = form.data('task-id');
+    var list;
+    if (task_id) {
+        var list_id = form.data('list-id');
+        list = this.listmap[list_id];
+    } else {
+        list = this.current_list;
+    }
     var url = task_id ? '/api/1/task/update' : '/api/1/task/create';
     var title = form.find('input[name=title]').val();
     var description = form.find('textarea[name=description]').val();
@@ -1773,12 +1786,12 @@ function submitCreateTask(form) {
         alert('please input task title.');
         return;
     }
-    var assignee_ids = [];
     var registrant_id = this.findMeFromList(list);
     if (!registrant_id) {
         alert("can't find registrant.");
         return;
     }
+    var assignee_ids = [];
     form.find('input[name=assignee]:checked').each(function(i, ele){
         assignee_ids.push(ele.value);
     });
@@ -1932,19 +1945,30 @@ function createTaskElement(list, task) {
     this.taskli[list.id + '-' + task.id] = li;
     li.find('.title').text(task.title);
     li.find('.due').text(task.due);
+    if ("registrant_id" in task) {
+        var url = that.getProfileImageUrl(task.registrant_id);
+        var img = $('<img/>').attr('src', url);
+        img.css('twitter_profile_image');
+        li.find('.assignee')
+            .append(img)
+            .append($('<span class="icon icon-right"/>'));
+        if (this.isMe(task.registrant_id)) {
+            li.find('.assignee').addClass('my');
+        }
+    }
     if ("assignee_ids" in task && task.assignee_ids && task.assignee_ids.length) {
         for (var i = 0; i < task.assignee_ids.length; i++) {
             var assignee_id = task.assignee_ids[i];
             var url = that.getProfileImageUrl(assignee_id);
             var img = $('<img/>').attr('src', url);
             img.css('twitter_profile_image');
-            li.find('.assignee')
-                .removeClass('icon-address-off')
-                .append(img);
+            li.find('.assignee').append(img);
             if (this.isMe(assignee_id)) {
                 li.find('.assignee').addClass('my');
             }
         }
+    } else {
+        li.find('.assignee').append($('<span class="icon icon-address-off"/>'));
     }
     
     

@@ -54,6 +54,7 @@ sub update {
     
     my $success;
     my $target_task;
+    my $action = 'update-task';
     my $doc = $c->open_list_doc($account, 'member', $list_id);
     for my $task (@{$doc->{tasks}}) {
         if ($task->{id} == $task_id) {
@@ -63,6 +64,18 @@ sub update {
                 if (defined $val) {
                     $task->{$key} = $val=~/^\d+$/ ? int($val) : $val;
                 }
+            }
+            my $status = $c->req->param('status');
+            my $closed = $c->req->param('closed');
+            my $status_action_map = {
+                0 => 'reopen-task',
+                1 => 'start-task',
+                2 => 'fix-task'
+            };
+            if (defined $status) {
+                $action = $status_action_map->{$status};
+            } elsif (defined $closed) {
+                $action = $closed ? 'close-task' : 're' . $status_action_map->{$task->{status}};
             }
             if ($c->req->param('assignee_ids[]')) {
                 my @assignee_ids = $c->req->param('assignee_ids[]');
@@ -79,7 +92,7 @@ sub update {
     die 'NotFound' unless $success;
     $c->append_history($doc, {
         id      => $registrant_id,
-        action  => 'update-task',
+        action  => $action,
         task_id => $task_id,
         date    => time
     });

@@ -496,6 +496,9 @@ body > div > article section > ul li div.assignee {
     width: auto;
     min-width: 16px;
 }
+body > div > article section > ul li div.assignee:hover {
+    -webkit-transform: none;
+}
 body > div > article section > ul li div.assignee img {
     width: 16px;
 }
@@ -553,9 +556,13 @@ body > div > article section > ul li .commentBox textarea {
     width: 100%;
     resize: none;
 }
+body > div > article section > ul.timeline {
+    cursor: pointer;
+}
 body > div > article section > ul.timeline li {
     line-height: 1.6;
 }
+
 body > div > article section > ul.timeline li span {
     display: block;
     float: left;
@@ -563,22 +570,20 @@ body > div > article section > ul.timeline li span {
 }
 body > div > article section > ul.timeline li span.list {
     color: #1E57FF;
-    cursor: pointer;
-}
-body > div > article section > ul.timeline li span.list:hover {
-    text-decoration: underline;
 }
 body > div > article section > ul.timeline li span.date {
     color: gray;
     font-size: 10px;
+    margin-top: 4px;
 }
 body > div > article section > ul.timeline li span.action {
-    cursor: default;
+    /*cursor: default;*/
 }
 body > div > article section > ul.timeline li span.code {
     height: 16px;
     width: 16px;
     margin-top: 3px;
+    vertical-align: baseline;
     background-repeat: no-repeat;
     background-position: 0px 0px;
     background-size:  16px 16px;
