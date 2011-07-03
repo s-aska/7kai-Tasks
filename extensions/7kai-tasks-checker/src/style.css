@@ -40,11 +40,12 @@ ul {
     padding: 0;
 }
 #popup-page article li {
-    font-size: 12px;
+    font-size: 11px;
     margin: 0 0 4px 0;
     padding: 0;
     line-height: 1;
     cursor: pointer;
+    font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
 }
 #popup-page article li:hover {
     background-color: #fcea6c;
@@ -58,11 +59,13 @@ ul {
 }
 #popup-page article li span.screen_name {
     margin-left: 4px;
+    font-size: 12px;
     font-weight: bold;
     color: #1E57FF;
 }
 #popup-page article li span.action {
     margin-left: 4px;
+    color: #333333;
 }
 #popup-page article li span.list {
     margin-left: 4px;

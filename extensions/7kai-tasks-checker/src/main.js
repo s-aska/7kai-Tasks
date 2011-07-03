@@ -45,6 +45,7 @@ ns.Tasks.prototype = {
     // 初期化系
     startBackground: startBackground,
     startOptionPage: startOptionPage,
+    startNotifyPage: startNotifyPage,
     handleEvent: handleEvent,
     initTimer: initTimer
 };
@@ -85,6 +86,17 @@ function startOptionPage($) {
     });
     this.fillOption($);
 }
+function startNotifyPage() {
+    var notify = this.notify;
+    this.parts.notify
+        .data('list-id', notify.history.list_id)
+        .data('task-id', notify.history.task_id);
+    this.parts.notify.find('img').attr('src', notify.friend.profile_image_url);
+    this.parts.notify.find('.action').text(notify.action_name);
+    this.parts.notify.find('.screen_name').text(notify.friend.screen_name);
+    this.parts.notify.find('.date').text('(' + this.timestamp(notify.history.date) + ')');
+    this.parts.notify.find('.list').text(notify.history.list_name);
+}
 function handleEvent(e) {
     var ele = $(e.currentTarget);
     var callback = ele.data('callback');
@@ -97,10 +109,8 @@ function initTimer() {
 }
 function refreshBadgeTimer() {
     var that = this;
-    // console.log('refreshBadgeTimer');
     this.refreshBadge()
     .always(function(){
-        // console.log('refreshBadgeTimer always');
         window.setTimeout(function(){
             that.refreshBadgeTimer();
         }, that.INTERVAL);
@@ -115,7 +125,6 @@ function refresh() {
 }
 function refreshBadge(popup) {
     var that = this;
-    // console.log('refreshBadge');
     return this
         .refresh()
         .done(function(data){
@@ -143,6 +152,7 @@ function refreshBadge(popup) {
                     if (that.needHistory(data.account, history)) {
                         if (history.date > last_history_time) {
                             history.list_name = list.doc.name;
+                            history.list_id = list.id;
                             last_history = history;
                             last_history_time = history.date;
                         }
@@ -173,21 +183,15 @@ function refreshBadge(popup) {
                     var key = 'text-' + history.action + '-' + account.lang;
                     var action_name = that.parts.text.data(key);
                     if (!that.option.notification_off) {
-                        var notification = webkitNotifications.createNotification(
-                            // 'icon-48.png',
-                            friend.profile_image_url,
-                            '7kat Tasks Notification',
-                            friend.screen_name + ' '
-                            + action_name + ' '
-                            + history.list_name + ' '
-                            + '(' + that.timestamp(history.date) + ' ago)'
+                        that.notify = {
+                            history: history,
+                            action_name: action_name,
+                            friend: friend
+                        };
+                        var notification = webkitNotifications.createHTMLNotification(
+                            'notify.html'
                         );
                         notification.show();
-                        if (that.option.notification_auto_close) {
-                            setTimeout(function(){
-                                notification.cancel();
-                            }, that.option.notification_auto_close * 1000);
-                        }
                     }
                     if (!popup) {
                         chrome.browserAction.setIcon({path: that.NOTIFY_ICON});
@@ -196,20 +200,16 @@ function refreshBadge(popup) {
             }
         })
         .fail(function(){
-            // console.log('refreshBadge fail');
             chrome.browserAction.setBadgeBackgroundColor(that.ERROR_BADGE_COLOR);
             chrome.browserAction.setBadgeText({text: '-'});
         });
 }
 function refreshPopupPage(popup) {
     var that = this;
-    // console.log('refreshPopupPage');
     chrome.browserAction.setIcon({path: that.NORMAL_ICON});
     this.refreshBadge(true)
         .done(function(data){
             // page render.
-            // console.log('refreshPopupPage done');
-            // console.log(data);
             var lists = data.account.lists;
             var histories = [];
             for (var i = 0, max_i = lists.length; i < max_i; i++) {
@@ -250,9 +250,18 @@ function openServicePage(e, ele, callback) {
 }
 function openListPage(e, ele) {
     var list_id = ele.data('list-id');
+    var task_id = ele.data('task-id');
     this.openServicePage(e, ele, function(tab){
         chrome.tabs.update(tab.id, {selected: true});
-        chrome.tabs.sendRequest(tab.id, {list_id: list_id});
+        chrome.tabs.sendRequest(tab.id, {
+            method: 'refresh',
+            arguments: [
+                {
+                    select_list_id: list_id,
+                    select_task_id: task_id
+                }
+            ]
+        });
     });
 }
 function loadOption() {
@@ -281,8 +290,16 @@ function saveOption(e, $) {
     });
 }
 function needCount(account, task) {
-    if (task.closed || task.status > 1) {
+    if (task.closed) {
         return false;
+    }
+    var my_order = this.isMe(account, task.registrant_id);
+    if (task.status === 2) {
+        if (my_order) {
+            return true;
+        } else {
+            return false;
+        }
     }
     if (task.due) {
         var mdy = task.due.split('/');
@@ -295,7 +312,7 @@ function needCount(account, task) {
     if (task.assignee_ids.length) {
         return this.findMe(account, task.assignee_ids);
     }
-    return this.isMe(account, task.registrant_id);
+    return my_order;
 }
 function needHistory(account, history) {
     return !(this.isMe(account, history.id));
@@ -327,6 +344,9 @@ function renderHistories(account, histories) {
         }
         for (var i = 0, max = histories.length; i < max; i++) {
             var history = histories[i];
+            if (!history.task_id) {
+                history.task_id = 0;
+            }
             var friend = friend_ids[history.id];
             var screen_name = $('<span class="screen_name"/>').text(friend.screen_name);
             var icon = $('<img/>').attr('src', friend.profile_image_url);
@@ -347,6 +367,7 @@ function renderHistories(account, histories) {
             .appendTo(that.parts.notifications)
             .data('callback', 'openListPage')
             .data('list-id', history.list_id)
+            .data('task-id', history.task_id)
             .get(0).addEventListener("click", that, false);
         }
     });
