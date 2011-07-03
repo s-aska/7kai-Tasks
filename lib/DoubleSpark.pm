@@ -159,4 +159,11 @@ sub append_history {
     }
 }
 
+sub lang {
+    my ($c) = @_;
+    my $lang = $c->req->param('lang') || $c->req->header('accept-language') || '';
+    return 'ja' if $lang=~/^ja/;
+    return 'en';
+}
+
 1;

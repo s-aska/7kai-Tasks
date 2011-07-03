@@ -1,0 +1,103 @@
+h1, h2, ul, li, p {
+    margin: 0;
+    padding: 0;
+}
+ul {
+    list-style: none;
+}
+.clearfix:before,
+.clearfix:after {
+    content:"";
+    display:table;
+}
+.clearfix:after {
+    clear:both;
+}
+#popup-page {
+    width: 360px;
+}
+#popup-page nav ul {
+    margin: 0;
+    padding: 0;
+}
+#popup-page nav li {
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    color: blue;
+    text-decoration: underline;
+}
+#popup-page nav li:hover {
+    cursor: pointer;
+}
+#popup-page h2 {
+    font-size: 20px;
+    margin: 0 0 6px 0;
+    padding: 0;
+}
+#popup-page article ul {
+    margin: 0 0 0 10px;
+    padding: 0;
+}
+#popup-page article li {
+    font-size: 12px;
+    margin: 0 0 4px 0;
+    padding: 0;
+    line-height: 1;
+    cursor: pointer;
+}
+#popup-page article li:hover {
+    background-color: #fcea6c;
+}
+#popup-page article li img {
+    display: block;
+    float: left;
+    width: 32px;
+    height: 32px;
+    vertical-align: top;
+}
+#popup-page article li span.screen_name {
+    margin-left: 4px;
+    font-weight: bold;
+    color: #1E57FF;
+}
+#popup-page article li span.action {
+    margin-left: 4px;
+}
+#popup-page article li span.list {
+    margin-left: 4px;
+    font-weight: bold;
+    color: #1E57FF;
+}
+#popup-page article li span.date {
+    color: gray;
+    margin-left: 4px;
+    font-size: 10px;
+}
+
+#option-page {
+    margin: 20px;
+}
+#option-page h1 {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+#option-page h2 {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+#option-page li {
+    font-size: 14px;
+}
+#option-page button {
+    margin-top: 10px;
+}
+#notification-auto-close {
+    width: 3em;
+}
+#msg {
+    display: none;
+    padding: 4px;
+    color: #009900;
+    background-color: #e0ffe0;
+}

@@ -1,65 +1,33 @@
-<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
 <script type="text/javascript" src="jquery-1.6.1.min.js"></script>
-<!-- <script type="text/javascript" src="main.js"></script> -->
+<script type="text/javascript" src="localizer.js"></script>
+<script type="text/javascript" src="main.js"></script>
 <script>
-
-var SIGNED_IN_BADGE_COLOR = {color: [208, 0, 24, 255]};
-var ERROR_BADGE_COLOR = {color: [190, 190, 190, 255]};
-
-chrome.browserAction.onClicked.addListener(function(tab){
-    // var url = 'http://tasks.7kai.org';
-    // chrome.tabs.create({url: url});
-    updateTask();
+var tasks;
+$(document).ready(function() {
+    tasks = new Tasks();
+    tasks.startBackground();
 });
-
-function isCount(task) {
-    if (!task.closed && task.status < 2) {
-        return true;
-    }
-    return false;
-}
-
-function updateTask() {
-    var url = 'http://tasks.7kai.org/api/1/account/';
-    $.ajax({
-        type: 'get',
-        url: url,
-        dataType: 'json'
-    })
-    .done(function(data){
-        var count = 0;
-        var lists = data.account.lists;
-        for (var i = 0; i < lists.length; i++) {
-            var list = lists[i];
-            var tasks = list.doc.tasks;
-            for (var j = 0; j < tasks.length; j++) {
-                var task = tasks[j];
-                if (isCount(task)) {
-                    count++;
-                }
-            }
-        }
-        if (count > 0) {
-            chrome.browserAction.setBadgeBackgroundColor(SIGNED_IN_BADGE_COLOR);
-            chrome.browserAction.setBadgeText({text: count.toString()});
-        } else {
-            chrome.browserAction.setBadgeText({text: ''});
-        }
-    })
-    .fail(function(){
-        chrome.browserAction.setBadgeBackgroundColor(ERROR_BADGE_COLOR);
-        chrome.browserAction.setBadgeText({text: '-'});
-    });
-}
-
-function updateTaskIntervalCall() {
-  updateTask();
-  
-  var updateTaskInterval = 60 * 1000;
-  
-  window.setTimeout('updateTaskIntervalCall()', updateTaskInterval);
-}
-
-updateTaskIntervalCall();
 </script>
+</head>
+<body>
+<div id="text"
+    data-text-create-task-en="create the task of the"
+    data-text-create-task-ja="タスクを作成"
+    data-text-update-task-en="update the task of the"
+    data-text-update-task-ja="タスクを更新"
+    data-text-clear-task-en="clear the task of the"
+    data-text-clear-task-ja="完了済タスクを削除"
+    data-text-create-list-en="create a"
+    data-text-create-list-ja="リストを作成"
+    data-text-update-list-en="updated the"
+    data-text-update-list-ja="リストを更新"
+    data-text-create-comment-en="commented on a task in"
+    data-text-create-comment-ja="コメント"
+    data-text-delete-comment-en="remove the comment of the"
+    data-text-delete-comment-ja="コメントを削除"
+></div>
+</body>
 </html>

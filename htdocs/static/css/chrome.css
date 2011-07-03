@@ -202,6 +202,18 @@ span.icon {
 .icon-progress-off {
     background-image: url(/static/img/progress_off.png);
 }
+.icon-badge {
+    display: block;
+    width: auto;
+    height: auto;
+    padding: 6px 8px;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    background-color: red;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+}
 li.twitter_profile_image img {
     width: 32px;
     height: 32px;
@@ -283,11 +295,11 @@ body > div > aside > nav ul li {
     position: relative;
     padding: 8px 0px 8px 32px;
     border-bottom: 1px solid #cecece;
+    cursor: pointer;
 }
 body > div > aside > nav ul li:hover {
     background-color: #fcea6c;
     /*background: -webkit-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));*/
-    cursor: pointer;
 }
 body > div > aside > nav ul li.selected {
     background-color: #f7d208;
@@ -569,6 +581,8 @@ body > div > article section > ul.timeline li span.code {
     margin-top: 3px;
     background-repeat: no-repeat;
     background-position: 0px 0px;
+    background-size:  16px 16px;
+    -o-background-size:  16px 16px;
     -moz-background-size:  16px 16px;
     -webkit-background-size: 16px 16px;
 }
@@ -695,9 +709,30 @@ form.confirm {
 #create-list-window {
     width: 300px;
 }
+#create-list-admins,
 #create-list-members {
     max-height: 200px;
     overflow-y: auto;
+}
+#create-list-admins li,
+#create-list-members li {
+    position: relative;
+    margin-bottom: 2px;
+}
+#create-list-admins img,
+#create-list-members img {
+    margin-right: 2px;
+    vertical-align: middle;
+}
+#create-list-admins li:hover,
+#create-list-members li:hover {
+    background-color: #fcea6c;
+}
+#create-list-admins .icon-delete,
+#create-list-members .icon-delete {
+    position: absolute;
+    right: 4px;
+    cursor: pointer;
 }
 #list-settings-window {
     width: 300px;
@@ -727,4 +762,29 @@ form.confirm {
     line-height: 1.2;
 }
 
+/********** scrollbar **********/
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    padding: 18px;
+    -webkit-border-radius: 1ex
+}
+::-webkit-scrollbar-thumb {
+    background-color: rgba(053,057,071,0.3);
+    padding: 8px;
+    width: 6px;
+    height: 6px;
+    -webkit-border-radius: 1ex;
+}
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment {
+    display: block;
+    height: 10px
+}
+::-webkit-scrollbar-thumb:vertical,
+::-webkit-scrollbar-thumb:horizontal {
+    height: 3px;
+    width: 3px;
+    margin: 3px;
+}
 

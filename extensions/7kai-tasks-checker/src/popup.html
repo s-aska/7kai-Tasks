@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>7kai Tasks Checker</title>
+<link rel="stylesheet" type="text/css" href="style.css" media="screen">
+<script type="text/javascript" src="jquery-1.6.1.min.js"></script>
+<script>
+var bg;
+$(document).ready(function() {
+    bg = chrome.extension.getBackgroundPage();
+    bg.tasks.parts.notifications = $('article ul');
+    $('nav li').each(function(i, ele){
+        ele.addEventListener("click", bg.tasks, false);
+    });
+    bg.tasks.refreshPopupPage();
+});
+</script>
+</head>
+<body id="popup-page">
+<nav>
+<ul>
+<li data-callback="openServicePage">Open Tasks</li>
+<li data-callback="openOptionPage">Options</li>
+</ul>
+</nav>
+<h2>Notifications</h2>
+<article>
+<ul>
+<li>loading...</li>
+</ul>
+</article>
+</body>
+</html>

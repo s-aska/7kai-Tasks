@@ -30,9 +30,7 @@ use Text::Xslate;
             uri_for  => sub { Amon2->context()->uri_for(@_) },
             lang => sub {
                 my $c = Amon2->context();
-                my $lang = $c->req->param('lang') || $c->req->header('accept-language') || '';
-                return 'ja' if $lang=~/^ja/;
-                return 'en';
+                return $c->lang;
             },
             is_ff => sub {
                 my $c = Amon2->context();

@@ -63,10 +63,12 @@ ns.Tasks.prototype = {
     submitFinalize: submitFinalize,
     showTimeline: showTimeline,
     renderTimeline: renderTimeline,
+    showList: showList,
     switchList: switchList,
     switchFilterList: switchFilterList,
     renderList: renderList,
     renderBadge: renderBadge,
+    needCount: needCount,
     renderCommentBadge: renderCommentBadge,
     createList: createList,
     modifyList: modifyList,
@@ -82,7 +84,7 @@ ns.Tasks.prototype = {
     readComment: readComment,
     isMe: isMe,
     findMe: findMe,
-    findMeByList: findMeByList,
+    findMeFromList: findMeFromList,
     listReadLastRev: listReadLastRev,
     listReadLastTime: listReadLastTime,
     clickStatebleCheckbox: clickStatebleCheckbox,
@@ -98,6 +100,7 @@ ns.Tasks.prototype = {
     
     // SideMenu
     clickListDisplaySwitch: clickListDisplaySwitch,
+    clickListBadgeSwitch: clickListBadgeSwitch,
     openCallbackCreateList: openCallbackCreateList,
     openCallbackCreateTaskWithMember: openCallbackCreateTaskWithMember,
     openCallbackEditList: openCallbackEditList,
@@ -223,17 +226,17 @@ function initEvent() {
     });
     
     // 
-    $('article .tasks > ul > li').each(function(i, ele){
-        // addEvent($(ele), 'click', function (event) {
-        //     console.log('click');
-        //     // event.dataTransfer.setData('Text', box.attr('id'));
-        // }, false);
-        ele.setAttribute('draggable', 'true');
-        addEvent(ele, 'dragstart', function (event) {
-            console.log(ele);
-            // event.dataTransfer.setData('Text', box.attr('id'));
-        }, false);
-    });
+    // $('article .tasks > ul > li').each(function(i, ele){
+    //     addEvent($(ele), 'click', function (event) {
+    //         console.log('click');
+    //         // event.dataTransfer.setData('Text', box.attr('id'));
+    //     }, false);
+    //     ele.setAttribute('draggable', 'true');
+    //     addEvent(ele, 'dragstart', function (event) {
+    //         console.log(ele);
+    //         event.dataTransfer.setData('Text', box.attr('id'));
+    //     }, false);
+    // });
     
     this.parts.tasks.sortable({
         handle: 'div.grip',
@@ -278,24 +281,33 @@ function initEvent() {
     
     // Create Task Window
     $('#create-task-date').datepicker();
-    $('#create-list-assignee').autocomplete({
-		source: function(request, response) {
-		    response($.ui.autocomplete.filter(that.assignee, request.term));
-		},
-		select: function(event, ui) {
-		    that.createAssigneeList(that.friends[ui.item.value]).prependTo($('#create-list-members'));
-        }
-	}).data('autocomplete')._renderItem = function(ul, item) {
-        return $(document.createElement('li'))
-            .data('item.autocomplete', item)
-            .append("<a>"+ item.label + "</a>")
-            .appendTo(ul);
-    };
-	$('#create-list-assignee').bind('autocompleteclose', function(event, element){
-	    $('#create-list-assignee').val('');
-	});
-
     
+    var bindAutocomplete = function(selector, prependTo){
+        selector.autocomplete({
+    		source: function(request, response) {
+    		    response($.ui.autocomplete.filter(that.assignee, request.term));
+    		},
+    		select: function(event, ui) {
+    		    that.createAssigneeList(that.friends[ui.item.value])
+    		    .prependTo(prependTo);
+            }
+    	}).data('autocomplete')._renderItem = function(ul, item) {
+            return $(document.createElement('li'))
+                .data('item.autocomplete', item)
+                .append("<a>"+ item.label + "</a>")
+                .appendTo(ul);
+        };
+        selector.bind('autocompleteclose', function(event, element){
+    	    selector.val('');
+    	});
+    };
+    bindAutocomplete.call(this, $('#create-list-members-input'), $('#create-list-members'));
+    bindAutocomplete.call(this, $('#create-list-admins-input'), $('#create-list-admins'));
+    
+    document.getElementById('extentionsEventDiv').addEventListener('extentionsEvent', function() {
+        var eventData = document.getElementById('extentionsEventDiv').innerText;
+        that.showList(eventData);
+    });
 }
 function initEventGuide(ele) {
     var that = this;
@@ -389,6 +401,9 @@ function handleEvent(e) {
     case 'listDisplaySwitch':
         this.clickListDisplaySwitch(e, ele);
         break
+    case 'listBadgeSwitch':
+        this.clickListBadgeSwitch(e, ele);
+        break
     }
 }
 function windowResizeEvent() {
@@ -429,7 +444,7 @@ function getProfileImageUrl(user_id) {
             return this.getTwitterProfileImageUrl(friend.screen_name);
         }
     } else {
-        // console.log(user_id);
+        console.log('unknown id ' + user_id);
     }
 }
 function getTwitterProfileImageUrl(screen_name) {
@@ -489,6 +504,7 @@ function lookupUnknownMembers(unknownMembers, callback) {
                 var friend = data.friends[i];
                 var meta = {
                     user_id: friend.id,
+                    name: friend.name,
                     screen_name: friend.screen_name,
                     profile_image_url: friend.profile_image_url
                 };
@@ -501,7 +517,7 @@ function lookupUnknownMembers(unknownMembers, callback) {
 }
 function updateAccount(params, refresh) {
     var that = this;
-    this.ajax({
+    return this.ajax({
         type: 'post',
         url: '/api/1/account/update',
         data: params,
@@ -562,21 +578,24 @@ function refresh() {
             
             that.unread_comment_count = 0;
             var lists = that.account.lists;
-            for (var i = 0; i < lists.length; i++) {
+            for (var i = 0, max_i = lists.length; i < max_i; i++) {
                 var list = lists[i];
-                that.registList(list);
-                var humans = [list.doc.owner_id].concat(list.doc.member_ids);
-                for (var j = 0, max = humans.length; j < max; j++) {
+                var humans = [list.doc.owner_id].concat(list.doc.admin_ids).concat(list.doc.member_ids);
+                for (var j = 0, max_j = humans.length; j < max_j; j++) {
                     var human = humans[j];
                     if (!(human in that.friend_ids)) {
                         unknownMembers.push(human);
                     }
                 }
             }
-            that.sortList();
-            that.renderCommentBadge();
-            var showLastList = function(){
+            var showList = function(){
                 that.renderTimeline();
+                for (var i = 0, max = lists.length; i < max; i++) {
+                    that.registList(lists[i]);
+                }
+                that.sortList();
+                that.sortTask('updated');
+                that.renderCommentBadge();
                 if ("last_read_list" in that.account.state) {
                     var id = that.account.state.last_read_list;
                     that.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
@@ -585,13 +604,10 @@ function refresh() {
                 }
             };
             if (unknownMembers.length) {
-                that.lookupUnknownMembers(unknownMembers, showLastList);
+                that.lookupUnknownMembers(unknownMembers, showList);
             } else {
-                showLastList.call();
+                showList.call();
             }
-            
-            
-            that.sortTask('updated');
             
             for (var i = 0, max = that.filters.length; i < max; i++) {
                 var filter = that.filters[i];
@@ -708,10 +724,9 @@ function renderTimeline() {
         this.parts.timeline.append(li);
     }
 }
-function switchList(e) {
+function showList(id) {
     var that = this;
-    var li = $(e.currentTarget);
-    var id = li.data('list-id');
+    var li = this.listli[id];
     var list = this.listmap[id];
     this.current_list = list;
     this.current_filter = null;
@@ -723,6 +738,12 @@ function switchList(e) {
     // FIXME: 最終的に消す
     if ("owner_id" in list.doc) {
         this.renderMember(list.doc.owner_id);
+    }
+    if ('admin_ids' in list.doc && list.doc.admin_ids.length) {
+        var admin_ids = list.doc.admin_ids.sort();
+        for (var i = 0, max = admin_ids.length; i < max; i++) {
+            this.renderMember(admin_ids[i]);
+        }
     }
     if ('member_ids' in list.doc && list.doc.member_ids.length) {
         var member_ids = list.doc.member_ids.sort();
@@ -748,6 +769,11 @@ function switchList(e) {
         key: 'last_read_list',
         val: list.id
     });
+}
+function switchList(e) {
+    var li = $(e.currentTarget);
+    var id = li.data('list-id');
+    this.showList(id);
 }
 function switchFilterList(e) {
     var that = this;
@@ -776,7 +802,7 @@ function renderList(list) {
     li.attr('class', 'project');
     li.text(list.doc.name);
     li.append(badge);
-    if (this.isMe(list.doc.owner_id)) {
+    if (this.isMe(list.doc.owner_id) || this.findMe(list.doc.admin_ids)) {
         var settings = $('<span class="icon icon-settings" '
             + 'data-method="open" data-id="create-list-window" '
             + 'data-callback="editList"></span>');
@@ -812,11 +838,12 @@ function renderList(list) {
     
     // 設定画面
     var tr = $('<tr class="project" data-list-id="'
-     + list.id
-     + '">'
-     + '<td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>'
-     + '</tr>')
-    .prepend($('<td></td>').text(list.doc.name));
+        + list.id
+        + '">'
+        + '<td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>'
+        + '<td><input type="checkbox" checked="checked" data-method="listBadgeSwitch"></td>'
+        + '</tr>')
+        .prepend($('<td></td>').text(list.doc.name));
     if (this.isMe(list.doc.owner_id)) {
         tr.append($(
             '<td><span class="icon icon-delete" data-method="open" '
@@ -839,7 +866,7 @@ function renderList(list) {
     // Task
     if (list.id in that.account.state.hide_list) {
         li.hide();
-        tr.find('input').attr('checked', false);
+        tr.find('input[data-method="listDisplaySwitch"]').attr('checked', false);
     } else if (!update) {
         var tasks = list.doc.tasks;
         for (var i = 0; i < tasks.length; i++) {
@@ -847,11 +874,18 @@ function renderList(list) {
             li.hide();
         }
     }
+    if (list.id in that.account.state.ignore_badge_list) {
+        tr.find('input[data-method="listBadgeSwitch"]').attr('checked', false);
+    }
 }
 function renderBadge(list) {
+    if (list.id in this.account.state.ignore_badge_list) {
+        list.badge.hide();
+        return ;
+    }
     var count = 0;
     for (var j = 0; j < list.doc.tasks.length; j++) {
-        if (!list.doc.tasks[j].closed && list.doc.tasks[j].status < 2) {
+        if (this.needCount(list.doc.tasks[j])) {
             count++;
         }
     }
@@ -861,6 +895,25 @@ function renderBadge(list) {
     } else {
         list.badge.hide();
     }
+}
+function needCount(task) {
+    if (task.closed || task.status > 1) {
+        return false;
+    }
+    if (task.due) {
+        var mdy = task.due.split('/');
+        var date = new Date(mdy[2], mdy[0] - 1, mdy[1]);
+        var now = new Date();
+        if (date.getTime() > now.getTime()) {
+            return false;
+        }
+    } else if (0) {
+        return false;
+    }
+    if (task.assignee_ids.length) {
+        return this.findMe(task.assignee_ids);
+    }
+    return this.isMe(task.registrant_id);
 }
 function renderCommentBadge() {
     if (this.unread_comment_count) {
@@ -1074,6 +1127,25 @@ function findMe(ids) {
         }
     }
 }
+function findMeFromList(list) {
+    for (user_id in this.account.tw) {
+        var code = 'tw-' + user_id;
+        if (code === list.doc.owner_id) {
+            return code;
+        } else {
+            for (var i = 0, max = list.doc.admin_ids.length; i < max; i++) {
+                if (code === list.doc.admin_ids[i]) {
+                    return code;
+                }
+            }
+            for (var i = 0, max = list.doc.member_ids.length; i < max; i++) {
+                if (code === list.doc.member_ids[i]) {
+                    return code;
+                }
+            }
+        }
+    }
+}
 function listReadLastRev(list_id) {
     if (list_id in this.account.state.read.list) {
         return this.account.state.read.list[list_id].split(',')[0];
@@ -1104,13 +1176,20 @@ function timestamp(epoch) {
     }
     var diff = now_epoch - epoch;
     if (diff < 60) {
-        return diff + ' sec';
+        var s = diff > 1 ? 's' : '';
+        return diff + ' sec' + s + ' ago';
     } else if (diff < 3600) {
-        return parseInt(diff / 60) + ' minutes ago';
+        var min = parseInt(diff / 60);
+        var s = min > 1 ? 's' : '';
+        return min + ' minute' + s + ' ago';
     } else if (diff < (3600 * 24)) {
-        return parseInt(diff / 3600) + ' hours ago';
+        var hour = parseInt(diff / 3600);
+        var s = hour > 1 ? 's' : '';
+        return hour + ' hour' + s + ' ago';
     } else {
-        return parseInt(diff / (3600 * 24)) + ' days ago';
+        var day = parseInt(diff / (3600 * 24));
+        var s = day > 1 ? 's' : '';
+        return day + ' day' + s + ' ago';
     }
 }
 
@@ -1218,6 +1297,24 @@ function clickListDisplaySwitch(e, ele) {
         val: list_id
     });
 }
+function clickListBadgeSwitch(e, ele) {
+    var that = this;
+    var list_id = ele.parent().parent().data('list-id');
+    var method = ele.attr('checked') ? '-' : '+';
+    var list = this.listmap[list_id];
+    if (ele.attr('checked')) {
+        delete this.account.state.ignore_badge_list[list_id];
+    } else {
+        this.account.state.ignore_badge_list[list_id] = 1;
+    }
+    this.renderBadge(list);
+    this.updateAccount({
+        ns: 'state',
+        method: method,
+        key: 'ignore_badge_list',
+        val: list_id
+    });
+}
 function openCallbackCreateList(e, ele) {
     
     var form = $('#create-list-window');
@@ -1232,30 +1329,45 @@ function openCallbackCreateList(e, ele) {
     this.resetCreateList(form);
 }
 function openCallbackEditList(e, ele) {
-    
+
     var list = this.listmap[ele.data('list-id')];
-    
+
     var form = $('#create-list-window');
     form.data('list-id', list.id);
     form.find('footer input[type=checkbox], footer label').hide();
-    
+
     var h1 = form.find('h1:first');
     h1.text(h1.data('text-edit'));
-    
+
     form.find('input[name=name]').val(list.doc.name);
+
+    if (this.isMe(list.doc.owner_id)) {
+        form.find('li[data-owner-only]').show();
+    } else {
+        form.find('li[data-owner-only]').hide();
+    }
+
+    var createListAdmins = $('#create-list-admins');
+    createListAdmins.empty();
+    for (var i = 0, max = list.doc.admin_ids.length; i < max; i++) {
+        var member_id = list.doc.admin_ids[i];
+        if (member_id in this.friend_ids) {
+            var member = this.friend_ids[member_id];
+            createListAdmins.append(this.createAssigneeList(member));
+        } else {
+            console.log(member_id);
+        }
+    }
 
     var createListMembers = $('#create-list-members');
     createListMembers.empty();
-    if ("member_ids" in list.doc) {
-        var member_ids = list.doc.member_ids;
-        for (var i = 0; i < member_ids.length; i++) {
-            var member_id = member_ids[i];
-            if (member_id in this.friend_ids) {
-                var member = this.friend_ids[member_id];
-                createListMembers.append(this.createAssigneeList(member));
-            } else {
-                // console.log(member_id);
-            }
+    for (var i = 0, max = list.doc.member_ids.length; i < max; i++) {
+        var member_id = list.doc.member_ids[i];
+        if (member_id in this.friend_ids) {
+            var member = this.friend_ids[member_id];
+            createListMembers.append(this.createAssigneeList(member));
+        } else {
+            console.log(member_id);
         }
     }
 }
@@ -1275,6 +1387,7 @@ function submitCreateList(form) {
     var name = form.find('input[name=name]').val();
     var privacy = form.find('select[name=privacy]').val();
     var owner_id = form.find('select[name=owner]').val();
+    var admin_ids = [];
     var member_ids = [];
     if (!name.length) {
         alert('please input list name.');
@@ -1284,7 +1397,10 @@ function submitCreateList(form) {
         alert('please select owner.');
         return;
     }
-    form.find('li.member').each(function(i, ele){
+    form.find('#create-list-admins > li.member').each(function(i, ele){
+        admin_ids.push($(ele).data('id'));
+    });
+    form.find('#create-list-members > li.member').each(function(i, ele){
         member_ids.push($(ele).data('id'));
     });
     if (list_id) {
@@ -1300,6 +1416,7 @@ function submitCreateList(form) {
             name: name,
             privacy: privacy,
             owner_id: owner_id,
+            admin_ids: admin_ids,
             member_ids: member_ids
         },
         dataType: 'json'
@@ -1578,7 +1695,7 @@ function openCallbackCreateTask(e, ele) {
     var list = this.listmap[list_id];
     var ul = $('#create-task-assignee');
     ul.html('<li>Assignee:</li>');
-    var member_ids = [list.doc.owner_id].concat(list.doc.member_ids);
+    var member_ids = [list.doc.owner_id].concat(list.doc.admin_ids).concat(list.doc.member_ids);
     for (var i = 0, max = member_ids.length; i < max; i++) {
         var id = member_ids[i];
         var url = this.getProfileImageUrl(id);
@@ -1657,7 +1774,7 @@ function submitCreateTask(form) {
         return;
     }
     var assignee_ids = [];
-    var registrant_id = this.findMe([list.doc.owner_id].concat(list.doc.member_ids));
+    var registrant_id = this.findMeFromList(list);
     if (!registrant_id) {
         alert("can't find registrant.");
         return;
@@ -1670,15 +1787,6 @@ function submitCreateTask(form) {
     } else {
         that.submitFinalize(form);
     }
-    // console.log({
-    //     list_id: list.id,
-    //     task_id: task_id,
-    //     registrant: registrant,
-    //     title: title,
-    //     description: description,
-    //     due: due,
-    //     assignee: (assignee.length ? assignee : 0)
-    // });
     return this.ajax({
         type: 'post',
         url: url,
@@ -1717,6 +1825,7 @@ function submitCreateTask(form) {
                 var li2 = that.createTaskElement(list, task);
                 li.replaceWith(li2);
             }
+            that.renderBadge(list);
         }
     });
 }
@@ -1724,7 +1833,7 @@ function submitClearTrash(form) {
     var that = this;
     var list_id = form.data('list-id');
     var list = this.listmap[list_id];
-    var owner_id = this.findMe([list.doc.owner_id].concat(list.doc.member_ids));
+    var owner_id = this.findMeFromList(list);
     return this.ajax({
         type: 'post',
         url: '/api/1/list/clear',
@@ -1779,7 +1888,7 @@ function createAssigneeLabel(friend) {
         '<span><img class="twitter_profile_image" src="'
         + url
         + '">'
-        + friend.name + '(' + friend.screen_name + ')'
+        + friend.screen_name
         + '</span>';
     return html;
 }
@@ -1828,6 +1937,7 @@ function createTaskElement(list, task) {
             var assignee_id = task.assignee_ids[i];
             var url = that.getProfileImageUrl(assignee_id);
             var img = $('<img/>').attr('src', url);
+            img.css('twitter_profile_image');
             li.find('.assignee')
                 .removeClass('icon-address-off')
                 .append(img);
@@ -1958,7 +2068,7 @@ function clickTaskAction(e) {
     var list_id = li.data('list-id');
     var task_id = li.data('id');
     var list = that.listmap[list_id];
-    var registrant_id = this.findMe([list.doc.owner_id].concat(list.doc.member_ids));
+    var registrant_id = this.findMeFromList(list);
     if (!registrant_id) {
         alert("can't find registrant_id.");
         return;
@@ -2053,25 +2163,11 @@ function clickTaskAction(e) {
         li.slideUp(that.speed);
     }
 }
-function findMeByList(list) {
-    for (user_id in this.account.tw) {
-        var code = 'tw-' + user_id;
-        if (code === list.doc.owner_id) {
-            return code;
-        } else {
-            for (var i = 0; i < list.doc.member_ids.length; i++) {
-                if (code === list.doc.member_ids[i]) {
-                    return code;
-                }
-            }
-        }
-    }
-}
 function submitComment(list_id, task_id, text, form, comments) {
     var that = this;
     
     var list = this.listmap[list_id];
-    var owner_id = this.findMeByList(list);
+    var owner_id = this.findMeFromList(list);
     var comment = text.val();
     return this.ajax({
         type: 'post',
@@ -2130,7 +2226,7 @@ function renderComment(list_id, task_id, comment, comments) {
 function deleteComment(list_id, task_id, comment) {
     var that = this;
     var list = this.listmap[list_id];
-    var owner_id = this.findMeByList(list);
+    var owner_id = this.findMeFromList(list);
     return this.ajax({
         type: 'post',
         url: '/api/1/comment/delete',

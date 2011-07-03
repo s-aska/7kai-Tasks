@@ -35,38 +35,45 @@ $(document).ready(function() {
 <ul class="clearfix">
 <li class="member-name">
 <button
-  id="guide-switch"
-  class="on"
-  style="line-height: 0.8; font-size: 10px"
-  data-val="0"
-  data-method="guideSwitch"
-  data-guide-en="Toggle Show Guide"
-  data-guide-ja="ガイド表示切り替え"
-  data-text-on="Guide ON"
-  data-text-off="Guide OFF"
+    id="guide-switch"
+    class="on"
+    style="line-height: 0.8; font-size: 10px"
+    data-val="0"
+    data-method="guideSwitch"
+    data-guide-en="Toggle Show Guide"
+    data-guide-ja="ガイド表示切り替え"
+    data-text-on="Guide ON"
+    data-text-off="Guide OFF"
 >guide on</button>
 </li>
 <li class="member-name">[% screen_name %]</li>
 <li class="sign-out">
 <a
-  href="http://www.facebook.com/pages/7kai-Tasks/189391624444427?sk=wall"
-  target="_blank"
-  data-guide-en="Facebook Pages"
-  data-guide-ja="Facebook Pagesにてご意見・ご要望を受付中!!"
+    href="http://www.facebook.com/pages/7kai-Tasks/189391624444427?sk=wall"
+    target="_blank"
+    data-guide-en="Facebook Pages"
+    data-guide-ja="Facebook Pagesにてご意見・ご要望を受付中!!"
 >Feedback</a></li>
 <li class="settings">
 <a
-  href="javascript:void(0)"
-  data-method="open"
-  data-id="account-settings-window"
-  data-guide-en="Account Settings"
-  data-guide-ja="Twitterのアカウント追加やフレンドの再同期が出来ます"
+    href="javascript:void(0)"
+    data-method="open"
+    data-id="account-settings-window"
+    data-guide-en="Account Settings"
+    data-guide-ja="Twitterのアカウント追加やフレンドの再同期が出来ます"
 >Settings</a></li>
+<li class="document">
+<a
+    href="http://tasks.7kai.org/doc/"
+    target="_blank"
+    data-guide-en="Document"
+    data-guide-ja="マニュアル"
+>Doc</a></li>
 <li class="sign-out">
 <a
-  href="/signout"
-  data-guide-en="Cheers for good work day today."
-  data-guide-ja="今日も一日 お疲れ様でした"
+    href="/signout"
+    data-guide-en="Cheers for good work day today."
+    data-guide-ja="今日も一日 お疲れ様でした"
 >Sign Out</a></li>
 </ul>
 </nav>
@@ -355,9 +362,9 @@ $(document).ready(function() {
   data-text-update-task-ja="タスクを更新"
   data-text-clear-task-en="clear the task of the"
   data-text-clear-task-ja="完了済タスクを削除"
-  data-text-create-list-en="create a list called"
+  data-text-create-list-en="create a"
   data-text-create-list-ja="リストを作成"
-  data-text-update-list-en="updated a task in"
+  data-text-update-list-en="updated the"
   data-text-update-list-ja="リストを更新"
   data-text-create-comment-en="commented on a task in"
   data-text-create-comment-ja="コメント"
@@ -459,13 +466,19 @@ $(document).ready(function() {
 <ul>
 <li>List Name: <strong style="color: red;">*</strong></li>
 <li><input type="text" name="name" value="" placeholder="Write a name..." data-no-keep="1"></li>
-<li>Owner:</li>
-<li>
+<li data-owner-only="true">Owner:</li>
+<li data-owner-only="true">
 <select name="owner"></select>
+</li>
+<li>Admins:</li>
+<li>
+<input type="text" id="create-list-admins-input" name="" value="" placeholder="su_aska">
+<ul id="create-list-admins">
+</ul>
 </li>
 <li>Members:</li>
 <li>
-<input type="text" id="create-list-assignee" name="" value="" placeholder="su_aska">
+<input type="text" id="create-list-members-input" name="" value="" placeholder="su_aska">
 <ul id="create-list-members">
 </ul>
 </li>
@@ -527,63 +540,75 @@ $(document).ready(function() {
 <article>
 <table>
   <tr>
-    <td data->Name</td>
+    <td>Name</td>
     <td><span class="icon icon-switch"></span></td>
+    <td><span class="icon icon-badge">0</span></td>
     <td></td>
   </tr>
   <tr data-list-id="list-timeline">
     <td data-text-ja="タイムライン">Timeline</td>
     <td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>
     <td></td>
+    <td></td>
   </tr>
   <tr data-list-id="list-comment">
     <td data-text-ja="未読コメント">Unread Comment</td>
     <td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>
+    <td></td>
     <td></td>
   </tr>
   <tr data-list-id="list-all">
     <td data-text-ja="すべて">All</td>
     <td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>
     <td></td>
+    <td></td>
   </tr>
   <tr data-list-id="list-todo">
     <td data-text-ja="やるべき事">Something to do</td>
     <td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>
+    <td></td>
     <td></td>
   </tr>
   <tr data-list-id="list-request">
     <td data-text-ja="頼んだ事">Requested by me</td>
     <td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>
     <td></td>
+    <td></td>
   </tr>
   <tr data-list-id="list-watch">
     <td data-text-ja="関心のあるタスク">Watch</td>
     <td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>
     <td></td>
+    <td></td>
   </tr>
   <tr class="project">
     <td>リストA</td>
     <td><input type="checkbox"></td>
+    <td></td>
     <td><span class="icon icon-delete"></span></td>
   </tr>
   <tr class="project">
     <td>プロジェクトX</td>
     <td><input type="checkbox"></td>
+    <td></td>
     <td><span class="icon icon-delete"></span></td>
   </tr>
   <tr class="project">
     <td>サブプロジェクトX</td>
     <td><input type="checkbox"></td>
+    <td></td>
     <td><span class="icon icon-delete"></span></td>
   </tr>
   <tr class="project">
     <td>[B] Project</td>
     <td><input type="checkbox"></td>
+    <td></td>
     <td><span class="icon icon-delete"></span></td>
   </tr>
   <tr class="project">
     <td>[G] Aska's Liste</td>
     <td><input type="checkbox"></td>
+    <td></td>
     <td><span class="icon icon-delete"></span></td>
   </tr>
 </table>
@@ -672,6 +697,8 @@ $(document).ready(function() {
 </form>
 
 <div id="guide"></div>
+
+<div id="extentionsEventDiv" style="display: none;"></div>
 
 </body>
 </html>

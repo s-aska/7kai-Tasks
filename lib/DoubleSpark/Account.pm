@@ -62,6 +62,7 @@ sub new {
                     name => $name,
                     privacy => 'closed',
                     owner_id   => $owner_id,
+                    admin_ids => [],
                     member_ids => [],
                     tasks => [],
                     history => []
@@ -108,6 +109,7 @@ sub new {
     $doc->{state}->{checkbox} ||= {};
     $doc->{state}->{button} ||= {};
     $doc->{state}->{hide_list} ||= {};
+    $doc->{state}->{ignore_badge_list} ||= {};
     $doc->{state}->{sort}->{task} ||= {};
     $doc->{state}->{sort}->{list} ||= {};
     $doc->{state}->{read}->{list} ||= {};
@@ -167,7 +169,7 @@ sub to_hashref {
     return {%{$self}};
 }
 
-sub has_role_admin {
+sub has_role_owner {
     my ($self, $list) = @_;
     
     for my $user_id (keys %{ $self->{tw} }) {
@@ -179,10 +181,24 @@ sub has_role_admin {
     return ;
 }
 
+sub has_role_admin {
+    my ($self, $list) = @_;
+    
+    for my $code ($list->{owner_id}, @{$list->{admin_ids}}) {
+        for my $user_id (keys %{ $self->{tw} }) {
+            if ('tw-' . $user_id eq $code) {
+                return 1;
+            }
+        }
+    }
+    
+    return ;
+}
+
 sub has_role_member {
     my ($self, $list) = @_;
     
-    for my $code ($list->{owner_id}, @{$list->{member_ids}}) {
+    for my $code ($list->{owner_id}, @{$list->{admin_ids}}, @{$list->{member_ids}}) {
         for my $user_id (keys %{ $self->{tw} }) {
             if ('tw-' . $user_id eq $code) {
                 return 1;

@@ -1,20 +1,29 @@
 {
-	"name":"7kai Tasks Checker",
-	"version":"0.1",
-	"description": "7kai Tasks Checker",
-	"browser_action":{
-		"default_icon":"icon-19.png",
-		"default_title":"7kai Tasks Checker"
-	},
-	"icons": { 
-      "19": "icon-19.png",
-      "32": "icon-32.png",
-	  "128": "icon-128.png"
-	},
-	"background_page": "background.html",
-	"permissions": [
-		"tabs",
-		"notifications",
-		"http://tasks.7kai.org/"
-	]
+  "name":"7kai Tasks Checker",
+  "version":"2.1",
+  "description": "7kai Tasks Checker",
+  "browser_action":{
+  	"default_icon":"icon-19.png",
+  	"default_title":"7kai Tasks Checker",
+  	"popup": "popup.html"
+  },
+  "icons": { 
+    "19": "icon-19.png",
+    "32": "icon-32.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "background_page": "background.html",
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["http://tasks.7kai.org/chrome/viewer"],
+      "js": ["content.js"]
+    }
+  ],
+  "permissions": [
+  	"tabs",
+  	"notifications",
+  	"http://tasks.7kai.org/"
+  ]
 }

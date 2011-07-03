@@ -12,6 +12,7 @@ sub get {
     my $account = DoubleSpark::Account->new($c);
     $account->set_social_accounts($c);
     $account->set_lists($c);
+    $account->{lang} = $c->lang;
     $c->render_json({success => 1, account => $account->to_hashref});
 }
 

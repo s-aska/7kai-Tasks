@@ -21,6 +21,7 @@ sub create {
     my $account = DoubleSpark::Account->new($c);
     my $name = $c->req->param('name');
     my $owner_id = $c->req->param('owner_id');
+    my @admin_ids = $c->req->param('admin_ids[]');
     my @member_ids = $c->req->param('member_ids[]');
     my $privacy = $c->req->param('privacy') || 'closed';
     
@@ -32,7 +33,7 @@ sub create {
         owner => $owner_id,
         created_on => \'now()'
     });
-    for my $member_id (@member_ids) {
+    for my $member_id (@admin_ids, @member_ids) {
         $c->db->insert('list_member', {
             list_id => $list->list_id,
             member => $member_id,
@@ -45,6 +46,7 @@ sub create {
         name => $name,
         privacy => $privacy,
         owner_id => $owner_id,
+        admin_ids => \@admin_ids,
         member_ids => \@member_ids,
         tasks => [],
         history => [
@@ -70,6 +72,7 @@ sub update {
     my $list_id = $c->req->param('list_id');
     my $name = $c->req->param('name');
     my $owner_id = $c->req->param('owner_id');
+    my @admin_ids = $c->req->param('admin_ids[]');
     my @member_ids = $c->req->param('member_ids[]');
     
     return $c->res_403 if ! length $name;
@@ -77,7 +80,10 @@ sub update {
     my $doc_id = $list_id;
     my $doc = $c->open_list_doc($account, 'admin', $list_id);
     $doc->{name} = $name;
-    $doc->{owner_id} = $owner_id;
+    if ($account->has_role_owner($doc) && $owner_id) {
+        $doc->{owner_id} = $owner_id;
+    }
+    $doc->{admin_ids} = \@admin_ids;
     $doc->{member_ids} = \@member_ids;
     $c->append_history($doc, {
         id     => $owner_id,
@@ -87,7 +93,7 @@ sub update {
     $c->save_list_doc($account, $doc);
     
     my $members = {};
-    for my $member (@member_ids) {
+    for my $member (@admin_ids, @member_ids) {
         $members->{$member}++;
     }
     my ($id) = $list_id=~/(\d+)/;
@@ -125,14 +131,11 @@ sub delete {
     $c->res_403 if $list_id!~/^list-\d+/;
     
     my ($id) = $list_id=~/(\d+)/;
-    my $doc = $c->open_list_doc($account, 'admin', $list_id);
+    my $doc = $c->open_list_doc($account, 'owner', $list_id);
     my $txn = $c->db->txn_scope;
     $c->db->delete('list', {
         list_id => $id
     });
-    # $c->db->delete('list_member', {
-    #     list_id => $id
-    # });
     $c->remove_doc($doc);
     $txn->commit;
     
