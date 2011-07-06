@@ -3,13 +3,13 @@
 <p data-text-ja="ソーシャルタスク管理サービス">This service is unfinished.</p>
 <ul>
 <li><a href="/signin/twitter/oauth">Sign in with Twitter</a></li>
-<li><del><a href="/signin/facebook/oauth">Sign in with Facebook</a></del></li>
-<li><del><a href="/easy/">Sign in with Gmail</a></del></li>
+<!-- <li><del><a href="/signin/facebook/oauth">Sign in with Facebook</a></del></li>
+<li><del><a href="/easy/">Sign in with Gmail</a></del></li> -->
 </ul>
 <p><a href="https://chrome.google.com/webstore/detail/dolhpjcchfcnkcanamhgcgbnmcogdank">Chrome Extensions</a></p>
 <p><a href="http://tasks.7kai.org/doc/">Document</a></p>
 <p><a href="https://github.com/s-aska/7kai-Tasks">Source Code</a></p>
-<p>Support: Chrome, Safari, Firefox</p>
+<p>Support: Chrome, Safari, Firefox, Opera</p>
 </nav>
 
 <form>

@@ -1,0 +1,9 @@
+body > div.box {
+    display: block;
+}
+body > div.box > aside {
+    float: left;
+}
+body > div.box > article {
+    float: left;
+}

@@ -36,6 +36,11 @@ use Text::Xslate;
                 my $c = Amon2->context();
                 return 1 if $c->req->user_agent =~/Firefox/;
                 return ;
+            },
+            is_opera => sub {
+                my $c = Amon2->context();
+                return 1 if $c->req->user_agent =~/Opera/;
+                return ;
             }
         },
         %$view_conf

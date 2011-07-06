@@ -23,8 +23,10 @@ ns.Tasks.prototype = {
     localizer: null,
     
     // データ
+    is_webkit: false,
     lang: 'en',
     guide: true,
+    dragging: false,
     current_list: null,
     current_filter: null,
     account: null,
@@ -150,6 +152,12 @@ function initialize(options) {
     }
     this.lang = $('html').attr('lang');
     this.token = $('input[name=' + this.token_name + ']:first').val();
+    if (
+        (navigator.userAgent.indexOf('Chrome') != -1) ||
+        (navigator.userAgent.indexOf('Safari') != -1)
+    ) {
+        this.is_webkit = true;
+    }
 }
 
 // Init
@@ -183,6 +191,7 @@ function initParts() {
     this.parts.connectacs  = $('#connect-accounts');
     
     this.template.task     = this.parts.tasks.html();
+    this.template.assign   = $('#create-task-assign').html();
 }
 function initEvent() {
     var that = this;
@@ -225,22 +234,16 @@ function initEvent() {
         }
     });
     
-    // 
-    // $('article .tasks > ul > li').each(function(i, ele){
-    //     addEvent($(ele), 'click', function (event) {
-    //         console.log('click');
-    //         // event.dataTransfer.setData('Text', box.attr('id'));
-    //     }, false);
-    //     ele.setAttribute('draggable', 'true');
-    //     addEvent(ele, 'dragstart', function (event) {
-    //         console.log(ele);
-    //         event.dataTransfer.setData('Text', box.attr('id'));
-    //     }, false);
-    // });
-    
     this.parts.tasks.sortable({
         handle: 'div.grip',
         cursor: 'url(/static/img/openhand.cur), move',
+        start: function (e, ui) {
+            that.dragging = true;
+            that.parts.guide.hide();
+        },
+        stop: function (e, ui) {
+            that.dragging = false;
+        },
         update: function(e, ui) {
             that.sortUpdateTask();
         }
@@ -249,6 +252,13 @@ function initEvent() {
     
     this.parts.lists.sortable({
         cursor: 'url(/static/img/openhand.cur), move',
+        start: function (e, ui) {
+            that.dragging = true;
+            that.parts.guide.hide();
+        },
+        stop: function (e, ui) {
+            that.dragging = false;
+        },
         update: function(e, ui) {
             that.sortUpdateList();
         }
@@ -260,6 +270,22 @@ function initEvent() {
         form.find('button.cancel').click(function(){
             form.fadeOut(that.speed);
             return false;
+        });
+        form.find('input[type=text]:first').keydown(function(e){
+            if (e.keyCode == 27) {
+                if (e.shiftKey) {
+                    var reset = form.data('reset');
+                    if (reset) {
+                        that[reset].call(this, form);
+                    } else {
+                        form.find('*[data-no-keep=1]').val('');
+                        form.find('input[type=text]:first').get(0).focus();
+                    }
+                } else {
+                    document.activeElement.blur();
+                    form.hide();
+                }
+            }
         });
         form.bind('submit', function(){
             // form.find('input:first').val('').get(0).focus();
@@ -309,6 +335,16 @@ function initEvent() {
         var eventData = JSON.parse(eventText);
         that[eventData.method].apply(that, eventData.arguments);
     }, false);
+    
+    $(document).keydown(function(e){
+        if (document.activeElement.tagName === 'BODY') {
+            if (e.keyCode === 67) {
+                $('#create-task-button').click();
+                return false;
+            }
+        }
+        return true;
+    });
 }
 function initEventGuide(ele) {
     var that = this;
@@ -317,7 +353,10 @@ function initEventGuide(ele) {
         var msg = ele.data('guide-' + that.lang);
         ele.hover(function(){
             if (!that.guide) {
-                return;
+                return true;
+            }
+            if (that.dragging) {
+                return true;
             }
             var top = ele.offset().top + ele.height();
             var left = ele.offset().left;
@@ -410,8 +449,12 @@ function handleEvent(e) {
 function windowResizeEvent() {
     // FIXME: スクロールが発生した場合にボタンを有効化する
     var w_height = w.height();
-    $('aside > nav').height(w_height - 97);
-    $('article > section').height(w_height - 117);
+    var h_height = this.parts.footer.height();
+    if (h_height > 0) {
+        h_height+= 8;
+    }
+    $('aside > nav').height(w_height - h_height - 73);
+    $('article > section').height(w_height - h_height - 93);
 }
 
 // General
@@ -432,8 +475,7 @@ function message(message) {
 }
 function statusUpdate(message) {
     this.parts.status.text(message);
-    this.parts.console.prepend($(document.createElement('li')).text(message));
-    // FIXME: 一定件数で消す
+    // this.parts.console.prepend($(document.createElement('li')).text(message));
 }
 function getProfileImageUrl(user_id) {
     var friend = this.friend_ids[user_id];
@@ -605,8 +647,18 @@ function refresh(option) {
                     that.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
                     if (option.select_task_id) {
                         var taskli = that.taskli[id + '-' + option.select_task_id];
+                        var display = taskli.css('display');
                         if (taskli) {
-                            taskli.effect("highlight", {}, 3000);
+                            if (display === 'none') {
+                                taskli.removeClass('delete');
+                            }
+                            taskli.effect("highlight", {}, 3000, function(){
+                                if (display === 'none') {
+                                    taskli.slideUp(that.speed, function(){
+                                        taskli.addClass('delete');
+                                    });
+                                }
+                            });
                         }
                     }
                 } else if ("last_read_list" in that.account.state) {
@@ -634,10 +686,10 @@ function refresh(option) {
                 }
             }
             // checkox state 
-            for (var id in that.account.state.checkbox) {
-                document.getElementById(id).checked =
-                    that.account.state.checkbox[id] ? true : false;
-            }
+            // for (var id in that.account.state.checkbox) {
+            //     document.getElementById(id).checked =
+            //         that.account.state.checkbox[id] ? true : false;
+            // }
             for (var id in that.account.state.button) {
                 var button = $(document.getElementById(id));
                 if (that.account.state.button[id]) {
@@ -666,19 +718,19 @@ function refresh(option) {
 }
 function submitFinalize(form) {
     // keep
-    if (form.find('input[name=keep]:checked').length) {
+    // if (form.find('input[name=keep]:checked').length) {
         form.find('*[data-no-keep=1]').val('');
         form.find('input[type=text]:first').get(0).focus();
-    } else {
-        var reset = form.data('reset');
-        this[reset].call(this, form);
-        // continue
-        if (form.find('input[name=continue]:checked').length) {
-            form.find('input[type=text]:first').get(0).focus();
-        } else {
-            form.fadeOut(this.speed);
-        }
-    }
+    // } else {
+        // var reset = form.data('reset');
+        // this[reset].call(this, form);
+    //     // continue
+    //     if (form.find('input[name=continue]:checked').length) {
+    //         form.find('input[type=text]:first').get(0).focus();
+    //     } else {
+    //         form.fadeOut(this.speed);
+    //     }
+    // }
 }
 function showTimeline(e) {
     this.parts.timeline.show();
@@ -891,7 +943,8 @@ function renderList(list) {
     if (list.id in that.account.state.hide_list) {
         li.hide();
         tr.find('input[data-method="listDisplaySwitch"]').attr('checked', false);
-    } else if (!update) {
+    }
+    if (!update) {
         var tasks = list.doc.tasks;
         for (var i = 0; i < tasks.length; i++) {
             var li = this.renderTask(list, tasks[i]);
@@ -1053,12 +1106,20 @@ function filterTask(readComment) {
     this.parts.tasks.find('> li').each(function(i, ele){
         var ele = $(ele);
         if (filter(ele)) {
-            ele.slideDown(that.speed);
+            if (that.is_webkit) {
+                ele.slideDown(that.speed);
+            } else {
+                ele.show();
+            }
             if (readComment) {
                 that.readComment(ele);
             }
         } else {
-            ele.slideUp(that.speed);
+            if (that.is_webkit) {
+                ele.slideUp(that.speed);
+            } else {
+                ele.hide();
+            }
         }
     });
     this.renderCommentBadge();
@@ -1110,6 +1171,9 @@ function sortTask(id) {
             return b.data('updated') - a.data('updated');
         }
     });
+    if (id === 'due') {
+        lis.reverse();
+    }
     for (var i = 0; i < lis.length; i++) {
         lis[i].appendTo(this.parts.tasks);
     }
@@ -1580,6 +1644,9 @@ function tasksCommentFilter(li) {
     return false;
 }
 function tasksTodoFilter(list, task) {
+    if (list.id in this.account.state.ignore_badge_list) {
+        return false;
+    }
     return this.needCount(task);
 }
 function tasksRequestFilter(list, task) {
@@ -1701,7 +1768,7 @@ function openCallbackCreateTask(e, ele) {
                 : $(ele).parent().data('list-id');
     var list = this.listmap[list_id];
     var ul = $('#create-task-assign');
-    ul.html('<li>Assign:</li>');
+    ul.html(this.template.assign);
     var member_ids = [list.doc.owner_id].concat(list.doc.admin_ids).concat(list.doc.member_ids);
     for (var i = 0, max = member_ids.length; i < max; i++) {
         var id = member_ids[i];
@@ -2060,24 +2127,24 @@ function createTaskElement(list, task) {
         e.stopPropagation();
     });
     if (task.status === 1) {
-        li.find('.icon-tasks-off')
+        li.find('> .icon-tasks-off')
         .removeClass('icon-tasks-off')
         .addClass('icon-progress');
     }
     else if (task.status === 2) {
-        li.find('.icon-tasks-off')
+        li.find('> .icon-tasks-off')
         .removeClass('icon-tasks-off')
         .addClass('icon-tasks-on');
     }
     if (task.closed) {
         li.addClass('delete');
-        li.find('.icon-delete')
+        li.find('> .icon-delete')
         .removeClass('icon-delete')
         .addClass('icon-recycle');
         li.hide();
     }
     if (list.id + ':' + task.id in this.account.state.watch) {
-        li.find('.icon-star-off')
+        li.find('> .icon-star-off')
         .removeClass('icon-star-off')
         .addClass('icon-star-on');
     }

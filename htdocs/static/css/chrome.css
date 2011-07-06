@@ -50,6 +50,7 @@ button {
     border: 1px solid gray;
     border-radius: 3px;
     -moz-border-radius: 3px;
+    background: -o-linear-gradient(top, #ffffff, #e1e1e1);
     background: -moz-linear-gradient(top, #ffffff, #e1e1e1);
     background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
     cursor: pointer;
@@ -64,11 +65,13 @@ button.on {
 button:hover, button:focus {
     border: 1px solid #cca905;
     text-shadow: 0 1px 0 #ffef97;
+    background: -o-linear-gradient(top, #fcea6c, #f7d208);
     background: -moz-linear-gradient(top, #fcea6c, #f7d208);
     background: -webkit-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));
 }
 button:disabled {
     opacity: 0.25;
+    background: -o-linear-gradient(top, #ffffff, #e1e1e1);
     background: -moz-linear-gradient(top, #ffffff, #e1e1e1);
     background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
 }
@@ -87,7 +90,7 @@ button:disabled {
     zoom:1;
 } /* IE6, IE7 */
 .box {
-    display: -moz-box;
+    /* display: -moz-box; */
     display: -webkit-box;
 }
 .icon {
@@ -229,7 +232,6 @@ body > header {
     height: 24px;
     background-color: #e1e1e1;
     border-bottom: 1px solid gray;
-    _background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
     font-size: 12px;
     line-height: 1.6;
 }
@@ -299,11 +301,9 @@ body > div > aside > nav ul li {
 }
 body > div > aside > nav ul li:hover {
     background-color: #fcea6c;
-    /*background: -webkit-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));*/
 }
 body > div > aside > nav ul li.selected {
     background-color: #f7d208;
-    /*background: -webkit-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));*/
 }
 body > div > aside > nav ul li.updated {
     background-color: #c1c1c1;
@@ -380,6 +380,7 @@ body > div > article nav ul li.action {
     border-radius: 3px;
     -moz-border-radius: 3px;
     text-shadow: rgba(255, 255, 255, 0.4) 0 1px;
+    background: -o-linear-gradient(top, #ffffff, #e1e1e1);
     background: -moz-linear-gradient(top, #ffffff, #e1e1e1);
     background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
 }
@@ -593,12 +594,12 @@ body > div > article section > ul.timeline li span.code {
 }
 /********** footer **********/
 body > footer {
+    display: block;
     position: absolute;
     left: 0;
     bottom: 0;
     width: 100%;
-    height: 16px;
-    padding: 4px;
+    padding: 6px;
     border-top: 1px solid gray;
     overflow: hidden;
     background-color: #e1e1e1;
@@ -633,28 +634,40 @@ form.modal {
     font-size: 12px;
     border: 1px solid #8f8f8f;
     background: #ededed;
+    box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
     -moz-box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
     -webkit-box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
 }
 form.modal article {
     margin: 10px 10px 10px 10px;
     padding: 10px;
+    box-shadow: inset 0px 1px 3px rgba(0,0,0,0.4);
     -moz-box-shadow: inset 0px 1px 3px rgba(0,0,0,0.4);
     -webkit-box-shadow: inset 0px 1px 3px rgba(0,0,0,0.4);
-    -moz-border-radius: 3px;
     border-radius: 3px;
+    -moz-border-radius: 3px;
     background: #e1e1e1;
 }
 form.modal h1 {
     padding: 8px;
     background: #bababa;
     border-bottom: 1px solid gray;
+    background: -o-linear-gradient(top, #ffffff, #e1e1e1);
     background: -moz-linear-gradient(top, #ffffff, #e1e1e1);
     background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
     cursor: move;
 }
 form.modal input {
     font-size: 16px;
+}
+form.modal li.label-first {
+    padding-bottom: 4px;
+    font-size: 14px;
+}
+form.modal li.label {
+    padding-top: 6px;
+    padding-bottom: 4px;
+    font-size: 14px;
 }
 form.modal footer nav {
     text-align: right;
@@ -668,6 +681,7 @@ form.modal footer nav ul li {
 }
 form.modal footer nav ul li button#save {
     background: #B5B5B5;
+    box-shadow: inset rgba(0, 0, 0, 0.4) 0 -5px 12px, inset rgba(0, 0, 0, 1) 0 1px 3px, rgba(255, 255, 255, 0.4) 0 1px;
     -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 -5px 12px, inset rgba(0, 0, 0, 1) 0 1px 3px, rgba(255, 255, 255, 0.4) 0 1px;
     -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 -5px 12px, inset rgba(0, 0, 0, 1) 0 1px 3px, rgba(255, 255, 255, 0.4) 0 1px;
 }
@@ -687,7 +701,8 @@ form nav.tabgroup li {
 }
 form nav.tabgroup li:hover {
     cursor: pointer;
-    background: -moz-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));
+    background: -o-gradient(top, from(#fcea6c), to(#f7d208));
+    background: -moz-gradient(top, from(#fcea6c), to(#f7d208));
     background: -webkit-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));
 }
 form.confirm {

@@ -15,6 +15,15 @@ sub signout {
     $c->redirect('/');
 }
 
+sub mock {
+    my ($class, $c) = @_;
+
+    $c->render('chrome/mock.tt', {
+        screen_name => $c->session->get('screen_name'),
+        profile_image_url => $c->session->get('profile_image_url')
+    });
+}
+
 sub viewer {
     my ($class, $c) = @_;
 
