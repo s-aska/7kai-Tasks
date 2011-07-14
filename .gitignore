@@ -13,3 +13,4 @@ test.db
 websocket.psgi
 mat
 src.zip
+src.pem
