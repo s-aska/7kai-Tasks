@@ -455,20 +455,6 @@ $(document).ready(function() {
 [ESC] <span data-text-ja="キャンセル">Cancel</span>,
 [Shift+ESC] <span data-text-ja="リセット">Reset</span>
 </li>
-<!-- <li
-  data-guide-en="Not close after registration."
-  data-guide-ja="登録後ウィンドウを閉じない。"
->
-<input id="create-task-window-continue" type="checkbox" name="continue" value="1">
-<label for="create-task-window-continue">Continue</label>
-</li>
-<li
-  data-guide-en="Not clear after registration."
-  data-guide-ja="登録後内容を消さない。"
->
-<input id="create-task-window-keep" type="checkbox" name="keep" value="1">
-<label for="create-task-window-keep">Keep</label>
-</li> -->
 <li><button id="">Save</button></li>
 <li><button class="cancel">Cancel</button></li>
 </ul>
@@ -503,14 +489,6 @@ $(document).ready(function() {
 <ul id="create-list-members">
 </ul>
 </li>
-<!-- <li>Privacy: <strong style="color: red;">*</strong></li>
-<li>
-<select name="privacy">
-<option>Open</option>
-<option selected="selected">Closed</option>
-<option>Secret</option>
-</select>
-</li> -->
 </ul>
 </article>
 <footer>
@@ -521,20 +499,6 @@ $(document).ready(function() {
 [ESC] <span data-text-ja="キャンセル">Cancel</span>,
 [Shift+ESC] <span data-text-ja="リセット">Reset</span>
 </li>
-<!-- <li
-  data-guide-en="Not close after registration."
-  data-guide-ja="登録後ウィンドウを閉じない。"
->
-<input id="create-list-window-continue" type="checkbox" name="continue" value="1">
-<label for="create-list-window-continue">Continue</label>
-</li>
-<li
-  data-guide-en="Not clear after registration."
-  data-guide-ja="登録後内容を消さない。"
->
-<input id="create-list-window-keep" type="checkbox" name="keep" value="1">
-<label for="create-list-window-keep">Keep</label>
-</li> -->
 <li><button>Save</button></li>
 <li><button class="cancel">Cancel</button></li>
 </ul>
@@ -548,7 +512,7 @@ $(document).ready(function() {
 </header>
 <article>
 <ul>
-<li>List [<span id="delete-list-name"></span>] Delete OK?</li>
+<li data-text-ja="このリストを削除しても宜しいですか？">List Delete OK?</li>
 </ul>
 </article>
 <footer>

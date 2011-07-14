@@ -21,11 +21,15 @@ function initialize(){
     this.lang = $('html').attr('lang');
 }
 function localize() {
-    var eles = $('*[data-text-' + this.lang + ']');
-    for (var i = 0; i < eles.length; i++) {
-        var ele = $(eles[i]);
-        ele.text(ele.data('text-' + this.lang));
-    }
+    var that = this;
+    $('*[data-text-' + this.lang + ']').each(function(i, ele){
+        var ele = $(ele);
+        ele.text(ele.data('text-' + that.lang));
+    });
+    $('*[data-text-placeholder-' + this.lang + ']').each(function(i, ele){
+        var ele = $(ele);
+        ele.attr('placeholder', ele.data('text-placeholder-' + that.lang));
+    });
 }
 function text(ele, key){
     if (key) {

@@ -103,4 +103,34 @@ sub update {
     });
 }
 
+sub move {
+    my ($class, $c) = @_;
+    
+    my $account = DoubleSpark::Account->new($c);
+    my $src_list_id = $c->req->param('src_list_id');
+    my $dst_list_id = $c->req->param('dst_list_id');
+    my $task_id = $c->req->param('task_id');
+    
+    my $target_task;
+    my $src_doc = $c->open_list_doc($account, 'member', $src_list_id);
+    my $dst_doc = $c->open_list_doc($account, 'member', $dst_list_id);
+    @{$src_doc->{tasks}} = grep {
+        my $task = $_;
+        if ($task->{id} == $task_id) {
+            $target_task = $task;
+        }
+        $task->{id} == $task_id ? 0 : 1;
+    } @{$src_doc->{tasks}};
+    die 'NotFound' unless $target_task;
+    $target_task->{id} = ++$dst_doc->{last_task_id};
+    push @{$dst_doc->{tasks}}, $target_task;
+    $c->save_list_doc($account, $dst_doc);
+    $account = DoubleSpark::Account->new($c);
+    $c->save_list_doc($account, $src_doc);
+    $c->render_json({
+        success => 1,
+        task => $target_task
+    });
+}
+
 1;

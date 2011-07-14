@@ -33,9 +33,10 @@ time, mark, audio, video, button {
 html, body {
     line-height: 1;
     overflow: hidden;
+    color: #323232;
 }
 html, body, button {
-    font-family:  "Hiragino Kaku Gothic Pro",Vernada,arial,sans-serif;
+    font-family: "Hiragino Kaku Gothic Pro",Vernada,arial,sans-serif;
 }
 ul {
     list-style: none;
@@ -89,12 +90,26 @@ button:disabled {
 .clearfix {
     zoom:1;
 } /* IE6, IE7 */
-.box {
-    /* display: -moz-box; */
-    display: -webkit-box;
+body > div.box {
+    display: block;
+    min-width: 1110px;
+}
+body > div.box > aside {
+    float: left;
+}
+body > div.box > article {
+    float: left;
+}
+body > div.box > #comment {
+    float: left;
 }
 .icon {
     width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+}
+.icon-wide {
+    width: 32px;
     height: 16px;
     background-repeat: no-repeat;
 }
@@ -105,7 +120,8 @@ button:disabled {
     padding-right: 2px;
     background-repeat: no-repeat;
 }
-span.icon {
+span.icon,
+span.icon-wide {
     display: inline-block;
     vertical-align: bottom;
 }
@@ -115,8 +131,14 @@ span.icon {
 .icon-a-z {
     background-image: url(/static/img/a-z.png);
 }
-.icon-create {
+.icon-create { /* 非推奨 */
     background-image: url(/static/img/create.png);
+}
+.icon-plus {
+    background-image: url(/static/img/create.png);
+}
+.icon-plus-1-m {
+    background-image: url(/static/img/plus-1-m.png);
 }
 .icon-minus {
     background-image: url(/static/img/minus.png);
@@ -126,6 +148,9 @@ span.icon {
 }
 .icon-right {
     background-image: url(/static/img/right.png);
+}
+.icon-left {
+    background-image: url(/static/img/left.png);
 }
 .icon-star-on {
     background-image: url(/static/img/star_on.png);
@@ -151,8 +176,17 @@ span.icon {
 .icon-trash {
     background-image: url(/static/img/trash.png);
 }
+.icon-pulldown {
+    background-image: url(/static/img/pulldown.png);
+}
 .icon-settings {
     background-image: url(/static/img/settings.png);
+}
+.icon-preference {
+    background-image: url(/static/img/preference.png);
+}
+.icon-preference-white {
+    background-image: url(/static/img/preference-white.png);
 }
 .icon-grip {
     background-image: url(/static/img/grip.png);
@@ -162,6 +196,9 @@ span.icon {
 }
 .icon-edit {
     background-image: url(/static/img/edit.png);
+}
+.icon-equal {
+    background-image: url(/static/img/equal.png);
 }
 .icon-search {
     background-image: url(/static/img/search.png);
@@ -228,15 +265,37 @@ img.twitter_profile_image {
     width: 16px;
     height: 16px;
 }
-
+img.twitter_profile_image32 {
+    width: 32px;
+    height: 32px;
+}
+.pulldown {
+    position: relative;
+}
+.pulldown ul {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    cursor: pointer;
+}
+.pulldown ul li {
+    padding: 10px 10px 10px 10px;
+    color: #36c;
+    font-size: 14px;
+}
+.pulldown ul li:hover {
+    background-color: #e6ecf8;
+}
 /********** header **********/
 body > header {
     padding: 2px;
     height: 24px;
-    background-color: #e1e1e1;
-    border-bottom: 1px solid gray;
-    font-size: 12px;
+    background-color: #2d2d2d;
+    border-bottom: 1px solid black;
+    font-size: 13px;
     line-height: 1.6;
+    color: white;
 }
 body > header h1 {
     padding: 4px 0px 0px 8px;
@@ -244,217 +303,272 @@ body > header h1 {
 body > header h1 span.version {
     padding-left: 4px;
     font-size: 10px;
+    color: #ccc;
 }
-body > header p {
+/*body > header p {
+    display: none;
     position: absolute;
     top: 6px;
     left: 246px;
-}
+}*/
 body > header nav {
     position: absolute;
-    top: 4px;
-    right: 10px;
+    top: 0px;
+    right: 5px;
 }
-body > header nav ul li {
+body > header nav > ul > li {
     float: left;
-    margin: 0px 0px 0px 10px;
+    position: relative;
 }
-body > header nav ul li img {
+body > header nav > ul > li.menu:hover {
+    background-color: white;
+    color: #323232;
+}
+body > header nav > ul > li.guide {
+    margin-top: 3px;
+    margin-right: 10px;
+}
+body > header nav > ul > li.account {
+    padding: 2px 10px 2px 5px;
+}
+body > header nav > ul > li.account > img {
+    width: 24px;
+    height: 24px;
     margin-right: 4px;
-    vertical-align: middle;
+    vertical-align: -7px;
 }
-body > header nav ul li a {
-    color: #1e57ff;
-    font-weight: bold;
+body > header nav > ul > li.settings {
+    padding: 2px 5px 6px 5px;
+}
+body > header nav > ul > li.settings > span {
+    font-family: arial, sans-serif;
+}
+body > header nav > ul > li.settings:hover > span {
+    background-image: url(/static/img/preference.png);
+}
+body > header nav > ul > li.menu > ul {
+    display: none;
+    position: absolute;
+    z-index: 2;
+    right: 0;
+    top: 28px;
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+    border-bottom: 1px solid gray;
+    background-color: white;
+    cursor: pointer;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+    -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+    -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+}
+body > header nav > ul > li.menu > ul li:hover {
+    background-color: #e6ecf8;
+}
+body > header nav > ul > li.menu > ul li a {
+    display: block;
+    padding: 10px 10px 10px 10px;
+    color: #36c;
+    font-size: 14px;
     text-decoration: none;
 }
-body > header nav ul li.member-name {
-    font-weight: bold;
+/********** wrapper **********/
+body > div {
+    border-top: 1px solid #d2d2d2;
 }
 
 /********** aside **********/
 body > div > aside {
-    width: 240px;
+    position: relative;
+    /*z-index: 2;*/
+    width: 180px;
     border-right: 1px solid gray;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
-    font-size: 16px;
+    font-size: 14px;
+    background-color: white;
+    box-shadow: 2px 0px 2px rgba(0,0,0,0.4);
+    -moz-box-shadow: 2px 0px 2px rgba(0,0,0,0.4);
+    -webkit-box-shadow: 2px 0px 2px rgba(0,0,0,0.4);
 }
 body > div > aside header nav ul {
-    padding: 8px 4px 8px 8px;
-    background-color: #f9f9f9;
+    padding: 9px 4px 9px 8px;
     border-bottom: 1px solid #cecece;
-}
-body > div > aside header nav ul li {
-    float: left;
-    font-size: 12px;
-    line-height: 0.8; /* ハックぽくでいやだけど.. */
-    margin-right: 4px;
-}
-body > div > aside > nav {
-    position: relative;
-    overflow-y: auto;
-    line-height: 1.6;
-}
-body > div > aside > nav ul li {
-    position: relative;
-    padding: 8px 0px 8px 32px;
-    border-bottom: 1px solid #cecece;
+    background-color: #eaeaea;
     cursor: pointer;
+    line-height: 1.2;
 }
-body > div > aside > nav ul li:hover {
+body > div > aside header nav ul:hover {
     background-color: #fcea6c;
 }
-body > div > aside > nav ul li.selected {
+body > div > aside article {
+    padding: 5px;
+}
+body > div > aside article h2 {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 4px;
+    margin-bottom: 2px;
+}
+body > div > aside article h2.members {
+    margin-top: 0px;
+}
+body > div > aside article ul.menu li {
+    padding-left: 10px;
+    padding-bottom: 2px;
+    font-size: 12px;
+    line-height: 1;
+}
+body > div > aside article ul.menu li.action {
+    color: #1e57ff;
+    cursor: pointer;
+}
+body > div > aside article ul.menu li.action:hover,
+body > div > aside article ul.menu li.selected {
+    text-decoration: underline;
+    background-color: #e0e0ff;
+}
+body > div > aside article ul.menu li hr {
+    border-width: 1px 0px 0px 0px;
+    border-style: solid;
+    border-color: gray;
+    margin-right: 10px;
+    height: 1px;
+}
+#current-list-name {
+    display: inline-block;
+    padding-right: 8px;
+}
+#list-members li {
+    float: left;
+    cursor: pointer;
+    border: 1px solid white;
+    height: 32px;
+}
+#list-members li:hover {
+    border: 1px solid #fcea6c;
+}
+
+#select-list-panel {
+    position: absolute;
+    display: none;
+    z-index: 3;
+    width: 180px;
+    overflow-y: auto;
+    background-color: #eaeaea;
+}
+#select-list-panel li {
+    position: relative;
+    padding: 4px 0px 4px 8px;
+    border-bottom: 1px solid #cecece;
+    cursor: pointer;
+    line-height: 1.6;
+}
+#select-list-panel li:hover {
+    background-color: #fcea6c;
+}
+#select-list-panel li.selected {
     background-color: #f7d208;
 }
-body > div > aside > nav ul li.updated {
+#select-list-panel li.updated {
     background-color: #c1c1c1;
 }
-body > div > aside > nav ul li.filter {
+#select-list-panel li.filter {
     background-image: url(/static/img/search.png);
     background-repeat: no-repeat;
-    background-position: 10px 12px;
+    background-position: 6px 6px;
+    padding-left: 24px;
 }
-body > div > aside > nav ul li.icon {
+#select-list-panel li.action {
+    background-repeat: no-repeat;
+    background-position: 6px 6px;
+    padding-left: 24px;
+}
+
+/*#select-list-panel li.icon {
     background-repeat: no-repeat;
     background-position: 10px 12px;
-}
-body > div > aside > nav ul li .badge {
+}*/
+#select-list-panel li .badge {
     position: absolute;
     right: 12px;
-    margin-top: 2px;
+    margin-top: 0px;
     padding: 4px 8px 2px 8px;
     border-radius: 10px;
     -moz-border-radius: 10px;
     background-color: red;
     color: white;
-    font-size: 10px;
+    font-size: 8px;
     font-weight: bold;
 }
-body > div > aside > nav ul li.project .icon-settings {
+/*#select-list-panel li.project .icon-settings {
     display: none;
     position: absolute;
     top: 12px;
     right: 12px;
-}
-body > div > aside > nav ul li.project:hover .badge {
-    display: none !important;
-}
-body > div > aside > nav ul li.project:hover .icon-settings {
-    display: block;
-}
-body > div > aside > nav .icon-prev {
+}*/
+#infomation {
     position: fixed;
-    top: 78px;
-    left: 215px;
+    bottom: 25px;
+    left: 0;
+    width: 180px;
+    padding-top: 10px;
+    font-size: 12px;
+    line-height: 1.2;
+    background-color: #f4f4f4;
 }
-body > div > aside > nav .icon-next {
-    position: fixed;
-    bottom: 31px;
-    left: 215px;
+#infomation li {
+    padding-left: 10px;
+    padding-top: 2px;
 }
-
+#infomation li .action {
+    color: #1e57ff;
+}
+#infomation li .action:hover,
+#infomation li .selected {
+    background-color: #e0e0ff;
+}
+#infomation > li {
+    padding-bottom: 4px;
+}
+#infomation li ul li {
+    
+}
 /********** article **********/
 body > div > article {
 }
-body > div > article nav {
-    padding: 8px 4px 8px 8px;
+body > div > article > header {
+    width: 548px;
+    padding: 4px 4px 4px 8px;
     border-bottom: 1px solid #cecece;
     font-size: 12px;
     background-color: #f9f9f9;
-    width: 700px;
 }
-body > div > article nav ul {
+body > div > article > header > div {
+    float: right;
+    margin: 4px;
 }
-body > div > article nav ul li {
-    float: left;
-    margin: 0px 4px 0px 0px;
-    line-height: 0.8; /* ハックぽくでいやだけど.. */
-}
-body > div > article nav ul li.label {
-    padding: 4px 4px 4px 4px;
-}
-body > div > article nav ul li.action {
-    padding: 4px 4px 4px 4px;
-    min-height: 16px;
-    background-position: 6px 4px;
+body > div > article > header > div > span {
+    display: inline-block;
+    min-width: 50px;
     border: 1px solid gray;
-    border-radius: 3px;
-    -moz-border-radius: 3px;
-    text-shadow: rgba(255, 255, 255, 0.4) 0 1px;
-    background: -o-linear-gradient(top, #ffffff, #e1e1e1);
-    background: -moz-linear-gradient(top, #ffffff, #e1e1e1);
-    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
+    padding: 2px;
+    background-color: white;
 }
-body > div > article nav ul li.action span {
-}
-body > div > article nav ul li span.icon,
-body > div > article nav ul li span.icon-with {
-    display: block;
-    min-width: 16px;
-    height: 16px;
-    background-repeat: no-repeat;
-    background-position: 0 0;
-}
-body > div > article nav ul li span.icon-with {
-    padding-left: 18px;
-    padding-right: 2px;
-}
-body > div > article nav ul li input.icon-search {
-    margin: 0;
-    padding: 2px 2px 0px 22px;
-    height: 20px;
-    width: 80px;
-    border-radius: 10px;
-    -moz-border-radius: 10px;
-    font-size: 14px;
-    background-repeat: no-repeat;
-    background-position: 4px 4px;
+body > div > article > header > div > ul {
+    border: 1px solid gray;
+    z-index: 1;
 }
 
 /********** article section **********/
 body > div > article section {
     overflow-y: auto;
-    width: 700px;
+    width: 540px;
     padding: 10px 10px 10px 10px;
     font-size: 14px;
 }
-body > div > article section header li {
-    float: left;
-    padding-left: 4px;
-}
-body > div > article section header li:first-child {
-    padding-left: 10px;
-}
-body > div > article section header li.twitter_profile_image {
-    /*width: 32px;*/
-    cursor: pointer;
-}
-body > div > article section header li.twitter_profile_image img {
-    width: 32px;
-    height: 32px;
-    vertical-align: bottom;
-    border: 2px solid gray;
-}
-body > div > article section header li.twitter_profile_image img:hover {
-    border: 2px solid #f7d208;
-}
-body > div > article section h1 {
-    float: left;
-    margin-bottom: 4px;
-    font-size: 16px;
-}
-#edit-list-link {
-    float: left;
-    display: inline-block;
-    padding-left: 4px;
-    color: #1e57ff;
-    font-size: 12px;
-    font-weight: bold;
+body > div > article section > ul {
 }
 body > div > article section > ul li {
     border-bottom: 1px solid gray;
+    font-size: 12px;
     line-height: 1;
 }
 body > div > article section > ul li.delete {
@@ -463,7 +577,7 @@ body > div > article section > ul li.delete {
 body > div > article section > ul li.clearfix {
     padding: 2px 0;
 }
-body > div > article section > ul li.clearfix:hover {
+body > div > article section > ul li.selected {
     background-color: #FFFFCC;
 }
 body > div > article section > ul li.clearfix > div {
@@ -472,14 +586,6 @@ body > div > article section > ul li.clearfix > div {
 body > div > article section > ul li.clearfix > div.right {
     float: right;
     margin-right: 5px;
-}
-body > div > article section > ul li div.grip {
-    margin-top: 3px;
-    width: 16px;
-    height: 16px;
-}
-body > div > article section > ul.sortable li div.grip {
-    cursor: url(/static/img/openhand.cur), move;
 }
 body > div > article section > ul li div.action {
     margin-top: 3px;
@@ -492,14 +598,31 @@ body > div > article section > ul li div.action {
 body > div > article section > ul li div.action:hover {
     -webkit-transform: rotate(-25deg);
 }
+body > div > article section > ul li div.grip {
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+}
+body > div > article section > ul.sortable li div.grip {
+    cursor: url(/static/img/openhand.cur), move;
+}
 body > div > article section > ul li div.title {
     padding-top: 5px;
     padding-left: 4px;
 }
+body > div > article section > ul li.clearfix div.comments {
+    float: right;
+    padding-top: 5px;
+    padding-right: 5px;
+    font-size: 12px;
+}
 body > div > article section > ul li.clearfix div.due {
     float: right;
     padding-top: 5px;
-    /*padding-right: 5px;*/
+    font-size: 12px;
+}
+body > div > article section > ul li.clearfix div.over {
+    color: red;
 }
 body > div > article section > ul li.clearfix div.icon-delete {
     
@@ -513,63 +636,6 @@ body > div > article section > ul li div.assign:hover {
 }
 body > div > article section > ul li div.assign img {
     width: 16px;
-}
-body > div > article section > ul li .content {
-    clear: both;
-    margin-left: 90px;
-    width: 420px;
-    max-height: 200px;
-    overflow-y: auto;
-}
-body > div > article section > ul li .description {
-    margin: 0px 0px 4px 0px;
-    padding: 6px;
-    border: 1px dotted gray;
-}
-body > div > article section > ul li ul.comments {
-    margin: 0px 0px 0px 0px;
-}
-body > div > article section > ul li ul.comments li {
-    position: relative;
-    padding-right: 20px;
-    padding-bottom: 4px;
-    border: none;
-    font-size: 12px;
-}
-body > div > article section > ul li ul.comments li img {
-    float: left;
-    width: 32px;
-    margin-right: 4px;
-}
-body > div > article section > ul li ul.comments li span.name,
-body > div > article section > ul li ul.comments li span.date,
-body > div > article section > ul li ul.comments li span.change {
-    color: gray;
-}
-body > div > article section > ul li ul.comments li span.name {
-    padding-right: 6px;
-}
-body > div > article section > ul li ul.comments li span.comment {
-    white-space: pre-wrap;
-}
-body > div > article section > ul li ul.comments li input[type=text] {
-    /*width: 300px;*/
-}
-body > div > article section > ul li ul.comments li span.icon-delete {
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-body > div > article section > ul li ul.comments li.unread {
-    background-color: #fcea6c;
-}
-body > div > article section > ul li .commentBox {
-    clear: both;
-}
-body > div > article section > ul li .commentBox textarea {
-    height: 14px;
-    width: 100%;
-    resize: none;
 }
 body > div > article section > ul.timeline {
     cursor: pointer;
@@ -592,7 +658,6 @@ body > div > article section > ul.timeline li span.date {
     margin-top: 4px;
 }
 body > div > article section > ul.timeline li span.action {
-    /*cursor: default;*/
 }
 body > div > article section > ul.timeline li span.code {
     height: 16px;
@@ -606,6 +671,83 @@ body > div > article section > ul.timeline li span.code {
     -moz-background-size:  16px 16px;
     -webkit-background-size: 16px 16px;
 }
+/********** comment **********/
+#comment {
+    /*min-width: 300px;*/
+    border-left: 1px solid gray;
+    padding: 10px;
+    opacity: 0.2;
+}
+#comment.selected {
+    opacity: 1;
+}
+#comment h1 {
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+#comment h2 {
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: bold;
+}
+#comment ul {
+    margin-top: 8px;
+    margin-bottom: 4px;
+    border-top: 2px solid gray;
+    overflow-y: auto;
+}
+#comment ul li {
+    position: relative;
+    padding: 4px 4px 4px 4px;
+    font-size: 12px;
+    min-height: 32px;
+    border-bottom: 1px solid gray;
+}
+#comment ul li:hover {
+    background-color: #FFFFCC;
+}
+#comment ul li img {
+    position: absolute;
+    width: 32px;
+    margin-right: 4px;
+}
+#comment ul li div {
+    margin-left: 36px;
+    margin-right: 18px;
+    line-height: 1.4;
+}
+#comment ul li span.name {
+    padding-right: 4px;
+    font-weight: bold;
+}
+#comment ul li span.date,
+#comment ul li span.change {
+    color: gray;
+}
+#comment ul li span.comment {
+    white-space: pre-wrap;
+}
+#comment ul li span.date {
+    font-size: 10px;
+}
+#comment ul li span.icon-delete {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+}
+#comment ul li.unread {
+    background-color: #fcea6c;
+}
+#comment p {
+    font-size: 12px;
+}
+#comment textarea {
+    height: 14px;
+    width: 100%;
+    resize: none;
+}
+
 /********** footer **********/
 body > footer {
     display: block;
@@ -639,40 +781,33 @@ body > footer div.disp {
 form.modal {
     display: none;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 600px;
-    margin-top: -130px;
-    margin-left: -300px;
-    z-index: 1000;
-    font-size: 12px;
+    z-index: 1;
+    top: 120px;
+    left: 180px;
     border: 1px solid #8f8f8f;
+    font-size: 12px;
     background: #ededed;
-    box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
-    -moz-box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
-    -webkit-box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
+    box-shadow: 6px 6px 6px rgba(0,0,0,0.4);
+    -moz-box-shadow: 6px 6px 6px rgba(0,0,0,0.4);
+    -webkit-box-shadow: 6px 6px 6px rgba(0,0,0,0.4);
 }
 form.modal article {
     margin: 10px 10px 10px 10px;
-    padding: 10px;
-    box-shadow: inset 0px 1px 3px rgba(0,0,0,0.4);
-    -moz-box-shadow: inset 0px 1px 3px rgba(0,0,0,0.4);
-    -webkit-box-shadow: inset 0px 1px 3px rgba(0,0,0,0.4);
-    border-radius: 3px;
-    -moz-border-radius: 3px;
-    background: #e1e1e1;
+    padding-bottom: 10px;
+    border-bottom: 1px solid gray;
+}
+form.modal article.clearfix ul {
+    float: left;
 }
 form.modal h1 {
     padding: 8px;
-    background: #bababa;
     border-bottom: 1px solid gray;
-    background: -o-linear-gradient(top, #ffffff, #e1e1e1);
-    background: -moz-linear-gradient(top, #ffffff, #e1e1e1);
-    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
+    background: #2d2d2d;
+    color: white;
     cursor: move;
 }
 form.modal input {
-    font-size: 16px;
+    font-size: 14px;
 }
 form.modal li.label-first {
     padding-bottom: 4px;
@@ -691,7 +826,7 @@ form.modal footer nav ul {
 }
 form.modal footer nav ul li {
     display: inline-block;
-    margin: 0 0px;
+    margin: 0 0;
 }
 form.modal footer nav ul li button#save {
     background: #B5B5B5;
@@ -722,24 +857,20 @@ form nav.tabgroup li:hover {
 form.confirm {
     z-index: 1001;
 }
+#delete-list-window {
+    background: #fed7d6;
+}
+#delete-list-window article {
+    background: #fec1c1;
+}
+#delete-list-window h1 {
+    background: #febaba;
+    background: -o-linear-gradient(top, #fee1e1, #febaba);
+    background: -moz-linear-gradient(top, #fee1e1, #febaba);
+    background: -webkit-gradient(linear, left top, left bottom, from(#fee1e1), to(#febaba));
+}
 
 /********** create-task **********/
-#create-task-window textarea,
-#create-task-window input[name=title] {
-    width: 90%;
-}
-#create-list-window .icon {
-    display: inline-block;
-    height: 16px;
-    width: 16px;
-}
-#create-task-window div {
-    display: -webkit-box;
-    
-}
-#create-task-window div ul {
-    width: 50%;
-}
 #create-list-window {
     width: 300px;
 }
@@ -775,6 +906,12 @@ form.confirm {
     max-height: 300px;
     overflow-y: auto;
 }
+#create-task-assign {
+    width: 240px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
 /********** guide **********/
 #guide {
     display: none;
@@ -812,8 +949,8 @@ form.confirm {
 }
 ::-webkit-scrollbar-button:start:decrement,
 ::-webkit-scrollbar-button:end:increment {
-    display: block;
-    height: 10px
+    display: none;
+    /*height: 10px;*/
 }
 ::-webkit-scrollbar-thumb:vertical,
 ::-webkit-scrollbar-thumb:horizontal {

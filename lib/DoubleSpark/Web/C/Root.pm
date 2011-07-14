@@ -15,15 +15,6 @@ sub signout {
     $c->redirect('/');
 }
 
-sub mock {
-    my ($class, $c) = @_;
-
-    $c->render('chrome/mock.tt', {
-        screen_name => $c->session->get('screen_name'),
-        profile_image_url => $c->session->get('profile_image_url')
-    });
-}
-
 sub viewer {
     my ($class, $c) = @_;
 
@@ -33,7 +24,10 @@ sub viewer {
 
     if ($c->session->get('account')) {
         infof("logined " . $c->session->get('screen_name'));
-        $c->render('chrome/mock.tt', {
+        
+        my $tmpl = $c->req->param('tmpl') || 'mock2';
+        
+        $c->render("chrome/$tmpl.tt", {
             screen_name => $c->session->get('screen_name'),
             profile_image_url => $c->session->get('profile_image_url')
         });

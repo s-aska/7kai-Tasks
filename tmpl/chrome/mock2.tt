@@ -8,8 +8,8 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
 <script type="text/javascript" src="/static/js/jquery.autogrow-textarea.js"></script>
 <script type="text/javascript" src="/static/js/h5utils.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/css/chrome.css" media="all">
-<script type="text/javascript" src="/static/js/chrome.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/css/chrome2.css" media="all">
+<script type="text/javascript" src="/static/js/chrome2.js"></script>
 <script type="text/javascript" src="/static/js/localizer.js"></script>
 [% IF is_ff(c) %]
 <link rel="stylesheet" type="text/css" href="/static/css/firefox.css" media="all">
@@ -18,7 +18,7 @@
 <link rel="stylesheet" type="text/css" href="/static/css/opera.css" media="all">
 [% END %]
 <script>
-var tasks;
+var tasks; // いつか保護する
 $(document).ready(function() {
     var localizer = new Localizer();
     if (localizer.lang != 'en') {
@@ -32,11 +32,11 @@ $(document).ready(function() {
 </head>
 <body>
 <header>
-<h1>7kai Tasks <span class="version">ver [% c().version() %] Bare Born</span></h1>
+<h1>7kai Tasks <span class="version">ver [% c().version() %] Bare Born+</span></h1>
 <p></p>
 <nav>
 <ul class="clearfix">
-<li class="member-name">
+<li class="guide">
 <button
     id="guide-switch"
     class="on"
@@ -49,29 +49,18 @@ $(document).ready(function() {
     data-text-off="Guide OFF"
 >guide on</button>
 </li>
-<li class="member-name">[% screen_name %]</li>
-<li class="sign-out">
-<a
-    href="http://www.facebook.com/pages/7kai-Tasks/189391624444427?sk=wall"
-    target="_blank"
-    data-guide-en="Facebook Pages"
-    data-guide-ja="Facebook Pagesにてご意見・ご要望を受付中!!"
->Feedback</a></li>
-<li class="settings">
+<li class="menu account">
+<img src="[% profile_image_url %]">
+<span>[% screen_name %]</span>
+<ul>
+<li>
 <a
     href="javascript:void(0)"
     data-method="open"
     data-id="account-settings-window"
-    data-guide-en="Account Settings"
-    data-guide-ja="Twitterのアカウント追加やフレンドの再同期が出来ます"
+    data-guide2-en="Account Settings"
+    data-guide2-ja="Twitterのアカウント追加やフレンドの再同期が出来ます"
 >Settings</a></li>
-<li class="document">
-<a
-    href="http://tasks.7kai.org/doc/"
-    target="_blank"
-    data-guide-en="Document"
-    data-guide-ja="マニュアル"
->Doc</a></li>
 <li class="sign-out">
 <a
     href="/signout"
@@ -79,282 +68,261 @@ $(document).ready(function() {
     data-guide-ja="今日も一日 お疲れ様でした"
 >Sign Out</a></li>
 </ul>
+</li>
+<li class="menu settings">
+<span class="action icon icon-preference-white"
+    data-hover=""
+></span>
+<ul>
+<li>
+<a
+    href="http://www.facebook.com/pages/7kai-Tasks/189391624444427?sk=wall"
+    target="_blank"
+    data-guide2-en="Facebook Pages"
+    data-guide2-ja="Facebook Pagesにてご意見・ご要望を受付中!!"
+>Feedback</a></li>
+<li>
+<a
+    href="http://tasks.7kai.org/doc/"
+    target="_blank"
+    data-guide2-en="Document"
+    data-guide2-ja="マニュアル"
+>Document</a></li>
+</ul>
+</li></ul>
 </nav>
 </header>
-<div class="box">
+<div class="box clearfix">
 <aside>
 <header>
 <nav>
-<ul class="clearfix">
-<li>
-<button
-  data-method="open"
-  data-id="create-list-window"
-  data-callback="createList"
-  data-guide-en="Let's Create New List!"
-  data-guide-ja="リスト作成"
->
-<div class="icon-with icon-create">New...</div>
-</button>
-</li>
-<li class="right">
-<button
-  data-method="open"
-  data-id="list-settings-window"
-  data-guide-en="List display on/off, sort, delete"
-  data-guide-ja="リストの表示on/off, 並び替え, 削除"
->
-<div class="icon icon-settings"></div>
-</button>
-</li>
-<li class="right">
-<button
-  data-method="refresh"
-  data-id=""
-  data-guide-en="Refresh Data"
-  data-guide-ja="再同期（壊れたら押す事）"
->
-<div class="icon icon-refresh"></div>
-</button>
-</li>
-</ul>
-</nav>
-</header>
-<nav>
 <ul>
-<li class="timeline"
-    data-list-id="list-timeline"
-    data-text-ja="タイムライン"
-    data-text-en="Timeline"
->Timeline</li>
-<li id="comment-filter" class="filter"
-    data-list-id="list-comment"
-    data-text-ja="未読コメント"
-    data-text-en="Unread Comments"
->Unread Comments</li>
-<li class="filter"
-  data-list-id="list-all"
-  data-text-ja="すべて"
-  data-text-en="All"
->All</li>
-<li class="filter"
-  data-list-id="list-todo"
-  data-text-ja="やるべき事"
-  data-text-en="Something to do"
->Something to do</li>
-<li class="filter"
-  data-list-id="list-request"
-  data-text-ja="頼んだ事"
-  data-text-en="Requested by me"
->Requested by me</li>
-<li class="filter"
-  data-list-id="list-watch"
-  data-text-ja="関心のあるタスク"
-  data-text-en="Watch"
->Watch</li>
+<li>
+<span id="current-list-name"></span>
+<span class="icon icon-pulldown"></span>
+</li>
 </ul>
-<!-- <div class="icon icon-prev"></div>
-<div class="icon icon-next"></div> -->
 </nav>
+<ul id="select-list-panel"></ul>
+</header>
+<article>
+<h2 class="members" data-listonly="true">Members</h2>
+<ul id="list-members" class="clearfix" data-listonly="true"></ul>
+<h2 data-listonly="true">Settings</h2>
+<ul class="menu" data-listonly="true"><li><label><input type="checkbox" id="ignore-badge-count" value="1" data-method="listBadgeSwitch"><span data-text-ja="バッジ対象外">ignore badge count</span></label></li></ul>
+<h2 data-listonly="true">Menu</h2>
+<ul class="menu" data-listonly="true">
+<li class="action"
+    data-method="open"
+    data-id="create-list-window"
+    data-callback="createList"
+    data-text-ja="リストを作成..."
+>New List...</li>
+<li class="action"
+    data-method="open"
+    data-id="create-list-window"
+    data-callback="editList"
+    data-text-ja="リストを編集..."
+>Edit List...</li>
+<li class="action"
+    id="closed-task-switch"
+    data-method="switchClosed"
+    data-closed="1"
+    data-text-ja="完了済のタスクを表示切替"
+>Toggle Show closed Task</li>
+<li class="action"
+    data-method="open"
+    data-id="clear-trash-window"
+    data-callback="clearTrash"
+    data-text-ja="完了済のタスクを削除"
+>Clear Trash</li>
+<li><hr></li>
+<li
+    class="action"
+    data-method="open"
+    data-id="delete-list-window"
+    data-callback="deleteList"
+    data-text-ja="リストを削除"
+>Delete List</li>
+</ul>
+<ul id="infomation">
+<li>
+<span
+    class="action"
+    data-method="switchFilterList"
+    data-todo="true"
+    data-text-ja="今日やるべき事"
+>Today's your task</span>: <span class="badge">0</span>
+<ul>
+<li>
+<span class="action"
+    data-method="switchFilterList"
+    data-status="2"
+    data-registrant="true"
+    data-text-ja="確認待ち"
+    data-guide-ja="×マークで閉じて下さい"
+    data-guide-en="please close."
+>Pending Verification</span>: <span class="badge">0</span></li>
+<li>
+<span class="action"
+    data-method="switchFilterList"
+    data-status-ignore="2"
+    data-assign="true"
+    data-todo="true"
+    data-text-ja="自分担当"
+>Assigned to me</span>: <span class="badge">0</span></li>
+</ul>
+</li>
+<li>
+<span class="action"
+    data-method="switchFilterList"
+    data-registrant="true"
+    data-assign="false"
+    data-text-ja="依頼したタスク"
+>Requested by me</span>: <span class="badge">0</span>
+<ul>
+<li>
+<span class="action"
+    data-method="switchFilterList"
+    data-status="0"
+    data-registrant="true"
+    data-assign="false"
+    data-text-ja="未着手"
+>Open</span>: <span class="badge">0</span></li>
+<li>
+<span class="action"
+    data-method="switchFilterList"
+    data-status="1"
+    data-registrant="true"
+    data-assign="false"
+    data-text-ja="着手"
+>In Progress</span>: <span class="badge">0</span></li>
+<li>
+<span class="action"
+    data-method="switchFilterList"
+    data-status="2"
+    data-registrant="true"
+    data-assign="false"
+    data-text-ja="処理済"
+>Fix</span>: <span class="badge">0</span></li>
+</ul>
+</li>
+<li>
+<span class="action"
+    data-method="switchFilterList"
+    data-star="true"
+    data-text-ja="スター"
+>Watch</span>: <span class="badge">0</span>
+<ul>
+<li>
+<span class="action"
+    data-method="switchFilterList"
+    data-status="0"
+    data-star="true"
+    data-text-ja="未着手"
+>Open</span>: <span class="badge">0</span></li>
+<li>
+<span class="action"
+    data-method="switchFilterList"
+    data-status="1"
+    data-star="true"
+    data-text-ja="着手"
+>In Progress</span>: <span class="badge">0</span></li>
+<li>
+<span class="action"
+    data-method="switchFilterList"
+    data-status="2"
+    data-star="true"
+    data-text-ja="処理済"
+>Fix</span>: <span class="badge">0</span></li>
+</ul>
+</li>
+</ul>
+</article>
 </aside>
 <article>
 <header>
-<nav>
-<ul class="clearfix">
-<li>
 <button
   id="create-task-button"
   data-method="open"
   data-id="create-task-window"
   data-callback="createTask"
-  data-guide-en="Let's Create New Task!"
-  data-guide-ja="タスク作成"
+  data-guide-en="Press the C Key or Click the Member Icon."
+  data-guide-ja="Cキー又はMemberアイコンをクリックして呼び出すと楽です。"
 >
-<div class="icon-with icon-create">New...</div>
+<div class="icon-with icon-create" data-text-ja="タスク作成">Create Task...</div>
 </button>
-</li>
-<li class="label"
-  data-guide-en="Task Sort Menu"
-  data-guide-ja="タスクを並び替えるメニュー"
-><span class="icon icon-sort"></span></li>
-<li>
-<button
-  id="free-sort-task-button"
-  data-method="taskmenuSort"
-  data-id="sort"
-  data-guide-en="Sort Free"
-  data-guide-ja="D&Dでソート"
->
-<div class="icon icon-openhand"></div>
-</button>
-</li>
-<li>
-<button class="on"
-  data-method="taskmenuSort"
-  data-id="updated"
-  data-guide-en="Sort Updated"
-  data-guide-ja="更新日でソート"
->
-<div class="icon icon-calendar"></div>
-</button>
-</li>
-<li>
-<button
-  data-method="taskmenuSort"
-  data-id="due"
-  data-guide-en="Sort Due"
-  data-guide-ja="期日でソート"
->
-<div class="icon icon-hourglass"></div>
-</button>
-</li>
-<li class="label"
-  data-guide-en="Task Filter Menu"
-  data-guide-ja="タスクの表示を絞り込むメニュー"
-><span class="icon icon-switch"></span></li>
-<li>
-<button
-  id="mainmenu-switch-description"
-  data-method="taskmenuSwitch"
-  data-id="description"
-  data-val="1"
-  data-guide-en="toggle description and comments."
-  data-guide-ja="詳細及びコメントの表示を切り替えます。"
->
-<div class="icon icon-description"></div>
-</button>
-</li>
-<li class="label"
-    data-guide-en="Task Filter Menu"
-    data-guide-ja="タスクの表示を絞り込むメニュー"
-><span class="icon icon-filter"></span></li>
-<li>
-<button
-  data-method="taskmenuFilter"
-  data-id="my"
-  data-val="1"
-  data-guide-en="Show only My Task"
-  data-guide-ja="自分が担当しているタスクのみ表示します。"
->
-<div class="icon my" data-url="[% profile_image_url %]"></div>
-</button>
-</li>
-<li>
-<button
-  data-method="taskmenuFilter"
-  data-id="star"
-  data-val="1"
-  data-guide-en="Show only Star Task."
-  data-guide-ja="スターのみ表示します。"
->
-<div class="icon icon-star-on"></div>
-</button>
-</li>
-<li>
-<button
-  data-method="taskmenuFilter"
-  data-id="tasksOff"
-  data-val="1"
-  data-guide-en="Show only open Task."
-  data-guide-ja="未着手のタスクのみ表示します。"
->
-<div class="icon icon-tasks-off"></div>
-</button>
-</li>
-<li>
-<button
-  data-method="taskmenuFilter"
-  data-id="progress"
-  data-val="1"
-  data-guide-en="Show only In Progress Task."
-  data-guide-ja="処理中のタスクのみ表示します。"
->
-<div class="icon icon-progress"></div>
-</button>
-</li>
-<li>
-<button
-  data-method="taskmenuFilter"
-  data-id="tasksOn"
-  data-val="1"
-  data-guide-en="Show only Fixed Task."
-  data-guide-ja="処理済のタスクのみ表示します。"
->
-<div class="icon icon-tasks-on"></div>
-</button>
-</li>
-<!-- <li class=""><input type="text" class="icon-search"></li> -->
-<!-- <li class="right">
-<button class="" data-method="open" data-id="create-list-window" data-callback="editList">
-<div class="icon icon-settings"></div>
-</button>
-</li> -->
-<li class="right">
-<button
-  id="recycle-button"
-  data-method="taskmenuFilter"
-  data-id="recycle"
-  data-val="1"
-  data-guide-en="Show closed Task."
-  data-guide-ja="完了済のタスクを表示します。"
->
-<div class="icon icon-recycle"></div>
-</button>
-</li>
-<li class="right">
-<button
-  id="clear-trash-button"
-  data-method="open"
-  data-id="clear-trash-window"
-  data-callback="clearTrash"
-  data-guide-en="Delete Closed Task."
-  data-guide-ja="完了済のタスクを削除します。"
->
-<div class="icon icon-trash"></div>
-</button>
-</li>
+<div class="pulldown">
+Sort: <span></span>
+<ul>
+<li
+    class="action"
+    data-method="taskmenuSort"
+    data-id="title"
+    data-text-ja="タイトル"
+>Title</li>
+<li
+    class="action selected"
+    data-method="taskmenuSort"
+    data-id="updated"
+    data-text-ja="更新日"
+>Updated</li>
+<li
+    class="action"
+    data-method="taskmenuSort"
+    data-id="due"
+    data-text-ja="期日"
+>Due</li>
+<li
+    class="action"
+    data-method="taskmenuSort"
+    data-id="sort"
+    data-text-ja="手動"
+>free</li>
 </ul>
-</nav>
+</div>
 </header>
 <section>
-<header class="clearfix">
-<h1>プロジェクトX</h1>
-<ul></ul>
-</header>
 <ul class="task">
-<li class="clearfix">
+<li class="clearfix" draggable="true">
 <div class="grip icon-grip"
   data-guide-en="hand sort grip"
   data-guide-ja="手動ソートグリップ（手動ソート時のみ使用可）"
 ></div>
 <div class="action icon-tasks-off"
-  data-guide-en="status rotation"
-  data-guide-ja="ステータス変更"
+    data-guide-en="status rotation"
+    data-guide-ja="ステータス変更"
 ></div>
 <div class="action icon assign"
-  data-method="open"
-  data-id="create-task-window"
-  data-callback="editTask"
-  data-guide-en="assign"
-  data-guide-ja="担当者"
+    data-method="open"
+    data-id="create-task-window"
+    data-callback="editTask"
 ></div>
 <div class="action icon-star-off"
-  data-guide-en="star toggle"
-  data-guide-ja="関心 on/off"
+    data-guide-en="star toggle"
+    data-guide-ja="関心 on/off"
 ></div>
 <div class="action icon-edit"
-  data-method="open"
-  data-id="create-task-window"
-  data-callback="editTask"
-  data-guide-en="edit"
-  data-guide-ja="編集"
+    data-method="open"
+    data-id="create-task-window"
+    data-callback="editTask"
+    data-guide-en="edit"
+    data-guide-ja="編集"
 ></div>
 <div class="title">名前を決める</div>
 <div class="action icon-delete right"
-  data-guide-en="closed"
-  data-guide-ja="完了（ごみ箱へ）"
+    data-guide-en="closed"
+    data-guide-ja="完了（ごみ箱へ）"
+></div>
+<div class="action icon-recycle right"
+    data-guide-en="restore"
+    data-guide-ja="元に戻す"
 ></div>
 <div class="due"></div>
+<div class="comments"
+    data-guide-en="number of comments"
+    data-guide-ja="コメント数"
+></div>
 </li>
 </ul>
 <ul
@@ -393,58 +361,81 @@ $(document).ready(function() {
 </ul>
 </section>
 </article>
+<div id="comment">
+<h1 id="list-name"></h1>
+<h2 id="task-name"></h2>
+<p id="task-description"></p>
+<p><span data-text-ja="コメント">Comment</span>:</p>
+<textarea data-text-placeholder-ja="ここにコメントを入力して下さい" placeholder="Write a comment..."></textarea>
+<p>
+[Enter] <span data-text-ja="投稿">post</span>,
+[Shift+Enter] <span data-text-ja="改行">new-line</span>,
+[ESC] <span data-text-ja="キャンセル">Cancel</span>
+</p>
+<ul></ul>
+</div>
 </div>
 <footer>
-<p><span data-text-ja="ショートカットキー">Shortcut Key</span> [C]: <span data-text-ja="タスク登録">Create Task</span></p>
-<!-- <div class="icon icon-prev"></div> -->
-<!-- <ul></ul> -->
+<p>
+<span data-text-ja="ショートカットキー">Shortcut Key</span>
+[C]: <span data-text-ja="タスク登録">Create Task</span>
+[R]: <span data-text-ja="リフレッシュ(データ再同期)">Refresh</span>
+</p>
 </footer>
 
 <!-- parts -->
 <form id="create-task-window" class="modal" data-submit="submitCreateTask" data-reset="resetCreateTask">
 <header>
 <h1
-  data-text-default="Create Task"
-  data-text-edit="Edit Task"
+    data-text-default="Create Task"
+    data-text-edit="Edit Task"
 >Create Task</h1>
 </header>
-<article class="box">
+<article class="clearfix">
 <ul>
 <li class="label-first"><span data-text-ja="タイトル:">Title:</span> <strong style="color: red;">*</strong></li>
-<li><input type="text" name="title" value="" placeholder="Write a title..." data-no-keep="1"></li>
-<li class="label" data-text-ja="詳細:">Description:</li>
-<li><textarea name="description" placeholder="Write a description..." data-no-keep="1"></textarea></li>
+<li><input type="text" name="title" value="" placeholder="Write a title..." data-no-keep="1" style="width: 420px;"></li>
 <li class="label" data-text-ja="期日:">Due:</li>
 <li>
-<input type="text" id="create-task-date" name="due" placeholder="5/21/2011">
+<input type="text" id="create-task-date" name="due" placeholder="5/21/2011" style="width: 120px">
+<span id="create-task-date-controller">
 <span
-  class="action icon icon-create"
-  data-method="createTaskDuePlus"
-  data-guide-en="+1 day"
-  data-guide-ja="+1日"
+    class="action icon icon-create"
+    data-method="createTaskDuePlus"
+    data-guide-en="+1 day"
+    data-guide-ja="+1日"
 ></span>
 <span
-  class="action icon icon-minus"
-  data-method="createTaskDueMinus"
-  data-guide-en="-1 day"
-  data-guide-ja="-1日"
+    class="action icon icon-minus"
+    data-method="createTaskDueMinus"
+    data-guide-en="-1 day"
+    data-guide-ja="-1日"
 ></span>
 <span
-  class="action icon icon-delete"
-  data-method="createTaskDueDelete"
-  data-guide-en="clear"
-  data-guide-ja="クリア"
+    class="action icon icon-delete"
+    data-method="createTaskDueDelete"
+    data-guide-en="clear"
+    data-guide-ja="クリア"
 ></span>
 <span
-  class="action icon icon-today"
-  data-method="createTaskDueToday"
-  data-guide-en="today"
-  data-guide-ja="今日"
->TODAY</span>
+    class="action icon icon-equal"
+    data-method="createTaskDueToday"
+    data-guide-en="today"
+    data-guide-ja="今日"
+></span>
+<span
+    class="action icon-wide icon-plus-1-m"
+    data-method="createTaskDuePlusMonth"
+    data-guide-en="+1 month"
+    data-guide-ja="+1月"
+></span>
+</span>
 </li>
-</ul>
+<li class="label" data-text-ja="担当者:">Assign:</li>
+<li>
 <ul id="create-task-assign">
-<li class="label-first" data-text-ja="担当者:">Assign:</li>
+</ul>
+</li>
 </ul>
 </article>
 <footer>
@@ -452,23 +443,9 @@ $(document).ready(function() {
 <ul>
 <li style="float: left;">
 [Enter] <span data-text-ja="登録">Save</span>,
-[ESC] <span data-text-ja="キャンセル">Cancel</span>,
+[ESC] <span data-text-ja="閉じる">Close</span>,
 [Shift+ESC] <span data-text-ja="リセット">Reset</span>
 </li>
-<!-- <li
-  data-guide-en="Not close after registration."
-  data-guide-ja="登録後ウィンドウを閉じない。"
->
-<input id="create-task-window-continue" type="checkbox" name="continue" value="1">
-<label for="create-task-window-continue">Continue</label>
-</li>
-<li
-  data-guide-en="Not clear after registration."
-  data-guide-ja="登録後内容を消さない。"
->
-<input id="create-task-window-keep" type="checkbox" name="keep" value="1">
-<label for="create-task-window-keep">Keep</label>
-</li> -->
 <li><button id="">Save</button></li>
 <li><button class="cancel">Cancel</button></li>
 </ul>
@@ -479,23 +456,16 @@ $(document).ready(function() {
 <form id="create-list-window" class="modal" data-submit="submitCreateList" data-reset="resetCreateList">
 <header>
 <h1
-  data-text-default="Create List"
-  data-text-edit="Edit List"
+    data-text-default="Create List"
+    data-text-edit="Edit List"
 >Create List</h1>
 </header>
 <article>
 <ul>
 <li class="label-first">List Name: <strong style="color: red;">*</strong></li>
 <li><input type="text" name="name" value="" placeholder="Write a name..." data-no-keep="1"></li>
-<li data-owner-only="true">Owner:</li>
-<li data-owner-only="true">
-<select name="owner"></select>
-</li>
-<li class="label">Admins:</li>
-<li>
-<input type="text" id="create-list-admins-input" name="" value="" placeholder="su_aska">
-<ul id="create-list-admins">
-</ul>
+<li data-owner-only="true" class="label">Owner:</li>
+<li data-owner-only="true"><select id="create-list-owner-select" name="owner"></select>
 </li>
 <li class="label">Members:</li>
 <li>
@@ -503,38 +473,11 @@ $(document).ready(function() {
 <ul id="create-list-members">
 </ul>
 </li>
-<!-- <li>Privacy: <strong style="color: red;">*</strong></li>
-<li>
-<select name="privacy">
-<option>Open</option>
-<option selected="selected">Closed</option>
-<option>Secret</option>
-</select>
-</li> -->
 </ul>
 </article>
 <footer>
 <nav>
 <ul>
-<li style="float: left;">
-[Enter] <span data-text-ja="登録">Save</span>,
-[ESC] <span data-text-ja="キャンセル">Cancel</span>,
-[Shift+ESC] <span data-text-ja="リセット">Reset</span>
-</li>
-<!-- <li
-  data-guide-en="Not close after registration."
-  data-guide-ja="登録後ウィンドウを閉じない。"
->
-<input id="create-list-window-continue" type="checkbox" name="continue" value="1">
-<label for="create-list-window-continue">Continue</label>
-</li>
-<li
-  data-guide-en="Not clear after registration."
-  data-guide-ja="登録後内容を消さない。"
->
-<input id="create-list-window-keep" type="checkbox" name="keep" value="1">
-<label for="create-list-window-keep">Keep</label>
-</li> -->
 <li><button>Save</button></li>
 <li><button class="cancel">Cancel</button></li>
 </ul>
@@ -544,11 +487,11 @@ $(document).ready(function() {
 
 <form id="delete-list-window" class="modal confirm" data-submit="submitDeleteList">
 <header>
-<h1>Delete List</h1>
+<h1 data-text-ja="リスト削除">Delete List</h1>
 </header>
 <article>
 <ul>
-<li>List [<span id="delete-list-name"></span>] Delete OK?</li>
+<li data-text-ja="[警告] このリストを削除しても宜しいですか？">[WARNNG] Delete List OK?</li>
 </ul>
 </article>
 <footer>

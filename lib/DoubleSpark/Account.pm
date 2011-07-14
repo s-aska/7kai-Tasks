@@ -62,7 +62,6 @@ sub new {
                     name => $name,
                     privacy => 'closed',
                     owner_id   => $owner_id,
-                    admin_ids => [],
                     member_ids => [],
                     tasks => [],
                     history => []
@@ -181,24 +180,10 @@ sub has_role_owner {
     return ;
 }
 
-sub has_role_admin {
-    my ($self, $list) = @_;
-    
-    for my $code ($list->{owner_id}, @{$list->{admin_ids}}) {
-        for my $user_id (keys %{ $self->{tw} }) {
-            if ('tw-' . $user_id eq $code) {
-                return 1;
-            }
-        }
-    }
-    
-    return ;
-}
-
 sub has_role_member {
     my ($self, $list) = @_;
     
-    for my $code ($list->{owner_id}, @{$list->{admin_ids}}, @{$list->{member_ids}}) {
+    for my $code ($list->{owner_id}, @{$list->{member_ids}}) {
         for my $user_id (keys %{ $self->{tw} }) {
             if ('tw-' . $user_id eq $code) {
                 return 1;

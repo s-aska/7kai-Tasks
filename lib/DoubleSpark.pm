@@ -2,7 +2,7 @@ package DoubleSpark;
 use strict;
 use warnings;
 use parent qw/Amon2/;
-our $VERSION='1.04';
+our $VERSION='1.10';
 use 5.008001;
 
 use AnyEvent::CouchDB ();

@@ -21,22 +21,40 @@ ns.Tasks.prototype = {
     ],
     template: {},
     localizer: null,
+    counters: [],
     
     // データ
     is_webkit: false,
     lang: 'en',
     guide: true,
     dragging: false,
+    dragtask: null,
     current_list: null,
-    current_filter: null,
+    current_task: null,
+    current_taskli: null,
     account: null,
     assign: [],
     modals: {},
+    offset: {},
     parts: {},
     friends: {},
     friend_ids: {},
     taskli: {},
     listli: {},
+    active: null,
+    cond_default: {
+        list_id: null,
+        star: null,
+        status: null,
+        status_ignore: null,
+        closed: 0,
+        registrant: null,
+        assign: null,
+        todo: null,
+        notify: null
+    },
+    cond: {},
+    sort: null,
     unread_comment_count: 0,
     
     // 初期化系
@@ -44,6 +62,7 @@ ns.Tasks.prototype = {
     initParts: initParts,
     initEvent: initEvent,
     initEventGuide: initEventGuide,
+    initCounter: initCounter,
     initWindow: initWindow,
     initAccount: initAccount,
     
@@ -68,9 +87,11 @@ ns.Tasks.prototype = {
     showList: showList,
     switchList: switchList,
     switchFilterList: switchFilterList,
+    switchClosed: switchClosed,
     renderList: renderList,
     renderBadge: renderBadge,
     needCount: needCount,
+    needNotify: needNotify,
     renderCommentBadge: renderCommentBadge,
     createList: createList,
     modifyList: modifyList,
@@ -79,6 +100,7 @@ ns.Tasks.prototype = {
     sortUpdateList: sortUpdateList,
     createTask: createTask,
     modifyTask: modifyTask,
+    moveTask: moveTask,
     deleteTask: deleteTask,
     filterTask: filterTask,
     sortTask: sortTask,
@@ -91,6 +113,8 @@ ns.Tasks.prototype = {
     listReadLastTime: listReadLastTime,
     clickStatebleCheckbox: clickStatebleCheckbox,
     timestamp: timestamp,
+    updateCounter: updateCounter,
+    resetCounter: resetCounter,
     
     // GrobalMenu
     clickOpenButton: clickOpenButton,
@@ -122,6 +146,7 @@ ns.Tasks.prototype = {
     clickTaskmenuFilter: clickTaskmenuFilter,
     clickTaskmenuTrash: clickTaskmenuTrash,
     clickCreateTaskDuePlus: clickCreateTaskDuePlus,
+    clickCreateTaskDuePlusMonth: clickCreateTaskDuePlusMonth,
     clickCreateTaskDueMinus: clickCreateTaskDueMinus,
     clickCreateTaskDueDelete: clickCreateTaskDueDelete,
     clickCreateTaskDueToday: clickCreateTaskDueToday,
@@ -164,6 +189,7 @@ function initialize(options) {
 function run() {
     this.initParts();
     this.initEvent();
+    this.initCounter();
     this.initWindow();
     this.initAccount();
 }
@@ -171,27 +197,37 @@ function initParts() {
     this.parts.header      = $('body > header');
     this.parts.aside       = $('body > div > aside');
     this.parts.article     = $('body > div > article');
+    this.parts.right       = $('body > div > div');
+    this.parts.comment     = $('body > div > div > ul');
     this.parts.footer      = $('body > footer');
     
     this.parts.status      = this.parts.header.find('p');
-    this.parts.console     = this.parts.footer.find('ul');
-    this.parts.sidemenu    = this.parts.aside.find('> header > nav > ul');
-    this.parts.lists       = this.parts.aside.find('> nav > ul');
-    this.parts.mainmenu    = this.parts.article.find('> header > nav > ul');
+    
+    this.parts.sidemenu    = this.parts.aside.find('> header');
+    this.parts.listnav     = this.parts.aside.find('> header > ul');
+    this.parts.lists       = this.parts.listnav;
+    this.parts.listname    = this.parts.aside.find('#current-list-name');
+    this.parts.listmembers = this.parts.aside.find('#list-members');
+    this.parts.listmenu    = this.parts.aside.find('> article li.action');
+    this.parts.listonly    = this.parts.aside.find('[data-listonly]');
+    this.parts.listsort    = this.parts.aside.find('> article ul.sort');
+    
+    this.parts.infomation  = $('#infomation');
+    
     this.parts.tasks       = this.parts.article.find('> section > ul.task');
     this.parts.timeline    = this.parts.article.find('> section > ul.timeline');
-    this.parts.listname    = this.parts.article.find('> section > header > h1');
-    this.parts.listmembers = this.parts.article.find('> section > header > ul');
     
     this.parts.lswt        = $('#list-settings-window table');
     this.parts.owners      = $('#create-list-window select[name=owner]');
     this.parts.guide       = $('#guide');
+    this.parts.commentbox  = $('body > div > div > textarea');
     
-    this.parts.listonly    = $('#create-task-button, #free-sort-task-button, #clear-trash-button');
     this.parts.connectacs  = $('#connect-accounts');
     
     this.template.task     = this.parts.tasks.html();
     this.template.assign   = $('#create-task-assign').html();
+    
+    this.offset.commment   = $('body > div > div').offset();
 }
 function initEvent() {
     var that = this;
@@ -202,17 +238,66 @@ function initEvent() {
     this.initEventGuide($(d));
     
     /* header */
+    $('body > header nav ul li').each(function(i, ele){
+        var li = $(ele);
+        var ul = li.find('> ul:first');
+        li.hover(function(){
+            ul.slideDown(that.speed);
+        }, function(){
+            ul.slideUp(that.speed);
+        });
+    });
+    $('.pulldown').each(function(i, ele){
+        var pulldown = $(ele);
+        var ul = pulldown.find('> ul:first');
+        pulldown.hover(function(){
+            ul.slideDown(that.speed);
+        }, function(){
+            ul.slideUp(that.speed);
+        });
+    });
+    
     
     
     /* aside */
+    
+    this.parts.sidemenu.hover(function(){
+        that.parts.listnav.show('drop', {}, that.speed);
+    }, function(){
+        if (!that.dragging) {
+            that.parts.listnav.hide('drop', {}, that.speed);
+        }
+    });
+    
+    // $('body > div > article > header > form > input').click(function(e){
+    //     var div = $('body > div > article > header > form > div');
+    //     if (div.css('display') === 'none') {
+    //         div.slideDown(that.speed, function(){
+    //             that.openCallbackCreateTask(e, $('body > div > article > header > form'));
+    //         });
+    //         return false;
+    //     }
+    // });
+    
+    // $('body > div > article > header').hover(function(e){
+    // }, function(){
+    //     // $('body > div > article > header > form > div').slideUp(that.speed);
+    // });
+    
+    // this.parts.article.mouseover(function(e){
+    //     that.parts.listnav.slideUp(that.speed);
+    // });
+    
+    
+    
     this.parts.lists.find('li.timeline').click($.proxy(this.showTimeline, this));
     this.parts.lists.find('li.filter').click($.proxy(this.switchFilterList, this));
     
-    $('textarea').autogrow();
+    // $('textarea').autogrow();
     
     /* article */
     /* article nav */
-    $('button, a, span.action, input[data-method]').each(function(i, ele){
+    $('button, a, span.action, li.action, input[data-method]').each(function(i, ele){
         ele.addEventListener("click", that, false);
     });
     
@@ -249,7 +334,6 @@ function initEvent() {
         }
     });
     
-    
     this.parts.lists.sortable({
         cursor: 'url(/static/img/openhand.cur), move',
         start: function (e, ui) {
@@ -268,7 +352,7 @@ function initEvent() {
     $('form.modal').each(function(i, ele){
         var form = $(ele);
         form.find('button.cancel').click(function(){
-            form.fadeOut(that.speed);
+            form.hide('drop');
             return false;
         });
         form.find('input[type=text]:first').keydown(function(e){
@@ -283,7 +367,7 @@ function initEvent() {
                     }
                 } else {
                     document.activeElement.blur();
-                    form.hide();
+                    form.hide('drop');
                 }
             }
         });
@@ -304,9 +388,49 @@ function initEvent() {
         form.draggable({ handle: 'h1' });
         form.find('footer input[type=checkbox]').click($.proxy(that.clickStatebleCheckbox, that));
     });
+    $('form.fillin').each(function(i, ele){
+        var form = $(ele);
+        form.find('button.cancel').click(function(){
+            form.find('input[type=text]:first').val('');
+            form.find('> div').slideUp(that.speed);
+            return false;
+        });
+        form.find('input[type=text]:first').keydown(function(e){
+            if (e.keyCode == 27) {
+                if (e.shiftKey) {
+                    var reset = form.data('reset');
+                    if (reset) {
+                        that[reset].call(this, form);
+                    } else {
+                        form.find('*[data-no-keep=1]').val('');
+                        form.find('input[type=text]:first').get(0).focus();
+                    }
+                } else {
+                    document.activeElement.blur();
+                    form.find('> div').slideUp(that.speed);
+                }
+            }
+        });
+        form.bind('submit', function(){
+            var submit = form.data('submit');
+            if (submit) {
+                that[submit].call(that, form);
+            }
+            return false;
+        });
+        that.modals[form.attr('id')] = form;
+    });
     
     // Create Task Window
-    $('#create-task-date').datepicker();
+    var datepicker_option = {};
+    if (this.lang === 'ja') {
+        datepicker_option.dateFormat = 'yy/mm/dd';
+        var ymd = $.datepicker.formatDate('yy/mm/dd', new Date());
+        $('#create-task-date').attr('placeholder', ymd);
+    }
+    $('#create-task-date').datepicker(datepicker_option);
+    
+    $('#create-task-date-controller').disableSelection();
     
     var bindAutocomplete = function(selector, prependTo){
         selector.autocomplete({
@@ -328,7 +452,6 @@ function initEvent() {
     	});
     };
     bindAutocomplete.call(this, $('#create-list-members-input'), $('#create-list-members'));
-    bindAutocomplete.call(this, $('#create-list-admins-input'), $('#create-list-admins'));
     
     document.getElementById('extentionsEventDiv').addEventListener('extentionsEvent', function() {
         var eventText = document.getElementById('extentionsEventDiv').innerText;
@@ -338,12 +461,38 @@ function initEvent() {
     
     $(document).keydown(function(e){
         if (document.activeElement.tagName === 'BODY') {
-            if (e.keyCode === 67) {
+            if (e.keyCode === 67) { // c
+                // that.clickOpenButton(e, $('#create-task-button'));
+                // $('body > div > article > header > form > div').slideDown(that.speed);
+                // that.openCallbackCreateTask(e, $('body > div > article > header > form'));
                 $('#create-task-button').click();
                 return false;
+            } else if (e.keyCode === 82) { // r
+                that.refresh();
             }
         }
         return true;
+    });
+    
+    this.parts.commentbox.attr('disabled', true);
+    this.parts.commentbox.keydown(function(e){
+        if (e.keyCode === 13 && !e.shiftKey) {
+            e.stopPropagation();
+            e.preventDefault();
+            if (that.parts.commentbox.val().length) {
+                that.submitComment();
+            }
+        } else if (e.keyCode === 27) {
+            that.parts.commentbox.blur();
+        }
+    });
+    this.parts.commentbox.autogrow({single: true});
+    this.parts.commentbox.focus(function(){
+        that.active = 'comment';
+        $('#comment').addClass('selected');
+    }).blur(function(){
+        that.active = null;
+        $('#comment').removeClass('selected');
     });
 }
 function initEventGuide(ele) {
@@ -369,6 +518,27 @@ function initEventGuide(ele) {
         });
     });
 }
+function initCounter() {
+    var that = this;
+    this.parts.infomation.find('li').each(function(i, ele){
+        var li = $(ele);
+        var link = li.find('> span.action');
+        var badge = li.find('> span.badge');
+        badge.text(0);
+        var cond = $.extend({}, that.cond_default);
+        for (var key in cond) {
+            var val = link.data(key.replace('_', '-'));
+            if (typeof val !== 'undefined') {
+                cond[key] = val;
+            }
+        }
+        var filter = that.tasksFilterGenerate(cond);
+        that.counters.push({
+            filter: filter,
+            badge: badge
+        });
+    });
+}
 function initWindow() {
     
     this.windowResizeEvent();
@@ -388,14 +558,13 @@ function initWindow() {
 }
 function initAccount() {
     this.refresh();
-    this.parts.mainmenu.find('.icon-trash').parent().fadeOut('slow');
+    // this.parts.mainmenu.find('.icon-trash').parent().fadeOut('slow');
 }
 
 // Event
 function handleEvent(e) {
     var ele = $(e.currentTarget);
     if (ele.data('method')) {
-        // e.preventDefault();
         e.stopPropagation();
     }
     switch (ele.data('method')) {
@@ -416,34 +585,46 @@ function handleEvent(e) {
         break;
     case 'syncTwitterContact':
         this.clickSyncTwitterContact(e, ele);
-        break
+        break;
     case 'accountSync':
         this.clickAccountSync(e, ele);
-        break
+        break;
     case 'refresh':
         this.clickRefresh(e, ele);
-        break
+        break;
     case 'signinTwitter':
         this.clickSignInTwitter(e, ele);
-        break
+        break;
     case 'createTaskDuePlus':
         this.clickCreateTaskDuePlus(e, ele);
-        break
+        break;
+    case 'createTaskDuePlusMonth':
+        this.clickCreateTaskDuePlusMonth(e, ele);
+        break;
     case 'createTaskDueMinus':
         this.clickCreateTaskDueMinus(e, ele);
-        break
+        break;
     case 'createTaskDueDelete':
         this.clickCreateTaskDueDelete(e, ele);
-        break
+        break;
     case 'createTaskDueToday':
         this.clickCreateTaskDueToday(e, ele);
-        break
+        break;
     case 'listDisplaySwitch':
         this.clickListDisplaySwitch(e, ele);
-        break
+        break;
     case 'listBadgeSwitch':
         this.clickListBadgeSwitch(e, ele);
-        break
+        break;
+    case 'switchFilterList':
+        this.switchFilterList(e);
+        break;
+    case 'switchClosed':
+        this.switchClosed(e);
+        break;
+    case 'showTimeline':
+        this.showTimeline(e);
+        break;
     }
 }
 function windowResizeEvent() {
@@ -453,8 +634,13 @@ function windowResizeEvent() {
     if (h_height > 0) {
         h_height+= 8;
     }
-    $('aside > nav').height(w_height - h_height - 73);
-    $('article > section').height(w_height - h_height - 93);
+    $('body > div > aside > header > ul').height(w_height - h_height - 71);
+    $('body > div > aside').height(w_height - h_height - 35);
+    $('body > div > article > section').height(w_height - h_height - 93 + 17);
+    
+    $('body > div > div > ul').height(w_height - h_height - $('body > div > div > ul').offset().top - 19);
+    $('body > div > div').width(w.width() - this.offset.commment.left - 24);
+    
 }
 
 // General
@@ -475,6 +661,7 @@ function message(message) {
 }
 function statusUpdate(message) {
     this.parts.status.text(message);
+    // this.parts.console.prepend($(document.createElement('li')).text(message));
 }
 function getProfileImageUrl(user_id) {
     var friend = this.friend_ids[user_id];
@@ -617,6 +804,7 @@ function refresh(option) {
                 }
             }
             // FIXME: 抜けたTwitterの情報を消す
+            that.resetCounter();
             that.listmap = [];
             that.parts.lists.find('.project').remove();
             that.parts.lswt.find('.project').remove();
@@ -625,7 +813,7 @@ function refresh(option) {
             var lists = that.account.lists;
             for (var i = 0, max_i = lists.length; i < max_i; i++) {
                 var list = lists[i];
-                var humans = [list.doc.owner_id].concat(list.doc.admin_ids).concat(list.doc.member_ids);
+                var humans = [list.doc.owner_id].concat(list.doc.member_ids);
                 for (var j = 0, max_j = humans.length; j < max_j; j++) {
                     var human = humans[j];
                     if (!(human in that.friend_ids)) {
@@ -673,32 +861,32 @@ function refresh(option) {
                 showList.call();
             }
             
-            for (var i = 0, max = that.filters.length; i < max; i++) {
-                var filter = that.filters[i];
-                if (filter in that.account.state.hide_list) {
-                    that.parts.lswt.find('tr[data-list-id=' + filter + ']').each(function(i, ele){
-                        $(ele).find('input').attr('checked', false);
-                    });
-                    that.parts.lists.find('li[data-list-id=' + filter + ']').hide();
-                } else {
-                    that.parts.lists.find('li[data-list-id=' + filter + ']').show();
-                }
-            }
+            // for (var i = 0, max = that.filters.length; i < max; i++) {
+            //     var filter = that.filters[i];
+            //     if (filter in that.account.state.hide_list) {
+            //         that.parts.lswt.find('tr[data-list-id=' + filter + ']').each(function(i, ele){
+            //             $(ele).find('input').attr('checked', false);
+            //         });
+            //         that.parts.lists.find('li[data-list-id=' + filter + ']').hide();
+            //     } else {
+            //         that.parts.lists.find('li[data-list-id=' + filter + ']').show();
+            //     }
+            // }
             // checkox state 
             // for (var id in that.account.state.checkbox) {
             //     document.getElementById(id).checked =
             //         that.account.state.checkbox[id] ? true : false;
             // }
-            for (var id in that.account.state.button) {
-                var button = $(document.getElementById(id));
-                if (that.account.state.button[id]) {
-                    button.removeClass('on');
-                    button.data('val', 1);
-                } else {
-                    button.addClass('on');
-                    button.data('val', 0);
-                }
-            }
+            // for (var id in that.account.state.button) {
+            //     var button = $(document.getElementById(id));
+            //     if (that.account.state.button[id]) {
+            //         button.removeClass('on');
+            //         button.data('val', 1);
+            //     } else {
+            //         button.addClass('on');
+            //         button.data('val', 0);
+            //     }
+            // }
             if ($('#guide-switch').data('val') == 1) {
                 that.guide = false;
                 $('#guide-switch').text($('#guide-switch').data('text-off'));
@@ -708,10 +896,10 @@ function refresh(option) {
             }
             
             // 
-            var my = that.parts.mainmenu.find('.my:first');
-            var url = my.data('url');
-            var img = $('<img/>').attr('src', url).attr('width', 16);
-            my.empty().append(img);
+            // var my = that.parts.mainmenu.find('.my:first');
+            // var url = my.data('url');
+            // var img = $('<img/>').attr('src', url).attr('width', 16);
+            // my.empty().append(img);
         }
     });
 }
@@ -722,10 +910,10 @@ function submitFinalize(form) {
 function showTimeline(e) {
     this.parts.timeline.show();
     this.parts.tasks.hide();
-    this.parts.lists.find('.selected').removeClass('selected');
+//    this.parts.lists.find('.selected').removeClass('selected');
     var li = $(e.currentTarget);
-    li.addClass('selected');
-    this.parts.mainmenu.find('button').attr('disabled', true);
+//    li.addClass('selected');
+//    this.parts.mainmenu.find('button').attr('disabled', true);
     this.parts.listname.text(li.text());
     this.parts.listmembers.empty();
     this.updateAccount({
@@ -785,22 +973,24 @@ function showList(id, task_id) {
     var that = this;
     var li = this.listli[id];
     var list = this.listmap[id];
+    this.cond = $.extend({}, this.cond_default);
+    this.cond.list_id = id;
     this.current_list = list;
     this.current_filter = null;
-    this.parts.lists.find('.selected').removeClass('selected');
-    this.listli[list.id].addClass('selected');
-    this.parts.mainmenu.find('button').attr('disabled', false);
+    $('#closed-task-switch').removeClass('selected');
     this.parts.listname.text(list.doc.name);
+    this.parts.listmenu.data('list-id', id);
     this.parts.listmembers.empty();
+    
+    if (id in this.account.state.ignore_badge_list) {
+        $('#ignore-badge-count').attr('checked', true);
+    } else {
+        $('#ignore-badge-count').attr('checked', false);
+    }
+    
     // FIXME: 最終的に消す
     if ("owner_id" in list.doc) {
         this.renderMember(list.doc.owner_id);
-    }
-    if ('admin_ids' in list.doc && list.doc.admin_ids.length) {
-        var admin_ids = list.doc.admin_ids.sort();
-        for (var i = 0, max = admin_ids.length; i < max; i++) {
-            this.renderMember(admin_ids[i]);
-        }
     }
     if ('member_ids' in list.doc && list.doc.member_ids.length) {
         var member_ids = list.doc.member_ids.sort();
@@ -808,7 +998,7 @@ function showList(id, task_id) {
             this.renderMember(member_ids[i]);
         }
     }
-    this.filterTask(true);
+    this.filterTask();
     this.sortTask();
     if (task_id) {
         var taskli = that.taskli[id + '-' + task_id];
@@ -816,47 +1006,61 @@ function showList(id, task_id) {
             taskli.effect("highlight", {}, 3000);
         }
     }
-    // 未読があった場合更新
-    if (li.hasClass('updated')) {
-        li.removeClass('updated');
-        this.updateAccount({
-            ns: 'state.read.list',
-            method: 'set',
-            key: id,
-            val: list.value.rev + ',' + (new Date()).getTime()
-        });
-    }
-    this.updateAccount({
-        ns: 'state',
-        method: 'set',
-        key: 'last_read_list',
-        val: list.id
-    });
+    // // 未読があった場合更新
+    // if (li.hasClass('updated')) {
+    //     li.removeClass('updated');
+    //     this.updateAccount({
+    //         ns: 'state.read.list',
+    //         method: 'set',
+    //         key: id,
+    //         val: list.value.rev + ',' + (new Date()).getTime()
+    //     });
+    // }
+    // this.updateAccount({
+    //     ns: 'state',
+    //     method: 'set',
+    //     key: 'last_read_list',
+    //     val: list.id
+    // });
 }
 function switchList(e) {
     var li = $(e.currentTarget);
     var id = li.data('list-id');
     this.showList(id);
+    this.parts.listonly.show();
 }
 function switchFilterList(e) {
     var that = this;
     var li = $(e.currentTarget);
-    var id = li.data('list-id');
-    this.current_list = null;
-    this.current_filter = id;
-    this.parts.lists.find('.selected').removeClass('selected');
-    li.addClass('selected');
-    this.parts.mainmenu.find('button').attr('disabled', false);
-    this.parts.listonly.attr('disabled', true);
-    this.parts.listname.text(this.localizer.text(li));
-    this.parts.listmembers.empty();
-    this.filterTask(true);
-    this.updateAccount({
-        ns: 'state',
-        method: 'set',
-        key: 'last_read_list',
-        val: id
-    });
+    var pli = li.parent().parent().parent().find('> span.action:first');
+    var listname = li.text();
+    if (pli.length) {
+        listname = pli.text();
+    }
+    this.cond = $.extend({}, this.cond_default);
+    for (var key in this.cond) {
+        var val = li.data(key.replace('_', '-'));
+        if (typeof val !== 'undefined') {
+            this.cond[key] = val;
+        }
+    }
+    if (!this.cond.list_id) {
+        this.parts.listonly.hide();
+        this.parts.listname.text(listname);
+        this.current_list = null;
+    }
+    this.filterTask();
+}
+function switchClosed(e) {
+    this.switchFilterList(e);
+    var li = $(e.currentTarget);
+    if (li.data('closed')) {
+        li.data('closed', 0);
+        li.addClass('selected');
+    } else {
+        li.data('closed', 1);
+        li.removeClass('selected');
+    }
 }
 function renderList(list) {
     var that = this;
@@ -865,81 +1069,60 @@ function renderList(list) {
     li.attr('class', 'project');
     li.text(list.doc.name);
     li.append(badge);
-    if (this.isMe(list.doc.owner_id) || this.findMe(list.doc.admin_ids)) {
-        var settings = $('<span class="icon icon-settings" '
-            + 'data-method="open" data-id="create-list-window" '
-            + 'data-callback="editList"></span>');
-        settings.data('list-id', list.id);
-        settings.get(0).addEventListener("click", that, false);
-        li.append(settings);
-    }
     this.listmap[list.id] = list;
     this.listli[list.id] = li;
     li.click($.proxy(that.switchList, that));
     list.taskmap = {};
     for (var j = 0; j < list.doc.tasks.length; j++) {
+        list.doc.tasks[j].list = list;
         list.taskmap[list.doc.tasks[j].id] = list.doc.tasks[j];
     }
     list.badge = badge;
     this.renderBadge(list);
     
-    if (this.listReadLastRev(list.id) != list.value.rev) {
-        li.addClass('updated');
-    }
+    // if (this.listReadLastRev(list.id) != list.value.rev) {
+    //     li.addClass('updated');
+    // }
+    
+    li.get(0).addEventListener('dragover', function(e){
+        if (list.id === that.dragtask.list.id) {
+            return true;
+        }
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+        return false;
+    }, false);
+    // li.get(0).addEventListener('dragenter', function(e){
+    //     if (e.preventDefault) {
+    //         e.preventDefault();
+    //     }
+    //     return false;
+    // }, false);
+    li.get(0).addEventListener('drop', function(e){
+        that.dragging = false;
+        that.parts.guide.hide();
+        that.parts.listnav.hide('drop', {}, that.speed);
+        var data = e.dataTransfer.getData('Text').split(':');
+        that.moveTask(data[1], data[0], list.id)
+    }, false);
     
     var old = this.parts.lists.find('li[data-list-id="' + list.id + '"]');
     if (old.length) {
         if (old.hasClass('selected')) {
             old.replaceWith(li);
-            li.click();
+            // li.click();
+            this.showList(list.id);
         } else {
             old.replaceWith(li);
         }
     } else {
         this.parts.lists.append(li);
-    }
-    
-    // 設定画面
-    var tr = $('<tr class="project" data-list-id="'
-        + list.id
-        + '">'
-        + '<td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>'
-        + '<td><input type="checkbox" checked="checked" data-method="listBadgeSwitch"></td>'
-        + '</tr>')
-        .prepend($('<td></td>').text(list.doc.name));
-    if (this.isMe(list.doc.owner_id)) {
-        tr.append($(
-            '<td><span class="icon icon-delete" data-method="open" '
-            + 'data-id="delete-list-window" data-callback="deleteList"></span></td>'
-        ));
-    }
-    var update = false;
-    var old = this.parts.lswt.find('tr[data-list-id="' + list.id + '"]');
-    if (old.length) {
-        update = true;
-        old.replaceWith(tr);
-    } else {
-        this.parts.lswt.append(tr);
-    }
-    
-    tr.find('span, input').each(function(i, ele){
-        ele.addEventListener("click", that, false);
-    });
-    
-    // Task
-    if (list.id in that.account.state.hide_list) {
-        li.hide();
-        tr.find('input[data-method="listDisplaySwitch"]').attr('checked', false);
-    }
-    if (!update) {
         var tasks = list.doc.tasks;
         for (var i = 0; i < tasks.length; i++) {
             var li = this.renderTask(list, tasks[i]);
             li.hide();
         }
-    }
-    if (list.id in that.account.state.ignore_badge_list) {
-        tr.find('input[data-method="listBadgeSwitch"]').attr('checked', false);
     }
 }
 function renderBadge(list) {
@@ -961,6 +1144,9 @@ function renderBadge(list) {
     }
 }
 function needCount(task) {
+    if (task.list.id in this.account.state.ignore_badge_list) {
+        return false;
+    }
     if (task.closed) {
         return false;
     }
@@ -984,6 +1170,9 @@ function needCount(task) {
         return this.findMe(task.assign_ids);
     }
     return my_order;
+}
+function needNotify(task) {
+    
 }
 function renderCommentBadge() {
     if (this.unread_comment_count) {
@@ -1075,9 +1264,56 @@ function modifyTask(params) {
     .done(function(data){
         if (data.success) {
             that.statusUpdate('update a task.');
-            $.extend(that.listmap[params.list_id].taskmap[data.task.id], data.task);
+            var oldtask = $.extend({}, that.listmap[params.list_id].taskmap[data.task.id]);
+            var newtask = $.extend(that.listmap[params.list_id].taskmap[data.task.id], data.task);
             that.renderBadge(that.listmap[params.list_id]);
             that.taskli[params.list_id + '-' + data.task.id].data('updated', data.task.updated);
+            that.updateCounter(oldtask, newtask);
+        }
+    });
+}
+function moveTask(task_id, src_list_id, dst_list_id) {
+    var that = this;
+    if (src_list_id === dst_list_id) {
+        alert("Can't be moved to the same list.");
+        return;
+    }
+    return this.ajax({
+        type: 'post',
+        url: '/api/1/task/move',
+        data: {
+            task_id: task_id,
+            src_list_id: src_list_id,
+            dst_list_id: dst_list_id
+        },
+        dataType: 'json'
+    })
+    .done(function(data){
+        if (data.success) {
+            that.statusUpdate('move a task.');
+            
+            delete that.listmap[src_list_id].taskmap[task_id];
+            that.taskli[src_list_id + '-' + task_id].remove();
+            
+            var task = data.task;
+            task.list = that.listmap[dst_list_id];
+            that.listmap[dst_list_id].taskmap[task.id] = task;
+            that.listmap[dst_list_id].doc.tasks.push(task);
+            var li = that.renderTask(task.list, task);
+            that.taskli[dst_list_id + '-' + task.id] = li;
+            that.resetCounter(true);
+            that.renderBadge(that.listmap[src_list_id]);
+            that.renderBadge(that.listmap[dst_list_id]);
+            
+            if (that.current_list) {
+                li.slideUp(that.speed);
+            } else {
+                if (that.current_filter.call(that, li)) {
+                    li.slideDown(that.speed);
+                } else {
+                    li.slideUp(that.speed);
+                }
+            }
             
         }
     });
@@ -1085,9 +1321,10 @@ function modifyTask(params) {
 function deleteTask(params) {
     
 }
-function filterTask(readComment) {
+function filterTask() {
     var that = this;
     var filter = this.tasksFilterGenerate();
+    this.current_filter = filter;
     this.parts.timeline.hide();
     this.parts.tasks.show();
     this.parts.tasks.find('> li').each(function(i, ele){
@@ -1126,29 +1363,19 @@ function readComment(li) {
     });
 }
 function sortTask(id) {
-    if (!id) {
-        id = this.parts.mainmenu.find('button.on[data-method=taskmenuSort]:first').data('id');
-    } else {
-        this.parts.mainmenu.find('button[data-method=taskmenuSort]').each(function(i, ele){
-            var button = $(ele);
-            if (button.data('id') === id) {
-                button.addClass('on');
-            } else {
-                button.removeClass('on');
-            }
-        });
-    }
-    if (id === "sort") {
-        this.parts.tasks.sortable("enable");
-        this.parts.tasks.addClass('sortable');
-    } else {
-        this.parts.tasks.sortable("disable");
-        this.parts.tasks.removeClass('sortable');
-    }
     var lis = [];
     this.parts.tasks.find('> li').each(function(i, ele) {
         lis.push($(ele));
     });
+    if (!id) {
+        id = this.sort;
+    } else {
+        this.sort = id;
+    }
+    
+    var label = $('body > div > article > header > div li[data-id="' + id + '"]').text();
+    $('body > div > article > header > div > span').text(label);
+    
     lis.sort(function(a, b) {
         if (id === 'title') {
             return a.text() > b.text() ? 1 : -1;
@@ -1163,6 +1390,13 @@ function sortTask(id) {
     });
     if (id === 'due') {
         lis.reverse();
+    }
+    if (id === "sort") {
+        this.parts.tasks.sortable("enable");
+        this.parts.tasks.addClass('sortable');
+    } else {
+        this.parts.tasks.sortable("disable");
+        this.parts.tasks.removeClass('sortable');
     }
     for (var i = 0; i < lis.length; i++) {
         lis[i].appendTo(this.parts.tasks);
@@ -1217,11 +1451,6 @@ function findMeFromList(list) {
         if (code === list.doc.owner_id) {
             return code;
         } else {
-            for (var i = 0, max = list.doc.admin_ids.length; i < max; i++) {
-                if (code === list.doc.admin_ids[i]) {
-                    return code;
-                }
-            }
             for (var i = 0, max = list.doc.member_ids.length; i < max; i++) {
                 if (code === list.doc.member_ids[i]) {
                     return code;
@@ -1276,20 +1505,58 @@ function timestamp(epoch) {
         return day + ' day' + s + ' ago';
     }
 }
+function updateCounter(oldtask, newtask) {
+    for (var i = 0, max_i = this.counters.length; i < max_i; i++) {
+        var counter = this.counters[i];
+        var old_match = 0,
+            new_match = 0;
+        if (oldtask && counter.filter.call(this, null, oldtask)) {
+            old_match = 1;
+        }
+        if (counter.filter.call(this, null, newtask)) {
+            new_match = 1;
+        }
+        if (old_match !== new_match) {
+            counter.badge.text(parseInt(counter.badge.text(), 10) - old_match + new_match);
+        }
+    }
+}
+function resetCounter(search) {
+    for (var i = 0, max_i = this.counters.length; i < max_i; i++) {
+        var counter = this.counters[i];
+        var count = 0;
+        if (search) {
+            for (var list_id in this.listmap) {
+                var list = this.listmap[list_id];
+                for (var task_id in list.taskmap) {
+                    var task = list.taskmap[task_id];
+                    if (counter.filter.call(this, null, task)) {
+                        count++;
+                    }
+                }
+            }
+        }
+        counter.badge.text(count);
+    }
+}
 
 // GrobalMenu
 function clickOpenButton(e, ele) {
+    var that = this;
     var form = this.modals[ele.data('id')];
-    form.css('top', $(w).scrollTop() + ($(w).height() / 2) + 'px');
-    form.show();
-    var input = form.find('input');
-    if (input.length) {
-        input.get(0).focus();
-    }
-    var callback = ele.data('callback');
-    if (callback) {
-        var func = callback.charAt(0).toUpperCase() + callback.substr(1);
-        this['openCallback' + func].call(this, e, ele);
+    if (form.css('display') === 'none') {
+        $('#create-task-assign').hide();
+        form.show('drop', {}, that.speed, function(){
+            var input = form.find('input[type=text]:first');
+            if (input.length) {
+                input.get(0).focus();
+            }
+            var callback = ele.data('callback');
+            if (callback) {
+                var func = callback.charAt(0).toUpperCase() + callback.substr(1);
+                that['openCallback' + func].call(that, e, ele);
+            }
+        });
     }
 }
 function clickSignInTwitter(e, ele) {
@@ -1383,14 +1650,15 @@ function clickListDisplaySwitch(e, ele) {
 }
 function clickListBadgeSwitch(e, ele) {
     var that = this;
-    var list_id = ele.parent().parent().data('list-id');
-    var method = ele.attr('checked') ? '-' : '+';
+    var list_id = this.current_list.id;
+    var method = ele.attr('checked') ? '+' : '-';
     var list = this.listmap[list_id];
     if (ele.attr('checked')) {
-        delete this.account.state.ignore_badge_list[list_id];
-    } else {
         this.account.state.ignore_badge_list[list_id] = 1;
+    } else {
+        delete this.account.state.ignore_badge_list[list_id];
     }
+    this.resetCounter(true);
     this.renderBadge(list);
     this.updateAccount({
         ns: 'state',
@@ -1413,7 +1681,6 @@ function openCallbackCreateList(e, ele) {
     this.resetCreateList(form);
 }
 function openCallbackEditList(e, ele) {
-
     var list = this.listmap[ele.data('list-id')];
 
     var form = $('#create-list-window');
@@ -1427,20 +1694,9 @@ function openCallbackEditList(e, ele) {
 
     if (this.isMe(list.doc.owner_id)) {
         form.find('li[data-owner-only]').show();
+        $('#create-list-owner-select').val(list.doc.owner_id);
     } else {
         form.find('li[data-owner-only]').hide();
-    }
-
-    var createListAdmins = $('#create-list-admins');
-    createListAdmins.empty();
-    for (var i = 0, max = list.doc.admin_ids.length; i < max; i++) {
-        var member_id = list.doc.admin_ids[i];
-        if (member_id in this.friend_ids) {
-            var member = this.friend_ids[member_id];
-            createListAdmins.append(this.createAssignList(member));
-        } else {
-            // console.log(member_id);
-        }
     }
 
     var createListMembers = $('#create-list-members');
@@ -1456,8 +1712,7 @@ function openCallbackEditList(e, ele) {
     }
 }
 function openCallbackDeleteList(e, ele) {
-    var tr = ele.parent().parent();
-    var list = this.listmap[tr.data('list-id')];
+    var list = this.listmap[ele.data('list-id')];
     var form = $('#delete-list-window');
     form.data('list-id', list.id);
     $('#delete-list-name').text(list.doc.name);
@@ -1471,7 +1726,6 @@ function submitCreateList(form) {
     var name = form.find('input[name=name]').val();
     var privacy = form.find('select[name=privacy]').val();
     var owner_id = form.find('select[name=owner]').val();
-    var admin_ids = [];
     var member_ids = [];
     if (!name.length) {
         alert('please input list name.');
@@ -1481,9 +1735,6 @@ function submitCreateList(form) {
         alert('please select owner.');
         return;
     }
-    form.find('#create-list-admins > li.member').each(function(i, ele){
-        admin_ids.push($(ele).data('id'));
-    });
     form.find('#create-list-members > li.member').each(function(i, ele){
         member_ids.push($(ele).data('id'));
     });
@@ -1500,7 +1751,6 @@ function submitCreateList(form) {
             name: name,
             privacy: privacy,
             owner_id: owner_id,
-            admin_ids: admin_ids,
             member_ids: member_ids
         },
         dataType: 'json'
@@ -1550,73 +1800,56 @@ function registList(list) {
 }
 
 // MainMenu
-function tasksFilterGenerate() {
+function tasksFilterGenerate(cond) {
     var that = this;
-    var my = this.parts.mainmenu.find('.my').parent().data('val');
-    var star = this.parts.mainmenu.find('.icon-star-on').parent().data('val');
-    var tasksOn = this.parts.mainmenu.find('.icon-tasks-on').parent().data('val');
-    var tasksOff = this.parts.mainmenu.find('.icon-tasks-off').parent().data('val');
-    var progress = this.parts.mainmenu.find('.icon-progress').parent().data('val');
-    var recycle = this.parts.mainmenu.find('.icon-recycle').parent().data('val');
-    var selectors = {
-        my: '.my',
-        star: '.icon-star-on',
-        tasksOn: '.icon-tasks-on',
-        tasksOff: '.icon-tasks-off',
-        recycle: '.icon-recycle',
-        progress: '.icon-progress'
-    };
-    var func = function(ul){
-        if (that.current_list) {
-            if (ul.data('list-id') !== that.current_list.id) {
+    if (!cond) {
+        cond = that.cond;
+    }
+    var func = function(ul, task){
+        var list_id, task_id;
+        if (task) {
+            list_id = task.list.id;
+            task_id = task.id;
+        } else {
+            list_id = ul.data('list-id');
+            task_id = ul.data('id');
+            task = that.listmap[list_id].taskmap[task_id];
+        }
+        if (cond.list_id && cond.list_id !== list_id) {
+            return false;
+        }
+        if (cond.star && !task.star) {
+            return false;
+        }
+        if (typeof cond.status === 'number' && cond.status !== task.status) {
+            return false;
+        }
+        if (typeof cond.status_ignore === 'number' && cond.status_ignore === task.status) {
+            return false;
+        }
+        if (typeof cond.closed === 'number' && cond.closed !== task.closed) {
+            return false;
+        }
+        if (cond.registrant && !that.isMe(task.registrant_id)) {
+            return false;
+        }
+        if (typeof cond.assign === 'boolean') {
+            var assign;
+            if (task.assign_ids.length) {
+                assign = that.findMe(task.assign_ids) ? true : false;
+            } else {
+                assign = that.isMe(task.registrant_id);
+            }
+            if (cond.assign !== assign) {
                 return false;
             }
         }
-        else if (that.current_filter) {
-            var list_id = ul.data('list-id');
-            var task_id = ul.data('id');
-            var list = that.listmap[list_id];
-            var task = that.listmap[list_id].taskmap[task_id];
-            if (that.current_filter == "list-comment") {
-                if (!that.tasksCommentFilter(ul)) {
-                    return false;
-                }
-            } else if (that.current_filter === "list-todo") {
-                if (!that.tasksTodoFilter(list, task)) {
-                    return false;
-                }
-            } else if (that.current_filter === "list-request") {
-                if (!that.tasksRequestFilter(list, task)) {
-                    return false;
-                }
-            }
-            else if (that.current_filter === 'list-watch') {
-                star = 0;
-            }
-        }
-        else {
-            // ERROR
-        }
-        
-        if (!my && ul.find(selectors["my"]).length === 0) {
+        // todo
+        if (cond.todo && !that.needCount(task)) {
             return false;
         }
-        if (!star && ul.find(selectors["star"]).length === 0) {
-            return false;
-        }
-        if (!tasksOn && ul.find(selectors["tasksOn"]).length === 0) {
-            return false;
-        }
-        if (!tasksOff && ul.find(selectors["tasksOff"]).length === 0) {
-            return false;
-        }
-        if (!progress && ul.find(selectors["progress"]).length === 0) {
-            return false;
-        }
-        if (recycle && ul.find(selectors["recycle"]).length > 0) {
-            return false;
-        }
-        if (!recycle && ul.find(selectors["recycle"]).length === 0) {
+        // notify
+        if (cond.notify && !that.needNotify(task)) {
             return false;
         }
         return true;
@@ -1634,9 +1867,6 @@ function tasksCommentFilter(li) {
     return false;
 }
 function tasksTodoFilter(list, task) {
-    if (list.id in this.account.state.ignore_badge_list) {
-        return false;
-    }
     return this.needCount(task);
 }
 function tasksRequestFilter(list, task) {
@@ -1662,73 +1892,73 @@ function clickTaskmenuSort(e, ele) {
     this.sortTask(ele.data('id'));
 }
 function clickTaskmenuSwitch(e, ele) {
-    var type = ele.data('id');
-    var val = ele.data('val');
-    var id = ele.attr('id');
-    var selectors = {
-        description: '.content',
-        comment: 'ul.comments'
-    };
-    var selector = selectors[type];
-    if (val) {
-        ele.data('val', 0);
-        ele.addClass('on');
-        this.parts.tasks.find(selector).slideUp(this.speed);
-    }
-    else {
-        ele.data('val', 1);
-        ele.removeClass('on');
-        this.parts.tasks.find(selector).slideDown(this.speed);
-    }
-    this.updateAccount({
-        ns: 'state.button',
-        method: 'set',
-        key: id,
-        val: ele.data('val')
-    });
+    // var type = ele.data('id');
+    // var val = ele.data('val');
+    // var id = ele.attr('id');
+    // var selectors = {
+    //     description: '.content',
+    //     comment: 'ul.comments'
+    // };
+    // var selector = selectors[type];
+    // if (val) {
+    //     ele.data('val', 0);
+    //     ele.addClass('on');
+    //     this.parts.tasks.find(selector).slideUp(this.speed);
+    // }
+    // else {
+    //     ele.data('val', 1);
+    //     ele.removeClass('on');
+    //     this.parts.tasks.find(selector).slideDown(this.speed);
+    // }
+    // this.updateAccount({
+    //     ns: 'state.button',
+    //     method: 'set',
+    //     key: id,
+    //     val: ele.data('val')
+    // });
 }
 function clickTaskmenuFilter(e, ele) {
-    var that = this;
-    var id = ele.data('id');
-    var val = ele.data('val');
-    var selectors = {
-        my: '',
-        star: '.icon-star-on',
-        tasksOn: '.icon-tasks-on',
-        tasksOff: '.icon-tasks-off',
-        progress: '.icon-progress',
-        recycle: '.icon-recycle'
-    };
-    var selector = selectors[id];
-    if (id === 'recycle') {
-        this.parts.mainmenu.find('.icon-star-on').parent().removeClass('on').data('val', 1);
-        this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
-        this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
-        if (val) {
-            this.parts.mainmenu.find('.icon-trash').parent().fadeIn('slow');
-        } else {
-            this.parts.mainmenu.find('.icon-trash').parent().fadeOut('slow');
-        }
-    }
-    if (id === 'tasksOn') {
-        this.parts.mainmenu.find('.icon-progress').parent().removeClass('on').data('val', 1);
-        this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
-    } else if (id === 'tasksOff') {
-        this.parts.mainmenu.find('.icon-progress').parent().removeClass('on').data('val', 1);
-        this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
-    } else if (id === 'progress') {
-        this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
-        this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
-    }
-    if (val) {
-            ele.data('val', '');
-            ele.addClass('on');
-    }
-    else {
-            ele.data('val', 1);
-            ele.removeClass('on');
-    }
-    this.filterTask();
+    // var that = this;
+    // var id = ele.data('id');
+    // var val = ele.data('val');
+    // var selectors = {
+    //     my: '',
+    //     star: '.icon-star-on',
+    //     tasksOn: '.icon-tasks-on',
+    //     tasksOff: '.icon-tasks-off',
+    //     progress: '.icon-progress',
+    //     recycle: '.icon-recycle'
+    // };
+    // var selector = selectors[id];
+    // if (id === 'recycle') {
+    //     this.parts.mainmenu.find('.icon-star-on').parent().removeClass('on').data('val', 1);
+    //     this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
+    //     this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
+    //     if (val) {
+    //         this.parts.mainmenu.find('.icon-trash').parent().fadeIn('slow');
+    //     } else {
+    //         this.parts.mainmenu.find('.icon-trash').parent().fadeOut('slow');
+    //     }
+    // }
+    // if (id === 'tasksOn') {
+    //     this.parts.mainmenu.find('.icon-progress').parent().removeClass('on').data('val', 1);
+    //     this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
+    // } else if (id === 'tasksOff') {
+    //     this.parts.mainmenu.find('.icon-progress').parent().removeClass('on').data('val', 1);
+    //     this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
+    // } else if (id === 'progress') {
+    //     this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
+    //     this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
+    // }
+    // if (val) {
+    //         ele.data('val', '');
+    //         ele.addClass('on');
+    // }
+    // else {
+    //         ele.data('val', 1);
+    //         ele.removeClass('on');
+    // }
+    // this.filterTask();
 }
 function clickTaskmenuTrash(e, ele) {
     
@@ -1737,6 +1967,12 @@ function clickCreateTaskDuePlus(e, ele) {
     var due = $('#create-task-date');
     var date = due.datepicker("getDate") || new Date();
     date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
+    due.datepicker("setDate", date);
+}
+function clickCreateTaskDuePlusMonth(e, ele) {
+    var due = $('#create-task-date');
+    var date = due.datepicker("getDate") || new Date();
+    date.setMonth(date.getMonth() + 1);
     due.datepicker("setDate", date);
 }
 function clickCreateTaskDueMinus(e, ele) {
@@ -1756,37 +1992,44 @@ function openCallbackCreateTask(e, ele) {
     var list_id = this.current_list
                 ? this.current_list.id
                 : $(ele).parent().data('list-id');
+    if (!list_id) {
+        return;
+    }
     var list = this.listmap[list_id];
     var ul = $('#create-task-assign');
-    ul.html(this.template.assign);
-    var member_ids = [list.doc.owner_id].concat(list.doc.admin_ids).concat(list.doc.member_ids);
+    ul.empty();
+    ul.hide();
+    var member_ids = [list.doc.owner_id].concat(list.doc.member_ids);
     for (var i = 0, max = member_ids.length; i < max; i++) {
         var id = member_ids[i];
         var url = this.getProfileImageUrl(id);
         var friend = this.friend_ids[id];
-        var li = $('<li></li>');
+        var li = $('<li/>');
+        var label = $('<label/>');
         var input = $('<input type="checkbox" name="assign" value="">');
         input.val(id);
-        li.append(input)
+        label.append(input);
         if (url) {
             $('<img>')
             .attr('src', url)
             .attr('class', 'twitter_profile_image')
-            .appendTo(li);
+            .appendTo(label);
         }
-        li.append($('<span></span>').text(friend.screen_name));
+        label.append($('<span></span>').text(friend.screen_name));
+        li.append(label);
         ul.append(li);
     }
     if (!member_ids.length) {
         ul.append($('<li>no member.</li>'));
     }
+    ul.slideDown();
     var form = $('#create-task-window');
-    form.find('footer input[type=checkbox], footer label').show();
     var h1 = form.find('h1:first');
     h1.text(h1.data('text-default'));
+    var save = form.find('button.save:first');
+    save.text(this.localizer.text(save, 'default'));
     this.resetCreateTask(form);
-    form.find('input[type=text]:first').get(0).focus();
-    form.find('input[type=text]').val('');
+    // form.find('input[type=text]:first').get(0).focus();
     form.data('list-id', list.id);
     form.data('task-id', 0);
 }
@@ -1807,11 +2050,17 @@ function openCallbackEditTask(e, ele) {
     form.find('footer input[type=checkbox], footer label').hide();
     var h1 = form.find('h1:first');
     h1.text(h1.data('text-edit'));
+    var save = form.find('button.save:first');
+    save.text(this.localizer.text(save, 'edit'));
     form.data('list-id', list_id);
     form.data('task-id', task_id);
     form.find('input[name=title]').val(task.title || '');
-    form.find('textarea[name=description]').val(task.description || '');
-    form.find('input[name=due]').val(task.due || '');
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(task.due)) {
+        var due_date = $.datepicker.parseDate('mm/dd/yy', task.due);
+        $('#create-task-date').datepicker('setDate', due_date);
+    } else {
+        form.find('input[name=due]').val('');
+    }
     if (task.assign_ids) {
         for (var i = 0; i < task.assign_ids.length; i++) {
             var id = task.assign_ids[i];
@@ -1837,8 +2086,8 @@ function submitCreateTask(form) {
     }
     var url = task_id ? '/api/1/task/update' : '/api/1/task/create';
     var title = form.find('input[name=title]').val();
-    var description = form.find('textarea[name=description]').val();
-    var due = form.find('input[name=due]').val();
+    var due = form.find('input[name=due]').datepicker("getDate");
+    due = $.datepicker.formatDate('mm/dd/yy', due);
     if (!title.length) {
         alert('please input task title.');
         return;
@@ -1853,7 +2102,8 @@ function submitCreateTask(form) {
         assign_ids.push(ele.value);
     });
     if (task_id) {
-        form.fadeOut(this.speed);
+        form.find('input[name=title]').val('');
+        form.hide('drop', {}, this.speed);
     } else {
         that.submitFinalize(form);
     }
@@ -1865,7 +2115,6 @@ function submitCreateTask(form) {
             task_id: task_id,
             registrant_id: registrant_id,
             title: title,
-            description: description,
             due: due,
             assign_ids: (assign_ids.length ? assign_ids : 0)
         },
@@ -1873,27 +2122,26 @@ function submitCreateTask(form) {
     })
     .done(function(data){
         if (data.success) {
-            // FIXME: 
+            var task, li;
             if (!task_id) {
                 that.statusUpdate('create a task.');
-                var task = data.task;
+                task = data.task;
+                task.list = list;
                 list.taskmap[task.id] = task;
                 list.doc.tasks.push(task);
-                var li = that.renderTask(list, task);
+                li = that.renderTask(list, task);
                 that.taskli[list.id + '-' + task.id] = li;
-                var filter = that.tasksFilterGenerate();
-                if (!filter(li)) {
-                    li.delay(500).slideUp('slow');
-                }
             }
             else {
                 that.statusUpdate('update a task.');
-                // FIXME
-                var task = data.task;
-                $.extend(that.listmap[list.id].taskmap[task.id], data.task);
-                var li = that.taskli[list.id + '-' + task.id];
-                var li2 = that.createTaskElement(list, task);
-                li.replaceWith(li2);
+                task = $.extend(that.listmap[list.id].taskmap[data.task.id], data.task);
+                task.list = list;
+                li = that.taskli[list.id + '-' + task.id];
+                li.replaceWith(that.createTaskElement(list, task));
+                that.taskli[list.id + '-' + task.id].effect("highlight", {}, that.speed);
+            }
+            if (!that.current_filter.call(that, null, task)) {
+                that.taskli[list.id + '-' + task.id].delay(500).slideUp('slow');
             }
             that.renderBadge(list);
         }
@@ -1977,6 +2225,7 @@ function createAssignList(friend) {
 function renderTask(list, task) {
     var li = this.createTaskElement(list, task);
     this.parts.tasks.prepend(li);
+    this.updateCounter(null, task);
     return li;
 }
 function createTaskElement(list, task) {
@@ -1985,12 +2234,31 @@ function createTaskElement(list, task) {
     li.data('list-id', list.id);
     li.data('id', task.id);
     li.data('updated', task.updated);
-    var due = 0;
+    var due_epoch = 0;
     if (task.due) {
         var mdy = task.due.split('/');
-        due = mdy[2] * 10000 + mdy[0] * 100 + mdy[1];
+        var label = mdy[0] + '/' + mdy[1];
+        var now = new Date();
+        if (now.getFullYear() != mdy[2]) {
+            if (this.lang === 'ja') {
+                label = mdy[2] + '/' + label;
+            } else {
+                label = label + '/' + mdy[2];
+            }
+        }
+        li.find('.due').text(label);
+        var due = new Date(mdy[2], mdy[0] - 1, mdy[1]);
+        due_epoch = due.getTime();
+        if (now.getTime() > due_epoch) {
+            li.find('.due').addClass('over');
+        }
+    } else {
+        li.find('.due').text('');
     }
-    li.data('due', due);
+    li.data('due', due_epoch);
+    if (task.comments.length) {
+        li.find('.comments').text('(' + task.comments.length + ')');
+    }
     if (list.id in this.account.state.sort.task) {
         var sort = this.account.state.sort.task[list.id];
         if (task.id in sort) {
@@ -2001,117 +2269,74 @@ function createTaskElement(list, task) {
     }
     this.taskli[list.id + '-' + task.id] = li;
     li.find('.title').text(task.title);
-    li.find('.due').text(task.due);
     if ("registrant_id" in task) {
         var url = that.getProfileImageUrl(task.registrant_id);
-        var img = $('<img/>').attr('src', url);
-        img.css('twitter_profile_image');
-        li.find('.assign')
-            .append(img)
-            .append($('<span class="icon icon-right"/>'));
-        if (this.isMe(task.registrant_id)) {
-            li.find('.assign').addClass('my');
-        }
+        var img = $('<img data-guide-en="Requester" data-guide-ja="依頼者"/>')
+            .attr('src', url)
+            .addClass('twitter_profile_image');
+        li.find('.assign').append(img);
     }
-    if ("assign_ids" in task && task.assign_ids && task.assign_ids.length) {
+    if (task.assign_ids.length) {
+        li.find('.assign').prepend($('<span class="icon icon-left"/>'));
         for (var i = 0; i < task.assign_ids.length; i++) {
             var assign_id = task.assign_ids[i];
             var url = that.getProfileImageUrl(assign_id);
-            var img = $('<img/>').attr('src', url);
-            img.css('twitter_profile_image');
-            li.find('.assign').append(img);
-            if (this.isMe(assign_id)) {
-                li.find('.assign').addClass('my');
-            }
-        }
-    } else {
-        li.find('.assign').append($('<span class="icon icon-address-off"/>'));
-    }
-    
-    
-    var content = $('<div class="content"></div>');
-    if (task.description) {
-        var make_link = function(href, text) {
-            var a = document.createElement('a');
-            a.href = href;
-            a.target = '_blank';
-            a.appendChild(document.createTextNode(text));
-            var div = document.createElement('div');
-            div.appendChild(a);
-            return div.innerHTML;
-        };
-        var pre = $('<pre class="description"></pre>').text(task.description);
-        var re = new RegExp('(?:https?://[\\x21-\\x7e]+)', 'g');
-        pre.html(pre.html().replace(re, function(m0){ return make_link(m0, m0) }));
-        content.append(pre);
-    }
-    var comments = $('<ul class="comments"></ul>');
-    if (task.comments) {
-        for (var i = 0; i < task.comments.length; i++) {
-            var comment = task.comments[i];
-            this.renderComment(list.id, task.id, comment, comments);
+            var img = $('<img data-guide-en="Assignee" data-guide-ja="担当者"/>')
+                .attr('src', url)
+                .addClass('twitter_profile_image');
+            li.find('.assign').prepend(img);
         }
     }
-    var commentBox = $(document.createElement('div'));
-    var form = $(document.createElement('form'));
-    var text = $(document.createElement('textarea'));
-    form.append(text);
-    commentBox.attr('class', 'commentBox');
-    commentBox.append(form);
-    commentBox.hide();
-    text.keydown(function(e){
-        if (e.keyCode === 13) {
-            e.stopPropagation();
-            e.preventDefault();
-            if (text.val().length) {
-                that.submitComment(list.id, task.id, text, form, comments);
-            }
-        } else {
-            
-        }
-    });
-    text.keypress(function(e){
-        if (e.keyCode === 13) {
-            e.preventDefault();
-        }
-    })
-    text.keyup(function(e){
-        if (e.keyCode === 13) {
-            e.preventDefault();
-        }
-    })
-    text.autogrow({single: true});
-    text.click(function(e){
-        e.stopPropagation();
-    });
-    
-    // form.bind('submit', function(){
-    //     try {
-    //         that.submitComment(list.id, task.id, text, form, comments);
-    //     } catch(e) {
-    //         console.log(e);
-    //     }
-    //     return false;
-    // });
-    
+    if (task.status === 2 && task.assign_ids.length) {
+        var url = that.getProfileImageUrl(task.registrant_id);
+        var img = $('<img data-guide-en="Approver" data-guide-ja="承認者"/>')
+            .attr('src', url)
+            .addClass('twitter_profile_image');
+        li.find('.assign').prepend($('<span class="icon icon-left"/>')).prepend(img);
+    }
     li.click(function(){
-        if (content.css('display') === 'none') {
-            content.show();
+        if (that.current_task !== task) {
+            li.mouseover();
         }
-        commentBox.slideToggle(that.speed, function(){
-            if (commentBox.css('display') !== 'none') {
-                text.get(0).focus();
-            }
-        });
+        that.parts.commentbox.focus();
     });
-    content.append(comments);
-    content.append(commentBox);
-    if ("mainmenu-switch-description" in this.account.state.button) {
-        if (!this.account.state.button["mainmenu-switch-description"]) {
-            content.hide();
+    li.mouseover(function(){
+        if (that.active === 'comment') {
+            return;
         }
-    }
-    li.append(content);
+        that.parts.commentbox.blur();
+        if (that.current_taskli) {
+            that.current_taskli.removeClass('selected');
+        }
+        that.current_task = task;
+        that.current_taskli = li;
+        li.addClass('selected');
+        $('#list-name').text(list.doc.name);
+        $('#task-name').text(task.title);
+        if (task.description) {
+            $('#task-description').text(task.description);
+        } else {
+            $('#task-description').text('');
+        }
+        that.parts.commentbox
+            .attr('disabled', false)
+            .data('list-id', list.id)
+            .data('task-id', task.id);
+        that.parts.comment.empty();
+        if (task.comments) {
+            for (var i = 0, max_i = task.comments.length; i < max_i; i++) {
+                var comment = task.comments[i];
+                that.renderComment(list.id, task.id, comment);
+            }
+        }
+        that.parts.commentbox.val('').css('height', '16px');
+        that.parts.comment.scrollTop(that.parts.comment.height());
+    });
+    // if ("mainmenu-switch-description" in this.account.state.button) {
+    //     if (!this.account.state.button["mainmenu-switch-description"]) {
+    //         content.hide();
+    //     }
+    // }
     li.find('> .action').click($.proxy(this.clickTaskAction, this));
     li.find('.grip').click(function(e){
         e.stopPropagation();
@@ -2128,17 +2353,32 @@ function createTaskElement(list, task) {
     }
     if (task.closed) {
         li.addClass('delete');
-        li.find('> .icon-delete')
-        .removeClass('icon-delete')
-        .addClass('icon-recycle');
+        li.find('> .icon-delete').hide();
         li.hide();
+    } else {
+        li.find('> .icon-recycle').hide();
     }
     if (list.id + ':' + task.id in this.account.state.watch) {
         li.find('> .icon-star-off')
         .removeClass('icon-star-off')
         .addClass('icon-star-on');
+        task.star = true;
     }
     this.initEventGuide(li);
+    li.get(0).addEventListener('dragstart', function(e){
+        that.dragging = true;
+        that.parts.guide.hide();
+        that.parts.listnav.show('drop', {}, that.speed);
+        e.dataTransfer.setData('Text', list.id + ':' + task.id);
+        that.dragtask = task;
+    }, false);
+    li.get(0).addEventListener('dragend', function(e){
+        if (that.dragging) {
+            that.dragging = false;
+            that.parts.listnav.hide('drop', {}, that.speed);
+            e.dataTransfer.clearData();
+        }
+    }, false);
     return li;
 }
 function clickTaskAction(e) {
@@ -2149,6 +2389,7 @@ function clickTaskAction(e) {
     var list_id = li.data('list-id');
     var task_id = li.data('id');
     var list = that.listmap[list_id];
+    var task = list.taskmap[task_id];
     var registrant_id = this.findMeFromList(list);
     if (!registrant_id) {
         alert("can't find registrant_id.");
@@ -2156,7 +2397,8 @@ function clickTaskAction(e) {
     }
     if (div.hasClass('icon-delete')) {
         li.addClass('delete');
-        div.addClass('icon-recycle').removeClass('icon-delete');
+        div.hide();
+        li.find('> .icon-recycle').show();
         this.modifyTask({
             registrant_id: registrant_id,
             list_id: list_id,
@@ -2167,7 +2409,8 @@ function clickTaskAction(e) {
     }
     else if (div.hasClass('icon-recycle')) {
         li.removeClass('delete');
-        div.addClass('icon-delete').removeClass('icon-recycle');
+        div.hide();
+        li.find('> .icon-delete').show();
         this.modifyTask({
             registrant_id: registrant_id,
             list_id: list_id,
@@ -2221,6 +2464,9 @@ function clickTaskAction(e) {
             key: 'watch',
             val: list_id + ':' + task_id
         });
+        var oldtask = $.extend({}, task);
+        task.star = false;
+        this.updateCounter(oldtask, task);
     }
     else if (div.hasClass('icon-star-off')) {
         div.removeClass('icon-star-off').addClass('icon-star-on');
@@ -2231,6 +2477,9 @@ function clickTaskAction(e) {
             key: 'watch',
             val: list_id + ':' + task_id
         });
+        var oldtask = $.extend({}, task);
+        task.star = true;
+        this.updateCounter(oldtask, task);
     }
     else if (div.hasClass('icon-edit')) {
         this.clickOpenButton(e, div);
@@ -2244,12 +2493,15 @@ function clickTaskAction(e) {
         li.slideUp(that.speed);
     }
 }
-function submitComment(list_id, task_id, text, form, comments) {
+function submitComment() {
     var that = this;
+    
+    var list_id = this.parts.commentbox.data('list-id');
+    var task_id = this.parts.commentbox.data('task-id');
+    var comment = this.parts.commentbox.val();
     
     var list = this.listmap[list_id];
     var owner_id = this.findMeFromList(list);
-    var comment = text.val();
     return this.ajax({
         type: 'post',
         url: '/api/1/comment/create',
@@ -2268,6 +2520,7 @@ function submitComment(list_id, task_id, text, form, comments) {
             // FIXME
             $.extend(that.listmap[list_id].taskmap[data.task.id], data.task);
             that.taskli[list_id + '-' + data.task.id].data('updated', data.task.updated);
+            that.taskli[list_id + '-' + data.task.id].find('.comments').text('(' + data.task.comments.length + ')');
             var li = $('<li/>');
             li.text(comment);
             that.renderComment(list_id, task_id, {
@@ -2275,15 +2528,17 @@ function submitComment(list_id, task_id, text, form, comments) {
                 time: (new Date()).getTime(),
                 owner_id: owner_id,
                 comment: comment
-            }, comments);
-            text.delay(500).val('');
+            });
+            that.parts.commentbox.val('').css('height', '16px');
         }
     });
 }
-function renderComment(list_id, task_id, comment, comments) {
+function renderComment(list_id, task_id, comment) {
     var that = this;
-    var li = $('<li/>');
+    var li = $('<li class="clearfix"/>');
     var friend = this.friend_ids[comment.owner_id];
+    var img = $('<img>').attr('src', friend.profile_image_url);
+    var msg = $('<div/>');
     var name = $('<span class="name"></span>').text(friend.screen_name);
     var date = $('<span class="date"></span>').text(this.timestamp(comment.time));
     var message = $('<span class="comment"/>').text(comment.comment);
@@ -2292,17 +2547,20 @@ function renderComment(list_id, task_id, comment, comments) {
         e.stopPropagation();
         that.deleteComment(list_id, task_id, comment);
         li.remove();
+        that.parts.commentbox.focus();
     });
-    li.append(name);
-    li.append(message);
-    li.append($('<br>'));
-    li.append(date);
-    li.append(del);
+    li.append(img);
+    li.append(msg);
+    msg.append(name);
+    msg.append(message);
+    msg.append($('<br>'));
+    msg.append(date);
+    msg.append(del);
     if (this.listReadLastTime(list_id) < comment.time) {
         li.addClass('unread');
-        this.unread_comment_count++;
+        // this.unread_comment_count++;
     }
-    comments.append(li);
+    this.parts.comment.append(li);
 }
 function deleteComment(list_id, task_id, comment) {
     var that = this;
@@ -2325,6 +2583,11 @@ function deleteComment(list_id, task_id, comment) {
             that.statusUpdate('delete a comment.');
             // FIXME
             $.extend(that.listmap[list_id].taskmap[data.task.id], data.task);
+            if (data.task.comments.length) {
+                that.taskli[list_id + '-' + data.task.id].find('.comments').text('(' + data.task.comments.length + ')');
+            } else {
+                that.taskli[list_id + '-' + data.task.id].find('.comments').text('');
+            }
         }
     });
 }

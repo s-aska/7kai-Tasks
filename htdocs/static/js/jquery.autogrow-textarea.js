@@ -14,9 +14,7 @@
                 position:   'absolute',
                 top:        -10000,
                 left:       -10000,
-                width:      $(this).width()
-                    - parseInt($this.css('paddingLeft'))
-                    - parseInt($this.css('paddingRight')),
+                width:      $this.width(),
                 fontSize:   $this.css('fontSize'),
                 fontFamily: $this.css('fontFamily'),
                 lineHeight: $this.css('lineHeight'),
@@ -37,9 +35,9 @@
                                     .replace(/\n/g, '<br/>')
                                     .replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
                 
-                var margin = val.length === 0 ? 2 : 0;
+                var margin = val.length === 0 ? 2 : 2;
                 if (e && "keyCode" in e && e.keyCode == 13 && e.type == 'keydown') {
-                    if (options && options.single) {
+                    if (options && options.single && !e.shiftKey) {
                         e.preventDefault();
                     } else {
                         e.preventDefault();
