@@ -1016,12 +1016,12 @@ function showList(id, task_id) {
     //         val: list.value.rev + ',' + (new Date()).getTime()
     //     });
     // }
-    // this.updateAccount({
-    //     ns: 'state',
-    //     method: 'set',
-    //     key: 'last_read_list',
-    //     val: list.id
-    // });
+    this.updateAccount({
+        ns: 'state',
+        method: 'set',
+        key: 'last_read_list',
+        val: list.id
+    });
 }
 function switchList(e) {
     var li = $(e.currentTarget);
