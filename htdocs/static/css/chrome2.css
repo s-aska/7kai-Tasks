@@ -275,9 +275,16 @@ img.twitter_profile_image32 {
 .pulldown ul {
     display: none;
     position: absolute;
+    z-index: 5;
     right: 0;
     background: white;
     cursor: pointer;
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+    border-bottom: 1px solid gray;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+    -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+    -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
 }
 .pulldown ul li {
     padding: 10px 10px 10px 10px;
@@ -291,7 +298,7 @@ img.twitter_profile_image32 {
 body > header {
     padding: 2px;
     height: 24px;
-    background-color: #2d2d2d;
+    background-color: #323232;
     border-bottom: 1px solid black;
     font-size: 13px;
     line-height: 1.6;
@@ -305,12 +312,16 @@ body > header h1 span.version {
     font-size: 10px;
     color: #ccc;
 }
-/*body > header p {
-    display: none;
+body > header p {
     position: absolute;
     top: 6px;
     left: 246px;
-}*/
+    float: left;
+}
+body > header a {
+    font-size: 12px;
+    color: white;
+}
 body > header nav {
     position: absolute;
     top: 0px;
@@ -329,7 +340,7 @@ body > header nav > ul > li.guide {
     margin-right: 10px;
 }
 body > header nav > ul > li.account {
-    padding: 2px 10px 2px 5px;
+    padding: 2px 10px 2px 10px;
 }
 body > header nav > ul > li.account > img {
     width: 24px;
@@ -352,24 +363,74 @@ body > header nav > ul > li.menu > ul {
     z-index: 2;
     right: 0;
     top: 28px;
-    border-left: 1px solid gray;
-    border-right: 1px solid gray;
-    border-bottom: 1px solid gray;
-    background-color: white;
-    cursor: pointer;
-    box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
-    -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
-    -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
 }
 body > header nav > ul > li.menu > ul li:hover {
     background-color: #e6ecf8;
 }
 body > header nav > ul > li.menu > ul li a {
     display: block;
-    padding: 10px 10px 10px 10px;
     color: #36c;
     font-size: 14px;
     text-decoration: none;
+}
+#notification-badge > span {
+    display: inline-block;
+    margin-top: 2px;
+    min-width: 16px;
+    padding: 4px 4px 1px 4px;
+    background-color: rgba(190, 190, 190, 1);
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    font-size: 12px;
+    text-align: center;
+}
+#notification-badge > span.active {
+    background-color: rgba(208, 0, 24, 1);
+}
+#notification-badge > ul {
+    width: 360px;
+    padding: 4px 4px 0 4px;
+}
+#notification-badge > ul > li {
+    
+}
+#notification-badge > ul > li {
+    font-size: 11px;
+    margin: 0 0 4px 0;
+    padding: 0;
+    line-height: 1;
+    cursor: pointer;
+    font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+}
+#notification-badge > ul > li:hover {
+    background-color: #fcea6c;
+}
+#notification-badge > ul > li img {
+    display: block;
+    float: left;
+    width: 32px;
+    height: 32px;
+    vertical-align: top;
+}
+#notification-badge > ul > li span.screen_name {
+    margin-left: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #1E57FF;
+}
+#notification-badge > ul > li span.action {
+    margin-left: 4px;
+    color: #333333;
+}
+#notification-badge > ul > li span.list {
+    margin-left: 4px;
+    font-weight: bold;
+    color: #1E57FF;
+}
+#notification-badge > ul > li span.date {
+    color: gray;
+    margin-left: 4px;
+    font-size: 10px;
 }
 /********** wrapper **********/
 body > div {
@@ -470,22 +531,11 @@ body > div > aside article ul.menu li hr {
 #select-list-panel li.updated {
     background-color: #c1c1c1;
 }
-#select-list-panel li.filter {
-    background-image: url(/static/img/search.png);
-    background-repeat: no-repeat;
-    background-position: 6px 6px;
-    padding-left: 24px;
-}
 #select-list-panel li.action {
     background-repeat: no-repeat;
     background-position: 6px 6px;
     padding-left: 24px;
 }
-
-/*#select-list-panel li.icon {
-    background-repeat: no-repeat;
-    background-position: 10px 12px;
-}*/
 #select-list-panel li .badge {
     position: absolute;
     right: 12px;
@@ -495,35 +545,31 @@ body > div > aside article ul.menu li hr {
     -moz-border-radius: 10px;
     background-color: red;
     color: white;
-    font-size: 8px;
+    font-size: 9px;
     font-weight: bold;
 }
-/*#select-list-panel li.project .icon-settings {
-    display: none;
-    position: absolute;
-    top: 12px;
-    right: 12px;
-}*/
 #infomation {
     position: fixed;
     bottom: 25px;
     left: 0;
     width: 180px;
     padding-top: 10px;
+    padding-bottom: 6px;
     font-size: 12px;
     line-height: 1.2;
-    background-color: #f4f4f4;
+    background-color: #323232;
+    color: white;
 }
 #infomation li {
     padding-left: 10px;
     padding-top: 2px;
 }
 #infomation li .action {
-    color: #1e57ff;
+    text-decoration: underline;
 }
 #infomation li .action:hover,
 #infomation li .selected {
-    background-color: #e0e0ff;
+    color: #9999ff;
 }
 #infomation > li {
     padding-bottom: 4px;
@@ -603,28 +649,38 @@ body > div > article section > ul li div.grip {
     width: 16px;
     height: 16px;
 }
-body > div > article section > ul.sortable li div.grip {
+body > div > article section > ul li div.grip {
     cursor: url(/static/img/openhand.cur), move;
 }
 body > div > article section > ul li div.title {
     padding-top: 5px;
     padding-left: 4px;
 }
-body > div > article section > ul li.clearfix div.comments {
+body > div > article section > ul li div.comments {
+    padding-top: 5px;
+    padding-left: 2px;
+    font-size: 9px;
+    line-height: 12px;
+    color: gray;
+}
+body > div > article section > ul li div.comment {
     float: right;
     padding-top: 5px;
-    padding-right: 5px;
-    font-size: 12px;
+    padding-left: 5px;
+    font-size: 9px;
+    color: #1e57ff;
+    cursor: pointer;
 }
-body > div > article section > ul li.clearfix div.due {
+body > div > article section > ul li div.due {
     float: right;
     padding-top: 5px;
     font-size: 12px;
+    cursor: pointer;
 }
-body > div > article section > ul li.clearfix div.over {
+body > div > article section > ul li div.over {
     color: red;
 }
-body > div > article section > ul li.clearfix div.icon-delete {
+body > div > article section > ul li div.icon-delete {
     
 }
 body > div > article section > ul li div.assign {
@@ -676,11 +732,12 @@ body > div > article section > ul.timeline li span.code {
     /*min-width: 300px;*/
     border-left: 1px solid gray;
     padding: 10px;
-    opacity: 0.2;
+    /*opacity: 0.2;*/
+    word-wrap: break-word;
 }
-#comment.selected {
+/*#comment.selected {
     opacity: 1;
-}
+}*/
 #comment h1 {
     margin-bottom: 6px;
     font-size: 14px;
@@ -916,6 +973,7 @@ form.confirm {
 #guide {
     display: none;
     position: absolute;
+    left: 40px;
     margin: 20px 0 0 0;
     padding: 6px;
     border: 1px solid gray;
@@ -924,10 +982,24 @@ form.confirm {
     font-size: 12px;
     z-index: 9999;
 }
-
+#digest {
+    display: none;
+    position: absolute;
+    margin: 20px 0 0 0;
+    padding: 6px;
+    border: 1px solid gray;
+    background: white;
+    color: gray;
+    font-size: 12px;
+    z-index: 9999;
+}
+#digest-title {
+    font-weight: bold;
+    color: black;
+}
 /********** .ui **********/
 .ui-widget {
-    font-size: 0.5em;
+    font-size: 12px;
 }
 .ui-datepicker {
     line-height: 1.2;

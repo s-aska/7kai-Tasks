@@ -77,6 +77,21 @@ ul {
     margin-left: 4px;
     font-size: 10px;
 }
+#digest {
+    display: none;
+    position: absolute;
+    left: 40px;
+    padding: 6px;
+    border: 1px solid gray;
+    background: white;
+    color: gray;
+    font-size: 12px;
+    z-index: 9999;
+}
+#digest-title {
+    color: black;
+    font-weight: bold;
+}
 
 #option-page {
     margin: 20px;

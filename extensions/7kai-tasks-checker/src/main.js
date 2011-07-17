@@ -146,16 +146,34 @@ function refreshBadge(popup) {
                             count++;
                         }
                     }
-                }
-                // notification check
-                for (var j = 0, max_j = list.doc.history.length; j < max_j; j++) {
-                    var history = list.doc.history[j];
-                    history.list_id = list.id;
-                    history.list_name = list.doc.name;
-                    if (that.needNotification(data.account, history)) {
-                        if (history.date > last_history_time) {
-                            last_history = history;
-                            last_history_time = history.date;
+                    // notification check
+                    for (var k = 0, max_k = task.history.length; k < max_k; k++) {
+                        var history = task.history[k];
+                        history.task_id = task.id;
+                        history.list_id = list.id;
+                        history.list_name = list.doc.name;
+                        if (that.needNotification(data.account, history)) {
+                            if (history.date > last_history_time) {
+                                last_history = history;
+                                last_history_time = history.date;
+                            }
+                        }
+                    }
+                    for (var l = 0, max_l = task.comments.length; l < max_l; l++) {
+                        var comment = task.comments[l];
+                        var history = {
+                            id: comment.owner_id,
+                            action: 'create-comment',
+                            date: comment.time,
+                            task_id: task.id,
+                            list_id: list.id,
+                            list_name: list.doc.name
+                        };
+                        if (that.needNotification(data.account, history)) {
+                            if (history.date > last_history_time) {
+                                last_history = history;
+                                last_history_time = history.date;
+                            }
                         }
                     }
                 }
@@ -215,10 +233,36 @@ function refreshPopupPage(popup) {
             var histories = [];
             for (var i = 0, max_i = lists.length; i < max_i; i++) {
                 var list = lists[i];
-                for (var j = 0, max_j = list.doc.history.length; j < max_j; j++) {
-                    var history = list.doc.history[j];
-                    if (that.needNotification(data.account, history)) {
-                        histories.push(history);
+                for (var j = 0, max_j = list.doc.tasks.length; j < max_j; j++) {
+                    var task = list.doc.tasks[j];
+                    for (var k = 0, max_k = task.history.length; k < max_k; k++) {
+                        var history = task.history[k];
+                        history.title = task.title;
+                        if (that.needNotification(data.account, history)) {
+                            histories.push(history);
+                        }
+                    }
+                    var comment_map = {};
+                    var comments = task.comments.reverse();
+                    for (var l = 0, max_l = comments.length; l < max_l; l++) {
+                        var comment = comments[l];
+                        if (comment.owner_id in comment_map) {
+                            continue;
+                        }
+                        comment_map[comment.owner_id] = 1;
+                        var history = {
+                            id: comment.owner_id,
+                            action: 'create-comment',
+                            date: comment.time,
+                            task_id: task.id,
+                            list_id: list.id,
+                            list_name: list.doc.name,
+                            title: task.title,
+                            comment: comment.comment
+                        };
+                        if (that.needNotification(data.account, history)) {
+                            histories.push(history);
+                        }
                     }
                 }
             }
@@ -292,7 +336,7 @@ function needCount(account, task) {
     if (task.closed) {
         return false;
     }
-    var my_order = this.isMe(account, task.registrant_id);
+    var my_order = this.isMe(account, task.requester_id);
     if (task.status === 2) {
         if (my_order) {
             return true;
@@ -325,7 +369,7 @@ function needNotification(account, history) {
             var task = account.taskmap[key];
             if (key_w in account.state.watch) {
                 return true;
-            } else if (this.findMe(account, [task.registrant_id].concat(task.assign_ids))) {
+            } else if (this.findMe(account, [task.requester_id].concat(task.assign_ids))) {
                 return true;
             }
         }
@@ -375,9 +419,19 @@ function renderNotifications(account, histories) {
             var key = 'text-' + history.action + '-' + account.lang;
             var action_name = that.parts.text.data(key);
             var action = $('<span class="action"/>').text(action_name);
-            var list = $('<span class="list"/>')
-                .text(history.list_name)
+            var list = $('<span class="list"/>').text(history.list_name);
             var date = $('<span class="date"/>').text(that.timestamp(history.date));
+            var disp = function(history){
+                return function(){
+                    that.parts.guide.find('#digest-title').text(history.title || '');
+                    that.parts.guide.find('#digest-comment').text(
+                        history.comment ? '> ' + history.comment : ''
+                    );
+                    that.parts.guide
+                        .css('top', $(this).offset().top - 60 + 'px')
+                        .show();
+                };
+            };
             $(document.createElement('li'))
             .addClass('clearfix')
             .append(icon)
@@ -390,6 +444,9 @@ function renderNotifications(account, histories) {
             .data('callback', 'openListPage')
             .data('list-id', history.list_id)
             .data('task-id', history.task_id)
+            .hover(disp.call(that, history), function(){
+                $('#digest').hide();
+            })
             .get(0).addEventListener("click", that, false);
         }
     });
@@ -411,12 +468,7 @@ function findMe(account, codes) {
     return false;
 }
 function timestamp(epoch) {
-    var now = new Date();
-    var now_epoch = parseInt(now.getTime() / 1000);
-    if (epoch > now_epoch) {
-        epoch = parseInt(epoch / 1000);
-    }
-    var diff = now_epoch - epoch;
+    var diff = parseInt(((new Date()).getTime() - epoch) / 1000);
     if (diff < 60) {
         var s = diff > 1 ? 's' : '';
         return diff + ' sec' + s + ' ago';

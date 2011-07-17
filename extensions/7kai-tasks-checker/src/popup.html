@@ -10,6 +10,7 @@ var bg;
 $(document).ready(function() {
     bg = chrome.extension.getBackgroundPage();
     bg.tasks.parts.notifications = $('article ul');
+    bg.tasks.parts.guide = $('#digest');
     $('nav li').each(function(i, ele){
         ele.addEventListener("click", bg.tasks, false);
     });
@@ -30,5 +31,9 @@ $(document).ready(function() {
 <li>loading...</li>
 </ul>
 </article>
+<div id="digest">
+<p id="digest-title"></p>
+<p id="digest-comment"></p>
+</div>
 </body>
 </html>

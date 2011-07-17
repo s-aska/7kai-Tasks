@@ -104,6 +104,7 @@ sub new {
     }
     
     $doc->{tw} ||= {};
+    $doc->{state}->{last_history_time} ||= 0;
     $doc->{state}->{watch} ||= {};
     $doc->{state}->{checkbox} ||= {};
     $doc->{state}->{button} ||= {};

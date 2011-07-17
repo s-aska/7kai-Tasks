@@ -7,6 +7,7 @@ ns.Tasks.prototype = {
     
     // 定数
     token_name: 'csrf_token',
+    url_re: new RegExp('(?:https?://[\\x21-\\x7e]+)', 'g'),
     valid: {
         list_name_max_length: 20
     },
@@ -56,6 +57,8 @@ ns.Tasks.prototype = {
     cond: {},
     sort: null,
     unread_comment_count: 0,
+    notifications: [],
+    busy: false,
     
     // 初期化系
     run: run,
@@ -69,6 +72,7 @@ ns.Tasks.prototype = {
     // イベント
     handleEvent: handleEvent,
     windowResizeEvent: windowResizeEvent,
+    commentHeightResize: commentHeightResize,
     
     // General
     ajax: ajax,
@@ -82,8 +86,7 @@ ns.Tasks.prototype = {
     updateAccount: updateAccount,
     refresh: refresh,
     submitFinalize: submitFinalize,
-    showTimeline: showTimeline,
-    renderTimeline: renderTimeline,
+    showNotifications: showNotifications,
     showList: showList,
     switchList: switchList,
     switchFilterList: switchFilterList,
@@ -115,6 +118,10 @@ ns.Tasks.prototype = {
     timestamp: timestamp,
     updateCounter: updateCounter,
     resetCounter: resetCounter,
+    autoLink: autoLink,
+    needNotification: needNotification,
+    notificationCheck: notificationCheck,
+    notificationCheckDone: notificationCheckDone,
     
     // GrobalMenu
     clickOpenButton: clickOpenButton,
@@ -201,6 +208,8 @@ function initParts() {
     this.parts.comment     = $('body > div > div > ul');
     this.parts.footer      = $('body > footer');
     
+    this.parts.badge       = $('#notification-badge');
+    
     this.parts.status      = this.parts.header.find('p');
     
     this.parts.sidemenu    = this.parts.aside.find('> header');
@@ -220,7 +229,8 @@ function initParts() {
     this.parts.lswt        = $('#list-settings-window table');
     this.parts.owners      = $('#create-list-window select[name=owner]');
     this.parts.guide       = $('#guide');
-    this.parts.commentbox  = $('body > div > div > textarea');
+    this.parts.commentform = $('#comment-box');
+    this.parts.commentbox  = $('#comment-box textarea');
     
     this.parts.connectacs  = $('#connect-accounts');
     
@@ -238,85 +248,54 @@ function initEvent() {
     this.initEventGuide($(d));
     
     /* header */
-    $('body > header nav ul li').each(function(i, ele){
-        var li = $(ele);
-        var ul = li.find('> ul:first');
-        li.hover(function(){
-            ul.slideDown(that.speed);
-        }, function(){
-            ul.slideUp(that.speed);
-        });
-    });
+    // $('body > header nav ul li').each(function(i, ele){
+    //     var li = $(ele);
+    //     var ul = li.find('> ul:first');
+    //     li.hover(function(){
+    //         ul.slideDown(that.speed);
+    //     }, function(){
+    //         ul.slideUp(that.speed);
+    //     });
+    // });
     $('.pulldown').each(function(i, ele){
         var pulldown = $(ele);
         var ul = pulldown.find('> ul:first');
+        var timer;
         pulldown.hover(function(){
+            if (timer) {
+                clearInterval(timer);
+            }
             ul.slideDown(that.speed);
         }, function(){
-            ul.slideUp(that.speed);
+            timer = setTimeout(function(){
+                ul.slideUp(that.speed);
+            }, 500);
         });
     });
     
     
     
     /* aside */
+    (function(){
+        var timer;
+        that.parts.sidemenu.hover(function(){
+            if (timer) {
+                clearInterval(timer);
+            }
+            if (that.parts.listnav.css('display') === 'none') {
+                that.parts.listnav.show('drop', {}, that.speed);
+            }
+        }, function(){
+            if (!that.dragging) {
+                timer = setTimeout(function(){
+                    that.parts.listnav.hide('drop', {}, that.speed);
+                }, 500);
+            }
+        });
+    })();
     
-    this.parts.sidemenu.hover(function(){
-        that.parts.listnav.show('drop', {}, that.speed);
-    }, function(){
-        if (!that.dragging) {
-            that.parts.listnav.hide('drop', {}, that.speed);
-        }
-    });
-    
-    // $('body > div > article > header > form > input').click(function(e){
-    //     var div = $('body > div > article > header > form > div');
-    //     if (div.css('display') === 'none') {
-    //         div.slideDown(that.speed, function(){
-    //             that.openCallbackCreateTask(e, $('body > div > article > header > form'));
-    //         });
-    //         return false;
-    //     }
-    // });
-    
-    // $('body > div > article > header').hover(function(e){
-    // }, function(){
-    //     // $('body > div > article > header > form > div').slideUp(that.speed);
-    // });
-    
-    // this.parts.article.mouseover(function(e){
-    //     that.parts.listnav.slideUp(that.speed);
-    // });
-    
-    
-    
-    this.parts.lists.find('li.timeline').click($.proxy(this.showTimeline, this));
-    this.parts.lists.find('li.filter').click($.proxy(this.switchFilterList, this));
-    
-    // $('textarea').autogrow();
-    
-    /* article */
-    /* article nav */
     $('button, a, span.action, li.action, input[data-method]').each(function(i, ele){
         ele.addEventListener("click", that, false);
-    });
-    
-    var f_disp = false;
-    var footer = $('body > footer');
-    var ul = $('body > footer > ul');
-    var footer_default_height = footer.height();
-    $('body > footer > div').click(function(){
-        var div = $(this);
-        if (f_disp) {
-            footer.animate({ height: footer_default_height + 'px' });
-            div.removeClass('disp');
-            f_disp = false;
-        } else {
-            var h = ul.height() - 12;
-            footer.animate({ height: footer_default_height + h + 'px' });
-            div.addClass('disp');
-            f_disp = true;
-        }
     });
     
     this.parts.tasks.sortable({
@@ -459,16 +438,17 @@ function initEvent() {
         that[eventData.method].apply(that, eventData.arguments);
     }, false);
     
-    $(document).keydown(function(e){
+    $(document).keypress(function(e){
+        if (e.shiftKey || e.ctrlKey) {
+            return true;
+        }
         if (document.activeElement.tagName === 'BODY') {
-            if (e.keyCode === 67) { // c
-                // that.clickOpenButton(e, $('#create-task-button'));
-                // $('body > div > article > header > form > div').slideDown(that.speed);
-                // that.openCallbackCreateTask(e, $('body > div > article > header > form'));
+            if (e.keyCode === 99) { // c
                 $('#create-task-button').click();
                 return false;
-            } else if (e.keyCode === 82) { // r
-                that.refresh();
+            } else if (e.keyCode === 114) { // r
+                // that.refresh();
+                that.notificationCheck();
             }
         }
         return true;
@@ -488,12 +468,37 @@ function initEvent() {
     });
     this.parts.commentbox.autogrow({single: true});
     this.parts.commentbox.focus(function(){
-        that.active = 'comment';
-        $('#comment').addClass('selected');
+        that.parts.commentform.val('');
     }).blur(function(){
-        that.active = null;
-        $('#comment').removeClass('selected');
+        that.parts.commentform.slideUp(that.speed, function(){
+            that.parts.commentbox.val('');
+        });
     });
+    
+    
+    var timer;
+    this.parts.badge.hover(function(){
+        if (timer) {
+            clearInterval(timer);
+        }
+        var ul = that.parts.badge.find('> ul');
+        ul.slideDown(that.speed);
+        if (that.parts.badge.find('> span').hasClass('active')) {
+            that.parts.badge.find('> span').removeClass('active').text(0);
+            that.account.state.last_history_time = (new Date()).getTime();
+            that.updateAccount({
+                ns: 'state',
+                method: 'set',
+                key: 'last_history_time',
+                val: that.account.state.last_history_time
+            });
+        }
+    }, function(){
+        timer = setTimeout(function(){
+            that.parts.badge.find('> ul').slideUp(that.speed);
+        }, 1000);
+    });
+    
 }
 function initEventGuide(ele) {
     var that = this;
@@ -501,7 +506,7 @@ function initEventGuide(ele) {
         var ele = $(ele);
         var msg = ele.data('guide-' + that.lang);
         ele.hover(function(){
-            if (!that.guide) {
+            if (that.account.state.noguide) {
                 return true;
             }
             if (that.dragging) {
@@ -557,8 +562,11 @@ function initWindow() {
     
 }
 function initAccount() {
+    var that = this;
     this.refresh();
-    // this.parts.mainmenu.find('.icon-trash').parent().fadeOut('slow');
+    setTimeout(function(){
+        that.notificationCheck(true);
+    }, 60 * 1000);
 }
 
 // Event
@@ -634,13 +642,19 @@ function windowResizeEvent() {
     if (h_height > 0) {
         h_height+= 8;
     }
-    $('body > div > aside > header > ul').height(w_height - h_height - 71);
+    $('body > div > aside > header > ul').height(w_height - h_height - 70);
     $('body > div > aside').height(w_height - h_height - 35);
     $('body > div > article > section').height(w_height - h_height - 93 + 17);
-    
-    $('body > div > div > ul').height(w_height - h_height - $('body > div > div > ul').offset().top - 19);
     $('body > div > div').width(w.width() - this.offset.commment.left - 24);
-    
+    this.commentHeightResize();
+}
+function commentHeightResize() {
+    var w_height = w.height();
+    var h_height = this.parts.footer.height();
+    if (h_height > 0) {
+        h_height+= 8;
+    }
+    $('body > div > div > ul').height(w_height - h_height - $('body > div > div > ul').offset().top - 19);
 }
 
 // General
@@ -660,7 +674,7 @@ function message(message) {
     alert(message);
 }
 function statusUpdate(message) {
-    this.parts.status.text(message);
+    // this.parts.status.text(message);
     // this.parts.console.prepend($(document.createElement('li')).text(message));
 }
 function getProfileImageUrl(user_id) {
@@ -775,7 +789,6 @@ function refresh(option) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('refresh.');
             that.account = data.account;
             that.assign = [];
             that.parts.owners.empty();
@@ -822,7 +835,6 @@ function refresh(option) {
                 }
             }
             var showList = function(){
-                that.renderTimeline();
                 for (var i = 0, max = lists.length; i < max; i++) {
                     that.registList(lists[i]);
                 }
@@ -854,120 +866,170 @@ function refresh(option) {
                 } else {
                     that.parts.lists.find('li.project:first').click();
                 }
+                that.notificationCheckDone(data);
             };
             if (unknownMembers.length) {
                 that.lookupUnknownMembers(unknownMembers, showList);
             } else {
                 showList.call();
             }
-            
-            // for (var i = 0, max = that.filters.length; i < max; i++) {
-            //     var filter = that.filters[i];
-            //     if (filter in that.account.state.hide_list) {
-            //         that.parts.lswt.find('tr[data-list-id=' + filter + ']').each(function(i, ele){
-            //             $(ele).find('input').attr('checked', false);
-            //         });
-            //         that.parts.lists.find('li[data-list-id=' + filter + ']').hide();
-            //     } else {
-            //         that.parts.lists.find('li[data-list-id=' + filter + ']').show();
-            //     }
-            // }
-            // checkox state 
-            // for (var id in that.account.state.checkbox) {
-            //     document.getElementById(id).checked =
-            //         that.account.state.checkbox[id] ? true : false;
-            // }
-            // for (var id in that.account.state.button) {
-            //     var button = $(document.getElementById(id));
-            //     if (that.account.state.button[id]) {
-            //         button.removeClass('on');
-            //         button.data('val', 1);
-            //     } else {
-            //         button.addClass('on');
-            //         button.data('val', 0);
-            //     }
-            // }
-            if ($('#guide-switch').data('val') == 1) {
-                that.guide = false;
+            if (that.account.state.noguide) {
+                $('#guide-switch').removeClass('on');
                 $('#guide-switch').text($('#guide-switch').data('text-off'));
             } else {
-                that.guide = true;
+                $('#guide-switch').addClass('on');
                 $('#guide-switch').text($('#guide-switch').data('text-on'));
             }
-            
-            // 
-            // var my = that.parts.mainmenu.find('.my:first');
-            // var url = my.data('url');
-            // var img = $('<img/>').attr('src', url).attr('width', 16);
-            // my.empty().append(img);
         }
     });
+}
+function needNotification(account, history) {
+    if (this.isMe(history.id)) {
+        return false;
+    }
+    var key = history.list_id + ':' + history.task.id;
+    if (key in account.state.watch) {
+        return true;
+    } else if (this.findMe([history.task.requester_id].concat(history.task.assign_ids))) {
+        return true;
+    }
+}
+function notificationCheck(loop) {
+    var that = this;
+    return this.ajax({
+        type: 'get',
+        url: '/api/1/account/',
+        dataType: 'json'
+    })
+    .done(function(data){
+        that.notificationCheckDone(data, loop);
+    })
+}
+function notificationCheckDone(data, loop) {
+    var that = this;
+    that.notifications = [];
+    var check = function(account, history) {
+        if (that.needNotification(account, history)) {
+            that.notifications.push(history);
+        }
+    }
+    var lists = data.account.lists;
+    for (var i = 0, max_i = lists.length; i < max_i; i++) {
+        var list = lists[i];
+        var tasks = list.doc.tasks;
+        for (var j = 0, max_j = tasks.length; j < max_j; j++) {
+            var task = tasks[j];
+            // create task
+            check.call(that, data.account, {
+                id: task.registrant_id,
+                action: 'create-task',
+                date: (task.created * 1000),
+                task: task,
+                list_id: list.id,
+                list_name: list.doc.name
+            });
+            // update task
+            for (var k = 0, max_k = task.history.length; k < max_k; k++) {
+                var history = task.history[k];
+                history.task = task;
+                history.list_id = list.id;
+                history.list_name = list.doc.name;
+                check.call(that, data.account, history);
+            }
+            // create comment
+            for (var l = 0, max_l = task.comments.length; l < max_l; l++) {
+                var comment = task.comments[l];
+                var history = {
+                    id: comment.owner_id,
+                    action: 'create-comment',
+                    date: comment.time,
+                    task: task,
+                    list_id: list.id,
+                    list_name: list.doc.name,
+                    comment: comment.comment
+                };
+                check.call(that, data.account, history);
+            }
+        }
+    }
+    
+    that.notifications.sort(function(a, b){
+        return b.date - a.date;
+    });
+    var disp = function(history){
+        return function(){
+            $('#digest-title').text(history.task.title || '');
+            $('#digest-comment').text(
+                history.comment ? '> ' + history.comment : ''
+            );
+            $('#digest')
+                .css('left', $(this).offset().left - $('#digest').width() - 20 + 'px')
+                .css('top', $(this).offset().top - 20 + 'px')
+                .show();
+        };
+    };
+    var ul = that.parts.badge.find('> ul');
+    ul.empty();
+    var comment_map = {};
+    var count = 0;
+    var disps = 0;
+    for (var i = 0, max_i = that.notifications.length; i < max_i; i++) {
+        var history = that.notifications[i];
+        var key = history.id + ':' + history.list_id + ':' + history.task.id + history.action;
+        if (key in comment_map) {
+            continue;
+        }
+        comment_map[key] = true;
+        disps++;
+        if (disps >= 20) {
+            break;
+        }
+        var friend = that.friend_ids[history.id];
+        var screen_name = $('<span class="screen_name"/>').text(friend.screen_name);
+        var icon = $('<img/>').attr('src', friend.profile_image_url);
+        var key = 'text-' + history.action + '-' + that.account.lang;
+        var action = $('<span class="action"/>').text(ul.data(key));
+        var list = $('<span class="list"/>').text(history.list_name);
+        var date = $('<span class="date"/>').text(that.timestamp(history.date));
+        $('<li/>')
+            .addClass('clearfix')
+            .append(icon)
+            .append(screen_name)
+            .append(action)
+            .append(list)
+            .append($('<br>'))
+            .append(date)
+            .data('list-id', history.list_id)
+            .data('task-id', history.task.id)
+            .hover(disp.call(that, history), function(){
+                $('#digest').hide();
+            })
+            .click(function(){
+                that.refresh({
+                    select_list_id: $(this).data('list-id'),
+                    select_task_id: $(this).data('task-id')
+                });
+            })
+            .appendTo(ul);
+        if (history.date > this.account.state.last_history_time) {
+            count++;
+        }
+    }
+    that.parts.badge.find('> span').text(count);
+    if (count > 0) {
+        that.parts.badge.find('> span').addClass('active');
+    } else {
+        that.parts.badge.find('> span').removeClass('active');
+    }
+    if (loop) {
+        setTimeout(function(){
+            that.notificationCheck(loop);
+        }, 60 * 1000);
+    }
 }
 function submitFinalize(form) {
     form.find('*[data-no-keep=1]').val('');
     form.find('input[type=text]:first').get(0).focus();
-}
-function showTimeline(e) {
-    this.parts.timeline.show();
-    this.parts.tasks.hide();
-//    this.parts.lists.find('.selected').removeClass('selected');
-    var li = $(e.currentTarget);
-//    li.addClass('selected');
-//    this.parts.mainmenu.find('button').attr('disabled', true);
-    this.parts.listname.text(li.text());
-    this.parts.listmembers.empty();
-    this.updateAccount({
-        ns: 'state',
-        method: 'set',
-        key: 'last_read_list',
-        val: 'list-timeline'
-    });
-}
-function renderTimeline() {
-    var that = this;
-    var lists = this.account.lists;
-    var timeline_items = [];
-    for (var i = 0; i < lists.length; i++) {
-        var list = lists[i];
-        for (var j = 0; j < list.doc.history.length; j++) {
-            var item = list.doc.history[j];
-            item.list = list;
-            timeline_items.push(item);
-        }
-    }
-    timeline_items.sort(function(a, b){ return b.date - a.date });
-    this.parts.timeline.empty();
-    for (var i = 0; i < timeline_items.length; i++) {
-        var item = timeline_items[i];
-        if (this.isMe(item.id)) continue;
-        var code = $('<span class="code"/>');
-        if (item.id && /tw-./.test(item.id)) {
-            var url = this.getProfileImageUrl(item.id);
-            if (url) {
-                var screen_name = this.friend_ids[item.id].screen_name;
-                code.css('background-image', 'url(' + url + ')');
-                code.attr('title', screen_name);
-            }
-        } else {
-            
-        }
-        var action_msg = this.localizer.text(this.parts.timeline, item.action);
-        var action = $('<span class="action"/>').text(action_msg);
-        var list = $('<span class="list"/>').text(item.list.doc.name);
-        var date = $('<span class="date"/>').text(this.timestamp(item.date));
-        var li = $('<li class="clearfix"/>')
-            .append(code)
-            .append(action)
-            .append(list)
-            .append(date)
-            .appendTo(this.parts.timeline)
-            .data('list-id', item.list.id)
-            .data('task-id', (item.task_id || 0))
-            .click(function(e){
-                var ele = $(e.currentTarget);
-                that.showList(ele.data('list-id'), ele.data('task-id'));
-            });
-    }
 }
 function showList(id, task_id) {
     var that = this;
@@ -1539,6 +1601,20 @@ function resetCounter(search) {
         counter.badge.text(count);
     }
 }
+function autoLink(text) {
+    return text.replace(this.url_re, function(url){
+        var a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.appendChild(document.createTextNode(url));
+        var div = document.createElement('div');
+        div.appendChild(a);
+        return div.innerHTML;
+    });
+}
+function showNotifications() {
+    
+}
 
 // GrobalMenu
 function clickOpenButton(e, ele) {
@@ -1605,19 +1681,19 @@ function clickRefresh(e, ele) {
     this.refresh();
 }
 function clickGuideSwitch(e, ele) {
-    if (this.guide) {
-        this.guide = false;
+    if (this.account.state.noguide) {
+        delete this.account.state["noguide"];
+        ele.addClass('on').text(ele.data('text-on'));
+    } else {
+        this.account.state.noguide = true;
         ele.removeClass('on').text(ele.data('text-off'));
         this.parts.guide.fadeOut('slow');
-    } else {
-        this.guide = true;
-        ele.addClass('on').text(ele.data('text-on'));
     }
     this.updateAccount({
-        ns: 'state.button',
-        method: 'set',
-        key: ele.attr('id'),
-        val: (this.guide ? 0 : 1)
+        ns: '',
+        method: (this.account.state.noguide ? '+' : '-'),
+        key: 'state',
+        val: 'noguide'
     });
 }
 
@@ -1999,6 +2075,8 @@ function openCallbackCreateTask(e, ele) {
     var ul = $('#create-task-assign');
     ul.empty();
     ul.hide();
+    var select = $('#create-task-requester');
+    select.empty();
     var member_ids = [list.doc.owner_id].concat(list.doc.member_ids);
     for (var i = 0, max = member_ids.length; i < max; i++) {
         var id = member_ids[i];
@@ -2018,7 +2096,13 @@ function openCallbackCreateTask(e, ele) {
         label.append($('<span></span>').text(friend.screen_name));
         li.append(label);
         ul.append(li);
+        
+        $('<option/>')
+            .val(id)
+            .text(friend.screen_name)
+            .appendTo(select);
     }
+    select.val(this.findMe(member_ids));
     if (!member_ids.length) {
         ul.append($('<li>no member.</li>'));
     }
@@ -2038,6 +2122,7 @@ function openCallbackCreateTaskWithMember(e, ele) {
     var id = $(ele).data('member-id');
     var ul = $('#create-task-assign');
     ul.find('input[value="' + id + '"]').attr('checked', true);
+    $('#create-task-requester').val($(ele).data('requester-id'));
 }
 function openCallbackEditTask(e, ele) {
     this.openCallbackCreateTask(e, ele);
@@ -2067,6 +2152,7 @@ function openCallbackEditTask(e, ele) {
             form.find('input[value="' + id + '"]').attr('checked', true);
         }
     }
+    $('#create-task-requester').val(div.parent().data('requester-id'));
 }
 function openCallbackClearTrash(e, ele) {
     var form = $('#clear-trash-window');
@@ -2092,6 +2178,7 @@ function submitCreateTask(form) {
         alert('please input task title.');
         return;
     }
+    var requester_id = $('#create-task-requester').val();
     var registrant_id = this.findMeFromList(list);
     if (!registrant_id) {
         alert("can't find registrant.");
@@ -2113,6 +2200,7 @@ function submitCreateTask(form) {
         data: {
             list_id: list.id,
             task_id: task_id,
+            requester_id: requester_id,
             registrant_id: registrant_id,
             title: title,
             due: due,
@@ -2253,9 +2341,14 @@ function createTaskElement(list, task) {
             li.find('.due').addClass('over');
         }
     } else {
-        li.find('.due').text('');
+        li.find('.due').text('-');
     }
     li.data('due', due_epoch);
+    li.find('.comment').click(function(){
+        that.parts.commentform.slideDown(that.speed, function(){
+            that.parts.commentbox.focus();
+        });
+    });
     if (task.comments.length) {
         li.find('.comments').text('(' + task.comments.length + ')');
     }
@@ -2269,12 +2362,12 @@ function createTaskElement(list, task) {
     }
     this.taskli[list.id + '-' + task.id] = li;
     li.find('.title').text(task.title);
-    if ("registrant_id" in task) {
-        var url = that.getProfileImageUrl(task.registrant_id);
-        var img = $('<img data-guide-en="Requester" data-guide-ja="依頼者"/>')
-            .attr('src', url)
-            .addClass('twitter_profile_image');
-        li.find('.assign').append(img);
+    if ("requester_id" in task) {
+        $('<img data-guide-en="Requester" data-guide-ja="依頼者"/>')
+            .attr('src', that.getProfileImageUrl(task.requester_id))
+            .addClass('twitter_profile_image')
+            .appendTo(li.find('.assign'))
+        li.data('requester-id', task.requester_id);
     }
     if (task.assign_ids.length) {
         li.find('.assign').prepend($('<span class="icon icon-left"/>'));
@@ -2294,12 +2387,6 @@ function createTaskElement(list, task) {
             .addClass('twitter_profile_image');
         li.find('.assign').prepend($('<span class="icon icon-left"/>')).prepend(img);
     }
-    li.click(function(){
-        if (that.current_task !== task) {
-            li.mouseover();
-        }
-        that.parts.commentbox.focus();
-    });
     li.mouseover(function(){
         if (that.active === 'comment') {
             return;
@@ -2331,16 +2418,19 @@ function createTaskElement(list, task) {
         }
         that.parts.commentbox.val('').css('height', '16px');
         that.parts.comment.scrollTop(that.parts.comment.height());
+        that.commentHeightResize();
     });
-    // if ("mainmenu-switch-description" in this.account.state.button) {
-    //     if (!this.account.state.button["mainmenu-switch-description"]) {
-    //         content.hide();
-    //     }
-    // }
-    li.find('> .action').click($.proxy(this.clickTaskAction, this));
-    li.find('.grip').click(function(e){
-        e.stopPropagation();
+    li.find('> .action, > .due').click($.proxy(this.clickTaskAction, this));
+    li.find('.grip').hover(function(e){
+        if (that.parts.tasks.hasClass('sortable')) {
+            li.removeAttr('draggable');
+        } else {
+            li.attr('draggable', true);
+        }
+    }, function(e){
+        li.removeAttr('draggable');
     });
+    li.removeAttr('draggable');
     if (task.status === 1) {
         li.find('> .icon-tasks-off')
         .removeClass('icon-tasks-off')
@@ -2481,7 +2571,7 @@ function clickTaskAction(e) {
         task.star = true;
         this.updateCounter(oldtask, task);
     }
-    else if (div.hasClass('icon-edit')) {
+    else if (div.hasClass('icon-edit') || div.hasClass('due')) {
         this.clickOpenButton(e, div);
     }
     else if (div.hasClass('assign')) {
@@ -2541,7 +2631,7 @@ function renderComment(list_id, task_id, comment) {
     var msg = $('<div/>');
     var name = $('<span class="name"></span>').text(friend.screen_name);
     var date = $('<span class="date"></span>').text(this.timestamp(comment.time));
-    var message = $('<span class="comment"/>').text(comment.comment);
+    var message = $('<span class="comment"/>').html(this.autoLink(comment.comment));
     var del = $('<span class="action icon icon-delete"></span>');
     del.click(function(e){
         e.stopPropagation();

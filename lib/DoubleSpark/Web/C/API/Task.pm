@@ -7,6 +7,7 @@ sub create {
     my ($class, $c) = @_;
     
     my $account = DoubleSpark::Account->new($c);
+    my $requester_id = $c->req->param('requester_id');
     my $registrant_id = $c->req->param('registrant_id');
     my $title = $c->req->param('title');
     my $description = $c->req->param('description');
@@ -18,6 +19,7 @@ sub create {
     $doc->{tasks} = [] unless $doc->{tasks};
     my $task = {
         id => $task_id,
+        requester_id => $requester_id,
         registrant_id => $registrant_id,
         title => $title,
         description => $description,
@@ -25,18 +27,13 @@ sub create {
         status => 0,
         closed => 0,
         comments => [],
+        history => [],
         created => time,
         updated => time,
         sort => $task_id
     };
     $task->{assign_ids} = \@assign_ids;
     push @{$doc->{tasks}}, $task;
-    $c->append_history($doc, {
-        id      => $registrant_id,
-        action  => 'create-task',
-        task_id => $task_id,
-        date    => time
-    });
     $c->save_list_doc($account, $doc);
     $c->render_json({
         success => 1,
@@ -58,7 +55,7 @@ sub update {
     my $doc = $c->open_list_doc($account, 'member', $list_id);
     for my $task (@{$doc->{tasks}}) {
         if ($task->{id} == $task_id) {
-            my @keys = qw(status closed title description due);
+            my @keys = qw(status closed title description due requester_id);
             for my $key (@keys) {
                 my $val = $c->req->param($key);
                 if (defined $val) {
@@ -84,18 +81,28 @@ sub update {
                 $task->{assign_ids} = [];
             }
             $task->{updated} = time;
+            push @{$task->{history}}, {
+                id      => $registrant_id,
+                action  => $action,
+                date    => time * 1000
+            };
+            my $max_history = $c->config->{max_history} || 20;
+            if (scalar(@{$task->{history}}) > $max_history) {
+                @{$task->{history}} =
+                    splice(@{$task->{history}}, scalar(@{$task->{history}}) - $max_history);
+            }
             $target_task = $task;
             $success++;
             last;
         }
     }
     die 'NotFound' unless $success;
-    $c->append_history($doc, {
-        id      => $registrant_id,
-        action  => $action,
-        task_id => $task_id,
-        date    => time
-    });
+    # $c->append_history($doc, {
+    #     id      => $registrant_id,
+    #     action  => $action,
+    #     task_id => $task_id,
+    #     date    => time
+    # });
     $c->save_list_doc($account, $doc);
     $c->render_json({
         success => $success,

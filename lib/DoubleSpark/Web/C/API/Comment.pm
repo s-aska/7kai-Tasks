@@ -33,12 +33,6 @@ sub create {
             last;
         }
     }
-    $c->append_history($doc, {
-        id      => $owner_id,
-        action  => 'create-comment',
-        task_id => $task_id,
-        date    => time
-    });
     $c->save_list_doc($account, $doc);
     $c->render_json({
         success => 1,
@@ -71,12 +65,6 @@ sub delete {
             last;
         }
     }
-    $c->append_history($doc, {
-        id      => $owner_id,
-        action  => 'delete-comment',
-        task_id => $task_id,
-        date    => time
-    });
     $c->save_list_doc($account, $doc);
     $c->render_json({
         success => $success,

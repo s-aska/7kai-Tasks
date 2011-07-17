@@ -46,14 +46,7 @@ sub create {
         privacy => $privacy,
         owner_id => $owner_id,
         member_ids => \@member_ids,
-        tasks => [],
-        history => [
-            {
-                id     => $owner_id,
-                action => 'create-list',
-                date   => time
-            }
-        ]
+        tasks => []
     });
     $txn->commit;
     
@@ -81,11 +74,6 @@ sub update {
         $doc->{owner_id} = $owner_id;
     }
     $doc->{member_ids} = \@member_ids;
-    $c->append_history($doc, {
-        id     => $owner_id,
-        action => 'update-list',
-        date   => time
-    });
     $c->save_list_doc($account, $doc);
     
     my $members = {};
@@ -155,11 +143,6 @@ sub clear {
     my $num = scalar(@{$doc->{tasks}});
     @{$doc->{tasks}} = grep { !$_->{closed} } @{$doc->{tasks}};
     my $count = $num - scalar(@{$doc->{tasks}});
-    $c->append_history($doc, {
-        id      => $owner_id,
-        action  => 'clear-task',
-        date    => time
-    });
     $c->save_list_doc($account, $doc);
     $c->render_json({
         success => $count ? 1 : 0,

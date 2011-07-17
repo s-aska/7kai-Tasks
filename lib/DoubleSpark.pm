@@ -2,7 +2,7 @@ package DoubleSpark;
 use strict;
 use warnings;
 use parent qw/Amon2/;
-our $VERSION='1.10';
+our $VERSION='1.11';
 use 5.008001;
 
 use AnyEvent::CouchDB ();
@@ -133,30 +133,6 @@ sub save_list_doc {
     $account_doc->{state}->{read}->{list}->{$id} =
         $rev . ',' . $time;
     $self->save_doc($account_doc);
-}
-
-sub append_history {
-    my ($self, $doc, $history) = @_;
-    my $update;
-    for (@{$doc->{history}}) {
-        if ($_->{id} eq $history->{id} && $_->{action} eq $history->{action}) {
-            $_ = $history;
-            $update++;
-            last;
-        }
-    }
-    if ($update) {
-        @{$doc->{history}} = sort {
-            $a->{date} <=> $b->{date}
-        } @{$doc->{history}};
-    } else {
-        push @{$doc->{history}}, $history;
-    }
-    my $max_history = $self->config->{max_history} || 20;
-    if (scalar(@{$doc->{history}}) > $max_history) {
-        @{$doc->{history}} =
-            splice(@{$doc->{history}}, scalar(@{$doc->{history}}) - $max_history);
-    }
 }
 
 sub lang {

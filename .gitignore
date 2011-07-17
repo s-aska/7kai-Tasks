@@ -14,3 +14,5 @@ websocket.psgi
 mat
 src.zip
 src.pem
+src-ld*
+*-ld.sh

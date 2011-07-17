@@ -7,3 +7,6 @@ chrome.extension.onRequest.addListener(
         eventDiv.dispatchEvent(customEvent);
     }
 );
+if (document.getElementById('status')) {
+    document.getElementById('status').innerHTML = '';
+}
