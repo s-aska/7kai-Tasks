@@ -391,6 +391,7 @@ function renderNotifications(account, histories) {
     }
     if (!user_ids.length) {
         that.parts.notifications.empty();
+        that.parts.notifications.append($('<li/>').text('none.'));
         return;
     }
     $.ajax({

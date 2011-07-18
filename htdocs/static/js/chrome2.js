@@ -827,13 +827,28 @@ function refresh(option) {
             
             app.unread_comment_count = 0;
             var lists = app.account.lists;
+            
+            var humanmap = {};
+            var unknownCheck = function(id){
+                if (!(id in app.friend_ids) && !(id in humanmap)) {
+                    humanmap[id] = true;
+                    unknownMembers.push(id);
+                }
+            }
             for (var i = 0, max_i = lists.length; i < max_i; i++) {
                 var list = lists[i];
                 var humans = [list.doc.owner_id].concat(list.doc.member_ids);
                 for (var j = 0, max_j = humans.length; j < max_j; j++) {
-                    var human = humans[j];
-                    if (!(human in app.friend_ids)) {
-                        unknownMembers.push(human);
+                    unknownCheck(humans[j]);
+                }
+                for (var j = 0, max_j = list.doc.tasks.length; j < max_j; j++) {
+                    var task = list.doc.tasks[j];
+                    unknownCheck(task.requester_id);
+                    for (var k = 0, max_k = task.comments.length; k < max_k; k++) {
+                        unknownCheck(task.comments[k].owner_id);
+                    }
+                    for (var k = 0, max_k = task.history.length; k < max_k; k++) {
+                        unknownCheck(task.history[k].id);
                     }
                 }
             }
@@ -1391,8 +1406,8 @@ function filterTask() {
     // var app = this;
     var filter = this.tasksFilterGenerate();
     this.current_filter = filter;
-    this.parts.timeline.hide();
-    this.parts.tasks.show();
+    // this.parts.timeline.hide();
+    // this.parts.tasks.show();
     this.parts.tasks.find('> li').each(function(i, ele){
         var ele = $(ele);
         if (filter(ele)) {
@@ -1401,9 +1416,9 @@ function filterTask() {
             } else {
                 ele.show();
             }
-            if (readComment) {
-                app.readComment(ele);
-            }
+            // if (readComment) {
+            //     app.readComment(ele);
+            // }
         } else {
             if (app.is_webkit) {
                 ele.slideUp(app.speed);
@@ -2394,7 +2409,7 @@ function createTaskElement(list, task) {
         }
     }
     if (task.status === 2 && task.assign_ids.length) {
-        var url = app.getProfileImageUrl(task.registrant_id);
+        var url = app.getProfileImageUrl(task.requester_id);
         var img = $('<img data-guide-en="Approver" data-guide-ja="承認者"/>')
             .attr('src', url)
             .addClass('twitter_profile_image');

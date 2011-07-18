@@ -623,6 +623,7 @@ body > div > article section > ul li {
     border-bottom: 1px solid gray;
     font-size: 12px;
     line-height: 1;
+    background-color: white;
 }
 body > div > article section > ul li.delete {
     background-color: #eaeaea;

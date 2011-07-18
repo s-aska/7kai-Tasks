@@ -291,7 +291,7 @@ location.href = '/';
 <div class="icon-with icon-create" data-text-ja="タスク登録...">Create Task...</div>
 </button>
 <div class="pulldown">
-Sort: <span></span>
+<a data-text-ja="並び替え">Sort</a>: <span></span>
 <ul class="pulldown-menu">
 <li
     class="action"
@@ -321,6 +321,7 @@ Sort: <span></span>
 </div>
 </header>
 <section>
+<p id="task-not-found-message" style="position: absolute; z-index: -1;margin: 4px;">task not found.</p>
 <ul class="task">
 <li class="clearfix" draggable="true">
 <div class="grip icon-grip"
