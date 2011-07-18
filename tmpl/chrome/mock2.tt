@@ -28,7 +28,7 @@ location.href = '/';
 <body>
 <header>
 <h1>7kai Tasks <span class="version">ver [% c().version() %] Bare Born+</span></h1>
-<p id="status"><a href="https://chrome.google.com/webstore/detail/dolhpjcchfcnkcanamhgcgbnmcogdank" target="_blank">please install Chrome Extensions</a></p>
+<p id="status"><a href="[% c().config.ext_url %]" target="_blank">please install Chrome Extensions</a></p>
 <nav>
 <ul class="clearfix">
 <li class="guide">

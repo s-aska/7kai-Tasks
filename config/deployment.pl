@@ -1,5 +1,5 @@
 +{
-    max_history => 10,
+    ext_url => 'https://chrome.google.com/webstore/detail/dolhpjcchfcnkcanamhgcgbnmcogdank',
     DB => [
         'dbi:mysql:dbname=doublespark;sql-mode=STRICT_TRANS_TABLES',
         'root',
