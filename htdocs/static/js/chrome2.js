@@ -2,8 +2,7 @@
 
 var w = $(w);
 
-ns.Tasks = initialize;
-ns.Tasks.prototype = {
+var app = {
     
     // 定数
     token_name: 'csrf_token',
@@ -178,9 +177,22 @@ ns.Tasks.prototype = {
     
 };
 
-function initialize(options) {
-    if (typeof window.console != 'object') {
-        console.log = function(){};
+$(d).ready(function() {
+    var localizer = new Localizer();
+    if (localizer.lang != 'en') {
+      localizer.localize();
+    }
+    app.localizer = localizer;
+    app.run();
+});
+
+// Init
+function run() {
+    
+    if (typeof window.console !== 'object') {
+        console = {
+            log: function(){}
+        };
     }
     this.lang = $('html').attr('lang');
     this.token = $('input[name=' + this.token_name + ']:first').val();
@@ -190,10 +202,7 @@ function initialize(options) {
     ) {
         this.is_webkit = true;
     }
-}
-
-// Init
-function run() {
+    
     this.initParts();
     this.initEvent();
     this.initCounter();
@@ -240,7 +249,7 @@ function initParts() {
     this.offset.commment   = $('body > div > div').offset();
 }
 function initEvent() {
-    var that = this;
+    // var app = this;
     
     /* window */
     w.resize($.proxy(this.windowResizeEvent, this));
@@ -248,27 +257,19 @@ function initEvent() {
     this.initEventGuide($(d));
     
     /* header */
-    // $('body > header nav ul li').each(function(i, ele){
-    //     var li = $(ele);
-    //     var ul = li.find('> ul:first');
-    //     li.hover(function(){
-    //         ul.slideDown(that.speed);
-    //     }, function(){
-    //         ul.slideUp(that.speed);
-    //     });
-    // });
     $('.pulldown').each(function(i, ele){
         var pulldown = $(ele);
-        var ul = pulldown.find('> ul:first');
+        var menu = pulldown.find('> .pulldown-menu');
         var timer;
         pulldown.hover(function(){
             if (timer) {
                 clearInterval(timer);
+                timer = null;
             }
-            ul.slideDown(that.speed);
+            menu.slideDown(app.speed);
         }, function(){
             timer = setTimeout(function(){
-                ul.slideUp(that.speed);
+                menu.slideUp(app.speed);
             }, 500);
         });
     });
@@ -278,52 +279,53 @@ function initEvent() {
     /* aside */
     (function(){
         var timer;
-        that.parts.sidemenu.hover(function(){
+        app.parts.sidemenu.hover(function(){
             if (timer) {
                 clearInterval(timer);
+                timer = null;
             }
-            if (that.parts.listnav.css('display') === 'none') {
-                that.parts.listnav.show('drop', {}, that.speed);
+            if (app.parts.listnav.css('display') === 'none') {
+                app.parts.listnav.show('drop', {}, app.speed);
             }
         }, function(){
-            if (!that.dragging) {
+            if (!app.dragging) {
                 timer = setTimeout(function(){
-                    that.parts.listnav.hide('drop', {}, that.speed);
+                    app.parts.listnav.hide('drop', {}, app.speed);
                 }, 500);
             }
         });
     })();
     
     $('button, a, span.action, li.action, input[data-method]').each(function(i, ele){
-        ele.addEventListener("click", that, false);
+        ele.addEventListener("click", app, false);
     });
     
     this.parts.tasks.sortable({
         handle: 'div.grip',
         cursor: 'url(/static/img/openhand.cur), move',
         start: function (e, ui) {
-            that.dragging = true;
-            that.parts.guide.hide();
+            app.dragging = true;
+            app.parts.guide.hide();
         },
         stop: function (e, ui) {
-            that.dragging = false;
+            app.dragging = false;
         },
         update: function(e, ui) {
-            that.sortUpdateTask();
+            app.sortUpdateTask();
         }
     });
     
     this.parts.lists.sortable({
         cursor: 'url(/static/img/openhand.cur), move',
         start: function (e, ui) {
-            that.dragging = true;
-            that.parts.guide.hide();
+            app.dragging = true;
+            app.parts.guide.hide();
         },
         stop: function (e, ui) {
-            that.dragging = false;
+            app.dragging = false;
         },
         update: function(e, ui) {
-            that.sortUpdateList();
+            app.sortUpdateList();
         }
     });
     
@@ -339,7 +341,7 @@ function initEvent() {
                 if (e.shiftKey) {
                     var reset = form.data('reset');
                     if (reset) {
-                        that[reset].call(this, form);
+                        app[reset].call(this, form);
                     } else {
                         form.find('*[data-no-keep=1]').val('');
                         form.find('input[type=text]:first').get(0).focus();
@@ -355,23 +357,23 @@ function initEvent() {
             
             var submit = form.data('submit');
             if (submit) {
-                that[submit].call(that, form);
+                app[submit].call(app, form);
             }
             // FIXME: keep
             
             return false;
         });
-        that.modals[form.attr('id')] = form;
+        app.modals[form.attr('id')] = form;
         // form.disableSelection();
         // form.draggable();
         form.draggable({ handle: 'h1' });
-        form.find('footer input[type=checkbox]').click($.proxy(that.clickStatebleCheckbox, that));
+        form.find('footer input[type=checkbox]').click($.proxy(app.clickStatebleCheckbox, app));
     });
     $('form.fillin').each(function(i, ele){
         var form = $(ele);
         form.find('button.cancel').click(function(){
             form.find('input[type=text]:first').val('');
-            form.find('> div').slideUp(that.speed);
+            form.find('> div').slideUp(app.speed);
             return false;
         });
         form.find('input[type=text]:first').keydown(function(e){
@@ -379,25 +381,25 @@ function initEvent() {
                 if (e.shiftKey) {
                     var reset = form.data('reset');
                     if (reset) {
-                        that[reset].call(this, form);
+                        app[reset].call(this, form);
                     } else {
                         form.find('*[data-no-keep=1]').val('');
                         form.find('input[type=text]:first').get(0).focus();
                     }
                 } else {
                     document.activeElement.blur();
-                    form.find('> div').slideUp(that.speed);
+                    form.find('> div').slideUp(app.speed);
                 }
             }
         });
         form.bind('submit', function(){
             var submit = form.data('submit');
             if (submit) {
-                that[submit].call(that, form);
+                app[submit].call(app, form);
             }
             return false;
         });
-        that.modals[form.attr('id')] = form;
+        app.modals[form.attr('id')] = form;
     });
     
     // Create Task Window
@@ -414,10 +416,10 @@ function initEvent() {
     var bindAutocomplete = function(selector, prependTo){
         selector.autocomplete({
     		source: function(request, response) {
-    		    response($.ui.autocomplete.filter(that.assign, request.term));
+    		    response($.ui.autocomplete.filter(app.assign, request.term));
     		},
     		select: function(event, ui) {
-    		    that.createAssignList(that.friends[ui.item.value])
+    		    app.createAssignList(app.friends[ui.item.value])
     		    .prependTo(prependTo);
             }
     	}).data('autocomplete')._renderItem = function(ul, item) {
@@ -435,7 +437,7 @@ function initEvent() {
     document.getElementById('extentionsEventDiv').addEventListener('extentionsEvent', function() {
         var eventText = document.getElementById('extentionsEventDiv').innerText;
         var eventData = JSON.parse(eventText);
-        that[eventData.method].apply(that, eventData.arguments);
+        app[eventData.method].apply(app, eventData.arguments);
     }, false);
     
     $(document).keypress(function(e){
@@ -447,8 +449,8 @@ function initEvent() {
                 $('#create-task-button').click();
                 return false;
             } else if (e.keyCode === 114) { // r
-                // that.refresh();
-                that.notificationCheck();
+                // app.refresh();
+                app.notificationCheck();
             }
         }
         return true;
@@ -459,86 +461,86 @@ function initEvent() {
         if (e.keyCode === 13 && !e.shiftKey) {
             e.stopPropagation();
             e.preventDefault();
-            if (that.parts.commentbox.val().length) {
-                that.submitComment();
+            if (app.parts.commentbox.val().length) {
+                app.submitComment();
             }
         } else if (e.keyCode === 27) {
-            that.parts.commentbox.blur();
+            app.parts.commentbox.blur();
         }
     });
     this.parts.commentbox.autogrow({single: true});
     this.parts.commentbox.focus(function(){
-        that.parts.commentform.val('');
+        app.parts.commentform.val('');
     }).blur(function(){
-        that.parts.commentform.slideUp(that.speed, function(){
-            that.parts.commentbox.val('');
+        app.parts.commentform.slideUp(app.speed, function(){
+            app.parts.commentbox.val('');
         });
     });
     
     
     var timer;
     this.parts.badge.hover(function(){
-        if (timer) {
-            clearInterval(timer);
-        }
-        var ul = that.parts.badge.find('> ul');
-        ul.slideDown(that.speed);
-        if (that.parts.badge.find('> span').hasClass('active')) {
-            that.parts.badge.find('> span').removeClass('active').text(0);
-            that.account.state.last_history_time = (new Date()).getTime();
-            that.updateAccount({
+        // if (timer) {
+        //     clearInterval(timer);
+        // }
+        // var ul = app.parts.badge.find('> div');
+        // ul.slideDown(app.speed);
+        if (app.parts.badge.find('> span').hasClass('active')) {
+            app.parts.badge.find('> span').removeClass('active').text(0);
+            app.account.state.last_history_time = (new Date()).getTime();
+            app.updateAccount({
                 ns: 'state',
                 method: 'set',
                 key: 'last_history_time',
-                val: that.account.state.last_history_time
+                val: app.account.state.last_history_time
             });
         }
     }, function(){
-        timer = setTimeout(function(){
-            that.parts.badge.find('> ul').slideUp(that.speed);
-        }, 1000);
+        // timer = setTimeout(function(){
+        //     app.parts.badge.find('> div').slideUp(app.speed);
+        // }, 1000);
     });
     
 }
 function initEventGuide(ele) {
-    var that = this;
-    ele.find('*[data-guide-' + that.lang + ']').each(function(i, ele){
+    // var app = this;
+    ele.find('*[data-guide-' + app.lang + ']').each(function(i, ele){
         var ele = $(ele);
-        var msg = ele.data('guide-' + that.lang);
+        var msg = ele.data('guide-' + app.lang);
         ele.hover(function(){
-            if (that.account.state.noguide) {
+            if (app.account.state.noguide) {
                 return true;
             }
-            if (that.dragging) {
+            if (app.dragging) {
                 return true;
             }
             var top = ele.offset().top + ele.height();
             var left = ele.offset().left;
-            that.parts.guide.text(msg);
-            that.parts.guide.show();
-            that.parts.guide.css('top', top + 'px');
-            that.parts.guide.css('left', left + 'px');
+            app.parts.guide.text(msg);
+            app.parts.guide.show();
+            app.parts.guide.css('top', top + 'px');
+            app.parts.guide.css('left', left + 'px');
         }, function() {
-            that.parts.guide.hide();
+            app.parts.guide.hide();
         });
     });
 }
 function initCounter() {
-    var that = this;
+    // var app = this;
     this.parts.infomation.find('li').each(function(i, ele){
         var li = $(ele);
         var link = li.find('> span.action');
         var badge = li.find('> span.badge');
         badge.text(0);
-        var cond = $.extend({}, that.cond_default);
+        var cond = $.extend({}, app.cond_default);
         for (var key in cond) {
             var val = link.data(key.replace('_', '-'));
             if (typeof val !== 'undefined') {
                 cond[key] = val;
             }
         }
-        var filter = that.tasksFilterGenerate(cond);
-        that.counters.push({
+        var filter = app.tasksFilterGenerate(cond);
+        app.counters.push({
             filter: filter,
             badge: badge
         });
@@ -562,10 +564,10 @@ function initWindow() {
     
 }
 function initAccount() {
-    var that = this;
+    // var app = this;
     this.refresh();
     setTimeout(function(){
-        that.notificationCheck(true);
+        app.notificationCheck(true);
     }, 60 * 1000);
 }
 
@@ -699,12 +701,12 @@ function getTwitterProfileImageUrl(screen_name) {
     }
 }
 function syncTwitterContact(user_id, cursor, screen_name) {
-    var that = this;
+    // var app = this;
     if (!cursor || cursor === -1) {
-        if (user_id in that.account.tw) {
-            that.account.tw[user_id].friends = [];
+        if (user_id in app.account.tw) {
+            app.account.tw[user_id].friends = [];
         } else {
-            that.account.tw[user_id] = {friends: []};
+            app.account.tw[user_id] = {friends: []};
         }
     }
     this.ajax({
@@ -718,21 +720,21 @@ function syncTwitterContact(user_id, cursor, screen_name) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('sync contact list '
+            app.statusUpdate('sync contact list '
             + screen_name + ' ' + data.sync_count + '/' + data.friends_count);
-            that.registAssign(data.friends);
-            $.merge(that.account.tw[user_id].friends, data.friends);
+            app.registAssign(data.friends);
+            $.merge(app.account.tw[user_id].friends, data.friends);
             if (data.next_cursor) {
-                that.syncTwitterContact(user_id, data.next_cursor, screen_name);
+                app.syncTwitterContact(user_id, data.next_cursor, screen_name);
             } else {
-                that.statusUpdate('sync contact list ' + screen_name + ' fin.');
-                that.refresh();
+                app.statusUpdate('sync contact list ' + screen_name + ' fin.');
+                app.refresh();
             }
         }
     });
 }
 function lookupUnknownMembers(unknownMembers, callback) {
-    var that = this;
+    // var app = this;
     this.ajax({
         type: 'get',
         url: '/api/1/contact/lookup_twitter',
@@ -751,15 +753,15 @@ function lookupUnknownMembers(unknownMembers, callback) {
                     screen_name: friend.screen_name,
                     profile_image_url: friend.profile_image_url
                 };
-                that.friends["@" + friend.screen_name] = meta;
-                that.friend_ids["tw-" + friend.id] = meta;
+                app.friends["@" + friend.screen_name] = meta;
+                app.friend_ids["tw-" + friend.id] = meta;
             }
             callback.call();
         }
     });
 }
 function updateAccount(params, refresh) {
-    var that = this;
+    // var app = this;
     return this.ajax({
         type: 'post',
         url: '/api/1/account/update',
@@ -768,15 +770,15 @@ function updateAccount(params, refresh) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('update a account.');
+            app.statusUpdate('update a account.');
             if (refresh) {
-                that.refresh();
+                app.refresh();
             }
         }
     });
 }
 function refresh(option) {
-    var that = this;
+    // var app = this;
     var syncContact = false;
     var unknownMembers = [];
     if (!option) {
@@ -789,63 +791,64 @@ function refresh(option) {
     })
     .done(function(data){
         if (data.success) {
-            that.account = data.account;
-            that.assign = [];
-            that.parts.owners.empty();
-            that.parts.tasks.empty();
-            that.parts.connectacs.empty();
+            app.account = data.account;
+            app.assign = [];
+            app.parts.owners.empty();
+            app.parts.tasks.empty();
+            app.parts.connectacs.empty();
             for (var user_id in data.account.tw) {
                 var tw = data.account.tw[user_id];
-                that.registAssign(tw.friends);
-                $('<option/>')
-                    .attr('value', 'tw-' + user_id)
-                    .text('@' + tw.screen_name)
-                    .appendTo(that.parts.owners);
-                $('<li>Twitter: '
-                    + tw.screen_name
-                    + ' <!-- span class="icon icon-delete"></span --></li>')
-                    .appendTo(that.parts.connectacs);
+                app.registAssign(tw.friends);
                 if (!("user_id" in tw.friends[0])) {
-                    that.syncTwitterContact(user_id, -1, tw.screen_name);
+                    app.syncTwitterContact(user_id, -1, tw.screen_name);
                 }
             }
-            for (var i = 0; i < that.account.tw_accounts.length; i++) {
-                var tw_account = that.account.tw_accounts[i];
+            for (var i = 0; i < app.account.tw_accounts.length; i++) {
+                var tw_account = app.account.tw_accounts[i];
                 var user_id = tw_account.user_id;
+                $('<option/>')
+                    .attr('value', 'tw-' + user_id)
+                    .text('@' + tw_account.screen_name)
+                    .appendTo(app.parts.owners);
+                $('<li>Twitter: '
+                    + tw_account.screen_name
+                    + ' <!-- span class="icon icon-delete"></span --></li>')
+                    .appendTo(app.parts.connectacs);
+                
                 if (!(user_id in data.account.tw)) {
-                    that.syncTwitterContact(user_id, -1, tw_account.screen_name);
+                    app.syncTwitterContact(user_id, -1, tw_account.screen_name);
                 }
             }
             // FIXME: 抜けたTwitterの情報を消す
-            that.resetCounter();
-            that.listmap = [];
-            that.parts.lists.find('.project').remove();
-            that.parts.lswt.find('.project').remove();
+            app.resetCounter();
+            app.listmap = [];
+            app.parts.lists.find('.project').remove();
+            app.parts.lswt.find('.project').remove();
             
-            that.unread_comment_count = 0;
-            var lists = that.account.lists;
+            app.unread_comment_count = 0;
+            var lists = app.account.lists;
             for (var i = 0, max_i = lists.length; i < max_i; i++) {
                 var list = lists[i];
                 var humans = [list.doc.owner_id].concat(list.doc.member_ids);
                 for (var j = 0, max_j = humans.length; j < max_j; j++) {
                     var human = humans[j];
-                    if (!(human in that.friend_ids)) {
+                    if (!(human in app.friend_ids)) {
                         unknownMembers.push(human);
                     }
                 }
             }
             var showList = function(){
                 for (var i = 0, max = lists.length; i < max; i++) {
-                    that.registList(lists[i]);
+                    app.registList(lists[i]);
                 }
-                that.sortList();
-                that.sortTask('updated');
-                that.renderCommentBadge();
+                app.sortList();
+                app.sortTask('updated');
+                app.renderCommentBadge();
                 if ("select_list_id" in option) {
                     var id = option.select_list_id;
-                    that.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
+                    app.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
                     if (option.select_task_id) {
-                        var taskli = that.taskli[id + '-' + option.select_task_id];
+                        var taskli = app.taskli[id + '-' + option.select_task_id];
                         var display = taskli.css('display');
                         if (taskli) {
                             if (display === 'none') {
@@ -853,27 +856,27 @@ function refresh(option) {
                             }
                             taskli.effect("highlight", {}, 3000, function(){
                                 if (display === 'none') {
-                                    taskli.slideUp(that.speed, function(){
+                                    taskli.slideUp(app.speed, function(){
                                         taskli.addClass('delete');
                                     });
                                 }
                             });
                         }
                     }
-                } else if ("last_read_list" in that.account.state) {
-                    var id = that.account.state.last_read_list;
-                    that.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
+                } else if ("last_read_list" in app.account.state) {
+                    var id = app.account.state.last_read_list;
+                    app.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
                 } else {
-                    that.parts.lists.find('li.project:first').click();
+                    app.parts.lists.find('li.project:first').click();
                 }
-                that.notificationCheckDone(data);
+                app.notificationCheckDone(data);
             };
             if (unknownMembers.length) {
-                that.lookupUnknownMembers(unknownMembers, showList);
+                app.lookupUnknownMembers(unknownMembers, showList);
             } else {
                 showList.call();
             }
-            if (that.account.state.noguide) {
+            if (app.account.state.noguide) {
                 $('#guide-switch').removeClass('on');
                 $('#guide-switch').text($('#guide-switch').data('text-off'));
             } else {
@@ -895,22 +898,22 @@ function needNotification(account, history) {
     }
 }
 function notificationCheck(loop) {
-    var that = this;
+    // var app = this;
     return this.ajax({
         type: 'get',
         url: '/api/1/account/',
         dataType: 'json'
     })
     .done(function(data){
-        that.notificationCheckDone(data, loop);
+        app.notificationCheckDone(data, loop);
     })
 }
 function notificationCheckDone(data, loop) {
-    var that = this;
-    that.notifications = [];
+    // var app = this;
+    app.notifications = [];
     var check = function(account, history) {
-        if (that.needNotification(account, history)) {
-            that.notifications.push(history);
+        if (app.needNotification(account, history)) {
+            app.notifications.push(history);
         }
     }
     var lists = data.account.lists;
@@ -920,7 +923,7 @@ function notificationCheckDone(data, loop) {
         for (var j = 0, max_j = tasks.length; j < max_j; j++) {
             var task = tasks[j];
             // create task
-            check.call(that, data.account, {
+            check.call(app, data.account, {
                 id: task.registrant_id,
                 action: 'create-task',
                 date: (task.created * 1000),
@@ -934,7 +937,7 @@ function notificationCheckDone(data, loop) {
                 history.task = task;
                 history.list_id = list.id;
                 history.list_name = list.doc.name;
-                check.call(that, data.account, history);
+                check.call(app, data.account, history);
             }
             // create comment
             for (var l = 0, max_l = task.comments.length; l < max_l; l++) {
@@ -948,12 +951,17 @@ function notificationCheckDone(data, loop) {
                     list_name: list.doc.name,
                     comment: comment.comment
                 };
-                check.call(that, data.account, history);
+                check.call(app, data.account, history);
             }
         }
     }
     
-    that.notifications.sort(function(a, b){
+    if (app.notifications.length === 0) {
+        app.parts.badge.find('> div > p').text('none.');
+    } else {
+        app.parts.badge.find('> div > p').text('');
+    }
+    app.notifications.sort(function(a, b){
         return b.date - a.date;
     });
     var disp = function(history){
@@ -968,13 +976,13 @@ function notificationCheckDone(data, loop) {
                 .show();
         };
     };
-    var ul = that.parts.badge.find('> ul');
+    var ul = app.parts.badge.find('> div > ul');
     ul.empty();
     var comment_map = {};
     var count = 0;
     var disps = 0;
-    for (var i = 0, max_i = that.notifications.length; i < max_i; i++) {
-        var history = that.notifications[i];
+    for (var i = 0, max_i = app.notifications.length; i < max_i; i++) {
+        var history = app.notifications[i];
         var key = history.id + ':' + history.list_id + ':' + history.task.id + history.action;
         if (key in comment_map) {
             continue;
@@ -984,13 +992,16 @@ function notificationCheckDone(data, loop) {
         if (disps >= 20) {
             break;
         }
-        var friend = that.friend_ids[history.id];
+        if (!(history.id in app.friend_ids)) {
+            continue;
+        }
+        var friend = app.friend_ids[history.id];
         var screen_name = $('<span class="screen_name"/>').text(friend.screen_name);
         var icon = $('<img/>').attr('src', friend.profile_image_url);
-        var key = 'text-' + history.action + '-' + that.account.lang;
+        var key = 'text-' + history.action + '-' + app.account.lang;
         var action = $('<span class="action"/>').text(ul.data(key));
         var list = $('<span class="list"/>').text(history.list_name);
-        var date = $('<span class="date"/>').text(that.timestamp(history.date));
+        var date = $('<span class="date"/>').text(app.timestamp(history.date));
         $('<li/>')
             .addClass('clearfix')
             .append(icon)
@@ -1001,11 +1012,11 @@ function notificationCheckDone(data, loop) {
             .append(date)
             .data('list-id', history.list_id)
             .data('task-id', history.task.id)
-            .hover(disp.call(that, history), function(){
+            .hover(disp.call(app, history), function(){
                 $('#digest').hide();
             })
             .click(function(){
-                that.refresh({
+                app.refresh({
                     select_list_id: $(this).data('list-id'),
                     select_task_id: $(this).data('task-id')
                 });
@@ -1015,15 +1026,15 @@ function notificationCheckDone(data, loop) {
             count++;
         }
     }
-    that.parts.badge.find('> span').text(count);
+    app.parts.badge.find('> span').text(count);
     if (count > 0) {
-        that.parts.badge.find('> span').addClass('active');
+        app.parts.badge.find('> span').addClass('active');
     } else {
-        that.parts.badge.find('> span').removeClass('active');
+        app.parts.badge.find('> span').removeClass('active');
     }
     if (loop) {
         setTimeout(function(){
-            that.notificationCheck(loop);
+            app.notificationCheck(loop);
         }, 60 * 1000);
     }
 }
@@ -1032,7 +1043,7 @@ function submitFinalize(form) {
     form.find('input[type=text]:first').get(0).focus();
 }
 function showList(id, task_id) {
-    var that = this;
+    // var app = this;
     var li = this.listli[id];
     var list = this.listmap[id];
     this.cond = $.extend({}, this.cond_default);
@@ -1043,14 +1054,6 @@ function showList(id, task_id) {
     this.parts.listname.text(list.doc.name);
     this.parts.listmenu.data('list-id', id);
     this.parts.listmembers.empty();
-    
-    if (id in this.account.state.ignore_badge_list) {
-        $('#ignore-badge-count').attr('checked', true);
-    } else {
-        $('#ignore-badge-count').attr('checked', false);
-    }
-    
-    // FIXME: 最終的に消す
     if ("owner_id" in list.doc) {
         this.renderMember(list.doc.owner_id);
     }
@@ -1060,10 +1063,17 @@ function showList(id, task_id) {
             this.renderMember(member_ids[i]);
         }
     }
+    
+    if (id in this.account.state.ignore_badge_list) {
+        $('#ignore-badge-count').attr('checked', true);
+    } else {
+        $('#ignore-badge-count').attr('checked', false);
+    }
+    
     this.filterTask();
     this.sortTask();
     if (task_id) {
-        var taskli = that.taskli[id + '-' + task_id];
+        var taskli = app.taskli[id + '-' + task_id];
         if (taskli) {
             taskli.effect("highlight", {}, 3000);
         }
@@ -1092,7 +1102,7 @@ function switchList(e) {
     this.parts.listonly.show();
 }
 function switchFilterList(e) {
-    var that = this;
+    // var app = this;
     var li = $(e.currentTarget);
     var pli = li.parent().parent().parent().find('> span.action:first');
     var listname = li.text();
@@ -1125,7 +1135,7 @@ function switchClosed(e) {
     }
 }
 function renderList(list) {
-    var that = this;
+    // var app = this;
     var badge = $('<span class="badge"></span>');
     var li = $('<li data-list-id="' + list.id + '"></li>');
     li.attr('class', 'project');
@@ -1133,7 +1143,7 @@ function renderList(list) {
     li.append(badge);
     this.listmap[list.id] = list;
     this.listli[list.id] = li;
-    li.click($.proxy(that.switchList, that));
+    li.click($.proxy(app.switchList, app));
     list.taskmap = {};
     for (var j = 0; j < list.doc.tasks.length; j++) {
         list.doc.tasks[j].list = list;
@@ -1147,7 +1157,7 @@ function renderList(list) {
     // }
     
     li.get(0).addEventListener('dragover', function(e){
-        if (list.id === that.dragtask.list.id) {
+        if (list.id === app.dragtask.list.id) {
             return true;
         }
         if (e.preventDefault) {
@@ -1155,18 +1165,12 @@ function renderList(list) {
         }
         return false;
     }, false);
-    // li.get(0).addEventListener('dragenter', function(e){
-    //     if (e.preventDefault) {
-    //         e.preventDefault();
-    //     }
-    //     return false;
-    // }, false);
     li.get(0).addEventListener('drop', function(e){
-        that.dragging = false;
-        that.parts.guide.hide();
-        that.parts.listnav.hide('drop', {}, that.speed);
+        app.dragging = false;
+        app.parts.guide.hide();
+        app.parts.listnav.hide('drop', {}, app.speed);
         var data = e.dataTransfer.getData('Text').split(':');
-        that.moveTask(data[1], data[0], list.id)
+        app.moveTask(data[1], data[0], list.id)
     }, false);
     
     var old = this.parts.lists.find('li[data-list-id="' + list.id + '"]');
@@ -1261,7 +1265,7 @@ function deleteList(params) {
     
 }
 function sortList() {
-    var that = this;
+    // var app = this;
     
     // sidebar
     var lis = [];
@@ -1270,8 +1274,8 @@ function sortList() {
     });
     var val = function(ele){
         var list_id = ele.data('list-id');
-        if (list_id in that.account.state.sort.list) {
-            return parseInt(that.account.state.sort.list[list_id]);
+        if (list_id in app.account.state.sort.list) {
+            return parseInt(app.account.state.sort.list[list_id]);
         } else {
             return 0;
         }
@@ -1316,7 +1320,7 @@ function createTask(params) {
     
 }
 function modifyTask(params) {
-    var that = this;
+    // var app = this;
     return this.ajax({
         type: 'post',
         url: '/api/1/task/update',
@@ -1325,17 +1329,17 @@ function modifyTask(params) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('update a task.');
-            var oldtask = $.extend({}, that.listmap[params.list_id].taskmap[data.task.id]);
-            var newtask = $.extend(that.listmap[params.list_id].taskmap[data.task.id], data.task);
-            that.renderBadge(that.listmap[params.list_id]);
-            that.taskli[params.list_id + '-' + data.task.id].data('updated', data.task.updated);
-            that.updateCounter(oldtask, newtask);
+            app.statusUpdate('update a task.');
+            var oldtask = $.extend({}, app.listmap[params.list_id].taskmap[data.task.id]);
+            var newtask = $.extend(app.listmap[params.list_id].taskmap[data.task.id], data.task);
+            app.renderBadge(app.listmap[params.list_id]);
+            app.taskli[params.list_id + '-' + data.task.id].data('updated', data.task.updated);
+            app.updateCounter(oldtask, newtask);
         }
     });
 }
 function moveTask(task_id, src_list_id, dst_list_id) {
-    var that = this;
+    // var app = this;
     if (src_list_id === dst_list_id) {
         alert("Can't be moved to the same list.");
         return;
@@ -1352,28 +1356,28 @@ function moveTask(task_id, src_list_id, dst_list_id) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('move a task.');
+            app.statusUpdate('move a task.');
             
-            delete that.listmap[src_list_id].taskmap[task_id];
-            that.taskli[src_list_id + '-' + task_id].remove();
+            delete app.listmap[src_list_id].taskmap[task_id];
+            app.taskli[src_list_id + '-' + task_id].remove();
             
             var task = data.task;
-            task.list = that.listmap[dst_list_id];
-            that.listmap[dst_list_id].taskmap[task.id] = task;
-            that.listmap[dst_list_id].doc.tasks.push(task);
-            var li = that.renderTask(task.list, task);
-            that.taskli[dst_list_id + '-' + task.id] = li;
-            that.resetCounter(true);
-            that.renderBadge(that.listmap[src_list_id]);
-            that.renderBadge(that.listmap[dst_list_id]);
+            task.list = app.listmap[dst_list_id];
+            app.listmap[dst_list_id].taskmap[task.id] = task;
+            app.listmap[dst_list_id].doc.tasks.push(task);
+            var li = app.renderTask(task.list, task);
+            app.taskli[dst_list_id + '-' + task.id] = li;
+            app.resetCounter(true);
+            app.renderBadge(app.listmap[src_list_id]);
+            app.renderBadge(app.listmap[dst_list_id]);
             
-            if (that.current_list) {
-                li.slideUp(that.speed);
+            if (app.current_list) {
+                li.slideUp(app.speed);
             } else {
-                if (that.current_filter.call(that, li)) {
-                    li.slideDown(that.speed);
+                if (app.current_filter.call(app, li)) {
+                    li.slideDown(app.speed);
                 } else {
-                    li.slideUp(that.speed);
+                    li.slideUp(app.speed);
                 }
             }
             
@@ -1384,7 +1388,7 @@ function deleteTask(params) {
     
 }
 function filterTask() {
-    var that = this;
+    // var app = this;
     var filter = this.tasksFilterGenerate();
     this.current_filter = filter;
     this.parts.timeline.hide();
@@ -1392,17 +1396,17 @@ function filterTask() {
     this.parts.tasks.find('> li').each(function(i, ele){
         var ele = $(ele);
         if (filter(ele)) {
-            if (that.is_webkit) {
-                ele.slideDown(that.speed);
+            if (app.is_webkit) {
+                ele.slideDown(app.speed);
             } else {
                 ele.show();
             }
             if (readComment) {
-                that.readComment(ele);
+                app.readComment(ele);
             }
         } else {
-            if (that.is_webkit) {
-                ele.slideUp(that.speed);
+            if (app.is_webkit) {
+                ele.slideUp(app.speed);
             } else {
                 ele.hide();
             }
@@ -1411,7 +1415,7 @@ function filterTask() {
     this.renderCommentBadge();
 }
 function readComment(li) {
-    var that = this;
+    // var app = this;
     li.find('ul.comments > li').each(function(i, ele){
         var comment = $(ele);
         if (comment.data('read')) {
@@ -1420,7 +1424,7 @@ function readComment(li) {
         }
         if (comment.hasClass('unread')) {
             comment.data('read', 1);
-            that.unread_comment_count--;
+            app.unread_comment_count--;
         }
     });
 }
@@ -1618,11 +1622,11 @@ function showNotifications() {
 
 // GrobalMenu
 function clickOpenButton(e, ele) {
-    var that = this;
+    // var app = this;
     var form = this.modals[ele.data('id')];
     if (form.css('display') === 'none') {
         $('#create-task-assign').hide();
-        form.show('drop', {}, that.speed, function(){
+        form.show('drop', {}, app.speed, function(){
             var input = form.find('input[type=text]:first');
             if (input.length) {
                 input.get(0).focus();
@@ -1630,7 +1634,7 @@ function clickOpenButton(e, ele) {
             var callback = ele.data('callback');
             if (callback) {
                 var func = callback.charAt(0).toUpperCase() + callback.substr(1);
-                that['openCallback' + func].call(that, e, ele);
+                app['openCallback' + func].call(app, e, ele);
             }
         });
     }
@@ -1639,7 +1643,7 @@ function clickSignInTwitter(e, ele) {
     location.href = '/signin/twitter/oauth';
 }
 function clickSyncTwitterContact(e, ele) {
-    var that = this;
+    // var app = this;
     
     // FIXME: statusbar update
     this.statusUpdate('sync contact list begin.');
@@ -1652,13 +1656,13 @@ function clickSyncTwitterContact(e, ele) {
     .done(function(data){
         for (var i = 0; i < data.account.tw_accounts.length; i++) {
             var tw = data.account.tw_accounts[i];
-            that.syncTwitterContact(tw.user_id, -1, tw.screen_name);
+            app.syncTwitterContact(tw.user_id, -1, tw.screen_name);
         }
     });
     
 }
 function clickAccountSync(e, ele) {
-    // var that = this;
+    // // var app = this;
     // 
     // return this.ajax({
     //     type: 'get',
@@ -1667,13 +1671,13 @@ function clickAccountSync(e, ele) {
     // })
     // .done(function(data){
     //     if (data.success) {
-    //         that.account = data.doc;
+    //         app.account = data.doc;
     //         
-    //         that.assign = [];
+    //         app.assign = [];
     //         for (user_id in data.doc.tw) {
-    //             that.registAssign(data.doc.tw[user_id].friends);
+    //             app.registAssign(data.doc.tw[user_id].friends);
     //         }
-    //         console.log(that.account);
+    //         console.log(app.account);
     //     }
     // });
 }
@@ -1699,20 +1703,20 @@ function clickGuideSwitch(e, ele) {
 
 // SideMenu
 function clickListDisplaySwitch(e, ele) {
-    var that = this;
+    // var app = this;
     var list_id = ele.parent().parent().data('list-id');
     var method = ele.attr('checked') ? '-' : '+';
     
     if (ele.attr('checked')) {
         this.parts.lists.find('li').each(function(i, ele){
             if (list_id === $(ele).data('list-id')) {
-                $(ele).slideDown(that.speed);
+                $(ele).slideDown(app.speed);
             }
         });
     } else {
         this.parts.lists.find('li').each(function(i, ele){
             if (list_id === $(ele).data('list-id')) {
-                $(ele).slideUp(that.speed);
+                $(ele).slideUp(app.speed);
             }
         });
     }
@@ -1725,7 +1729,7 @@ function clickListDisplaySwitch(e, ele) {
     });
 }
 function clickListBadgeSwitch(e, ele) {
-    var that = this;
+    // var app = this;
     var list_id = this.current_list.id;
     var method = ele.attr('checked') ? '+' : '-';
     var list = this.listmap[list_id];
@@ -1795,7 +1799,7 @@ function openCallbackDeleteList(e, ele) {
     form.find('button').get(0).focus();
 }
 function submitCreateList(form) {
-    var that = this;
+    // var app = this;
     
     var list_id = form.data('list-id');
     var url = list_id ? '/api/1/list/update' : '/api/1/list/create';
@@ -1816,8 +1820,13 @@ function submitCreateList(form) {
     });
     if (list_id) {
         form.fadeOut(this.speed);
+        this.parts.listmembers.empty();
+        this.renderMember(owner_id);
+        for (var i = 0; i < member_ids.length; i++) {
+            this.renderMember(member_ids[i]);
+        }
     } else {
-        that.submitFinalize(form);
+        app.submitFinalize(form);
     }
     return this.ajax({
         type: 'post',
@@ -1833,8 +1842,8 @@ function submitCreateList(form) {
     })
     .pipe(function(data){
         if (data.success) {
-            that.statusUpdate('create list ' + data.list_id);
-            return that.ajax({
+            // app.statusUpdate('create list ' + data.list_id);
+            return app.ajax({
                 type: 'get',
                 url: '/api/1/list/' + data.list_id,
                 dataType: 'json'
@@ -1843,13 +1852,13 @@ function submitCreateList(form) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('get list ' + data.list.doc.name);
-            that.registList(data.list);
+            // app.statusUpdate('get list ' + data.list.doc.name);
+            app.registList(data.list);
         }
     });
 }
 function submitDeleteList(form) {
-    var that = this;
+    // var app = this;
     var list_id = form.data('list-id');
     return this.ajax({
         type: 'post',
@@ -1861,8 +1870,8 @@ function submitDeleteList(form) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('delete list ' + data.list_id);
-            that.refresh();
+            app.statusUpdate('delete list ' + data.list_id);
+            app.refresh();
             form.fadeOut();
         }
     });
@@ -1877,9 +1886,9 @@ function registList(list) {
 
 // MainMenu
 function tasksFilterGenerate(cond) {
-    var that = this;
+    // var app = this;
     if (!cond) {
-        cond = that.cond;
+        cond = app.cond;
     }
     var func = function(ul, task){
         var list_id, task_id;
@@ -1889,7 +1898,7 @@ function tasksFilterGenerate(cond) {
         } else {
             list_id = ul.data('list-id');
             task_id = ul.data('id');
-            task = that.listmap[list_id].taskmap[task_id];
+            task = app.listmap[list_id].taskmap[task_id];
         }
         if (cond.list_id && cond.list_id !== list_id) {
             return false;
@@ -1906,26 +1915,26 @@ function tasksFilterGenerate(cond) {
         if (typeof cond.closed === 'number' && cond.closed !== task.closed) {
             return false;
         }
-        if (cond.registrant && !that.isMe(task.registrant_id)) {
+        if (cond.registrant && !app.isMe(task.registrant_id)) {
             return false;
         }
         if (typeof cond.assign === 'boolean') {
             var assign;
             if (task.assign_ids.length) {
-                assign = that.findMe(task.assign_ids) ? true : false;
+                assign = app.findMe(task.assign_ids) ? true : false;
             } else {
-                assign = that.isMe(task.registrant_id);
+                assign = app.isMe(task.registrant_id);
             }
             if (cond.assign !== assign) {
                 return false;
             }
         }
         // todo
-        if (cond.todo && !that.needCount(task)) {
+        if (cond.todo && !app.needCount(task)) {
             return false;
         }
         // notify
-        if (cond.notify && !that.needNotify(task)) {
+        if (cond.notify && !app.needNotify(task)) {
             return false;
         }
         return true;
@@ -1994,7 +2003,7 @@ function clickTaskmenuSwitch(e, ele) {
     // });
 }
 function clickTaskmenuFilter(e, ele) {
-    // var that = this;
+    // // var app = this;
     // var id = ele.data('id');
     // var val = ele.data('val');
     // var selectors = {
@@ -2160,7 +2169,7 @@ function openCallbackClearTrash(e, ele) {
     form.find('button').get(0).focus();
 }
 function submitCreateTask(form) {
-    var that = this;
+    // var app = this;
     
     var task_id = form.data('task-id');
     var list;
@@ -2192,7 +2201,7 @@ function submitCreateTask(form) {
         form.find('input[name=title]').val('');
         form.hide('drop', {}, this.speed);
     } else {
-        that.submitFinalize(form);
+        app.submitFinalize(form);
     }
     return this.ajax({
         type: 'post',
@@ -2212,31 +2221,31 @@ function submitCreateTask(form) {
         if (data.success) {
             var task, li;
             if (!task_id) {
-                that.statusUpdate('create a task.');
+                app.statusUpdate('create a task.');
                 task = data.task;
                 task.list = list;
                 list.taskmap[task.id] = task;
                 list.doc.tasks.push(task);
-                li = that.renderTask(list, task);
-                that.taskli[list.id + '-' + task.id] = li;
+                li = app.renderTask(list, task);
+                app.taskli[list.id + '-' + task.id] = li;
             }
             else {
-                that.statusUpdate('update a task.');
-                task = $.extend(that.listmap[list.id].taskmap[data.task.id], data.task);
+                app.statusUpdate('update a task.');
+                task = $.extend(app.listmap[list.id].taskmap[data.task.id], data.task);
                 task.list = list;
-                li = that.taskli[list.id + '-' + task.id];
-                li.replaceWith(that.createTaskElement(list, task));
-                that.taskli[list.id + '-' + task.id].effect("highlight", {}, that.speed);
+                li = app.taskli[list.id + '-' + task.id];
+                li.replaceWith(app.createTaskElement(list, task));
+                app.taskli[list.id + '-' + task.id].effect("highlight", {}, app.speed);
             }
-            if (!that.current_filter.call(that, null, task)) {
-                that.taskli[list.id + '-' + task.id].delay(500).slideUp('slow');
+            if (!app.current_filter.call(app, null, task)) {
+                app.taskli[list.id + '-' + task.id].delay(500).slideUp('slow');
             }
-            that.renderBadge(list);
+            app.renderBadge(list);
         }
     });
 }
 function submitClearTrash(form) {
-    var that = this;
+    // var app = this;
     var list_id = form.data('list-id');
     var list = this.listmap[list_id];
     var owner_id = this.findMeFromList(list);
@@ -2251,13 +2260,13 @@ function submitClearTrash(form) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('clear trash ' + data.count + ' tasks remove.');
-            var list = that.listmap[list_id];
+            app.statusUpdate('clear trash ' + data.count + ' tasks remove.');
+            var list = app.listmap[list_id];
             var tasks = [];
             for (var i = 0; i < list.doc.tasks.length; i++) {
                 var task = list.doc.tasks[i];
                 if (task.closed) {
-                    that.taskli[list.id + '-' + task.id].remove();
+                    app.taskli[list.id + '-' + task.id].remove();
                     delete list.taskmap[task.id];
                 } else {
                     tasks.push(task);
@@ -2265,9 +2274,13 @@ function submitClearTrash(form) {
             }
             list.doc.tasks = tasks;
         }
-        form.fadeOut(that.speed, function(){
-            $('#recycle-button').click();
-        });
+        form.fadeOut(app.speed);
+        var li = $('#closed-task-switch');
+        if (!li.data('closed')) {
+            app.switchClosed({
+                currentTarget: li
+            });
+        }
     });
 }
 function resetCreateTask(form) {
@@ -2317,7 +2330,7 @@ function renderTask(list, task) {
     return li;
 }
 function createTaskElement(list, task) {
-    var that = this;
+    // var app = this;
     var li = $(this.template.task);
     li.data('list-id', list.id);
     li.data('id', task.id);
@@ -2345,8 +2358,8 @@ function createTaskElement(list, task) {
     }
     li.data('due', due_epoch);
     li.find('.comment').click(function(){
-        that.parts.commentform.slideDown(that.speed, function(){
-            that.parts.commentbox.focus();
+        app.parts.commentform.slideDown(app.speed, function(){
+            app.parts.commentbox.focus();
         });
     });
     if (task.comments.length) {
@@ -2364,7 +2377,7 @@ function createTaskElement(list, task) {
     li.find('.title').text(task.title);
     if ("requester_id" in task) {
         $('<img data-guide-en="Requester" data-guide-ja="依頼者"/>')
-            .attr('src', that.getProfileImageUrl(task.requester_id))
+            .attr('src', app.getProfileImageUrl(task.requester_id))
             .addClass('twitter_profile_image')
             .appendTo(li.find('.assign'))
         li.data('requester-id', task.requester_id);
@@ -2373,7 +2386,7 @@ function createTaskElement(list, task) {
         li.find('.assign').prepend($('<span class="icon icon-left"/>'));
         for (var i = 0; i < task.assign_ids.length; i++) {
             var assign_id = task.assign_ids[i];
-            var url = that.getProfileImageUrl(assign_id);
+            var url = app.getProfileImageUrl(assign_id);
             var img = $('<img data-guide-en="Assignee" data-guide-ja="担当者"/>')
                 .attr('src', url)
                 .addClass('twitter_profile_image');
@@ -2381,22 +2394,22 @@ function createTaskElement(list, task) {
         }
     }
     if (task.status === 2 && task.assign_ids.length) {
-        var url = that.getProfileImageUrl(task.registrant_id);
+        var url = app.getProfileImageUrl(task.registrant_id);
         var img = $('<img data-guide-en="Approver" data-guide-ja="承認者"/>')
             .attr('src', url)
             .addClass('twitter_profile_image');
         li.find('.assign').prepend($('<span class="icon icon-left"/>')).prepend(img);
     }
     li.mouseover(function(){
-        if (that.active === 'comment') {
+        if (app.active === 'comment') {
             return;
         }
-        that.parts.commentbox.blur();
-        if (that.current_taskli) {
-            that.current_taskli.removeClass('selected');
+        app.parts.commentbox.blur();
+        if (app.current_taskli) {
+            app.current_taskli.removeClass('selected');
         }
-        that.current_task = task;
-        that.current_taskli = li;
+        app.current_task = task;
+        app.current_taskli = li;
         li.addClass('selected');
         $('#list-name').text(list.doc.name);
         $('#task-name').text(task.title);
@@ -2405,24 +2418,24 @@ function createTaskElement(list, task) {
         } else {
             $('#task-description').text('');
         }
-        that.parts.commentbox
+        app.parts.commentbox
             .attr('disabled', false)
             .data('list-id', list.id)
             .data('task-id', task.id);
-        that.parts.comment.empty();
+        app.parts.comment.empty();
         if (task.comments) {
             for (var i = 0, max_i = task.comments.length; i < max_i; i++) {
                 var comment = task.comments[i];
-                that.renderComment(list.id, task.id, comment);
+                app.renderComment(list.id, task.id, comment);
             }
         }
-        that.parts.commentbox.val('').css('height', '16px');
-        that.parts.comment.scrollTop(that.parts.comment.height());
-        that.commentHeightResize();
+        app.parts.commentbox.val('').css('height', '16px');
+        app.parts.comment.scrollTop(app.parts.comment.height());
+        app.commentHeightResize();
     });
     li.find('> .action, > .due').click($.proxy(this.clickTaskAction, this));
     li.find('.grip').hover(function(e){
-        if (that.parts.tasks.hasClass('sortable')) {
+        if (app.parts.tasks.hasClass('sortable')) {
             li.removeAttr('draggable');
         } else {
             li.attr('draggable', true);
@@ -2456,29 +2469,29 @@ function createTaskElement(list, task) {
     }
     this.initEventGuide(li);
     li.get(0).addEventListener('dragstart', function(e){
-        that.dragging = true;
-        that.parts.guide.hide();
-        that.parts.listnav.show('drop', {}, that.speed);
+        app.dragging = true;
+        app.parts.guide.hide();
+        app.parts.listnav.show('drop', {}, app.speed);
         e.dataTransfer.setData('Text', list.id + ':' + task.id);
-        that.dragtask = task;
+        app.dragtask = task;
     }, false);
     li.get(0).addEventListener('dragend', function(e){
-        if (that.dragging) {
-            that.dragging = false;
-            that.parts.listnav.hide('drop', {}, that.speed);
+        if (app.dragging) {
+            app.dragging = false;
+            app.parts.listnav.hide('drop', {}, app.speed);
             e.dataTransfer.clearData();
         }
     }, false);
     return li;
 }
 function clickTaskAction(e) {
-    var that = this;
+    // var app = this;
     e.stopPropagation();
     var div = $(e.currentTarget);
     var li = div.parent();
     var list_id = li.data('list-id');
     var task_id = li.data('id');
-    var list = that.listmap[list_id];
+    var list = app.listmap[list_id];
     var task = list.taskmap[task_id];
     var registrant_id = this.findMeFromList(list);
     if (!registrant_id) {
@@ -2495,7 +2508,7 @@ function clickTaskAction(e) {
             task_id: task_id,
             closed: 1
         });
-        li.slideUp(that.speed);
+        li.slideUp(app.speed);
     }
     else if (div.hasClass('icon-recycle')) {
         li.removeClass('delete');
@@ -2507,7 +2520,7 @@ function clickTaskAction(e) {
             task_id: task_id,
             closed: 0
         });
-        li.slideUp(that.speed);
+        li.slideUp(app.speed);
     }
     else if (div.hasClass('icon-tasks-off')) {
         li.removeClass('delete');
@@ -2580,11 +2593,11 @@ function clickTaskAction(e) {
     
     var filter = this.tasksFilterGenerate();
     if (!filter(li)) {
-        li.slideUp(that.speed);
+        li.slideUp(app.speed);
     }
 }
 function submitComment() {
-    var that = this;
+    // var app = this;
     
     var list_id = this.parts.commentbox.data('list-id');
     var task_id = this.parts.commentbox.data('task-id');
@@ -2606,25 +2619,25 @@ function submitComment() {
     .done(function(data){
         if (data.success) {
             // FIXME: 
-            that.statusUpdate('create a comment.');
+            app.statusUpdate('create a comment.');
             // FIXME
-            $.extend(that.listmap[list_id].taskmap[data.task.id], data.task);
-            that.taskli[list_id + '-' + data.task.id].data('updated', data.task.updated);
-            that.taskli[list_id + '-' + data.task.id].find('.comments').text('(' + data.task.comments.length + ')');
+            $.extend(app.listmap[list_id].taskmap[data.task.id], data.task);
+            app.taskli[list_id + '-' + data.task.id].data('updated', data.task.updated);
+            app.taskli[list_id + '-' + data.task.id].find('.comments').text('(' + data.task.comments.length + ')');
             var li = $('<li/>');
             li.text(comment);
-            that.renderComment(list_id, task_id, {
+            app.renderComment(list_id, task_id, {
                 id: data.comment_id,
                 time: (new Date()).getTime(),
                 owner_id: owner_id,
                 comment: comment
             });
-            that.parts.commentbox.val('').css('height', '16px');
+            app.parts.commentbox.val('').css('height', '16px');
         }
     });
 }
 function renderComment(list_id, task_id, comment) {
-    var that = this;
+    // var app = this;
     var li = $('<li class="clearfix"/>');
     var friend = this.friend_ids[comment.owner_id];
     var img = $('<img>').attr('src', friend.profile_image_url);
@@ -2635,9 +2648,9 @@ function renderComment(list_id, task_id, comment) {
     var del = $('<span class="action icon icon-delete"></span>');
     del.click(function(e){
         e.stopPropagation();
-        that.deleteComment(list_id, task_id, comment);
+        app.deleteComment(list_id, task_id, comment);
         li.remove();
-        that.parts.commentbox.focus();
+        app.parts.commentbox.focus();
     });
     li.append(img);
     li.append(msg);
@@ -2653,7 +2666,7 @@ function renderComment(list_id, task_id, comment) {
     this.parts.comment.append(li);
 }
 function deleteComment(list_id, task_id, comment) {
-    var that = this;
+    // var app = this;
     var list = this.listmap[list_id];
     var owner_id = this.findMeFromList(list);
     return this.ajax({
@@ -2670,13 +2683,13 @@ function deleteComment(list_id, task_id, comment) {
     .done(function(data){
         if (data.success) {
             // FIXME: 
-            that.statusUpdate('delete a comment.');
+            app.statusUpdate('delete a comment.');
             // FIXME
-            $.extend(that.listmap[list_id].taskmap[data.task.id], data.task);
+            $.extend(app.listmap[list_id].taskmap[data.task.id], data.task);
             if (data.task.comments.length) {
-                that.taskli[list_id + '-' + data.task.id].find('.comments').text('(' + data.task.comments.length + ')');
+                app.taskli[list_id + '-' + data.task.id].find('.comments').text('(' + data.task.comments.length + ')');
             } else {
-                that.taskli[list_id + '-' + data.task.id].find('.comments').text('');
+                app.taskli[list_id + '-' + data.task.id].find('.comments').text('');
             }
         }
     });

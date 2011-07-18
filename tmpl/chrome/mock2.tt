@@ -9,26 +9,21 @@
 <script type="text/javascript" src="/static/js/jquery.autogrow-textarea.js"></script>
 <script type="text/javascript" src="/static/js/h5utils.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/css/chrome2.css" media="all">
-<script type="text/javascript" src="/static/js/chrome2.js"></script>
 <script type="text/javascript" src="/static/js/localizer.js"></script>
+<script type="text/javascript" src="/static/js/chrome2.js"></script>
 [% IF is_ff(c) %]
 <link rel="stylesheet" type="text/css" href="/static/css/firefox.css" media="all">
 [% END %]
 [% IF is_opera(c) %]
 <link rel="stylesheet" type="text/css" href="/static/css/opera.css" media="all">
 [% END %]
+<!--[if IE]>
+<link rel="stylesheet" type="text/css" href="/static/css/ie.css" media="all">
 <script>
-var tasks; // いつか保護する
-$(document).ready(function() {
-    var localizer = new Localizer();
-    if (localizer.lang != 'en') {
-      localizer.localize();
-    }
-    tasks = new Tasks();
-    tasks.localizer = localizer;
-    tasks.run();
-});
+alert('no support IE.');
+location.href = '/';
 </script>
+<![endif]-->
 </head>
 <body>
 <header>
@@ -54,6 +49,9 @@ $(document).ready(function() {
     class="action"
     data-method="showNotifications"
 >0</span>
+<div class="pulldown-menu">
+<h1>Notifications</h1>
+<p></p>
 <ul
     data-text-create-task-en="create the task of the"
     data-text-create-task-ja="タスクを作成"
@@ -87,11 +85,12 @@ $(document).ready(function() {
     data-text-delete-comment-ja="コメントを削除"
 >
 </ul>
+</div>
 </li>
 <li class="menu account pulldown">
 <img src="[% profile_image_url %]">
 <span>[% screen_name %]</span>
-<ul>
+<ul class="pulldown-menu">
 <li>
 <a
     href="javascript:void(0)"
@@ -112,7 +111,7 @@ $(document).ready(function() {
 <span class="action icon icon-preference-white"
     data-hover=""
 ></span>
-<ul>
+<ul class="pulldown-menu">
 <li>
 <a
     href="http://www.facebook.com/pages/7kai-Tasks/189391624444427?sk=wall"
@@ -293,7 +292,7 @@ $(document).ready(function() {
 </button>
 <div class="pulldown">
 Sort: <span></span>
-<ul>
+<ul class="pulldown-menu">
 <li
     class="action"
     data-method="taskmenuSort"

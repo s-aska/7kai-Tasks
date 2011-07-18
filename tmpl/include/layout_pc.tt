@@ -17,6 +17,7 @@ if (navigator.userAgent.indexOf('Win') != -1) {
 <body>
 <header>
 <h1>7kai Tasks</h1>
+<h2 data-text-ja="ソーシャルタスク管理サービス">Social Task Management Tool.</h2>
 </header>
 <article>
 [% content %]

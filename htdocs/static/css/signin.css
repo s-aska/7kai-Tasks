@@ -120,35 +120,50 @@ header {
     padding-top: 8px;
     padding-bottom: 8px;
     border-bottom: 1px solid #ccc;
-    font-size: 24px;
     font-family: Raleway;
     font-weight: normal;
     text-align: center;
 }
-
+header h1 {
+    font-size: 24px;
+}
+header h2 {
+    font-size: 18px;
+}
 article {
     margin-top: 30px;
+    text-align: center;
 }
 article nav {
     margin: auto;
     width: 500px;
-    padding: 30px;
+    margin-bottom: 30px;
+    padding: 20px;
     border: 1px solid #68a9cf;
     border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
+    text-align: center;
 }
 article ul {
     list-style: none;
 }
+article ul li {
+    font-size: 24px;
+}
+article img {
+    margin: auto;
+    width: 560px;
+}
+/*
 article form {
     margin: 30px auto;
     width: 500px;
     padding: 30px;
     border: 1px solid #68a9cf;
     border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-}
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+}*/
 
 

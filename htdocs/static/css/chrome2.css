@@ -272,13 +272,14 @@ img.twitter_profile_image32 {
 .pulldown {
     position: relative;
 }
-.pulldown ul {
+.pulldown .pulldown-menu {
     display: none;
     position: absolute;
     z-index: 5;
     right: 0;
     background: white;
     cursor: pointer;
+    color: #323232;
     border-left: 1px solid gray;
     border-right: 1px solid gray;
     border-bottom: 1px solid gray;
@@ -286,12 +287,12 @@ img.twitter_profile_image32 {
     -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
     -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
 }
-.pulldown ul li {
+.pulldown .pulldown-menu li {
     padding: 10px 10px 10px 10px;
     color: #36c;
     font-size: 14px;
 }
-.pulldown ul li:hover {
+.pulldown .pulldown-menu li:hover {
     background-color: #e6ecf8;
 }
 /********** header **********/
@@ -304,15 +305,15 @@ body > header {
     line-height: 1.6;
     color: white;
 }
-body > header h1 {
+body > header > h1 {
     padding: 4px 0px 0px 8px;
 }
-body > header h1 span.version {
+body > header > h1 span.version {
     padding-left: 4px;
     font-size: 10px;
     color: #ccc;
 }
-body > header p {
+body > header > p {
     position: absolute;
     top: 6px;
     left: 246px;
@@ -387,14 +388,20 @@ body > header nav > ul > li.menu > ul li a {
 #notification-badge > span.active {
     background-color: rgba(208, 0, 24, 1);
 }
-#notification-badge > ul {
+#notification-badge > div > h1 {
+    padding: 10px 0 0 10px;
+}
+#notification-badge > div > p {
+    padding: 0 0 0 10px;
+}
+#notification-badge > div > ul {
     width: 360px;
     padding: 4px 4px 0 4px;
 }
-#notification-badge > ul > li {
+#notification-badge > div > ul > li {
     
 }
-#notification-badge > ul > li {
+#notification-badge > div > ul > li {
     font-size: 11px;
     margin: 0 0 4px 0;
     padding: 0;
@@ -402,32 +409,32 @@ body > header nav > ul > li.menu > ul li a {
     cursor: pointer;
     font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
 }
-#notification-badge > ul > li:hover {
+#notification-badge > div > ul > li:hover {
     background-color: #fcea6c;
 }
-#notification-badge > ul > li img {
+#notification-badge > div > ul > li img {
     display: block;
     float: left;
     width: 32px;
     height: 32px;
     vertical-align: top;
 }
-#notification-badge > ul > li span.screen_name {
+#notification-badge > div > ul > li span.screen_name {
     margin-left: 4px;
     font-size: 12px;
     font-weight: bold;
     color: #1E57FF;
 }
-#notification-badge > ul > li span.action {
+#notification-badge > div > ul > li span.action {
     margin-left: 4px;
     color: #333333;
 }
-#notification-badge > ul > li span.list {
+#notification-badge > div > ul > li span.list {
     margin-left: 4px;
     font-weight: bold;
     color: #1E57FF;
 }
-#notification-badge > ul > li span.date {
+#notification-badge > div > ul > li span.date {
     color: gray;
     margin-left: 4px;
     font-size: 10px;
@@ -729,15 +736,10 @@ body > div > article section > ul.timeline li span.code {
 }
 /********** comment **********/
 #comment {
-    /*min-width: 300px;*/
     border-left: 1px solid gray;
     padding: 10px;
-    /*opacity: 0.2;*/
     word-wrap: break-word;
 }
-/*#comment.selected {
-    opacity: 1;
-}*/
 #comment h1 {
     margin-bottom: 6px;
     font-size: 14px;

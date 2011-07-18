@@ -1,0 +1,21 @@
+header, aside, article, nav, section {
+    display: block;
+}
+button {
+    padding: 2px 1px;
+}
+body > div.box {
+    display: block;
+}
+body > div.box > aside {
+    float: left;
+}
+body > div.box > article {
+    float: left;
+}
+body > div.box > div {
+    float: left;
+}
+#guide-switch {
+    padding: 0px;
+}
