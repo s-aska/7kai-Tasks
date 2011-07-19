@@ -1456,10 +1456,16 @@ function sortTask(id) {
     
     var label = $('body > div > article > header > div li[data-id="' + id + '"]').text();
     $('body > div > article > header > div > span').text(label);
-    
     lis.sort(function(a, b) {
         if (id === 'title') {
             return a.text() > b.text() ? 1 : -1;
+        }
+        if (id === 'responser-ids') {
+            if (a.data(id) === b.data(id)) {
+                return b.data('updated') - a.data('updated');
+            } else {
+                return a.data(id) > b.data(id) ? 1 : -1;
+            }
         }
         var a_val = parseInt(a.data(id)) || 0;
         var b_val = parseInt(b.data(id)) || 0;
@@ -2390,12 +2396,14 @@ function createTaskElement(list, task) {
     }
     this.taskli[list.id + '-' + task.id] = li;
     li.find('.title').text(task.title);
+    var responser;
     if ("requester_id" in task) {
         $('<img data-guide-en="Requester" data-guide-ja="依頼者"/>')
             .attr('src', app.getProfileImageUrl(task.requester_id))
             .addClass('twitter_profile_image')
             .appendTo(li.find('.assign'))
         li.data('requester-id', task.requester_id);
+        responser = [task.requester_id];
     }
     if (task.assign_ids.length) {
         li.find('.assign').prepend($('<span class="icon icon-left"/>'));
@@ -2407,6 +2415,7 @@ function createTaskElement(list, task) {
                 .addClass('twitter_profile_image');
             li.find('.assign').prepend(img);
         }
+        responser = task.assign_ids;
     }
     if (task.status === 2 && task.assign_ids.length) {
         var url = app.getProfileImageUrl(task.requester_id);
@@ -2414,7 +2423,9 @@ function createTaskElement(list, task) {
             .attr('src', url)
             .addClass('twitter_profile_image');
         li.find('.assign').prepend($('<span class="icon icon-left"/>')).prepend(img);
+        responser = [task.requester_id];
     }
+    li.data('responser-ids', responser.sort().join(','));
     li.mouseover(function(){
         if (app.active === 'comment') {
             return;

@@ -1,6 +1,7 @@
 package DoubleSpark::Web::C::API::Contact;
 use strict;
 use warnings;
+use Log::Minimal;
 
 sub lookup_twitter {
     my ($class, $c) = @_;

@@ -2,6 +2,7 @@ package DoubleSpark::Web::C::API::Task;
 use strict;
 use warnings;
 use DoubleSpark::Account;
+use Log::Minimal;
 
 sub create {
     my ($class, $c) = @_;
@@ -35,6 +36,7 @@ sub create {
     $task->{assign_ids} = \@assign_ids;
     push @{$doc->{tasks}}, $task;
     $c->save_list_doc($account, $doc);
+    infof("[%s] task create", $c->session->get('screen_name'));
     $c->render_json({
         success => 1,
         task => $task
@@ -96,14 +98,10 @@ sub update {
             last;
         }
     }
+    
     die 'NotFound' unless $success;
-    # $c->append_history($doc, {
-    #     id      => $registrant_id,
-    #     action  => $action,
-    #     task_id => $task_id,
-    #     date    => time
-    # });
     $c->save_list_doc($account, $doc);
+    infof("[%s] task update %s", $c->session->get('screen_name'), $action);
     $c->render_json({
         success => $success,
         task => $target_task
@@ -134,6 +132,7 @@ sub move {
     $c->save_list_doc($account, $dst_doc);
     $account = DoubleSpark::Account->new($c);
     $c->save_list_doc($account, $src_doc);
+    infof("[%s] task move", $c->session->get('screen_name'));
     $c->render_json({
         success => 1,
         task => $target_task

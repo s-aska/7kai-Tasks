@@ -1,6 +1,7 @@
 package DoubleSpark::Account;
 use strict;
 use warnings;
+use Log::Minimal;
 # use Class::Accessor::Lite (
 #     ro  => [ qw(id type code name angel_id) ]
 # );
@@ -95,12 +96,12 @@ sub new {
                 $doc = $c->open_doc($doc_id);
             } else {
                 # FIXME: 
-                warn $@;
+                critf("CouchDB Error " . $@);
             }
         }
     };if ($@) {
         # FIXME: 
-        warn $@;
+        critf("CouchDB Error " . $@);
     }
     
     $doc->{tw} ||= {};
@@ -142,6 +143,11 @@ sub set_social_accounts {
 
 sub set_lists {
     my ($self, $c) = @_;
+    
+    unless (scalar(@{$self->{codes}})) {
+        warnf("has not social accounts " . $c->session->get('screen_name'));
+        return;
+    }
     
     my @list_ids1 = map {
         'list-' . $_->list_id

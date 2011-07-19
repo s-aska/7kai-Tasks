@@ -1,6 +1,7 @@
 package DoubleSpark::Web::C::Signin::Twitter;
 use strict;
 use warnings;
+use Log::Minimal;
 
 sub oauth {
     my ($class, $c) = @_;
@@ -38,24 +39,25 @@ sub callback {
     
     my $verifier = $c->req->param('oauth_verifier');
     unless ($verifier) {
-        return $c->redirect('/');
+        return $c->redirect('/', { twitter_denied => 1 });
     }
 
-    my ($access_token, $access_token_secret, $user_id, $screen_name) =
-        $nt->request_access_token(verifier => $verifier);
-    
-    my $res = $nt->show_user($user_id);
-    
-    $c->session->set('tw_account', {
-        user_id => $user_id,
-        name => $res->{name} || '',
-        screen_name => $screen_name,
-        profile_image_url => $res->{profile_image_url} || ''
-    });
-    
-    $c->session->regenerate_session_id(1);
-    
-    $c->redirect('/chrome/viewer');
+    eval {
+        my ($access_token, $access_token_secret, $user_id, $screen_name) =
+            $nt->request_access_token(verifier => $verifier);
+        my $res = $nt->show_user($user_id);
+        $c->session->set('tw_account', {
+            user_id => $user_id,
+            name => $res->{name} || '',
+            screen_name => $screen_name,
+            profile_image_url => $res->{profile_image_url} || ''
+        });
+    };if ($@) {
+        $c->redirect('/', { twitter_error => 1 });
+    } else {
+        $c->session->regenerate_session_id(1);
+        $c->redirect('/chrome/viewer');
+    }
 }
 
 1;

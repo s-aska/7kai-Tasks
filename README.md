@@ -8,7 +8,7 @@
 1. Single Page Application
 
 ## Install
-    ... commint soon ...
+    ... comming soon ...
 
 ## License
 Released under the [MIT license](http://creativecommons.org/licenses/MIT/).

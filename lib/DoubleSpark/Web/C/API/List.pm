@@ -2,6 +2,7 @@ package DoubleSpark::Web::C::API::List;
 use strict;
 use warnings;
 use DoubleSpark::Account;
+use Log::Minimal;
 
 sub get {
     my ($class, $c) = @_;
@@ -49,7 +50,7 @@ sub create {
         tasks => []
     });
     $txn->commit;
-    
+    infof("[%s] list create", $c->session->get('screen_name'));
     $c->render_json({
         success => 1,
         list_id => $doc_id
@@ -99,7 +100,7 @@ sub update {
             created_on => \'now()'
         });
     }
-    
+    infof("[%s] list update", $c->session->get('screen_name'));
     $c->render_json({
         success => 1,
         list_id => $list_id
@@ -122,7 +123,7 @@ sub delete {
     });
     $c->remove_doc($doc);
     $txn->commit;
-    
+    infof("[%s] list delete", $c->session->get('screen_name'));
     $c->render_json({
         success => 1,
         list_id => $list_id
@@ -144,6 +145,7 @@ sub clear {
     @{$doc->{tasks}} = grep { !$_->{closed} } @{$doc->{tasks}};
     my $count = $num - scalar(@{$doc->{tasks}});
     $c->save_list_doc($account, $doc);
+    infof("[%s] list clear", $c->session->get('screen_name'));
     $c->render_json({
         success => $count ? 1 : 0,
         count => $count

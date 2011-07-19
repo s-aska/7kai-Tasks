@@ -2,6 +2,7 @@ package DoubleSpark::Web::C::API::Comment;
 use strict;
 use warnings;
 use DoubleSpark::Account;
+use Log::Minimal;
 
 sub create {
     my ($class, $c) = @_;
@@ -34,6 +35,7 @@ sub create {
         }
     }
     $c->save_list_doc($account, $doc);
+    infof("[%s] comment", $c->session->get('screen_name'));
     $c->render_json({
         success => 1,
         task => $target_task,
@@ -66,6 +68,7 @@ sub delete {
         }
     }
     $c->save_list_doc($account, $doc);
+    infof("[%s] comment delete", $c->session->get('screen_name'));
     $c->render_json({
         success => $success,
         task => $target_task,

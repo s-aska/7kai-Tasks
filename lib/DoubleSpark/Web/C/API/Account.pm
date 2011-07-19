@@ -2,6 +2,7 @@ package DoubleSpark::Web::C::API::Account;
 use strict;
 use warnings;
 use JSON;
+use Log::Minimal;
 
 sub get {
     my ($class, $c) = @_;
@@ -13,6 +14,7 @@ sub get {
     $account->set_social_accounts($c);
     $account->set_lists($c);
     $account->{lang} = $c->lang;
+    # infof("Account GET " . $c->session->get('screen_name'));
     $c->render_json({success => 1, account => $account->to_hashref});
 }
 
