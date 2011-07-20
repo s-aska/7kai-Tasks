@@ -99,7 +99,7 @@ sub update {
         }
     }
     
-    die 'NotFound' unless $success;
+    return $c->res_404() unless $success;
     $c->save_list_doc($account, $doc);
     infof("[%s] task update %s", $c->session->get('screen_name'), $action);
     $c->render_json({

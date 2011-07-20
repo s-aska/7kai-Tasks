@@ -1,29 +1,26 @@
 (function(ns, w, d) {
 
-var w = $(w);
-
 var app = {
-    
     // 定数
-    token_name: 'csrf_token',
-    url_re: new RegExp('(?:https?://[\\x21-\\x7e]+)', 'g'),
+    cond_default: {
+        list_id: null,
+        star: null,
+        status: null,
+        status_ignore: null,
+        closed: 0,
+        registrant: null,
+        assign: null,
+        todo: null,
+        notify: null
+    },
     valid: {
         list_name_max_length: 20
     },
-    speed: 'fast',
-    filters: [
-        'list-timeline',
-        'list-comment',
-        'list-all',
-        'list-todo',
-        'list-request',
-        'list-watch'
-    ],
+
+    // オブジェクト変数
     template: {},
     localizer: null,
     counters: [],
-    
-    // データ
     is_webkit: false,
     lang: 'en',
     guide: true,
@@ -42,17 +39,6 @@ var app = {
     taskli: {},
     listli: {},
     active: null,
-    cond_default: {
-        list_id: null,
-        star: null,
-        status: null,
-        status_ignore: null,
-        closed: 0,
-        registrant: null,
-        assign: null,
-        todo: null,
-        notify: null
-    },
     cond: {},
     sort: null,
     unread_comment_count: 0,
@@ -63,10 +49,21 @@ var app = {
     run: run,
     initParts: initParts,
     initEvent: initEvent,
-    initEventGuide: initEventGuide,
-    initCounter: initCounter,
-    initWindow: initWindow,
     initAccount: initAccount,
+    initElements: initElements,
+    initElementClick: initElementClick,
+    initElementLocalize: initElementLocalize,
+    initElementLocalizePlaceholder: initElementLocalizePlaceholder,
+    initElementPulldown: initElementPulldown,
+    initElementGuide: initElementGuide,
+    initElementSummary: initElementSummary,
+    initElementSortable: initElementSortable,
+    initElementCommentBox: initElementCommentBox,
+    initElementFormWindow: initElementFormWindow,
+    initElementDatepicker: initElementDatepicker,
+    initElementDisableSelection: initElementDisableSelection,
+    initElementAutocomplete: initElementAutocomplete,
+    initElementNoticecheck: initElementNoticecheck,
     
     // イベント
     handleEvent: handleEvent,
@@ -74,32 +71,37 @@ var app = {
     commentHeightResize: commentHeightResize,
     
     // General
+    exec: exec,
     ajax: ajax,
-    ajaxFailure: ajaxFailure,
+    
     message: message,
-    statusUpdate: statusUpdate,
+    
     getProfileImageUrl: getProfileImageUrl,
     getTwitterProfileImageUrl: getTwitterProfileImageUrl,
     syncTwitterContact: syncTwitterContact,
     lookupUnknownMembers: lookupUnknownMembers,
+    
     updateAccount: updateAccount,
     refresh: refresh,
+    
     submitFinalize: submitFinalize,
     showNotifications: showNotifications,
     showList: showList,
     switchList: switchList,
-    switchFilterList: switchFilterList,
-    switchClosed: switchClosed,
+    switchFilterListClick: switchFilterListClick,
+    switchClosedClick: switchClosedClick,
     renderList: renderList,
     renderBadge: renderBadge,
     needCount: needCount,
     needNotify: needNotify,
     renderCommentBadge: renderCommentBadge,
+    
     createList: createList,
     modifyList: modifyList,
     deleteList: deleteList,
     sortList: sortList,
     sortUpdateList: sortUpdateList,
+    
     createTask: createTask,
     modifyTask: modifyTask,
     moveTask: moveTask,
@@ -107,32 +109,32 @@ var app = {
     filterTask: filterTask,
     sortTask: sortTask,
     sortUpdateTask: sortUpdateTask,
+    
     readComment: readComment,
     isMe: isMe,
     findMe: findMe,
     findMeFromList: findMeFromList,
     listReadLastRev: listReadLastRev,
     listReadLastTime: listReadLastTime,
-    clickStatebleCheckbox: clickStatebleCheckbox,
-    timestamp: timestamp,
+    statebleCheckboxClick: statebleCheckboxClick,
     updateCounter: updateCounter,
     resetCounter: resetCounter,
-    autoLink: autoLink,
+    
     needNotification: needNotification,
     notificationCheck: notificationCheck,
     notificationCheckDone: notificationCheckDone,
     
     // GrobalMenu
-    clickOpenButton: clickOpenButton,
-    clickSignInTwitter: clickSignInTwitter,
-    clickSyncTwitterContact: clickSyncTwitterContact,
-    clickAccountSync: clickAccountSync,
-    clickRefresh: clickRefresh,
-    clickGuideSwitch: clickGuideSwitch,
+    openClick: openClick,
+    openCommentClick: openCommentClick,
+    signInTwitterClick: signInTwitterClick,
+    syncTwitterContactClick: syncTwitterContactClick,
+    refreshClick: refreshClick,
+    guideSwitchClick: guideSwitchClick,
     
     // SideMenu
-    clickListDisplaySwitch: clickListDisplaySwitch,
-    clickListBadgeSwitch: clickListBadgeSwitch,
+    listDisplaySwitchClick: listDisplaySwitchClick,
+    listBadgeSwitchClick: listBadgeSwitchClick,
     openCallbackCreateList: openCallbackCreateList,
     openCallbackCreateTaskWithMember: openCallbackCreateTaskWithMember,
     openCallbackEditList: openCallbackEditList,
@@ -147,15 +149,12 @@ var app = {
     tasksCommentFilter: tasksCommentFilter,
     tasksTodoFilter: tasksTodoFilter,
     tasksRequestFilter: tasksRequestFilter,
-    clickTaskmenuSort: clickTaskmenuSort,
-    clickTaskmenuSwitch: clickTaskmenuSwitch,
-    clickTaskmenuFilter: clickTaskmenuFilter,
-    clickTaskmenuTrash: clickTaskmenuTrash,
-    clickCreateTaskDuePlus: clickCreateTaskDuePlus,
-    clickCreateTaskDuePlusMonth: clickCreateTaskDuePlusMonth,
-    clickCreateTaskDueMinus: clickCreateTaskDueMinus,
-    clickCreateTaskDueDelete: clickCreateTaskDueDelete,
-    clickCreateTaskDueToday: clickCreateTaskDueToday,
+    taskmenuSortClick: taskmenuSortClick,
+    createTaskDuePlusClick: createTaskDuePlusClick,
+    createTaskDuePlusMonthClick: createTaskDuePlusMonthClick,
+    createTaskDueMinusClick: createTaskDueMinusClick,
+    createTaskDueDeleteClick: createTaskDueDeleteClick,
+    createTaskDueTodayClick: createTaskDueTodayClick,
     openCallbackCreateTask: openCallbackCreateTask,
     openCallbackEditTask: openCallbackEditTask,
     openCallbackClearTrash: openCallbackClearTrash,
@@ -169,324 +168,302 @@ var app = {
     createAssignList: createAssignList,
     renderTask: renderTask,
     createTaskElement: createTaskElement,
-    clickTaskAction: clickTaskAction,
+    taskActionClick: taskActionClick,
     submitComment: submitComment,
     deleteComment: deleteComment,
     renderComment: renderComment,
     renderMember: renderMember
-    
 };
 
-$(d).ready(function() {
-    var localizer = new Localizer();
-    if (localizer.lang != 'en') {
-      localizer.localize();
-    }
-    app.localizer = localizer;
+c.addEvents('initApplication');
+
+$(d).ready(function(){
     app.run();
 });
 
-// Init
+// Run
 function run() {
     
-    if (typeof window.console !== 'object') {
-        console = {
-            log: function(){}
-        };
-    }
-    this.lang = $('html').attr('lang');
-    this.token = $('input[name=' + this.token_name + ']:first').val();
-    if (
-        (navigator.userAgent.indexOf('Chrome') != -1) ||
-        (navigator.userAgent.indexOf('Safari') != -1)
-    ) {
-        this.is_webkit = true;
+    if (navigator.userAgent.indexOf('AppleWebKit/') != -1) {
+        app.is_webkit = true;
     }
     
-    this.initParts();
-    this.initEvent();
-    this.initCounter();
-    this.initWindow();
-    this.initAccount();
+    c.init();
+    
+    app.initParts();
+    app.initEvent();
+    app.initElements();
+    app.windowResizeEvent();
+    
+    app.initAccount();
+    
+    c.fireEvent('initApplication');
 }
 function initParts() {
-    this.parts.header      = $('body > header');
-    this.parts.aside       = $('body > div > aside');
-    this.parts.article     = $('body > div > article');
-    this.parts.right       = $('body > div > div');
-    this.parts.comment     = $('body > div > div > ul');
-    this.parts.footer      = $('body > footer');
     
-    this.parts.badge       = $('#notification-badge');
+    // base
+    app.parts.header      = $('body > header');
+    app.parts.aside       = $('body > div > aside');
+    app.parts.article     = $('body > div > article');
+    app.parts.right       = $('body > div > div');
+    app.parts.footer      = $('body > footer');
     
-    this.parts.status      = this.parts.header.find('p');
+    // header
+    app.parts.status      = app.parts.header.find('p');
+    app.parts.badge       = $('#notification-badge');
     
-    this.parts.sidemenu    = this.parts.aside.find('> header');
-    this.parts.listnav     = this.parts.aside.find('> header > ul');
-    this.parts.lists       = this.parts.listnav;
-    this.parts.listname    = this.parts.aside.find('#current-list-name');
-    this.parts.listmembers = this.parts.aside.find('#list-members');
-    this.parts.listmenu    = this.parts.aside.find('> article li.action');
-    this.parts.listonly    = this.parts.aside.find('[data-listonly]');
-    this.parts.listsort    = this.parts.aside.find('> article ul.sort');
+    // aside
+    app.parts.sidemenu    = app.parts.aside.find('> header');
+    app.parts.listnav     = app.parts.aside.find('> header > ul');
+    app.parts.lists       = app.parts.listnav;
+    app.parts.listname    = app.parts.aside.find('#current-list-name');
+    app.parts.listmembers = app.parts.aside.find('#list-members');
+    app.parts.listmenu    = app.parts.aside.find('> article li.action');
+    app.parts.listonly    = app.parts.aside.find('[data-listonly]');
+    app.parts.listsort    = app.parts.aside.find('> article ul.sort');
+    app.parts.summary     = $('#summary');
     
-    this.parts.infomation  = $('#infomation');
+    // article
+    app.parts.tasks       = app.parts.article.find('> section > ul.task');
     
-    this.parts.tasks       = this.parts.article.find('> section > ul.task');
-    this.parts.timeline    = this.parts.article.find('> section > ul.timeline');
+    // comment
+    app.parts.comment     = $('body > div > div > ul');
+    app.parts.commentform = $('#comment-box');
+    app.parts.commentbox  = $('#comment-box textarea');
     
-    this.parts.lswt        = $('#list-settings-window table');
-    this.parts.owners      = $('#create-list-window select[name=owner]');
-    this.parts.guide       = $('#guide');
-    this.parts.commentform = $('#comment-box');
-    this.parts.commentbox  = $('#comment-box textarea');
+    // absolute
+    app.parts.guide       = $('#guide');
+    app.parts.owners      = $('#create-list-window select[name=owner]');
+    app.parts.connectacs  = $('#connect-accounts');
     
-    this.parts.connectacs  = $('#connect-accounts');
+    // template
+    app.template.task     = app.parts.tasks.html();
+    app.template.assign   = $('#create-task-assign').html();
     
-    this.template.task     = this.parts.tasks.html();
-    this.template.assign   = $('#create-task-assign').html();
-    
-    this.offset.commment   = $('body > div > div').offset();
+    // offset
+    app.offset.commment   = $('body > div > div').offset();
 }
 function initEvent() {
-    // var app = this;
     
-    /* window */
-    w.resize($.proxy(this.windowResizeEvent, this));
+    $(w).resize($.proxy(this.windowResizeEvent, this));
     
-    this.initEventGuide($(d));
-    
-    /* header */
-    $('.pulldown').each(function(i, ele){
-        var pulldown = $(ele);
-        var menu = pulldown.find('> .pulldown-menu');
-        var timer;
-        pulldown.hover(function(){
-            if (timer) {
-                clearInterval(timer);
-                timer = null;
-            }
-            menu.slideDown(app.speed);
-        }, function(){
-            timer = setTimeout(function(){
-                menu.slideUp(app.speed);
-            }, 500);
-        });
-    });
-    
-    
-    
-    /* aside */
-    (function(){
-        var timer;
-        app.parts.sidemenu.hover(function(){
-            if (timer) {
-                clearInterval(timer);
-                timer = null;
-            }
-            if (app.parts.listnav.css('display') === 'none') {
-                app.parts.listnav.show('drop', {}, app.speed);
-            }
-        }, function(){
-            if (!app.dragging) {
-                timer = setTimeout(function(){
-                    app.parts.listnav.hide('drop', {}, app.speed);
-                }, 500);
-            }
-        });
-    })();
-    
-    $('button, a, span.action, li.action, input[data-method]').each(function(i, ele){
-        ele.addEventListener("click", app, false);
-    });
-    
-    this.parts.tasks.sortable({
-        handle: 'div.grip',
-        cursor: 'url(/static/img/openhand.cur), move',
-        start: function (e, ui) {
-            app.dragging = true;
-            app.parts.guide.hide();
-        },
-        stop: function (e, ui) {
-            app.dragging = false;
-        },
-        update: function(e, ui) {
-            app.sortUpdateTask();
-        }
-    });
-    
-    this.parts.lists.sortable({
-        cursor: 'url(/static/img/openhand.cur), move',
-        start: function (e, ui) {
-            app.dragging = true;
-            app.parts.guide.hide();
-        },
-        stop: function (e, ui) {
-            app.dragging = false;
-        },
-        update: function(e, ui) {
-            app.sortUpdateList();
-        }
-    });
-    
-    // Modal Window
-    $('form.modal').each(function(i, ele){
-        var form = $(ele);
-        form.find('button.cancel').click(function(){
-            form.hide('drop');
-            return false;
-        });
-        form.find('input[type=text]:first').keydown(function(e){
-            if (e.keyCode == 27) {
-                if (e.shiftKey) {
-                    var reset = form.data('reset');
-                    if (reset) {
-                        app[reset].call(this, form);
-                    } else {
-                        form.find('*[data-no-keep=1]').val('');
-                        form.find('input[type=text]:first').get(0).focus();
-                    }
-                } else {
-                    document.activeElement.blur();
-                    form.hide('drop');
-                }
-            }
-        });
-        form.bind('submit', function(){
-            // form.find('input:first').val('').get(0).focus();
-            
-            var submit = form.data('submit');
-            if (submit) {
-                app[submit].call(app, form);
-            }
-            // FIXME: keep
-            
-            return false;
-        });
-        app.modals[form.attr('id')] = form;
-        // form.disableSelection();
-        // form.draggable();
-        form.draggable({ handle: 'h1' });
-        form.find('footer input[type=checkbox]').click($.proxy(app.clickStatebleCheckbox, app));
-    });
-    $('form.fillin').each(function(i, ele){
-        var form = $(ele);
-        form.find('button.cancel').click(function(){
-            form.find('input[type=text]:first').val('');
-            form.find('> div').slideUp(app.speed);
-            return false;
-        });
-        form.find('input[type=text]:first').keydown(function(e){
-            if (e.keyCode == 27) {
-                if (e.shiftKey) {
-                    var reset = form.data('reset');
-                    if (reset) {
-                        app[reset].call(this, form);
-                    } else {
-                        form.find('*[data-no-keep=1]').val('');
-                        form.find('input[type=text]:first').get(0).focus();
-                    }
-                } else {
-                    document.activeElement.blur();
-                    form.find('> div').slideUp(app.speed);
-                }
-            }
-        });
-        form.bind('submit', function(){
-            var submit = form.data('submit');
-            if (submit) {
-                app[submit].call(app, form);
-            }
-            return false;
-        });
-        app.modals[form.attr('id')] = form;
-    });
-    
-    // Create Task Window
-    var datepicker_option = {};
-    if (this.lang === 'ja') {
-        datepicker_option.dateFormat = 'yy/mm/dd';
-        var ymd = $.datepicker.formatDate('yy/mm/dd', new Date());
-        $('#create-task-date').attr('placeholder', ymd);
-    }
-    $('#create-task-date').datepicker(datepicker_option);
-    
-    $('#create-task-date-controller').disableSelection();
-    
-    var bindAutocomplete = function(selector, prependTo){
-        selector.autocomplete({
-    		source: function(request, response) {
-    		    response($.ui.autocomplete.filter(app.assign, request.term));
-    		},
-    		select: function(event, ui) {
-    		    app.createAssignList(app.friends[ui.item.value])
-    		    .prependTo(prependTo);
-            }
-    	}).data('autocomplete')._renderItem = function(ul, item) {
-            return $(document.createElement('li'))
-                .data('item.autocomplete', item)
-                .append("<a>"+ item.label + "</a>")
-                .appendTo(ul);
-        };
-        selector.bind('autocompleteclose', function(event, element){
-    	    selector.val('');
-    	});
-    };
-    bindAutocomplete.call(this, $('#create-list-members-input'), $('#create-list-members'));
-    
+    // Receiver Element for Chrome Extensions
     document.getElementById('extentionsEventDiv').addEventListener('extentionsEvent', function() {
-        var eventText = document.getElementById('extentionsEventDiv').innerText;
-        var eventData = JSON.parse(eventText);
-        app[eventData.method].apply(app, eventData.arguments);
+        var text = document.getElementById('extentionsEventDiv').innerText;
+        var data = JSON.parse(text);
+        app.exec(data.method, data.arguments);
     }, false);
     
+    // Shortcut Key
     $(document).keypress(function(e){
         if (e.shiftKey || e.ctrlKey) {
             return true;
         }
         if (document.activeElement.tagName === 'BODY') {
-            if (e.keyCode === 99) { // c
+            // C
+            if (e.keyCode === 99) {
                 $('#create-task-button').click();
                 return false;
-            } else if (e.keyCode === 114) { // r
-                // app.refresh();
+            }
+            // R
+            else if (e.keyCode === 114) {
                 app.notificationCheck();
             }
         }
         return true;
     });
-    
-    this.parts.commentbox.attr('disabled', true);
-    this.parts.commentbox.keydown(function(e){
+}
+function initAccount() {
+    app.refresh();
+    setTimeout(function(){
+        app.notificationCheck(true);
+    }, 60 * 1000);
+}
+
+function initElements(context) {
+    $('*[data-init]', context).each(function(){
+        var ele = $(this);
+        var methods = ele.data('init').split(',');
+        for (var i = 0, max_i = methods.length; i < max_i; i++) {
+            app.exec(['initElement', methods[i]], [this]);
+        }
+    });
+}
+function initElementClick(element) {
+    element.addEventListener("click", app, false);
+}
+function initElementLocalize(element) {
+    var ele = $(element);
+    ele.text(ele.data('text-' + c.lang));
+}
+function initElementLocalizePlaceholder(element) {
+    var ele = $(element);
+    ele.attr('placeholder', ele.data('text-' + c.lang));
+}
+function initElementGuide(element) {
+    var ele = $(element);
+    var msg = ele.data('guide-' + c.lang);
+    ele.hover(function(){
+        // 動的に変更可能にする為、この段階で評価する
+        if (app.account.state.noguide) {
+            return true;
+        }
+        if (app.dragging) {
+            return true;
+        }
+        var top = ele.offset().top + ele.height();
+        var left = ele.offset().left;
+        app.parts.guide.text(msg);
+        app.parts.guide.show();
+        app.parts.guide.css('top', top + 'px');
+        app.parts.guide.css('left', left + 'px');
+    }, function() {
+        app.parts.guide.hide();
+    });
+}
+function initElementPulldown(element) {
+    var ele = $(element);
+    var menu = ele.find('> .pulldown-menu');
+    var effect = ele.data('effect');
+    c.delayHover(element, function(){
+        if (effect) {
+            menu.show(effect, {}, c.SPEED);
+        } else {
+            menu.slideDown(c.SPEED);
+        }
+    }, function(){
+        if (effect) {
+            menu.hide(effect, {}, c.SPEED);
+        } else {
+            menu.slideUp(c.SPEED);
+        }
+    }, 500);
+}
+function initElementSummary(element) {
+    var li = $(element);
+    var link = li.find('> span.action');
+    var badge = li.find('> span.badge');
+    badge.text(0);
+    var cond = $.extend({}, app.cond_default);
+    for (var key in cond) {
+        var val = link.data(key.replace('_', '-'));
+        if (typeof val !== 'undefined') {
+            cond[key] = val;
+        }
+    }
+    var filter = app.tasksFilterGenerate(cond);
+    app.counters.push({
+        filter: filter,
+        badge: badge
+    });
+}
+function initElementSortable(element) {
+    var ele = $(element);
+    var update = ele.data('update');
+    var handle = ele.data('handle');
+    ele.sortable({
+        handle: handle,
+        cursor: 'url(/static/img/openhand.cur), move',
+        start: function (e, ui) {
+            app.dragging = true;
+            app.parts.guide.hide();
+        },
+        stop: function (e, ui) {
+            app.dragging = false;
+        },
+        update: function(e, ui) {
+            app.exec(update);
+        }
+    });
+}
+function initElementCommentBox(element) {
+    var ele = $(element);
+    ele.attr('disabled', true);
+    ele.keydown(function(e){
         if (e.keyCode === 13 && !e.shiftKey) {
             e.stopPropagation();
             e.preventDefault();
-            if (app.parts.commentbox.val().length) {
+            if (ele.val().length) {
                 app.submitComment();
             }
         } else if (e.keyCode === 27) {
-            app.parts.commentbox.blur();
+            app.parts.commentbox.val('');
+            $('#comment-window').hide('drop');
         }
     });
-    this.parts.commentbox.autogrow({single: true});
-    this.parts.commentbox.focus(function(){
-        app.parts.commentform.val('');
-    }).blur(function(){
-        app.parts.commentform.slideUp(app.speed, function(){
-            app.parts.commentbox.val('');
-        });
+    ele.autogrow({single: true});
+}
+function initElementFormWindow(element) {
+    var form = $(element);
+    form.find('button.cancel').click(function(){
+        form.hide('drop');
+        return false;
     });
-    
-    
-    var timer;
-    this.parts.badge.hover(function(){
-        // if (timer) {
-        //     clearInterval(timer);
-        // }
-        // var ul = app.parts.badge.find('> div');
-        // ul.slideDown(app.speed);
-        if (app.parts.badge.find('> span').hasClass('active')) {
-            app.parts.badge.find('> span').removeClass('active').text(0);
+    form.find('input[type=text]:first').keydown(function(e){
+        var input = $(this);
+        if (e.keyCode == 27) {
+            if (e.shiftKey) {
+                var reset = form.data('reset');
+                if (reset) {
+                    app.exec(reset, [form]);
+                } else {
+                    form.find('*[data-no-keep=1]').val('');
+                    input.get(0).focus();
+                }
+            } else {
+                document.activeElement.blur();
+                form.hide('drop');
+            }
+        }
+    });
+    form.bind('submit', function(){
+        var submit = form.data('submit');
+        if (submit) {
+            app.exec(submit, [form]);
+        }
+        return false;
+    });
+    app.modals[form.attr('id')] = form;
+    form.draggable({ handle: 'h1' });
+    form.find('footer input[type=checkbox]').click($.proxy(app.statebleCheckboxClick, app));
+}
+function initElementDatepicker(element) {
+    var ele = $(element);
+    var datepicker_option = {};
+    if (c.lang === 'ja') {
+        datepicker_option.dateFormat = 'yy/mm/dd';
+        var ymd = $.datepicker.formatDate('yy/mm/dd', new Date());
+        ele.attr('placeholder', ymd);
+    }
+    ele.datepicker(datepicker_option);
+}
+function initElementDisableSelection(element) {
+    $(element).disableSelection();
+}
+function initElementAutocomplete(element) {
+    var ele = $(element);
+    var prependTo = $('#create-list-members');
+    ele.autocomplete({
+		source: function(request, response) {
+		    response($.ui.autocomplete.filter(app.assign, request.term));
+		},
+		select: function(event, ui) {
+		    app.createAssignList(app.friends[ui.item.value])
+		    .prependTo(prependTo);
+        }
+	}).data('autocomplete')._renderItem = function(ul, item) {
+        return $(document.createElement('li'))
+            .data('item.autocomplete', item)
+            .append("<a>"+ item.label + "</a>")
+            .appendTo(ul);
+    };
+    ele.bind('autocompleteclose', function(){ ele.val('') });
+}
+function initElementNoticecheck(element) {
+    var ele = $(element);
+    ele.mouseover(function(){
+        if (ele.find('> span').hasClass('active')) {
+            ele.find('> span').removeClass('active').text(0);
             app.account.state.last_history_time = (new Date()).getTime();
             app.updateAccount({
                 ns: 'state',
@@ -495,164 +472,33 @@ function initEvent() {
                 val: app.account.state.last_history_time
             });
         }
-    }, function(){
-        // timer = setTimeout(function(){
-        //     app.parts.badge.find('> div').slideUp(app.speed);
-        // }, 1000);
     });
-    
-}
-function initEventGuide(ele) {
-    // var app = this;
-    ele.find('*[data-guide-' + app.lang + ']').each(function(i, ele){
-        var ele = $(ele);
-        var msg = ele.data('guide-' + app.lang);
-        ele.hover(function(){
-            if (app.account.state.noguide) {
-                return true;
-            }
-            if (app.dragging) {
-                return true;
-            }
-            var top = ele.offset().top + ele.height();
-            var left = ele.offset().left;
-            app.parts.guide.text(msg);
-            app.parts.guide.show();
-            app.parts.guide.css('top', top + 'px');
-            app.parts.guide.css('left', left + 'px');
-        }, function() {
-            app.parts.guide.hide();
-        });
-    });
-}
-function initCounter() {
-    // var app = this;
-    this.parts.infomation.find('li').each(function(i, ele){
-        var li = $(ele);
-        var link = li.find('> span.action');
-        var badge = li.find('> span.badge');
-        badge.text(0);
-        var cond = $.extend({}, app.cond_default);
-        for (var key in cond) {
-            var val = link.data(key.replace('_', '-'));
-            if (typeof val !== 'undefined') {
-                cond[key] = val;
-            }
-        }
-        var filter = app.tasksFilterGenerate(cond);
-        app.counters.push({
-            filter: filter,
-            badge: badge
-        });
-    });
-}
-function initWindow() {
-    
-    this.windowResizeEvent();
-    
-    // アカウント情報の取得
-    
-    // Twitter Contact List の初期化
-    
-    // リスト取得、無い場合作成
-    // aside構築
-    // article構築
-    
-    
-    
-    
-    
-}
-function initAccount() {
-    // var app = this;
-    this.refresh();
-    setTimeout(function(){
-        app.notificationCheck(true);
-    }, 60 * 1000);
 }
 
 // Event
 function handleEvent(e) {
     var ele = $(e.currentTarget);
-    if (ele.data('method')) {
+    if (ele.data('bind')) {
         e.stopPropagation();
     }
-    switch (ele.data('method')) {
-    case 'guideSwitch':
-        this.clickGuideSwitch(e, ele);
-        break;
-    case 'taskmenuSort':
-        this.clickTaskmenuSort(e, ele);
-        break;
-    case 'taskmenuSwitch':
-        this.clickTaskmenuSwitch(e, ele);
-        break;
-    case 'taskmenuFilter':
-        this.clickTaskmenuFilter(e, ele);
-        break;
-    case 'open':
-        this.clickOpenButton(e, ele);
-        break;
-    case 'syncTwitterContact':
-        this.clickSyncTwitterContact(e, ele);
-        break;
-    case 'accountSync':
-        this.clickAccountSync(e, ele);
-        break;
-    case 'refresh':
-        this.clickRefresh(e, ele);
-        break;
-    case 'signinTwitter':
-        this.clickSignInTwitter(e, ele);
-        break;
-    case 'createTaskDuePlus':
-        this.clickCreateTaskDuePlus(e, ele);
-        break;
-    case 'createTaskDuePlusMonth':
-        this.clickCreateTaskDuePlusMonth(e, ele);
-        break;
-    case 'createTaskDueMinus':
-        this.clickCreateTaskDueMinus(e, ele);
-        break;
-    case 'createTaskDueDelete':
-        this.clickCreateTaskDueDelete(e, ele);
-        break;
-    case 'createTaskDueToday':
-        this.clickCreateTaskDueToday(e, ele);
-        break;
-    case 'listDisplaySwitch':
-        this.clickListDisplaySwitch(e, ele);
-        break;
-    case 'listBadgeSwitch':
-        this.clickListBadgeSwitch(e, ele);
-        break;
-    case 'switchFilterList':
-        this.switchFilterList(e);
-        break;
-    case 'switchClosed':
-        this.switchClosed(e);
-        break;
-    case 'showTimeline':
-        this.showTimeline(e);
-        break;
-    }
+    app.exec(ele.data('bind') + 'Click', [e, ele])
 }
 function windowResizeEvent() {
     // FIXME: スクロールが発生した場合にボタンを有効化する
-    var w_height = w.height();
-    var h_height = this.parts.footer.height();
+    var w_height = $(w).height();
+    var h_height = app.parts.footer.height();
     if (h_height > 0) {
         h_height+= 8;
     }
     $('body > div > aside > header > ul').height(w_height - h_height - 70);
-    $('body > div > aside').height(w_height - h_height - 35);
+    $('body > div > aside').height(w_height - h_height - 33);
     $('body > div > article > section').height(w_height - h_height - 93 + 17);
-    $('body > div > div').width(w.width() - this.offset.commment.left - 24);
+    $('body > div > div').width($(w).width() - app.offset.commment.left - 24);
     this.commentHeightResize();
 }
 function commentHeightResize() {
-    var w_height = w.height();
-    var h_height = this.parts.footer.height();
+    var w_height = $(w).height();
+    var h_height = app.parts.footer.height();
     if (h_height > 0) {
         h_height+= 8;
     }
@@ -660,24 +506,44 @@ function commentHeightResize() {
 }
 
 // General
+function exec(method, args) {
+    if ($.isArray(method)) {
+        method = method[0] + c.capitalize(method[1]);
+    }
+    if (method in app) {
+        app[method].apply(app, args);
+    } else {
+        console.log('unkown method ' + method);
+    }
+}
 function ajax(option) {
-    //this.statusUpdate('ajax: begin url=' + option.url);
-    option.error = $.proxy(this.ajaxFailure, this);
     if ("data" in option && "type" in option && option.type.toLowerCase() === 'post') {
-        option.data[this.token_name] = this.token;
+        option.data[c.CSRF_TOKEN_NAME] = c.csrf_token;
         option.data["request_time"] = (new Date()).getTime();
     }
-    return $.ajax(option);
-}
-function ajaxFailure(jqXHR, textStatus, errorThrown) {
-    this.statusUpdate('ajax error: ' + jqXHR.status + ' ' + errorThrown);
+    return $.ajax(option)
+    .fail(function(jqXHR, textStatus, errorThrown){
+        console.log({
+            status: jqXHR.status,
+            thrown: errorThrown,
+            textStatus: textStatus
+        });
+
+        // Collision
+        if (jqXHR.status === 403 || jqXHR.status === 404) {
+            // soft reload
+            console.log('permission or not found.');
+        }
+
+        // Internal Server Error
+        else if (jqXHR.status === 500) {
+            // しばらくして...
+            console.log('error.');
+        }
+    });
 }
 function message(message) {
     alert(message);
-}
-function statusUpdate(message) {
-    // this.parts.status.text(message);
-    // this.parts.console.prepend($(document.createElement('li')).text(message));
 }
 function getProfileImageUrl(user_id) {
     var friend = this.friend_ids[user_id];
@@ -701,7 +567,6 @@ function getTwitterProfileImageUrl(screen_name) {
     }
 }
 function syncTwitterContact(user_id, cursor, screen_name) {
-    // var app = this;
     if (!cursor || cursor === -1) {
         if (user_id in app.account.tw) {
             app.account.tw[user_id].friends = [];
@@ -720,21 +585,17 @@ function syncTwitterContact(user_id, cursor, screen_name) {
     })
     .done(function(data){
         if (data.success) {
-            app.statusUpdate('sync contact list '
-            + screen_name + ' ' + data.sync_count + '/' + data.friends_count);
             app.registAssign(data.friends);
             $.merge(app.account.tw[user_id].friends, data.friends);
             if (data.next_cursor) {
                 app.syncTwitterContact(user_id, data.next_cursor, screen_name);
             } else {
-                app.statusUpdate('sync contact list ' + screen_name + ' fin.');
                 app.refresh();
             }
         }
     });
 }
 function lookupUnknownMembers(unknownMembers, callback) {
-    // var app = this;
     this.ajax({
         type: 'get',
         url: '/api/1/contact/lookup_twitter',
@@ -761,7 +622,6 @@ function lookupUnknownMembers(unknownMembers, callback) {
     });
 }
 function updateAccount(params, refresh) {
-    // var app = this;
     return this.ajax({
         type: 'post',
         url: '/api/1/account/update',
@@ -770,7 +630,6 @@ function updateAccount(params, refresh) {
     })
     .done(function(data){
         if (data.success) {
-            app.statusUpdate('update a account.');
             if (refresh) {
                 app.refresh();
             }
@@ -778,7 +637,6 @@ function updateAccount(params, refresh) {
     });
 }
 function refresh(option) {
-    // var app = this;
     var syncContact = false;
     var unknownMembers = [];
     if (!option) {
@@ -823,7 +681,6 @@ function refresh(option) {
             app.resetCounter();
             app.listmap = [];
             app.parts.lists.find('.project').remove();
-            app.parts.lswt.find('.project').remove();
             
             app.unread_comment_count = 0;
             var lists = app.account.lists;
@@ -871,7 +728,7 @@ function refresh(option) {
                             }
                             taskli.effect("highlight", {}, 3000, function(){
                                 if (display === 'none') {
-                                    taskli.slideUp(app.speed, function(){
+                                    taskli.slideUp(c.SPEED, function(){
                                         taskli.addClass('delete');
                                     });
                                 }
@@ -913,7 +770,6 @@ function needNotification(account, history) {
     }
 }
 function notificationCheck(loop) {
-    // var app = this;
     return this.ajax({
         type: 'get',
         url: '/api/1/account/',
@@ -924,7 +780,6 @@ function notificationCheck(loop) {
     })
 }
 function notificationCheckDone(data, loop) {
-    // var app = this;
     app.notifications = [];
     var check = function(account, history) {
         if (app.needNotification(account, history)) {
@@ -1016,7 +871,7 @@ function notificationCheckDone(data, loop) {
         var key = 'text-' + history.action + '-' + app.account.lang;
         var action = $('<span class="action"/>').text(ul.data(key));
         var list = $('<span class="list"/>').text(history.list_name);
-        var date = $('<span class="date"/>').text(app.timestamp(history.date));
+        var date = $('<span class="date"/>').text(c.timestamp(history.date));
         $('<li/>')
             .addClass('clearfix')
             .append(icon)
@@ -1058,7 +913,6 @@ function submitFinalize(form) {
     form.find('input[type=text]:first').get(0).focus();
 }
 function showList(id, task_id) {
-    // var app = this;
     var li = this.listli[id];
     var list = this.listmap[id];
     this.cond = $.extend({}, this.cond_default);
@@ -1066,9 +920,9 @@ function showList(id, task_id) {
     this.current_list = list;
     this.current_filter = null;
     $('#closed-task-switch').removeClass('selected');
-    this.parts.listname.text(list.doc.name);
-    this.parts.listmenu.data('list-id', id);
-    this.parts.listmembers.empty();
+    app.parts.listname.text(list.doc.name);
+    app.parts.listmenu.data('list-id', id);
+    app.parts.listmembers.empty();
     if ("owner_id" in list.doc) {
         this.renderMember(list.doc.owner_id);
     }
@@ -1113,17 +967,19 @@ function showList(id, task_id) {
 function switchList(e) {
     var li = $(e.currentTarget);
     var id = li.data('list-id');
-    this.showList(id);
-    this.parts.listonly.show();
+    app.showList(id);
+    app.parts.listonly.show();
+    app.parts.summary.find('.selected').removeClass('selected');
 }
-function switchFilterList(e) {
-    // var app = this;
+function switchFilterListClick(e) {
     var li = $(e.currentTarget);
     var pli = li.parent().parent().parent().find('> span.action:first');
     var listname = li.text();
     if (pli.length) {
         listname = pli.text();
     }
+    app.parts.summary.find('.selected').removeClass('selected');
+    li.addClass('selected');
     this.cond = $.extend({}, this.cond_default);
     for (var key in this.cond) {
         var val = li.data(key.replace('_', '-'));
@@ -1132,14 +988,14 @@ function switchFilterList(e) {
         }
     }
     if (!this.cond.list_id) {
-        this.parts.listonly.hide();
-        this.parts.listname.text(listname);
+        app.parts.listonly.hide();
+        app.parts.listname.text(listname);
         this.current_list = null;
     }
     this.filterTask();
 }
-function switchClosed(e) {
-    this.switchFilterList(e);
+function switchClosedClick(e) {
+    this.switchFilterListClick(e);
     var li = $(e.currentTarget);
     if (li.data('closed')) {
         li.data('closed', 0);
@@ -1150,7 +1006,6 @@ function switchClosed(e) {
     }
 }
 function renderList(list) {
-    // var app = this;
     var badge = $('<span class="badge"></span>');
     var li = $('<li data-list-id="' + list.id + '"></li>');
     li.attr('class', 'project');
@@ -1183,12 +1038,12 @@ function renderList(list) {
     li.get(0).addEventListener('drop', function(e){
         app.dragging = false;
         app.parts.guide.hide();
-        app.parts.listnav.hide('drop', {}, app.speed);
+        app.parts.listnav.hide('drop', {}, c.SPEED);
         var data = e.dataTransfer.getData('Text').split(':');
         app.moveTask(data[1], data[0], list.id)
     }, false);
     
-    var old = this.parts.lists.find('li[data-list-id="' + list.id + '"]');
+    var old = app.parts.lists.find('li[data-list-id="' + list.id + '"]');
     if (old.length) {
         if (old.hasClass('selected')) {
             old.replaceWith(li);
@@ -1198,7 +1053,7 @@ function renderList(list) {
             old.replaceWith(li);
         }
     } else {
-        this.parts.lists.append(li);
+        app.parts.lists.append(li);
         var tasks = list.doc.tasks;
         for (var i = 0; i < tasks.length; i++) {
             var li = this.renderTask(list, tasks[i]);
@@ -1280,11 +1135,10 @@ function deleteList(params) {
     
 }
 function sortList() {
-    // var app = this;
     
     // sidebar
     var lis = [];
-    this.parts.lists.find('> li').each(function(i, ele) {
+    app.parts.lists.find('> li').each(function(i, ele) {
         lis.push($(ele));
     });
     var val = function(ele){
@@ -1299,24 +1153,12 @@ function sortList() {
         return val(b) - val(a);
     });
     for (var i = 0; i < lis.length; i++) {
-        lis[i].appendTo(this.parts.lists);
-    }
-    
-    // list setting window
-    var trs = [];
-    this.parts.lswt.find('tr[data-list-id]').each(function(i, ele) {
-        trs.push($(ele));
-    });
-    trs.sort(function(a, b) {
-        return val(b) - val(a);
-    });
-    for (var i = 0; i < trs.length; i++) {
-        trs[i].appendTo(this.parts.lswt);
+        lis[i].appendTo(app.parts.lists);
     }
 }
 function sortUpdateList() {
     var sort = {};
-    var lists = this.parts.lists.find('> li');
+    var lists = app.parts.lists.find('> li');
     var count = lists.length;
     lists.each(function(i, ele) {
         var li = $(ele);
@@ -1335,8 +1177,7 @@ function createTask(params) {
     
 }
 function modifyTask(params) {
-    // var app = this;
-    return this.ajax({
+    return app.ajax({
         type: 'post',
         url: '/api/1/task/update',
         data: params,
@@ -1344,17 +1185,24 @@ function modifyTask(params) {
     })
     .done(function(data){
         if (data.success) {
-            app.statusUpdate('update a task.');
             var oldtask = $.extend({}, app.listmap[params.list_id].taskmap[data.task.id]);
             var newtask = $.extend(app.listmap[params.list_id].taskmap[data.task.id], data.task);
-            app.renderBadge(app.listmap[params.list_id]);
-            app.taskli[params.list_id + '-' + data.task.id].data('updated', data.task.updated);
+            var list = app.listmap[params.list_id];
+            app.renderBadge(list);
+            app.createTaskElement(list, newtask);
             app.updateCounter(oldtask, newtask);
         }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        console.log('custom fail.');
+        console.log({
+            status: jqXHR.status,
+            thrown: errorThrown,
+            textStatus: textStatus
+        })
     });
 }
 function moveTask(task_id, src_list_id, dst_list_id) {
-    // var app = this;
     if (src_list_id === dst_list_id) {
         alert("Can't be moved to the same list.");
         return;
@@ -1371,8 +1219,6 @@ function moveTask(task_id, src_list_id, dst_list_id) {
     })
     .done(function(data){
         if (data.success) {
-            app.statusUpdate('move a task.');
-            
             delete app.listmap[src_list_id].taskmap[task_id];
             app.taskli[src_list_id + '-' + task_id].remove();
             
@@ -1387,12 +1233,12 @@ function moveTask(task_id, src_list_id, dst_list_id) {
             app.renderBadge(app.listmap[dst_list_id]);
             
             if (app.current_list) {
-                li.slideUp(app.speed);
+                li.slideUp(c.SPEED);
             } else {
                 if (app.current_filter.call(app, li)) {
-                    li.slideDown(app.speed);
+                    li.slideDown(c.SPEED);
                 } else {
-                    li.slideUp(app.speed);
+                    li.slideUp(c.SPEED);
                 }
             }
             
@@ -1403,16 +1249,13 @@ function deleteTask(params) {
     
 }
 function filterTask() {
-    // var app = this;
     var filter = this.tasksFilterGenerate();
     this.current_filter = filter;
-    // this.parts.timeline.hide();
-    // this.parts.tasks.show();
-    this.parts.tasks.find('> li').each(function(i, ele){
+    app.parts.tasks.find('> li').each(function(i, ele){
         var ele = $(ele);
         if (filter(ele)) {
             if (app.is_webkit) {
-                ele.slideDown(app.speed);
+                ele.slideDown(c.SPEED);
             } else {
                 ele.show();
             }
@@ -1421,7 +1264,7 @@ function filterTask() {
             // }
         } else {
             if (app.is_webkit) {
-                ele.slideUp(app.speed);
+                ele.slideUp(c.SPEED);
             } else {
                 ele.hide();
             }
@@ -1430,7 +1273,6 @@ function filterTask() {
     this.renderCommentBadge();
 }
 function readComment(li) {
-    // var app = this;
     li.find('ul.comments > li').each(function(i, ele){
         var comment = $(ele);
         if (comment.data('read')) {
@@ -1445,7 +1287,7 @@ function readComment(li) {
 }
 function sortTask(id) {
     var lis = [];
-    this.parts.tasks.find('> li').each(function(i, ele) {
+    app.parts.tasks.find('> li').each(function(i, ele) {
         lis.push($(ele));
     });
     if (!id) {
@@ -1479,14 +1321,14 @@ function sortTask(id) {
         lis.reverse();
     }
     if (id === "sort") {
-        this.parts.tasks.sortable("enable");
-        this.parts.tasks.addClass('sortable');
+        app.parts.tasks.sortable("enable");
+        app.parts.tasks.addClass('sortable');
     } else {
-        this.parts.tasks.sortable("disable");
-        this.parts.tasks.removeClass('sortable');
+        app.parts.tasks.sortable("disable");
+        app.parts.tasks.removeClass('sortable');
     }
     for (var i = 0; i < lis.length; i++) {
-        lis[i].appendTo(this.parts.tasks);
+        lis[i].appendTo(app.parts.tasks);
     }
 }
 function sortUpdateTask() {
@@ -1494,7 +1336,7 @@ function sortUpdateTask() {
     var task_ids = [];
     var task_ids_sort = [];
     var sort = {};
-    this.parts.tasks.find('> li').each(function(i, ele) {
+    app.parts.tasks.find('> li').each(function(i, ele) {
         var li = $(ele);
         if (li.data('list-id') === list_id) {
             task_ids.push(li.data('id'));
@@ -1558,7 +1400,7 @@ function listReadLastTime(list_id) {
     }
     return '';
 }
-function clickStatebleCheckbox(e) {
+function statebleCheckboxClick(e) {
     var ele = $(e.currentTarget);
     var val = ele.attr('checked') ? 1 : 0;
     this.updateAccount({
@@ -1567,30 +1409,6 @@ function clickStatebleCheckbox(e) {
         key: ele.attr('id'),
         val: val
     })
-}
-function timestamp(epoch) {
-    var now = new Date();
-    var now_epoch = parseInt(now.getTime() / 1000);
-    if (epoch > now_epoch) {
-        epoch = parseInt(epoch / 1000);
-    }
-    var diff = now_epoch - epoch;
-    if (diff < 60) {
-        var s = diff > 1 ? 's' : '';
-        return diff + ' sec' + s + ' ago';
-    } else if (diff < 3600) {
-        var min = parseInt(diff / 60);
-        var s = min > 1 ? 's' : '';
-        return min + ' minute' + s + ' ago';
-    } else if (diff < (3600 * 24)) {
-        var hour = parseInt(diff / 3600);
-        var s = hour > 1 ? 's' : '';
-        return hour + ' hour' + s + ' ago';
-    } else {
-        var day = parseInt(diff / (3600 * 24));
-        var s = day > 1 ? 's' : '';
-        return day + ' day' + s + ' ago';
-    }
 }
 function updateCounter(oldtask, newtask) {
     for (var i = 0, max_i = this.counters.length; i < max_i; i++) {
@@ -1626,48 +1444,56 @@ function resetCounter(search) {
         counter.badge.text(count);
     }
 }
-function autoLink(text) {
-    return text.replace(this.url_re, function(url){
-        var a = document.createElement('a');
-        a.href = url;
-        a.target = '_blank';
-        a.appendChild(document.createTextNode(url));
-        var div = document.createElement('div');
-        div.appendChild(a);
-        return div.innerHTML;
-    });
-}
 function showNotifications() {
     
 }
 
 // GrobalMenu
-function clickOpenButton(e, ele) {
-    // var app = this;
-    var form = this.modals[ele.data('id')];
+function openClick(e, ele) {
+    var form = app.modals[ele.data('id')];
     if (form.css('display') === 'none') {
         $('#create-task-assign').hide();
-        form.show('drop', {}, app.speed, function(){
+        form.show('drop', {}, c.SPEED, function(){
             var input = form.find('input[type=text]:first');
             if (input.length) {
                 input.get(0).focus();
             }
             var callback = ele.data('callback');
             if (callback) {
-                var func = callback.charAt(0).toUpperCase() + callback.substr(1);
-                app['openCallback' + func].call(app, e, ele);
+                app.exec(['openCallback', callback], [e, ele]);
             }
         });
     }
 }
-function clickSignInTwitter(e, ele) {
+function openCommentClick(e, ele) {
+    var top = ele.offset().top + ele.height() + 20;
+    
+    var form = app.modals[ele.data('id')];
+    if (form.css('display') === 'none') {
+        form
+        .css({
+            top: top + 'px'
+        })
+        .slideDown(c.SPEED, function(){
+            var input = form.find('textarea');
+            if (input.length) {
+                input.get(0).focus();
+            } else {
+                form.find('textarea:first').focus();
+            }
+            var callback = ele.data('callback');
+            if (callback) {
+                app.exec(['openCallback', callback], [e, ele]);
+            }
+        });
+    }
+}
+function signInTwitterClick(e, ele) {
     location.href = '/signin/twitter/oauth';
 }
-function clickSyncTwitterContact(e, ele) {
-    // var app = this;
+function syncTwitterContactClick(e, ele) {
     
     // FIXME: statusbar update
-    this.statusUpdate('sync contact list begin.');
     this.assign = [];
     return this.ajax({
         type: 'get',
@@ -1682,37 +1508,17 @@ function clickSyncTwitterContact(e, ele) {
     });
     
 }
-function clickAccountSync(e, ele) {
-    // // var app = this;
-    // 
-    // return this.ajax({
-    //     type: 'get',
-    //     url: '/api/1/account/',
-    //     dataType: 'json'
-    // })
-    // .done(function(data){
-    //     if (data.success) {
-    //         app.account = data.doc;
-    //         
-    //         app.assign = [];
-    //         for (user_id in data.doc.tw) {
-    //             app.registAssign(data.doc.tw[user_id].friends);
-    //         }
-    //         console.log(app.account);
-    //     }
-    // });
-}
-function clickRefresh(e, ele) {
+function refreshClick(e, ele) {
     this.refresh();
 }
-function clickGuideSwitch(e, ele) {
+function guideSwitchClick(e, ele) {
     if (this.account.state.noguide) {
         delete this.account.state["noguide"];
         ele.addClass('on').text(ele.data('text-on'));
     } else {
         this.account.state.noguide = true;
         ele.removeClass('on').text(ele.data('text-off'));
-        this.parts.guide.fadeOut('slow');
+        app.parts.guide.fadeOut('slow');
     }
     this.updateAccount({
         ns: '',
@@ -1723,21 +1529,20 @@ function clickGuideSwitch(e, ele) {
 }
 
 // SideMenu
-function clickListDisplaySwitch(e, ele) {
-    // var app = this;
+function listDisplaySwitchClick(e, ele) {
     var list_id = ele.parent().parent().data('list-id');
     var method = ele.attr('checked') ? '-' : '+';
     
     if (ele.attr('checked')) {
-        this.parts.lists.find('li').each(function(i, ele){
+        app.parts.lists.find('li').each(function(i, ele){
             if (list_id === $(ele).data('list-id')) {
-                $(ele).slideDown(app.speed);
+                $(ele).slideDown(c.SPEED);
             }
         });
     } else {
-        this.parts.lists.find('li').each(function(i, ele){
+        app.parts.lists.find('li').each(function(i, ele){
             if (list_id === $(ele).data('list-id')) {
-                $(ele).slideUp(app.speed);
+                $(ele).slideUp(c.SPEED);
             }
         });
     }
@@ -1749,8 +1554,7 @@ function clickListDisplaySwitch(e, ele) {
         val: list_id
     });
 }
-function clickListBadgeSwitch(e, ele) {
-    // var app = this;
+function listBadgeSwitchClick(e, ele) {
     var list_id = this.current_list.id;
     var method = ele.attr('checked') ? '+' : '-';
     var list = this.listmap[list_id];
@@ -1802,6 +1606,7 @@ function openCallbackEditList(e, ele) {
 
     var createListMembers = $('#create-list-members');
     createListMembers.empty();
+    createListMembers.hide();
     for (var i = 0, max = list.doc.member_ids.length; i < max; i++) {
         var member_id = list.doc.member_ids[i];
         if (member_id in this.friend_ids) {
@@ -1811,6 +1616,7 @@ function openCallbackEditList(e, ele) {
             // console.log(member_id);
         }
     }
+    createListMembers.slideDown(c.SPEED);
 }
 function openCallbackDeleteList(e, ele) {
     var list = this.listmap[ele.data('list-id')];
@@ -1820,7 +1626,6 @@ function openCallbackDeleteList(e, ele) {
     form.find('button').get(0).focus();
 }
 function submitCreateList(form) {
-    // var app = this;
     
     var list_id = form.data('list-id');
     var url = list_id ? '/api/1/list/update' : '/api/1/list/create';
@@ -1840,8 +1645,8 @@ function submitCreateList(form) {
         member_ids.push($(ele).data('id'));
     });
     if (list_id) {
-        form.fadeOut(this.speed);
-        this.parts.listmembers.empty();
+        form.fadeOut(c.SPEED);
+        app.parts.listmembers.empty();
         this.renderMember(owner_id);
         for (var i = 0; i < member_ids.length; i++) {
             this.renderMember(member_ids[i]);
@@ -1863,7 +1668,6 @@ function submitCreateList(form) {
     })
     .pipe(function(data){
         if (data.success) {
-            // app.statusUpdate('create list ' + data.list_id);
             return app.ajax({
                 type: 'get',
                 url: '/api/1/list/' + data.list_id,
@@ -1873,13 +1677,11 @@ function submitCreateList(form) {
     })
     .done(function(data){
         if (data.success) {
-            // app.statusUpdate('get list ' + data.list.doc.name);
             app.registList(data.list);
         }
     });
 }
 function submitDeleteList(form) {
-    // var app = this;
     var list_id = form.data('list-id');
     return this.ajax({
         type: 'post',
@@ -1891,7 +1693,6 @@ function submitDeleteList(form) {
     })
     .done(function(data){
         if (data.success) {
-            app.statusUpdate('delete list ' + data.list_id);
             app.refresh();
             form.fadeOut();
         }
@@ -1907,7 +1708,6 @@ function registList(list) {
 
 // MainMenu
 function tasksFilterGenerate(cond) {
-    // var app = this;
     if (!cond) {
         cond = app.cond;
     }
@@ -1994,103 +1794,31 @@ function tasksRequestFilter(list, task) {
     }
     return true;
 }
-function clickTaskmenuSort(e, ele) {
+function taskmenuSortClick(e, ele) {
     this.sortTask(ele.data('id'));
 }
-function clickTaskmenuSwitch(e, ele) {
-    // var type = ele.data('id');
-    // var val = ele.data('val');
-    // var id = ele.attr('id');
-    // var selectors = {
-    //     description: '.content',
-    //     comment: 'ul.comments'
-    // };
-    // var selector = selectors[type];
-    // if (val) {
-    //     ele.data('val', 0);
-    //     ele.addClass('on');
-    //     this.parts.tasks.find(selector).slideUp(this.speed);
-    // }
-    // else {
-    //     ele.data('val', 1);
-    //     ele.removeClass('on');
-    //     this.parts.tasks.find(selector).slideDown(this.speed);
-    // }
-    // this.updateAccount({
-    //     ns: 'state.button',
-    //     method: 'set',
-    //     key: id,
-    //     val: ele.data('val')
-    // });
-}
-function clickTaskmenuFilter(e, ele) {
-    // // var app = this;
-    // var id = ele.data('id');
-    // var val = ele.data('val');
-    // var selectors = {
-    //     my: '',
-    //     star: '.icon-star-on',
-    //     tasksOn: '.icon-tasks-on',
-    //     tasksOff: '.icon-tasks-off',
-    //     progress: '.icon-progress',
-    //     recycle: '.icon-recycle'
-    // };
-    // var selector = selectors[id];
-    // if (id === 'recycle') {
-    //     this.parts.mainmenu.find('.icon-star-on').parent().removeClass('on').data('val', 1);
-    //     this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
-    //     this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
-    //     if (val) {
-    //         this.parts.mainmenu.find('.icon-trash').parent().fadeIn('slow');
-    //     } else {
-    //         this.parts.mainmenu.find('.icon-trash').parent().fadeOut('slow');
-    //     }
-    // }
-    // if (id === 'tasksOn') {
-    //     this.parts.mainmenu.find('.icon-progress').parent().removeClass('on').data('val', 1);
-    //     this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
-    // } else if (id === 'tasksOff') {
-    //     this.parts.mainmenu.find('.icon-progress').parent().removeClass('on').data('val', 1);
-    //     this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
-    // } else if (id === 'progress') {
-    //     this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
-    //     this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
-    // }
-    // if (val) {
-    //         ele.data('val', '');
-    //         ele.addClass('on');
-    // }
-    // else {
-    //         ele.data('val', 1);
-    //         ele.removeClass('on');
-    // }
-    // this.filterTask();
-}
-function clickTaskmenuTrash(e, ele) {
-    
-}
-function clickCreateTaskDuePlus(e, ele) {
+function createTaskDuePlusClick(e, ele) {
     var due = $('#create-task-date');
     var date = due.datepicker("getDate") || new Date();
     date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
     due.datepicker("setDate", date);
 }
-function clickCreateTaskDuePlusMonth(e, ele) {
+function createTaskDuePlusMonthClick(e, ele) {
     var due = $('#create-task-date');
     var date = due.datepicker("getDate") || new Date();
     date.setMonth(date.getMonth() + 1);
     due.datepicker("setDate", date);
 }
-function clickCreateTaskDueMinus(e, ele) {
+function createTaskDueMinusClick(e, ele) {
     var due = $('#create-task-date');
     var date = due.datepicker("getDate") || new Date();
     date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
     due.datepicker("setDate", date);
 }
-function clickCreateTaskDueDelete(e, ele) {
+function createTaskDueDeleteClick(e, ele) {
     $('#create-task-date').val('');
 }
-function clickCreateTaskDueToday(e, ele) {
+function createTaskDueTodayClick(e, ele) {
     var due = $('#create-task-date');
     due.datepicker("setDate", new Date());
 }
@@ -2141,7 +1869,7 @@ function openCallbackCreateTask(e, ele) {
     var h1 = form.find('h1:first');
     h1.text(h1.data('text-default'));
     var save = form.find('button.save:first');
-    save.text(this.localizer.text(save, 'default'));
+    save.text(c.lcText(save, 'default'));
     this.resetCreateTask(form);
     // form.find('input[type=text]:first').get(0).focus();
     form.data('list-id', list.id);
@@ -2166,7 +1894,7 @@ function openCallbackEditTask(e, ele) {
     var h1 = form.find('h1:first');
     h1.text(h1.data('text-edit'));
     var save = form.find('button.save:first');
-    save.text(this.localizer.text(save, 'edit'));
+    save.text(c.lcText(save, 'edit'));
     form.data('list-id', list_id);
     form.data('task-id', task_id);
     form.find('input[name=title]').val(task.title || '');
@@ -2190,7 +1918,6 @@ function openCallbackClearTrash(e, ele) {
     form.find('button').get(0).focus();
 }
 function submitCreateTask(form) {
-    // var app = this;
     
     var task_id = form.data('task-id');
     var list;
@@ -2220,7 +1947,7 @@ function submitCreateTask(form) {
     });
     if (task_id) {
         form.find('input[name=title]').val('');
-        form.hide('drop', {}, this.speed);
+        form.hide('drop', {}, c.SPEED);
     } else {
         app.submitFinalize(form);
     }
@@ -2242,21 +1969,18 @@ function submitCreateTask(form) {
         if (data.success) {
             var task, li;
             if (!task_id) {
-                app.statusUpdate('create a task.');
                 task = data.task;
                 task.list = list;
                 list.taskmap[task.id] = task;
                 list.doc.tasks.push(task);
                 li = app.renderTask(list, task);
-                app.taskli[list.id + '-' + task.id] = li;
             }
             else {
-                app.statusUpdate('update a task.');
                 task = $.extend(app.listmap[list.id].taskmap[data.task.id], data.task);
                 task.list = list;
-                li = app.taskli[list.id + '-' + task.id];
-                li.replaceWith(app.createTaskElement(list, task));
-                app.taskli[list.id + '-' + task.id].effect("highlight", {}, app.speed);
+                var li = app.createTaskElement(list, task);
+                // console.log(li);
+                // li.effect("highlight", {}, c.SPEED);
             }
             if (!app.current_filter.call(app, null, task)) {
                 app.taskli[list.id + '-' + task.id].delay(500).slideUp('slow');
@@ -2266,7 +1990,6 @@ function submitCreateTask(form) {
     });
 }
 function submitClearTrash(form) {
-    // var app = this;
     var list_id = form.data('list-id');
     var list = this.listmap[list_id];
     var owner_id = this.findMeFromList(list);
@@ -2281,7 +2004,6 @@ function submitClearTrash(form) {
     })
     .done(function(data){
         if (data.success) {
-            app.statusUpdate('clear trash ' + data.count + ' tasks remove.');
             var list = app.listmap[list_id];
             var tasks = [];
             for (var i = 0; i < list.doc.tasks.length; i++) {
@@ -2295,10 +2017,10 @@ function submitClearTrash(form) {
             }
             list.doc.tasks = tasks;
         }
-        form.fadeOut(app.speed);
+        form.fadeOut(c.SPEED);
         var li = $('#closed-task-switch');
         if (!li.data('closed')) {
-            app.switchClosed({
+            app.switchClosedClick({
                 currentTarget: li
             });
         }
@@ -2346,13 +2068,12 @@ function createAssignList(friend) {
 }
 function renderTask(list, task) {
     var li = this.createTaskElement(list, task);
-    this.parts.tasks.prepend(li);
+    app.parts.tasks.prepend(li);
     this.updateCounter(null, task);
     return li;
 }
 function createTaskElement(list, task) {
-    // var app = this;
-    var li = $(this.template.task);
+    var li = $(app.template.task);
     li.data('list-id', list.id);
     li.data('id', task.id);
     li.data('updated', task.updated);
@@ -2362,7 +2083,7 @@ function createTaskElement(list, task) {
         var label = mdy[0] + '/' + mdy[1];
         var now = new Date();
         if (now.getFullYear() != mdy[2]) {
-            if (this.lang === 'ja') {
+            if (c.LANG === 'ja') {
                 label = mdy[2] + '/' + label;
             } else {
                 label = label + '/' + mdy[2];
@@ -2378,11 +2099,6 @@ function createTaskElement(list, task) {
         li.find('.due').text('-');
     }
     li.data('due', due_epoch);
-    li.find('.comment').click(function(){
-        app.parts.commentform.slideDown(app.speed, function(){
-            app.parts.commentbox.focus();
-        });
-    });
     if (task.comments.length) {
         li.find('.comments').text('(' + task.comments.length + ')');
     }
@@ -2394,11 +2110,10 @@ function createTaskElement(list, task) {
             li.data('sort', 0);
         }
     }
-    this.taskli[list.id + '-' + task.id] = li;
     li.find('.title').text(task.title);
     var responser;
     if ("requester_id" in task) {
-        $('<img data-guide-en="Requester" data-guide-ja="依頼者"/>')
+        $('<img data-init="guide" data-guide-en="Requester" data-guide-ja="依頼者"/>')
             .attr('src', app.getProfileImageUrl(task.requester_id))
             .addClass('twitter_profile_image')
             .appendTo(li.find('.assign'))
@@ -2410,7 +2125,7 @@ function createTaskElement(list, task) {
         for (var i = 0; i < task.assign_ids.length; i++) {
             var assign_id = task.assign_ids[i];
             var url = app.getProfileImageUrl(assign_id);
-            var img = $('<img data-guide-en="Assignee" data-guide-ja="担当者"/>')
+            var img = $('<img data-init="guide" data-guide-en="Assignee" data-guide-ja="担当者"/>')
                 .attr('src', url)
                 .addClass('twitter_profile_image');
             li.find('.assign').prepend(img);
@@ -2419,7 +2134,7 @@ function createTaskElement(list, task) {
     }
     if (task.status === 2 && task.assign_ids.length) {
         var url = app.getProfileImageUrl(task.requester_id);
-        var img = $('<img data-guide-en="Approver" data-guide-ja="承認者"/>')
+        var img = $('<img data-init="guide" data-guide-en="Approver" data-guide-ja="承認者"/>')
             .attr('src', url)
             .addClass('twitter_profile_image');
         li.find('.assign').prepend($('<span class="icon icon-left"/>')).prepend(img);
@@ -2430,7 +2145,6 @@ function createTaskElement(list, task) {
         if (app.active === 'comment') {
             return;
         }
-        app.parts.commentbox.blur();
         if (app.current_taskli) {
             app.current_taskli.removeClass('selected');
         }
@@ -2455,11 +2169,9 @@ function createTaskElement(list, task) {
                 app.renderComment(list.id, task.id, comment);
             }
         }
-        app.parts.commentbox.val('').css('height', '16px');
         app.parts.comment.scrollTop(app.parts.comment.height());
         app.commentHeightResize();
     });
-    li.find('> .action, > .due').click($.proxy(this.clickTaskAction, this));
     li.find('.grip').hover(function(e){
         if (app.parts.tasks.hasClass('sortable')) {
             li.removeAttr('draggable');
@@ -2493,25 +2205,31 @@ function createTaskElement(list, task) {
         .addClass('icon-star-on');
         task.star = true;
     }
-    this.initEventGuide(li);
+    app.initElements(li);
     li.get(0).addEventListener('dragstart', function(e){
         app.dragging = true;
         app.parts.guide.hide();
-        app.parts.listnav.show('drop', {}, app.speed);
+        app.parts.listnav.show('drop', {}, c.SPEED);
         e.dataTransfer.setData('Text', list.id + ':' + task.id);
         app.dragtask = task;
     }, false);
     li.get(0).addEventListener('dragend', function(e){
         if (app.dragging) {
             app.dragging = false;
-            app.parts.listnav.hide('drop', {}, app.speed);
+            app.parts.listnav.hide('drop', {}, c.SPEED);
             e.dataTransfer.clearData();
         }
     }, false);
+    var key = list.id + '-' + task.id;
+    if (key in app.taskli) {
+        app.taskli[key].after(li).remove();
+        app.taskli[key] = li;
+    } else {
+        app.taskli[key] = li;
+    }
     return li;
 }
-function clickTaskAction(e) {
-    // var app = this;
+function taskActionClick(e) {
     e.stopPropagation();
     var div = $(e.currentTarget);
     var li = div.parent();
@@ -2534,7 +2252,7 @@ function clickTaskAction(e) {
             task_id: task_id,
             closed: 1
         });
-        li.slideUp(app.speed);
+        li.slideUp(c.SPEED);
     }
     else if (div.hasClass('icon-recycle')) {
         li.removeClass('delete');
@@ -2546,7 +2264,7 @@ function clickTaskAction(e) {
             task_id: task_id,
             closed: 0
         });
-        li.slideUp(app.speed);
+        li.slideUp(c.SPEED);
     }
     else if (div.hasClass('icon-tasks-off')) {
         li.removeClass('delete');
@@ -2611,23 +2329,22 @@ function clickTaskAction(e) {
         this.updateCounter(oldtask, task);
     }
     else if (div.hasClass('icon-edit') || div.hasClass('due')) {
-        this.clickOpenButton(e, div);
+        this.openClick(e, div);
     }
     else if (div.hasClass('assign')) {
-        this.clickOpenButton(e, div);
+        this.openClick(e, div);
     }
     
     var filter = this.tasksFilterGenerate();
     if (!filter(li)) {
-        li.slideUp(app.speed);
+        li.slideUp(c.SPEED);
     }
 }
 function submitComment() {
-    // var app = this;
     
-    var list_id = this.parts.commentbox.data('list-id');
-    var task_id = this.parts.commentbox.data('task-id');
-    var comment = this.parts.commentbox.val();
+    var list_id = app.parts.commentbox.data('list-id');
+    var task_id = app.parts.commentbox.data('task-id');
+    var comment = app.parts.commentbox.val();
     
     var list = this.listmap[list_id];
     var owner_id = this.findMeFromList(list);
@@ -2644,8 +2361,6 @@ function submitComment() {
     })
     .done(function(data){
         if (data.success) {
-            // FIXME: 
-            app.statusUpdate('create a comment.');
             // FIXME
             $.extend(app.listmap[list_id].taskmap[data.task.id], data.task);
             app.taskli[list_id + '-' + data.task.id].data('updated', data.task.updated);
@@ -2663,20 +2378,19 @@ function submitComment() {
     });
 }
 function renderComment(list_id, task_id, comment) {
-    // var app = this;
     var li = $('<li class="clearfix"/>');
     var friend = this.friend_ids[comment.owner_id];
     var img = $('<img>').attr('src', friend.profile_image_url);
     var msg = $('<div/>');
     var name = $('<span class="name"></span>').text(friend.screen_name);
-    var date = $('<span class="date"></span>').text(this.timestamp(comment.time));
-    var message = $('<span class="comment"/>').html(this.autoLink(comment.comment));
+    var date = $('<span class="date"></span>').text(c.timestamp(comment.time));
+    var message = $('<span class="comment"/>').html(c.autoLink(comment.comment));
     var del = $('<span class="action icon icon-delete"></span>');
     del.click(function(e){
         e.stopPropagation();
         app.deleteComment(list_id, task_id, comment);
         li.remove();
-        app.parts.commentbox.focus();
+        // app.parts.commentbox.focus();
     });
     li.append(img);
     li.append(msg);
@@ -2689,10 +2403,9 @@ function renderComment(list_id, task_id, comment) {
         li.addClass('unread');
         // this.unread_comment_count++;
     }
-    this.parts.comment.append(li);
+    app.parts.comment.append(li);
 }
 function deleteComment(list_id, task_id, comment) {
-    // var app = this;
     var list = this.listmap[list_id];
     var owner_id = this.findMeFromList(list);
     return this.ajax({
@@ -2708,8 +2421,6 @@ function deleteComment(list_id, task_id, comment) {
     })
     .done(function(data){
         if (data.success) {
-            // FIXME: 
-            app.statusUpdate('delete a comment.');
             // FIXME
             $.extend(app.listmap[list_id].taskmap[data.task.id], data.task);
             if (data.task.comments.length) {
@@ -2729,11 +2440,11 @@ function renderMember(id) {
     li.append(img);
     li.data('member-id', id);
     li.data('url', url);
-    li.data('method', 'open');
+    li.data('bind', 'open');
     li.data('id', 'create-task-window');
     li.data('callback', 'createTaskWithMember');
     li.get(0).addEventListener("click", this, false);
-    this.parts.listmembers.append(li);
+    app.parts.listmembers.append(li);
 }
 
 })(this, this, document);

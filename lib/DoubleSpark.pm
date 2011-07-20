@@ -106,18 +106,18 @@ sub open_list_doc {
     my ($self, $account, $role, $id) = @_;
     my $doc = $self->open_doc($id);
     my $check = 'has_role_' . $role;
-    die 'Forbidden' unless $account->$check($doc);
+    return $self->res_403() unless $account->$check($doc);
     return $doc;
 }
 
 sub open_list_docs {
     my ($self, $account, $role, $ids) = @_;
     my $res = $self->open_docs($ids);
-    die 'NotFond' unless $res && $res->{rows} && scalar(@{$res->{rows}});
+    return $self->res_404() unless $res && $res->{rows} && scalar(@{$res->{rows}});
     my $docs = $res->{rows};
     my $check = 'has_role_' . $role;
     for my $doc (@$docs) {
-        die 'Forbidden' unless $account->$check($doc->{doc});
+        return $self->res_403() unless $account->$check($doc->{doc});
     }
     return $docs;
 }
@@ -140,6 +140,19 @@ sub lang {
     my $lang = $c->req->param('lang') || $c->req->header('accept-language') || '';
     return 'ja' if $lang=~/^ja/;
     return 'en';
+}
+
+sub res_403 {
+    my $self = shift;
+    my $content = 'Forbidden';
+    $self->create_response(
+        403,
+        [
+            'Content-Type' => 'text/html; charset=utf-8',
+            'Content-Length' => length($content),
+        ],
+        [$content]
+    );
 }
 
 1;

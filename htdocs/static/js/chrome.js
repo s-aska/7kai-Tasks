@@ -1,108 +1,140 @@
 (function(ns, w, d) {
 
-var w = $(w);
-
-ns.Tasks = initialize;
-ns.Tasks.prototype = {
-    
+var app = {
     // 定数
-    token_name: 'csrf_token',
+    cond_default: {
+        list_id: null,
+        star: null,
+        status: null,
+        status_ignore: null,
+        closed: 0,
+        registrant: null,
+        assign: null,
+        todo: null,
+        notify: null
+    },
     valid: {
         list_name_max_length: 20
     },
-    speed: 'fast',
-    filters: [
-        'list-timeline',
-        'list-comment',
-        'list-all',
-        'list-todo',
-        'list-request',
-        'list-watch'
-    ],
+
+    // オブジェクト変数
     template: {},
     localizer: null,
-    
-    // データ
+    counters: [],
     is_webkit: false,
     lang: 'en',
     guide: true,
     dragging: false,
+    dragtask: null,
     current_list: null,
-    current_filter: null,
+    current_task: null,
+    current_taskli: null,
     account: null,
     assign: [],
     modals: {},
+    offset: {},
     parts: {},
     friends: {},
     friend_ids: {},
     taskli: {},
     listli: {},
+    active: null,
+    cond: {},
+    sort: null,
     unread_comment_count: 0,
+    notifications: [],
+    busy: false,
     
     // 初期化系
     run: run,
     initParts: initParts,
     initEvent: initEvent,
-    initEventGuide: initEventGuide,
-    initWindow: initWindow,
     initAccount: initAccount,
+    initElements: initElements,
+    initElementClick: initElementClick,
+    initElementLocalize: initElementLocalize,
+    initElementLocalizePlaceholder: initElementLocalizePlaceholder,
+    initElementPulldown: initElementPulldown,
+    initElementGuide: initElementGuide,
+    initElementSummary: initElementSummary,
+    initElementSortable: initElementSortable,
+    initElementCommentBox: initElementCommentBox,
+    initElementFormWindow: initElementFormWindow,
+    initElementDatepicker: initElementDatepicker,
+    initElementDisableSelection: initElementDisableSelection,
+    initElementAutocomplete: initElementAutocomplete,
+    initElementNoticecheck: initElementNoticecheck,
     
     // イベント
     handleEvent: handleEvent,
     windowResizeEvent: windowResizeEvent,
+    commentHeightResize: commentHeightResize,
     
     // General
+    exec: exec,
     ajax: ajax,
-    ajaxFailure: ajaxFailure,
+    
     message: message,
-    statusUpdate: statusUpdate,
+    
     getProfileImageUrl: getProfileImageUrl,
     getTwitterProfileImageUrl: getTwitterProfileImageUrl,
     syncTwitterContact: syncTwitterContact,
     lookupUnknownMembers: lookupUnknownMembers,
+    
     updateAccount: updateAccount,
     refresh: refresh,
+    
     submitFinalize: submitFinalize,
-    showTimeline: showTimeline,
-    renderTimeline: renderTimeline,
+    showNotifications: showNotifications,
     showList: showList,
     switchList: switchList,
-    switchFilterList: switchFilterList,
+    switchFilterListClick: switchFilterListClick,
+    switchClosedClick: switchClosedClick,
     renderList: renderList,
     renderBadge: renderBadge,
     needCount: needCount,
+    needNotify: needNotify,
     renderCommentBadge: renderCommentBadge,
+    
     createList: createList,
     modifyList: modifyList,
     deleteList: deleteList,
     sortList: sortList,
     sortUpdateList: sortUpdateList,
+    
     createTask: createTask,
     modifyTask: modifyTask,
+    moveTask: moveTask,
     deleteTask: deleteTask,
     filterTask: filterTask,
     sortTask: sortTask,
     sortUpdateTask: sortUpdateTask,
+    
     readComment: readComment,
     isMe: isMe,
     findMe: findMe,
     findMeFromList: findMeFromList,
     listReadLastRev: listReadLastRev,
     listReadLastTime: listReadLastTime,
-    clickStatebleCheckbox: clickStatebleCheckbox,
-    timestamp: timestamp,
+    statebleCheckboxClick: statebleCheckboxClick,
+    updateCounter: updateCounter,
+    resetCounter: resetCounter,
+    
+    needNotification: needNotification,
+    notificationCheck: notificationCheck,
+    notificationCheckDone: notificationCheckDone,
     
     // GrobalMenu
-    clickOpenButton: clickOpenButton,
-    clickSignInTwitter: clickSignInTwitter,
-    clickSyncTwitterContact: clickSyncTwitterContact,
-    clickAccountSync: clickAccountSync,
-    clickRefresh: clickRefresh,
-    clickGuideSwitch: clickGuideSwitch,
+    openClick: openClick,
+    openCommentClick: openCommentClick,
+    signInTwitterClick: signInTwitterClick,
+    syncTwitterContactClick: syncTwitterContactClick,
+    refreshClick: refreshClick,
+    guideSwitchClick: guideSwitchClick,
     
     // SideMenu
-    clickListDisplaySwitch: clickListDisplaySwitch,
-    clickListBadgeSwitch: clickListBadgeSwitch,
+    listDisplaySwitchClick: listDisplaySwitchClick,
+    listBadgeSwitchClick: listBadgeSwitchClick,
     openCallbackCreateList: openCallbackCreateList,
     openCallbackCreateTaskWithMember: openCallbackCreateTaskWithMember,
     openCallbackEditList: openCallbackEditList,
@@ -117,14 +149,12 @@ ns.Tasks.prototype = {
     tasksCommentFilter: tasksCommentFilter,
     tasksTodoFilter: tasksTodoFilter,
     tasksRequestFilter: tasksRequestFilter,
-    clickTaskmenuSort: clickTaskmenuSort,
-    clickTaskmenuSwitch: clickTaskmenuSwitch,
-    clickTaskmenuFilter: clickTaskmenuFilter,
-    clickTaskmenuTrash: clickTaskmenuTrash,
-    clickCreateTaskDuePlus: clickCreateTaskDuePlus,
-    clickCreateTaskDueMinus: clickCreateTaskDueMinus,
-    clickCreateTaskDueDelete: clickCreateTaskDueDelete,
-    clickCreateTaskDueToday: clickCreateTaskDueToday,
+    taskmenuSortClick: taskmenuSortClick,
+    createTaskDuePlusClick: createTaskDuePlusClick,
+    createTaskDuePlusMonthClick: createTaskDuePlusMonthClick,
+    createTaskDueMinusClick: createTaskDueMinusClick,
+    createTaskDueDeleteClick: createTaskDueDeleteClick,
+    createTaskDueTodayClick: createTaskDueTodayClick,
     openCallbackCreateTask: openCallbackCreateTask,
     openCallbackEditTask: openCallbackEditTask,
     openCallbackClearTrash: openCallbackClearTrash,
@@ -138,343 +168,382 @@ ns.Tasks.prototype = {
     createAssignList: createAssignList,
     renderTask: renderTask,
     createTaskElement: createTaskElement,
-    clickTaskAction: clickTaskAction,
+    taskActionClick: taskActionClick,
     submitComment: submitComment,
     deleteComment: deleteComment,
     renderComment: renderComment,
     renderMember: renderMember
-    
 };
 
-function initialize(options) {
-    if (typeof window.console != 'object') {
-        console.log = function(){};
-    }
-    this.lang = $('html').attr('lang');
-    this.token = $('input[name=' + this.token_name + ']:first').val();
-    if (
-        (navigator.userAgent.indexOf('Chrome') != -1) ||
-        (navigator.userAgent.indexOf('Safari') != -1)
-    ) {
-        this.is_webkit = true;
-    }
-}
+c.addEvents('initApplication');
 
-// Init
+$(d).ready(function(){
+    app.run();
+});
+
+// Run
 function run() {
-    this.initParts();
-    this.initEvent();
-    this.initWindow();
-    this.initAccount();
+    
+    if (navigator.userAgent.indexOf('AppleWebKit/') != -1) {
+        app.is_webkit = true;
+    }
+    
+    c.init();
+    
+    app.initParts();
+    app.initEvent();
+    app.initElements();
+    app.windowResizeEvent();
+    
+    app.initAccount();
+    
+    c.fireEvent('initApplication');
 }
 function initParts() {
-    this.parts.header      = $('body > header');
-    this.parts.aside       = $('body > div > aside');
-    this.parts.article     = $('body > div > article');
-    this.parts.footer      = $('body > footer');
     
-    this.parts.status      = this.parts.header.find('p');
-    this.parts.console     = this.parts.footer.find('ul');
-    this.parts.sidemenu    = this.parts.aside.find('> header > nav > ul');
-    this.parts.lists       = this.parts.aside.find('> nav > ul');
-    this.parts.mainmenu    = this.parts.article.find('> header > nav > ul');
-    this.parts.tasks       = this.parts.article.find('> section > ul.task');
-    this.parts.timeline    = this.parts.article.find('> section > ul.timeline');
-    this.parts.listname    = this.parts.article.find('> section > header > h1');
-    this.parts.listmembers = this.parts.article.find('> section > header > ul');
+    // base
+    app.parts.header      = $('body > header');
+    app.parts.aside       = $('body > div > aside');
+    app.parts.article     = $('body > div > article');
+    app.parts.right       = $('body > div > div');
+    app.parts.footer      = $('body > footer');
     
-    this.parts.lswt        = $('#list-settings-window table');
-    this.parts.owners      = $('#create-list-window select[name=owner]');
-    this.parts.guide       = $('#guide');
+    // header
+    app.parts.status      = app.parts.header.find('p');
+    app.parts.badge       = $('#notification-badge');
     
-    this.parts.listonly    = $('#create-task-button, #free-sort-task-button, #clear-trash-button');
-    this.parts.connectacs  = $('#connect-accounts');
+    // aside
+    app.parts.sidemenu    = app.parts.aside.find('> header');
+    app.parts.listnav     = app.parts.aside.find('> header > ul');
+    app.parts.lists       = app.parts.listnav;
+    app.parts.listname    = app.parts.aside.find('#current-list-name');
+    app.parts.listmembers = app.parts.aside.find('#list-members');
+    app.parts.listmenu    = app.parts.aside.find('> article li.action');
+    app.parts.listonly    = app.parts.aside.find('[data-listonly]');
+    app.parts.listsort    = app.parts.aside.find('> article ul.sort');
+    app.parts.summary     = $('#summary');
     
-    this.template.task     = this.parts.tasks.html();
-    this.template.assign   = $('#create-task-assign').html();
+    // article
+    app.parts.tasks       = app.parts.article.find('> section > ul.task');
+    
+    // comment
+    app.parts.comment     = $('body > div > div > ul');
+    app.parts.commentform = $('#comment-box');
+    app.parts.commentbox  = $('#comment-box textarea');
+    
+    // absolute
+    app.parts.guide       = $('#guide');
+    app.parts.owners      = $('#create-list-window select[name=owner]');
+    app.parts.connectacs  = $('#connect-accounts');
+    
+    // template
+    app.template.task     = app.parts.tasks.html();
+    app.template.assign   = $('#create-task-assign').html();
+    
+    // offset
+    app.offset.commment   = $('body > div > div').offset();
 }
 function initEvent() {
-    var that = this;
     
-    /* window */
-    w.resize($.proxy(this.windowResizeEvent, this));
+    $(w).resize($.proxy(this.windowResizeEvent, this));
     
-    this.initEventGuide($(d));
-    
-    /* header */
-    
-    
-    /* aside */
-    this.parts.lists.find('li.timeline').click($.proxy(this.showTimeline, this));
-    this.parts.lists.find('li.filter').click($.proxy(this.switchFilterList, this));
-    
-    $('textarea').autogrow();
-    
-    /* article */
-    /* article nav */
-    $('button, a, span.action, input[data-method]').each(function(i, ele){
-        ele.addEventListener("click", that, false);
-    });
-    
-    var f_disp = false;
-    var footer = $('body > footer');
-    var ul = $('body > footer > ul');
-    var footer_default_height = footer.height();
-    $('body > footer > div').click(function(){
-        var div = $(this);
-        if (f_disp) {
-            footer.animate({ height: footer_default_height + 'px' });
-            div.removeClass('disp');
-            f_disp = false;
-        } else {
-            var h = ul.height() - 12;
-            footer.animate({ height: footer_default_height + h + 'px' });
-            div.addClass('disp');
-            f_disp = true;
-        }
-    });
-    
-    this.parts.tasks.sortable({
-        handle: 'div.grip',
-        cursor: 'url(/static/img/openhand.cur), move',
-        start: function (e, ui) {
-            that.dragging = true;
-            that.parts.guide.hide();
-        },
-        stop: function (e, ui) {
-            that.dragging = false;
-        },
-        update: function(e, ui) {
-            that.sortUpdateTask();
-        }
-    });
-    
-    
-    this.parts.lists.sortable({
-        cursor: 'url(/static/img/openhand.cur), move',
-        start: function (e, ui) {
-            that.dragging = true;
-            that.parts.guide.hide();
-        },
-        stop: function (e, ui) {
-            that.dragging = false;
-        },
-        update: function(e, ui) {
-            that.sortUpdateList();
-        }
-    });
-    
-    // Modal Window
-    $('form.modal').each(function(i, ele){
-        var form = $(ele);
-        form.find('button.cancel').click(function(){
-            form.fadeOut(that.speed);
-            return false;
-        });
-        form.find('input[type=text]:first').keydown(function(e){
-            if (e.keyCode == 27) {
-                if (e.shiftKey) {
-                    var reset = form.data('reset');
-                    if (reset) {
-                        that[reset].call(this, form);
-                    } else {
-                        form.find('*[data-no-keep=1]').val('');
-                        form.find('input[type=text]:first').get(0).focus();
-                    }
-                } else {
-                    document.activeElement.blur();
-                    form.hide();
-                }
-            }
-        });
-        form.bind('submit', function(){
-            // form.find('input:first').val('').get(0).focus();
-            
-            var submit = form.data('submit');
-            if (submit) {
-                that[submit].call(that, form);
-            }
-            // FIXME: keep
-            
-            return false;
-        });
-        that.modals[form.attr('id')] = form;
-        // form.disableSelection();
-        // form.draggable();
-        form.draggable({ handle: 'h1' });
-        form.find('footer input[type=checkbox]').click($.proxy(that.clickStatebleCheckbox, that));
-    });
-    
-    // Create Task Window
-    $('#create-task-date').datepicker();
-    
-    var bindAutocomplete = function(selector, prependTo){
-        selector.autocomplete({
-    		source: function(request, response) {
-    		    response($.ui.autocomplete.filter(that.assign, request.term));
-    		},
-    		select: function(event, ui) {
-    		    that.createAssignList(that.friends[ui.item.value])
-    		    .prependTo(prependTo);
-            }
-    	}).data('autocomplete')._renderItem = function(ul, item) {
-            return $(document.createElement('li'))
-                .data('item.autocomplete', item)
-                .append("<a>"+ item.label + "</a>")
-                .appendTo(ul);
-        };
-        selector.bind('autocompleteclose', function(event, element){
-    	    selector.val('');
-    	});
-    };
-    bindAutocomplete.call(this, $('#create-list-members-input'), $('#create-list-members'));
-    bindAutocomplete.call(this, $('#create-list-admins-input'), $('#create-list-admins'));
-    
+    // Receiver Element for Chrome Extensions
     document.getElementById('extentionsEventDiv').addEventListener('extentionsEvent', function() {
-        var eventText = document.getElementById('extentionsEventDiv').innerText;
-        var eventData = JSON.parse(eventText);
-        that[eventData.method].apply(that, eventData.arguments);
+        var text = document.getElementById('extentionsEventDiv').innerText;
+        var data = JSON.parse(text);
+        app.exec(data.method, data.arguments);
     }, false);
     
-    $(document).keydown(function(e){
+    // Shortcut Key
+    $(document).keypress(function(e){
+        if (e.shiftKey || e.ctrlKey) {
+            return true;
+        }
         if (document.activeElement.tagName === 'BODY') {
-            if (e.keyCode === 67) {
+            // C
+            if (e.keyCode === 99) {
                 $('#create-task-button').click();
                 return false;
+            }
+            // R
+            else if (e.keyCode === 114) {
+                app.notificationCheck();
             }
         }
         return true;
     });
 }
-function initEventGuide(ele) {
-    var that = this;
-    ele.find('*[data-guide-' + that.lang + ']').each(function(i, ele){
-        var ele = $(ele);
-        var msg = ele.data('guide-' + that.lang);
-        ele.hover(function(){
-            if (!that.guide) {
-                return true;
-            }
-            if (that.dragging) {
-                return true;
-            }
-            var top = ele.offset().top + ele.height();
-            var left = ele.offset().left;
-            that.parts.guide.text(msg);
-            that.parts.guide.show();
-            that.parts.guide.css('top', top + 'px');
-            that.parts.guide.css('left', left + 'px');
-        }, function() {
-            that.parts.guide.hide();
-        });
+function initAccount() {
+    app.refresh();
+    setTimeout(function(){
+        app.notificationCheck(true);
+    }, 60 * 1000);
+}
+
+function initElements(context) {
+    $('*[data-init]', context).each(function(){
+        var ele = $(this);
+        var methods = ele.data('init').split(',');
+        for (var i = 0, max_i = methods.length; i < max_i; i++) {
+            app.exec(['initElement', methods[i]], [this]);
+        }
     });
 }
-function initWindow() {
-    
-    this.windowResizeEvent();
-    
-    // アカウント情報の取得
-    
-    // Twitter Contact List の初期化
-    
-    // リスト取得、無い場合作成
-    // aside構築
-    // article構築
-    
-    
-    
-    
-    
+function initElementClick(element) {
+    element.addEventListener("click", app, false);
 }
-function initAccount() {
-    this.refresh();
-    this.parts.mainmenu.find('.icon-trash').parent().fadeOut('slow');
+function initElementLocalize(element) {
+    var ele = $(element);
+    ele.text(ele.data('text-' + c.lang));
+}
+function initElementLocalizePlaceholder(element) {
+    var ele = $(element);
+    ele.attr('placeholder', ele.data('text-' + c.lang));
+}
+function initElementGuide(element) {
+    var ele = $(element);
+    var msg = ele.data('guide-' + c.lang);
+    ele.hover(function(){
+        // 動的に変更可能にする為、この段階で評価する
+        if (app.account.state.noguide) {
+            return true;
+        }
+        if (app.dragging) {
+            return true;
+        }
+        var top = ele.offset().top + ele.height();
+        var left = ele.offset().left;
+        app.parts.guide.text(msg);
+        app.parts.guide.show();
+        app.parts.guide.css('top', top + 'px');
+        app.parts.guide.css('left', left + 'px');
+    }, function() {
+        app.parts.guide.hide();
+    });
+}
+function initElementPulldown(element) {
+    var ele = $(element);
+    var menu = ele.find('> .pulldown-menu');
+    var effect = ele.data('effect');
+    c.delayHover(element, function(){
+        if (effect) {
+            menu.show(effect, {}, c.SPEED);
+        } else {
+            menu.slideDown(c.SPEED);
+        }
+    }, function(){
+        if (effect) {
+            menu.hide(effect, {}, c.SPEED);
+        } else {
+            menu.slideUp(c.SPEED);
+        }
+    }, 500);
+}
+function initElementSummary(element) {
+    var li = $(element);
+    var link = li.find('> span.action');
+    var badge = li.find('> span.badge');
+    badge.text(0);
+    var cond = $.extend({}, app.cond_default);
+    for (var key in cond) {
+        var val = link.data(key.replace('_', '-'));
+        if (typeof val !== 'undefined') {
+            cond[key] = val;
+        }
+    }
+    var filter = app.tasksFilterGenerate(cond);
+    app.counters.push({
+        filter: filter,
+        badge: badge
+    });
+}
+function initElementSortable(element) {
+    var ele = $(element);
+    var update = ele.data('update');
+    var handle = ele.data('handle');
+    ele.sortable({
+        handle: handle,
+        cursor: 'url(/static/img/openhand.cur), move',
+        start: function (e, ui) {
+            app.dragging = true;
+            app.parts.guide.hide();
+        },
+        stop: function (e, ui) {
+            app.dragging = false;
+        },
+        update: function(e, ui) {
+            app.exec(update);
+        }
+    });
+}
+function initElementCommentBox(element) {
+    var ele = $(element);
+    ele.attr('disabled', true);
+    ele.keydown(function(e){
+        if (e.keyCode === 13 && !e.shiftKey) {
+            e.stopPropagation();
+            e.preventDefault();
+            if (ele.val().length) {
+                app.submitComment();
+            }
+        } else if (e.keyCode === 27) {
+            app.parts.commentbox.val('');
+            $('#comment-window').hide('drop');
+        }
+    });
+    ele.autogrow({single: true});
+}
+function initElementFormWindow(element) {
+    var form = $(element);
+    form.find('button.cancel').click(function(){
+        form.hide('drop');
+        return false;
+    });
+    form.find('input[type=text]:first').keydown(function(e){
+        var input = $(this);
+        if (e.keyCode == 27) {
+            if (e.shiftKey) {
+                var reset = form.data('reset');
+                if (reset) {
+                    app.exec(reset, [form]);
+                } else {
+                    form.find('*[data-no-keep=1]').val('');
+                    input.get(0).focus();
+                }
+            } else {
+                document.activeElement.blur();
+                form.hide('drop');
+            }
+        }
+    });
+    form.bind('submit', function(){
+        var submit = form.data('submit');
+        if (submit) {
+            app.exec(submit, [form]);
+        }
+        return false;
+    });
+    app.modals[form.attr('id')] = form;
+    form.draggable({ handle: 'h1' });
+    form.find('footer input[type=checkbox]').click($.proxy(app.statebleCheckboxClick, app));
+}
+function initElementDatepicker(element) {
+    var ele = $(element);
+    var datepicker_option = {};
+    if (c.lang === 'ja') {
+        datepicker_option.dateFormat = 'yy/mm/dd';
+        var ymd = $.datepicker.formatDate('yy/mm/dd', new Date());
+        ele.attr('placeholder', ymd);
+    }
+    ele.datepicker(datepicker_option);
+}
+function initElementDisableSelection(element) {
+    $(element).disableSelection();
+}
+function initElementAutocomplete(element) {
+    var ele = $(element);
+    var prependTo = $('#create-list-members');
+    ele.autocomplete({
+		source: function(request, response) {
+		    response($.ui.autocomplete.filter(app.assign, request.term));
+		},
+		select: function(event, ui) {
+		    app.createAssignList(app.friends[ui.item.value])
+		    .prependTo(prependTo);
+        }
+	}).data('autocomplete')._renderItem = function(ul, item) {
+        return $(document.createElement('li'))
+            .data('item.autocomplete', item)
+            .append("<a>"+ item.label + "</a>")
+            .appendTo(ul);
+    };
+    ele.bind('autocompleteclose', function(){ ele.val('') });
+}
+function initElementNoticecheck(element) {
+    var ele = $(element);
+    ele.mouseover(function(){
+        if (ele.find('> span').hasClass('active')) {
+            ele.find('> span').removeClass('active').text(0);
+            app.account.state.last_history_time = (new Date()).getTime();
+            app.updateAccount({
+                ns: 'state',
+                method: 'set',
+                key: 'last_history_time',
+                val: app.account.state.last_history_time
+            });
+        }
+    });
 }
 
 // Event
 function handleEvent(e) {
     var ele = $(e.currentTarget);
-    if (ele.data('method')) {
-        // e.preventDefault();
+    if (ele.data('bind')) {
         e.stopPropagation();
     }
-    switch (ele.data('method')) {
-    case 'guideSwitch':
-        this.clickGuideSwitch(e, ele);
-        break;
-    case 'taskmenuSort':
-        this.clickTaskmenuSort(e, ele);
-        break;
-    case 'taskmenuSwitch':
-        this.clickTaskmenuSwitch(e, ele);
-        break;
-    case 'taskmenuFilter':
-        this.clickTaskmenuFilter(e, ele);
-        break;
-    case 'open':
-        this.clickOpenButton(e, ele);
-        break;
-    case 'syncTwitterContact':
-        this.clickSyncTwitterContact(e, ele);
-        break
-    case 'accountSync':
-        this.clickAccountSync(e, ele);
-        break
-    case 'refresh':
-        this.clickRefresh(e, ele);
-        break
-    case 'signinTwitter':
-        this.clickSignInTwitter(e, ele);
-        break
-    case 'createTaskDuePlus':
-        this.clickCreateTaskDuePlus(e, ele);
-        break
-    case 'createTaskDueMinus':
-        this.clickCreateTaskDueMinus(e, ele);
-        break
-    case 'createTaskDueDelete':
-        this.clickCreateTaskDueDelete(e, ele);
-        break
-    case 'createTaskDueToday':
-        this.clickCreateTaskDueToday(e, ele);
-        break
-    case 'listDisplaySwitch':
-        this.clickListDisplaySwitch(e, ele);
-        break
-    case 'listBadgeSwitch':
-        this.clickListBadgeSwitch(e, ele);
-        break
-    }
+    app.exec(ele.data('bind') + 'Click', [e, ele])
 }
 function windowResizeEvent() {
     // FIXME: スクロールが発生した場合にボタンを有効化する
-    var w_height = w.height();
-    var h_height = this.parts.footer.height();
+    var w_height = $(w).height();
+    var h_height = app.parts.footer.height();
     if (h_height > 0) {
         h_height+= 8;
     }
-    $('aside > nav').height(w_height - h_height - 73);
-    $('article > section').height(w_height - h_height - 93);
+    $('body > div > aside > header > ul').height(w_height - h_height - 70);
+    $('body > div > aside').height(w_height - h_height - 33);
+    $('body > div > article > section').height(w_height - h_height - 93 + 17);
+    $('body > div > div').width($(w).width() - app.offset.commment.left - 24);
+    this.commentHeightResize();
+}
+function commentHeightResize() {
+    var w_height = $(w).height();
+    var h_height = app.parts.footer.height();
+    if (h_height > 0) {
+        h_height+= 8;
+    }
+    $('body > div > div > ul').height(w_height - h_height - $('body > div > div > ul').offset().top - 19);
 }
 
 // General
+function exec(method, args) {
+    if ($.isArray(method)) {
+        method = method[0] + c.capitalize(method[1]);
+    }
+    if (method in app) {
+        app[method].apply(app, args);
+    } else {
+        console.log('unkown method ' + method);
+    }
+}
 function ajax(option) {
-    //this.statusUpdate('ajax: begin url=' + option.url);
-    option.error = $.proxy(this.ajaxFailure, this);
     if ("data" in option && "type" in option && option.type.toLowerCase() === 'post') {
-        option.data[this.token_name] = this.token;
+        option.data[c.CSRF_TOKEN_NAME] = c.csrf_token;
         option.data["request_time"] = (new Date()).getTime();
     }
-    return $.ajax(option);
-}
-function ajaxFailure(jqXHR, textStatus, errorThrown) {
-    this.statusUpdate('ajax error: ' + jqXHR.status + ' ' + errorThrown);
+    return $.ajax(option)
+    .fail(function(jqXHR, textStatus, errorThrown){
+        console.log({
+            status: jqXHR.status,
+            thrown: errorThrown,
+            textStatus: textStatus
+        });
+
+        // Collision
+        if (jqXHR.status === 403 || jqXHR.status === 404) {
+            // soft reload
+            console.log('permission or not found.');
+        }
+
+        // Internal Server Error
+        else if (jqXHR.status === 500) {
+            // しばらくして...
+            console.log('error.');
+        }
+    });
 }
 function message(message) {
     alert(message);
-}
-function statusUpdate(message) {
-    this.parts.status.text(message);
 }
 function getProfileImageUrl(user_id) {
     var friend = this.friend_ids[user_id];
@@ -498,12 +567,11 @@ function getTwitterProfileImageUrl(screen_name) {
     }
 }
 function syncTwitterContact(user_id, cursor, screen_name) {
-    var that = this;
     if (!cursor || cursor === -1) {
-        if (user_id in that.account.tw) {
-            that.account.tw[user_id].friends = [];
+        if (user_id in app.account.tw) {
+            app.account.tw[user_id].friends = [];
         } else {
-            that.account.tw[user_id] = {friends: []};
+            app.account.tw[user_id] = {friends: []};
         }
     }
     this.ajax({
@@ -517,21 +585,17 @@ function syncTwitterContact(user_id, cursor, screen_name) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('sync contact list '
-            + screen_name + ' ' + data.sync_count + '/' + data.friends_count);
-            that.registAssign(data.friends);
-            $.merge(that.account.tw[user_id].friends, data.friends);
+            app.registAssign(data.friends);
+            $.merge(app.account.tw[user_id].friends, data.friends);
             if (data.next_cursor) {
-                that.syncTwitterContact(user_id, data.next_cursor, screen_name);
+                app.syncTwitterContact(user_id, data.next_cursor, screen_name);
             } else {
-                that.statusUpdate('sync contact list ' + screen_name + ' fin.');
-                that.refresh();
+                app.refresh();
             }
         }
     });
 }
 function lookupUnknownMembers(unknownMembers, callback) {
-    var that = this;
     this.ajax({
         type: 'get',
         url: '/api/1/contact/lookup_twitter',
@@ -550,15 +614,14 @@ function lookupUnknownMembers(unknownMembers, callback) {
                     screen_name: friend.screen_name,
                     profile_image_url: friend.profile_image_url
                 };
-                that.friends["@" + friend.screen_name] = meta;
-                that.friend_ids["tw-" + friend.id] = meta;
+                app.friends["@" + friend.screen_name] = meta;
+                app.friend_ids["tw-" + friend.id] = meta;
             }
             callback.call();
         }
     });
 }
 function updateAccount(params, refresh) {
-    var that = this;
     return this.ajax({
         type: 'post',
         url: '/api/1/account/update',
@@ -567,15 +630,13 @@ function updateAccount(params, refresh) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('update a account.');
             if (refresh) {
-                that.refresh();
+                app.refresh();
             }
         }
     });
 }
 function refresh(option) {
-    var that = this;
     var syncContact = false;
     var unknownMembers = [];
     if (!option) {
@@ -588,64 +649,78 @@ function refresh(option) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('refresh.');
-            that.account = data.account;
-            that.assign = [];
-            that.parts.owners.empty();
-            that.parts.tasks.empty();
-            that.parts.connectacs.empty();
+            app.account = data.account;
+            app.assign = [];
+            app.parts.owners.empty();
+            app.parts.tasks.empty();
+            app.parts.connectacs.empty();
             for (var user_id in data.account.tw) {
                 var tw = data.account.tw[user_id];
-                that.registAssign(tw.friends);
-                $('<option/>')
-                    .attr('value', 'tw-' + user_id)
-                    .text('@' + tw.screen_name)
-                    .appendTo(that.parts.owners);
-                $('<li>Twitter: '
-                    + tw.screen_name
-                    + ' <!-- span class="icon icon-delete"></span --></li>')
-                    .appendTo(that.parts.connectacs);
+                app.registAssign(tw.friends);
                 if (!("user_id" in tw.friends[0])) {
-                    that.syncTwitterContact(user_id, -1, tw.screen_name);
+                    app.syncTwitterContact(user_id, -1, tw.screen_name);
                 }
             }
-            for (var i = 0; i < that.account.tw_accounts.length; i++) {
-                var tw_account = that.account.tw_accounts[i];
+            for (var i = 0; i < app.account.tw_accounts.length; i++) {
+                var tw_account = app.account.tw_accounts[i];
                 var user_id = tw_account.user_id;
+                $('<option/>')
+                    .attr('value', 'tw-' + user_id)
+                    .text('@' + tw_account.screen_name)
+                    .appendTo(app.parts.owners);
+                $('<li>Twitter: '
+                    + tw_account.screen_name
+                    + ' <!-- span class="icon icon-delete"></span --></li>')
+                    .appendTo(app.parts.connectacs);
+                
                 if (!(user_id in data.account.tw)) {
-                    that.syncTwitterContact(user_id, -1, tw_account.screen_name);
+                    app.syncTwitterContact(user_id, -1, tw_account.screen_name);
                 }
             }
             // FIXME: 抜けたTwitterの情報を消す
-            that.listmap = [];
-            that.parts.lists.find('.project').remove();
-            that.parts.lswt.find('.project').remove();
+            app.resetCounter();
+            app.listmap = [];
+            app.parts.lists.find('.project').remove();
             
-            that.unread_comment_count = 0;
-            var lists = that.account.lists;
+            app.unread_comment_count = 0;
+            var lists = app.account.lists;
+            
+            var humanmap = {};
+            var unknownCheck = function(id){
+                if (!(id in app.friend_ids) && !(id in humanmap)) {
+                    humanmap[id] = true;
+                    unknownMembers.push(id);
+                }
+            }
             for (var i = 0, max_i = lists.length; i < max_i; i++) {
                 var list = lists[i];
-                var humans = [list.doc.owner_id].concat(list.doc.admin_ids).concat(list.doc.member_ids);
+                var humans = [list.doc.owner_id].concat(list.doc.member_ids);
                 for (var j = 0, max_j = humans.length; j < max_j; j++) {
-                    var human = humans[j];
-                    if (!(human in that.friend_ids)) {
-                        unknownMembers.push(human);
+                    unknownCheck(humans[j]);
+                }
+                for (var j = 0, max_j = list.doc.tasks.length; j < max_j; j++) {
+                    var task = list.doc.tasks[j];
+                    unknownCheck(task.requester_id);
+                    for (var k = 0, max_k = task.comments.length; k < max_k; k++) {
+                        unknownCheck(task.comments[k].owner_id);
+                    }
+                    for (var k = 0, max_k = task.history.length; k < max_k; k++) {
+                        unknownCheck(task.history[k].id);
                     }
                 }
             }
             var showList = function(){
-                that.renderTimeline();
                 for (var i = 0, max = lists.length; i < max; i++) {
-                    that.registList(lists[i]);
+                    app.registList(lists[i]);
                 }
-                that.sortList();
-                that.sortTask('updated');
-                that.renderCommentBadge();
+                app.sortList();
+                app.sortTask('updated');
+                app.renderCommentBadge();
                 if ("select_list_id" in option) {
                     var id = option.select_list_id;
-                    that.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
+                    app.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
                     if (option.select_task_id) {
-                        var taskli = that.taskli[id + '-' + option.select_task_id];
+                        var taskli = app.taskli[id + '-' + option.select_task_id];
                         var display = taskli.css('display');
                         if (taskli) {
                             if (display === 'none') {
@@ -653,154 +728,203 @@ function refresh(option) {
                             }
                             taskli.effect("highlight", {}, 3000, function(){
                                 if (display === 'none') {
-                                    taskli.slideUp(that.speed, function(){
+                                    taskli.slideUp(c.SPEED, function(){
                                         taskli.addClass('delete');
                                     });
                                 }
                             });
                         }
                     }
-                } else if ("last_read_list" in that.account.state) {
-                    var id = that.account.state.last_read_list;
-                    that.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
+                } else if ("last_read_list" in app.account.state) {
+                    var id = app.account.state.last_read_list;
+                    app.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
                 } else {
-                    that.parts.lists.find('li.project:first').click();
+                    app.parts.lists.find('li.project:first').click();
                 }
+                app.notificationCheckDone(data);
             };
             if (unknownMembers.length) {
-                that.lookupUnknownMembers(unknownMembers, showList);
+                app.lookupUnknownMembers(unknownMembers, showList);
             } else {
                 showList.call();
             }
-            
-            for (var i = 0, max = that.filters.length; i < max; i++) {
-                var filter = that.filters[i];
-                if (filter in that.account.state.hide_list) {
-                    that.parts.lswt.find('tr[data-list-id=' + filter + ']').each(function(i, ele){
-                        $(ele).find('input').attr('checked', false);
-                    });
-                    that.parts.lists.find('li[data-list-id=' + filter + ']').hide();
-                } else {
-                    that.parts.lists.find('li[data-list-id=' + filter + ']').show();
-                }
-            }
-            // checkox state 
-            // for (var id in that.account.state.checkbox) {
-            //     document.getElementById(id).checked =
-            //         that.account.state.checkbox[id] ? true : false;
-            // }
-            for (var id in that.account.state.button) {
-                var button = $(document.getElementById(id));
-                if (that.account.state.button[id]) {
-                    button.removeClass('on');
-                    button.data('val', 1);
-                } else {
-                    button.addClass('on');
-                    button.data('val', 0);
-                }
-            }
-            if ($('#guide-switch').data('val') == 1) {
-                that.guide = false;
+            if (app.account.state.noguide) {
+                $('#guide-switch').removeClass('on');
                 $('#guide-switch').text($('#guide-switch').data('text-off'));
             } else {
-                that.guide = true;
+                $('#guide-switch').addClass('on');
                 $('#guide-switch').text($('#guide-switch').data('text-on'));
             }
-            
-            // 
-            var my = that.parts.mainmenu.find('.my:first');
-            var url = my.data('url');
-            var img = $('<img/>').attr('src', url).attr('width', 16);
-            my.empty().append(img);
         }
     });
+}
+function needNotification(account, history) {
+    if (this.isMe(history.id)) {
+        return false;
+    }
+    var key = history.list_id + ':' + history.task.id;
+    if (key in account.state.watch) {
+        return true;
+    } else if (this.findMe([history.task.requester_id].concat(history.task.assign_ids))) {
+        return true;
+    }
+}
+function notificationCheck(loop) {
+    return this.ajax({
+        type: 'get',
+        url: '/api/1/account/',
+        dataType: 'json'
+    })
+    .done(function(data){
+        app.notificationCheckDone(data, loop);
+    })
+}
+function notificationCheckDone(data, loop) {
+    app.notifications = [];
+    var check = function(account, history) {
+        if (app.needNotification(account, history)) {
+            app.notifications.push(history);
+        }
+    }
+    var lists = data.account.lists;
+    for (var i = 0, max_i = lists.length; i < max_i; i++) {
+        var list = lists[i];
+        var tasks = list.doc.tasks;
+        for (var j = 0, max_j = tasks.length; j < max_j; j++) {
+            var task = tasks[j];
+            // create task
+            check.call(app, data.account, {
+                id: task.registrant_id,
+                action: 'create-task',
+                date: (task.created * 1000),
+                task: task,
+                list_id: list.id,
+                list_name: list.doc.name
+            });
+            // update task
+            for (var k = 0, max_k = task.history.length; k < max_k; k++) {
+                var history = task.history[k];
+                history.task = task;
+                history.list_id = list.id;
+                history.list_name = list.doc.name;
+                check.call(app, data.account, history);
+            }
+            // create comment
+            for (var l = 0, max_l = task.comments.length; l < max_l; l++) {
+                var comment = task.comments[l];
+                var history = {
+                    id: comment.owner_id,
+                    action: 'create-comment',
+                    date: comment.time,
+                    task: task,
+                    list_id: list.id,
+                    list_name: list.doc.name,
+                    comment: comment.comment
+                };
+                check.call(app, data.account, history);
+            }
+        }
+    }
+    
+    if (app.notifications.length === 0) {
+        app.parts.badge.find('> div > p').text('none.');
+    } else {
+        app.parts.badge.find('> div > p').text('');
+    }
+    app.notifications.sort(function(a, b){
+        return b.date - a.date;
+    });
+    var disp = function(history){
+        return function(){
+            $('#digest-title').text(history.task.title || '');
+            $('#digest-comment').text(
+                history.comment ? '> ' + history.comment : ''
+            );
+            $('#digest')
+                .css('left', $(this).offset().left - $('#digest').width() - 20 + 'px')
+                .css('top', $(this).offset().top - 20 + 'px')
+                .show();
+        };
+    };
+    var ul = app.parts.badge.find('> div > ul');
+    ul.empty();
+    var comment_map = {};
+    var count = 0;
+    var disps = 0;
+    for (var i = 0, max_i = app.notifications.length; i < max_i; i++) {
+        var history = app.notifications[i];
+        var key = history.id + ':' + history.list_id + ':' + history.task.id + history.action;
+        if (key in comment_map) {
+            continue;
+        }
+        comment_map[key] = true;
+        disps++;
+        if (disps >= 20) {
+            break;
+        }
+        if (!(history.id in app.friend_ids)) {
+            continue;
+        }
+        var friend = app.friend_ids[history.id];
+        var screen_name = $('<span class="screen_name"/>').text(friend.screen_name);
+        var icon = $('<img/>').attr('src', friend.profile_image_url);
+        var key = 'text-' + history.action + '-' + app.account.lang;
+        var action = $('<span class="action"/>').text(ul.data(key));
+        var list = $('<span class="list"/>').text(history.list_name);
+        var date = $('<span class="date"/>').text(c.timestamp(history.date));
+        $('<li/>')
+            .addClass('clearfix')
+            .append(icon)
+            .append(screen_name)
+            .append(action)
+            .append(list)
+            .append($('<br>'))
+            .append(date)
+            .data('list-id', history.list_id)
+            .data('task-id', history.task.id)
+            .hover(disp.call(app, history), function(){
+                $('#digest').hide();
+            })
+            .click(function(){
+                app.refresh({
+                    select_list_id: $(this).data('list-id'),
+                    select_task_id: $(this).data('task-id')
+                });
+            })
+            .appendTo(ul);
+        if (history.date > this.account.state.last_history_time) {
+            count++;
+        }
+    }
+    app.parts.badge.find('> span').text(count);
+    if (count > 0) {
+        app.parts.badge.find('> span').addClass('active');
+    } else {
+        app.parts.badge.find('> span').removeClass('active');
+    }
+    if (loop) {
+        setTimeout(function(){
+            app.notificationCheck(loop);
+        }, 60 * 1000);
+    }
 }
 function submitFinalize(form) {
     form.find('*[data-no-keep=1]').val('');
     form.find('input[type=text]:first').get(0).focus();
 }
-function showTimeline(e) {
-    this.parts.timeline.show();
-    this.parts.tasks.hide();
-    this.parts.lists.find('.selected').removeClass('selected');
-    var li = $(e.currentTarget);
-    li.addClass('selected');
-    this.parts.mainmenu.find('button').attr('disabled', true);
-    this.parts.listname.text(li.text());
-    this.parts.listmembers.empty();
-    this.updateAccount({
-        ns: 'state',
-        method: 'set',
-        key: 'last_read_list',
-        val: 'list-timeline'
-    });
-}
-function renderTimeline() {
-    var that = this;
-    var lists = this.account.lists;
-    var timeline_items = [];
-    for (var i = 0; i < lists.length; i++) {
-        var list = lists[i];
-        for (var j = 0; j < list.doc.history.length; j++) {
-            var item = list.doc.history[j];
-            item.list = list;
-            timeline_items.push(item);
-        }
-    }
-    timeline_items.sort(function(a, b){ return b.date - a.date });
-    this.parts.timeline.empty();
-    for (var i = 0; i < timeline_items.length; i++) {
-        var item = timeline_items[i];
-        if (this.isMe(item.id)) continue;
-        var code = $('<span class="code"/>');
-        if (item.id && /tw-./.test(item.id)) {
-            var url = this.getProfileImageUrl(item.id);
-            if (url) {
-                var screen_name = this.friend_ids[item.id].screen_name;
-                code.css('background-image', 'url(' + url + ')');
-                code.attr('title', screen_name);
-            }
-        } else {
-            
-        }
-        var action_msg = this.localizer.text(this.parts.timeline, item.action);
-        var action = $('<span class="action"/>').text(action_msg);
-        var list = $('<span class="list"/>').text(item.list.doc.name);
-        var date = $('<span class="date"/>').text(this.timestamp(item.date));
-        var li = $('<li class="clearfix"/>')
-            .append(code)
-            .append(action)
-            .append(list)
-            .append(date)
-            .appendTo(this.parts.timeline)
-            .data('list-id', item.list.id)
-            .data('task-id', (item.task_id || 0))
-            .click(function(e){
-                var ele = $(e.currentTarget);
-                that.showList(ele.data('list-id'), ele.data('task-id'));
-            });
-    }
-}
 function showList(id, task_id) {
-    var that = this;
     var li = this.listli[id];
     var list = this.listmap[id];
+    this.cond = $.extend({}, this.cond_default);
+    this.cond.list_id = id;
     this.current_list = list;
     this.current_filter = null;
-    this.parts.lists.find('.selected').removeClass('selected');
-    this.listli[list.id].addClass('selected');
-    this.parts.mainmenu.find('button').attr('disabled', false);
-    this.parts.listname.text(list.doc.name);
-    this.parts.listmembers.empty();
-    // FIXME: 最終的に消す
+    $('#closed-task-switch').removeClass('selected');
+    app.parts.listname.text(list.doc.name);
+    app.parts.listmenu.data('list-id', id);
+    app.parts.listmembers.empty();
     if ("owner_id" in list.doc) {
         this.renderMember(list.doc.owner_id);
-    }
-    if ('admin_ids' in list.doc && list.doc.admin_ids.length) {
-        var admin_ids = list.doc.admin_ids.sort();
-        for (var i = 0, max = admin_ids.length; i < max; i++) {
-            this.renderMember(admin_ids[i]);
-        }
     }
     if ('member_ids' in list.doc && list.doc.member_ids.length) {
         var member_ids = list.doc.member_ids.sort();
@@ -808,24 +932,31 @@ function showList(id, task_id) {
             this.renderMember(member_ids[i]);
         }
     }
-    this.filterTask(true);
+    
+    if (id in this.account.state.ignore_badge_list) {
+        $('#ignore-badge-count').attr('checked', true);
+    } else {
+        $('#ignore-badge-count').attr('checked', false);
+    }
+    
+    this.filterTask();
     this.sortTask();
     if (task_id) {
-        var taskli = that.taskli[id + '-' + task_id];
+        var taskli = app.taskli[id + '-' + task_id];
         if (taskli) {
             taskli.effect("highlight", {}, 3000);
         }
     }
-    // 未読があった場合更新
-    if (li.hasClass('updated')) {
-        li.removeClass('updated');
-        this.updateAccount({
-            ns: 'state.read.list',
-            method: 'set',
-            key: id,
-            val: list.value.rev + ',' + (new Date()).getTime()
-        });
-    }
+    // // 未読があった場合更新
+    // if (li.hasClass('updated')) {
+    //     li.removeClass('updated');
+    //     this.updateAccount({
+    //         ns: 'state.read.list',
+    //         method: 'set',
+    //         key: id,
+    //         val: list.value.rev + ',' + (new Date()).getTime()
+    //     });
+    // }
     this.updateAccount({
         ns: 'state',
         method: 'set',
@@ -836,110 +967,98 @@ function showList(id, task_id) {
 function switchList(e) {
     var li = $(e.currentTarget);
     var id = li.data('list-id');
-    this.showList(id);
+    app.showList(id);
+    app.parts.listonly.show();
+    app.parts.summary.find('.selected').removeClass('selected');
 }
-function switchFilterList(e) {
-    var that = this;
+function switchFilterListClick(e) {
     var li = $(e.currentTarget);
-    var id = li.data('list-id');
-    this.current_list = null;
-    this.current_filter = id;
-    this.parts.lists.find('.selected').removeClass('selected');
+    var pli = li.parent().parent().parent().find('> span.action:first');
+    var listname = li.text();
+    if (pli.length) {
+        listname = pli.text();
+    }
+    app.parts.summary.find('.selected').removeClass('selected');
     li.addClass('selected');
-    this.parts.mainmenu.find('button').attr('disabled', false);
-    this.parts.listonly.attr('disabled', true);
-    this.parts.listname.text(this.localizer.text(li));
-    this.parts.listmembers.empty();
-    this.filterTask(true);
-    this.updateAccount({
-        ns: 'state',
-        method: 'set',
-        key: 'last_read_list',
-        val: id
-    });
+    this.cond = $.extend({}, this.cond_default);
+    for (var key in this.cond) {
+        var val = li.data(key.replace('_', '-'));
+        if (typeof val !== 'undefined') {
+            this.cond[key] = val;
+        }
+    }
+    if (!this.cond.list_id) {
+        app.parts.listonly.hide();
+        app.parts.listname.text(listname);
+        this.current_list = null;
+    }
+    this.filterTask();
+}
+function switchClosedClick(e) {
+    this.switchFilterListClick(e);
+    var li = $(e.currentTarget);
+    if (li.data('closed')) {
+        li.data('closed', 0);
+        li.addClass('selected');
+    } else {
+        li.data('closed', 1);
+        li.removeClass('selected');
+    }
 }
 function renderList(list) {
-    var that = this;
     var badge = $('<span class="badge"></span>');
     var li = $('<li data-list-id="' + list.id + '"></li>');
     li.attr('class', 'project');
     li.text(list.doc.name);
     li.append(badge);
-    if (this.isMe(list.doc.owner_id) || this.findMe(list.doc.admin_ids)) {
-        var settings = $('<span class="icon icon-settings" '
-            + 'data-method="open" data-id="create-list-window" '
-            + 'data-callback="editList"></span>');
-        settings.data('list-id', list.id);
-        settings.get(0).addEventListener("click", that, false);
-        li.append(settings);
-    }
     this.listmap[list.id] = list;
     this.listli[list.id] = li;
-    li.click($.proxy(that.switchList, that));
+    li.click($.proxy(app.switchList, app));
     list.taskmap = {};
     for (var j = 0; j < list.doc.tasks.length; j++) {
+        list.doc.tasks[j].list = list;
         list.taskmap[list.doc.tasks[j].id] = list.doc.tasks[j];
     }
     list.badge = badge;
     this.renderBadge(list);
     
-    if (this.listReadLastRev(list.id) != list.value.rev) {
-        li.addClass('updated');
-    }
+    // if (this.listReadLastRev(list.id) != list.value.rev) {
+    //     li.addClass('updated');
+    // }
     
-    var old = this.parts.lists.find('li[data-list-id="' + list.id + '"]');
+    li.get(0).addEventListener('dragover', function(e){
+        if (list.id === app.dragtask.list.id) {
+            return true;
+        }
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+        return false;
+    }, false);
+    li.get(0).addEventListener('drop', function(e){
+        app.dragging = false;
+        app.parts.guide.hide();
+        app.parts.listnav.hide('drop', {}, c.SPEED);
+        var data = e.dataTransfer.getData('Text').split(':');
+        app.moveTask(data[1], data[0], list.id)
+    }, false);
+    
+    var old = app.parts.lists.find('li[data-list-id="' + list.id + '"]');
     if (old.length) {
         if (old.hasClass('selected')) {
             old.replaceWith(li);
-            li.click();
+            // li.click();
+            this.showList(list.id);
         } else {
             old.replaceWith(li);
         }
     } else {
-        this.parts.lists.append(li);
-    }
-    
-    // 設定画面
-    var tr = $('<tr class="project" data-list-id="'
-        + list.id
-        + '">'
-        + '<td><input type="checkbox" checked="checked" data-method="listDisplaySwitch"></td>'
-        + '<td><input type="checkbox" checked="checked" data-method="listBadgeSwitch"></td>'
-        + '</tr>')
-        .prepend($('<td></td>').text(list.doc.name));
-    if (this.isMe(list.doc.owner_id)) {
-        tr.append($(
-            '<td><span class="icon icon-delete" data-method="open" '
-            + 'data-id="delete-list-window" data-callback="deleteList"></span></td>'
-        ));
-    }
-    var update = false;
-    var old = this.parts.lswt.find('tr[data-list-id="' + list.id + '"]');
-    if (old.length) {
-        update = true;
-        old.replaceWith(tr);
-    } else {
-        this.parts.lswt.append(tr);
-    }
-    
-    tr.find('span, input').each(function(i, ele){
-        ele.addEventListener("click", that, false);
-    });
-    
-    // Task
-    if (list.id in that.account.state.hide_list) {
-        li.hide();
-        tr.find('input[data-method="listDisplaySwitch"]').attr('checked', false);
-    }
-    if (!update) {
+        app.parts.lists.append(li);
         var tasks = list.doc.tasks;
         for (var i = 0; i < tasks.length; i++) {
             var li = this.renderTask(list, tasks[i]);
             li.hide();
         }
-    }
-    if (list.id in that.account.state.ignore_badge_list) {
-        tr.find('input[data-method="listBadgeSwitch"]').attr('checked', false);
     }
 }
 function renderBadge(list) {
@@ -961,6 +1080,9 @@ function renderBadge(list) {
     }
 }
 function needCount(task) {
+    if (task.list.id in this.account.state.ignore_badge_list) {
+        return false;
+    }
     if (task.closed) {
         return false;
     }
@@ -984,6 +1106,9 @@ function needCount(task) {
         return this.findMe(task.assign_ids);
     }
     return my_order;
+}
+function needNotify(task) {
+    
 }
 function renderCommentBadge() {
     if (this.unread_comment_count) {
@@ -1010,17 +1135,16 @@ function deleteList(params) {
     
 }
 function sortList() {
-    var that = this;
     
     // sidebar
     var lis = [];
-    this.parts.lists.find('> li').each(function(i, ele) {
+    app.parts.lists.find('> li').each(function(i, ele) {
         lis.push($(ele));
     });
     var val = function(ele){
         var list_id = ele.data('list-id');
-        if (list_id in that.account.state.sort.list) {
-            return parseInt(that.account.state.sort.list[list_id]);
+        if (list_id in app.account.state.sort.list) {
+            return parseInt(app.account.state.sort.list[list_id]);
         } else {
             return 0;
         }
@@ -1029,24 +1153,12 @@ function sortList() {
         return val(b) - val(a);
     });
     for (var i = 0; i < lis.length; i++) {
-        lis[i].appendTo(this.parts.lists);
-    }
-    
-    // list setting window
-    var trs = [];
-    this.parts.lswt.find('tr[data-list-id]').each(function(i, ele) {
-        trs.push($(ele));
-    });
-    trs.sort(function(a, b) {
-        return val(b) - val(a);
-    });
-    for (var i = 0; i < trs.length; i++) {
-        trs[i].appendTo(this.parts.lswt);
+        lis[i].appendTo(app.parts.lists);
     }
 }
 function sortUpdateList() {
     var sort = {};
-    var lists = this.parts.lists.find('> li');
+    var lists = app.parts.lists.find('> li');
     var count = lists.length;
     lists.each(function(i, ele) {
         var li = $(ele);
@@ -1065,8 +1177,7 @@ function createTask(params) {
     
 }
 function modifyTask(params) {
-    var that = this;
-    return this.ajax({
+    return app.ajax({
         type: 'post',
         url: '/api/1/task/update',
         data: params,
@@ -1074,10 +1185,62 @@ function modifyTask(params) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('update a task.');
-            $.extend(that.listmap[params.list_id].taskmap[data.task.id], data.task);
-            that.renderBadge(that.listmap[params.list_id]);
-            that.taskli[params.list_id + '-' + data.task.id].data('updated', data.task.updated);
+            var oldtask = $.extend({}, app.listmap[params.list_id].taskmap[data.task.id]);
+            var newtask = $.extend(app.listmap[params.list_id].taskmap[data.task.id], data.task);
+            var list = app.listmap[params.list_id];
+            app.renderBadge(list);
+            app.createTaskElement(list, newtask);
+            app.updateCounter(oldtask, newtask);
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        console.log('custom fail.');
+        console.log({
+            status: jqXHR.status,
+            thrown: errorThrown,
+            textStatus: textStatus
+        })
+    });
+}
+function moveTask(task_id, src_list_id, dst_list_id) {
+    if (src_list_id === dst_list_id) {
+        alert("Can't be moved to the same list.");
+        return;
+    }
+    return this.ajax({
+        type: 'post',
+        url: '/api/1/task/move',
+        data: {
+            task_id: task_id,
+            src_list_id: src_list_id,
+            dst_list_id: dst_list_id
+        },
+        dataType: 'json'
+    })
+    .done(function(data){
+        if (data.success) {
+            delete app.listmap[src_list_id].taskmap[task_id];
+            app.taskli[src_list_id + '-' + task_id].remove();
+            
+            var task = data.task;
+            task.list = app.listmap[dst_list_id];
+            app.listmap[dst_list_id].taskmap[task.id] = task;
+            app.listmap[dst_list_id].doc.tasks.push(task);
+            var li = app.renderTask(task.list, task);
+            app.taskli[dst_list_id + '-' + task.id] = li;
+            app.resetCounter(true);
+            app.renderBadge(app.listmap[src_list_id]);
+            app.renderBadge(app.listmap[dst_list_id]);
+            
+            if (app.current_list) {
+                li.slideUp(c.SPEED);
+            } else {
+                if (app.current_filter.call(app, li)) {
+                    li.slideDown(c.SPEED);
+                } else {
+                    li.slideUp(c.SPEED);
+                }
+            }
             
         }
     });
@@ -1085,25 +1248,23 @@ function modifyTask(params) {
 function deleteTask(params) {
     
 }
-function filterTask(readComment) {
-    var that = this;
+function filterTask() {
     var filter = this.tasksFilterGenerate();
-    this.parts.timeline.hide();
-    this.parts.tasks.show();
-    this.parts.tasks.find('> li').each(function(i, ele){
+    this.current_filter = filter;
+    app.parts.tasks.find('> li').each(function(i, ele){
         var ele = $(ele);
         if (filter(ele)) {
-            if (that.is_webkit) {
-                ele.slideDown(that.speed);
+            if (app.is_webkit) {
+                ele.slideDown(c.SPEED);
             } else {
                 ele.show();
             }
-            if (readComment) {
-                that.readComment(ele);
-            }
+            // if (readComment) {
+            //     app.readComment(ele);
+            // }
         } else {
-            if (that.is_webkit) {
-                ele.slideUp(that.speed);
+            if (app.is_webkit) {
+                ele.slideUp(c.SPEED);
             } else {
                 ele.hide();
             }
@@ -1112,7 +1273,6 @@ function filterTask(readComment) {
     this.renderCommentBadge();
 }
 function readComment(li) {
-    var that = this;
     li.find('ul.comments > li').each(function(i, ele){
         var comment = $(ele);
         if (comment.data('read')) {
@@ -1121,37 +1281,33 @@ function readComment(li) {
         }
         if (comment.hasClass('unread')) {
             comment.data('read', 1);
-            that.unread_comment_count--;
+            app.unread_comment_count--;
         }
     });
 }
 function sortTask(id) {
-    if (!id) {
-        id = this.parts.mainmenu.find('button.on[data-method=taskmenuSort]:first').data('id');
-    } else {
-        this.parts.mainmenu.find('button[data-method=taskmenuSort]').each(function(i, ele){
-            var button = $(ele);
-            if (button.data('id') === id) {
-                button.addClass('on');
-            } else {
-                button.removeClass('on');
-            }
-        });
-    }
-    if (id === "sort") {
-        this.parts.tasks.sortable("enable");
-        this.parts.tasks.addClass('sortable');
-    } else {
-        this.parts.tasks.sortable("disable");
-        this.parts.tasks.removeClass('sortable');
-    }
     var lis = [];
-    this.parts.tasks.find('> li').each(function(i, ele) {
+    app.parts.tasks.find('> li').each(function(i, ele) {
         lis.push($(ele));
     });
+    if (!id) {
+        id = this.sort;
+    } else {
+        this.sort = id;
+    }
+    
+    var label = $('body > div > article > header > div li[data-id="' + id + '"]').text();
+    $('body > div > article > header > div > span').text(label);
     lis.sort(function(a, b) {
         if (id === 'title') {
             return a.text() > b.text() ? 1 : -1;
+        }
+        if (id === 'responser-ids') {
+            if (a.data(id) === b.data(id)) {
+                return b.data('updated') - a.data('updated');
+            } else {
+                return a.data(id) > b.data(id) ? 1 : -1;
+            }
         }
         var a_val = parseInt(a.data(id)) || 0;
         var b_val = parseInt(b.data(id)) || 0;
@@ -1164,8 +1320,15 @@ function sortTask(id) {
     if (id === 'due') {
         lis.reverse();
     }
+    if (id === "sort") {
+        app.parts.tasks.sortable("enable");
+        app.parts.tasks.addClass('sortable');
+    } else {
+        app.parts.tasks.sortable("disable");
+        app.parts.tasks.removeClass('sortable');
+    }
     for (var i = 0; i < lis.length; i++) {
-        lis[i].appendTo(this.parts.tasks);
+        lis[i].appendTo(app.parts.tasks);
     }
 }
 function sortUpdateTask() {
@@ -1173,7 +1336,7 @@ function sortUpdateTask() {
     var task_ids = [];
     var task_ids_sort = [];
     var sort = {};
-    this.parts.tasks.find('> li').each(function(i, ele) {
+    app.parts.tasks.find('> li').each(function(i, ele) {
         var li = $(ele);
         if (li.data('list-id') === list_id) {
             task_ids.push(li.data('id'));
@@ -1217,11 +1380,6 @@ function findMeFromList(list) {
         if (code === list.doc.owner_id) {
             return code;
         } else {
-            for (var i = 0, max = list.doc.admin_ids.length; i < max; i++) {
-                if (code === list.doc.admin_ids[i]) {
-                    return code;
-                }
-            }
             for (var i = 0, max = list.doc.member_ids.length; i < max; i++) {
                 if (code === list.doc.member_ids[i]) {
                     return code;
@@ -1242,7 +1400,7 @@ function listReadLastTime(list_id) {
     }
     return '';
 }
-function clickStatebleCheckbox(e) {
+function statebleCheckboxClick(e) {
     var ele = $(e.currentTarget);
     var val = ele.attr('checked') ? 1 : 0;
     this.updateAccount({
@@ -1252,54 +1410,90 @@ function clickStatebleCheckbox(e) {
         val: val
     })
 }
-function timestamp(epoch) {
-    var now = new Date();
-    var now_epoch = parseInt(now.getTime() / 1000);
-    if (epoch > now_epoch) {
-        epoch = parseInt(epoch / 1000);
+function updateCounter(oldtask, newtask) {
+    for (var i = 0, max_i = this.counters.length; i < max_i; i++) {
+        var counter = this.counters[i];
+        var old_match = 0,
+            new_match = 0;
+        if (oldtask && counter.filter.call(this, null, oldtask)) {
+            old_match = 1;
+        }
+        if (counter.filter.call(this, null, newtask)) {
+            new_match = 1;
+        }
+        if (old_match !== new_match) {
+            counter.badge.text(parseInt(counter.badge.text(), 10) - old_match + new_match);
+        }
     }
-    var diff = now_epoch - epoch;
-    if (diff < 60) {
-        var s = diff > 1 ? 's' : '';
-        return diff + ' sec' + s + ' ago';
-    } else if (diff < 3600) {
-        var min = parseInt(diff / 60);
-        var s = min > 1 ? 's' : '';
-        return min + ' minute' + s + ' ago';
-    } else if (diff < (3600 * 24)) {
-        var hour = parseInt(diff / 3600);
-        var s = hour > 1 ? 's' : '';
-        return hour + ' hour' + s + ' ago';
-    } else {
-        var day = parseInt(diff / (3600 * 24));
-        var s = day > 1 ? 's' : '';
-        return day + ' day' + s + ' ago';
+}
+function resetCounter(search) {
+    for (var i = 0, max_i = this.counters.length; i < max_i; i++) {
+        var counter = this.counters[i];
+        var count = 0;
+        if (search) {
+            for (var list_id in this.listmap) {
+                var list = this.listmap[list_id];
+                for (var task_id in list.taskmap) {
+                    var task = list.taskmap[task_id];
+                    if (counter.filter.call(this, null, task)) {
+                        count++;
+                    }
+                }
+            }
+        }
+        counter.badge.text(count);
     }
+}
+function showNotifications() {
+    
 }
 
 // GrobalMenu
-function clickOpenButton(e, ele) {
-    var form = this.modals[ele.data('id')];
-    form.css('top', $(w).scrollTop() + ($(w).height() / 2) + 'px');
-    form.show();
-    var input = form.find('input');
-    if (input.length) {
-        input.get(0).focus();
-    }
-    var callback = ele.data('callback');
-    if (callback) {
-        var func = callback.charAt(0).toUpperCase() + callback.substr(1);
-        this['openCallback' + func].call(this, e, ele);
+function openClick(e, ele) {
+    var form = app.modals[ele.data('id')];
+    if (form.css('display') === 'none') {
+        $('#create-task-assign').hide();
+        form.show('drop', {}, c.SPEED, function(){
+            var input = form.find('input[type=text]:first');
+            if (input.length) {
+                input.get(0).focus();
+            }
+            var callback = ele.data('callback');
+            if (callback) {
+                app.exec(['openCallback', callback], [e, ele]);
+            }
+        });
     }
 }
-function clickSignInTwitter(e, ele) {
+function openCommentClick(e, ele) {
+    var top = ele.offset().top + ele.height() + 20;
+    
+    var form = app.modals[ele.data('id')];
+    if (form.css('display') === 'none') {
+        form
+        .css({
+            top: top + 'px'
+        })
+        .slideDown(c.SPEED, function(){
+            var input = form.find('textarea');
+            if (input.length) {
+                input.get(0).focus();
+            } else {
+                form.find('textarea:first').focus();
+            }
+            var callback = ele.data('callback');
+            if (callback) {
+                app.exec(['openCallback', callback], [e, ele]);
+            }
+        });
+    }
+}
+function signInTwitterClick(e, ele) {
     location.href = '/signin/twitter/oauth';
 }
-function clickSyncTwitterContact(e, ele) {
-    var that = this;
+function syncTwitterContactClick(e, ele) {
     
     // FIXME: statusbar update
-    this.statusUpdate('sync contact list begin.');
     this.assign = [];
     return this.ajax({
         type: 'get',
@@ -1309,67 +1503,46 @@ function clickSyncTwitterContact(e, ele) {
     .done(function(data){
         for (var i = 0; i < data.account.tw_accounts.length; i++) {
             var tw = data.account.tw_accounts[i];
-            that.syncTwitterContact(tw.user_id, -1, tw.screen_name);
+            app.syncTwitterContact(tw.user_id, -1, tw.screen_name);
         }
     });
     
 }
-function clickAccountSync(e, ele) {
-    // var that = this;
-    // 
-    // return this.ajax({
-    //     type: 'get',
-    //     url: '/api/1/account/',
-    //     dataType: 'json'
-    // })
-    // .done(function(data){
-    //     if (data.success) {
-    //         that.account = data.doc;
-    //         
-    //         that.assign = [];
-    //         for (user_id in data.doc.tw) {
-    //             that.registAssign(data.doc.tw[user_id].friends);
-    //         }
-    //         console.log(that.account);
-    //     }
-    // });
-}
-function clickRefresh(e, ele) {
+function refreshClick(e, ele) {
     this.refresh();
 }
-function clickGuideSwitch(e, ele) {
-    if (this.guide) {
-        this.guide = false;
-        ele.removeClass('on').text(ele.data('text-off'));
-        this.parts.guide.fadeOut('slow');
-    } else {
-        this.guide = true;
+function guideSwitchClick(e, ele) {
+    if (this.account.state.noguide) {
+        delete this.account.state["noguide"];
         ele.addClass('on').text(ele.data('text-on'));
+    } else {
+        this.account.state.noguide = true;
+        ele.removeClass('on').text(ele.data('text-off'));
+        app.parts.guide.fadeOut('slow');
     }
     this.updateAccount({
-        ns: 'state.button',
-        method: 'set',
-        key: ele.attr('id'),
-        val: (this.guide ? 0 : 1)
+        ns: '',
+        method: (this.account.state.noguide ? '+' : '-'),
+        key: 'state',
+        val: 'noguide'
     });
 }
 
 // SideMenu
-function clickListDisplaySwitch(e, ele) {
-    var that = this;
+function listDisplaySwitchClick(e, ele) {
     var list_id = ele.parent().parent().data('list-id');
     var method = ele.attr('checked') ? '-' : '+';
     
     if (ele.attr('checked')) {
-        this.parts.lists.find('li').each(function(i, ele){
+        app.parts.lists.find('li').each(function(i, ele){
             if (list_id === $(ele).data('list-id')) {
-                $(ele).slideDown(that.speed);
+                $(ele).slideDown(c.SPEED);
             }
         });
     } else {
-        this.parts.lists.find('li').each(function(i, ele){
+        app.parts.lists.find('li').each(function(i, ele){
             if (list_id === $(ele).data('list-id')) {
-                $(ele).slideUp(that.speed);
+                $(ele).slideUp(c.SPEED);
             }
         });
     }
@@ -1381,16 +1554,16 @@ function clickListDisplaySwitch(e, ele) {
         val: list_id
     });
 }
-function clickListBadgeSwitch(e, ele) {
-    var that = this;
-    var list_id = ele.parent().parent().data('list-id');
-    var method = ele.attr('checked') ? '-' : '+';
+function listBadgeSwitchClick(e, ele) {
+    var list_id = this.current_list.id;
+    var method = ele.attr('checked') ? '+' : '-';
     var list = this.listmap[list_id];
     if (ele.attr('checked')) {
-        delete this.account.state.ignore_badge_list[list_id];
-    } else {
         this.account.state.ignore_badge_list[list_id] = 1;
+    } else {
+        delete this.account.state.ignore_badge_list[list_id];
     }
+    this.resetCounter(true);
     this.renderBadge(list);
     this.updateAccount({
         ns: 'state',
@@ -1413,7 +1586,6 @@ function openCallbackCreateList(e, ele) {
     this.resetCreateList(form);
 }
 function openCallbackEditList(e, ele) {
-
     var list = this.listmap[ele.data('list-id')];
 
     var form = $('#create-list-window');
@@ -1427,24 +1599,14 @@ function openCallbackEditList(e, ele) {
 
     if (this.isMe(list.doc.owner_id)) {
         form.find('li[data-owner-only]').show();
+        $('#create-list-owner-select').val(list.doc.owner_id);
     } else {
         form.find('li[data-owner-only]').hide();
     }
 
-    var createListAdmins = $('#create-list-admins');
-    createListAdmins.empty();
-    for (var i = 0, max = list.doc.admin_ids.length; i < max; i++) {
-        var member_id = list.doc.admin_ids[i];
-        if (member_id in this.friend_ids) {
-            var member = this.friend_ids[member_id];
-            createListAdmins.append(this.createAssignList(member));
-        } else {
-            // console.log(member_id);
-        }
-    }
-
     var createListMembers = $('#create-list-members');
     createListMembers.empty();
+    createListMembers.hide();
     for (var i = 0, max = list.doc.member_ids.length; i < max; i++) {
         var member_id = list.doc.member_ids[i];
         if (member_id in this.friend_ids) {
@@ -1454,24 +1616,22 @@ function openCallbackEditList(e, ele) {
             // console.log(member_id);
         }
     }
+    createListMembers.slideDown(c.SPEED);
 }
 function openCallbackDeleteList(e, ele) {
-    var tr = ele.parent().parent();
-    var list = this.listmap[tr.data('list-id')];
+    var list = this.listmap[ele.data('list-id')];
     var form = $('#delete-list-window');
     form.data('list-id', list.id);
     $('#delete-list-name').text(list.doc.name);
     form.find('button').get(0).focus();
 }
 function submitCreateList(form) {
-    var that = this;
     
     var list_id = form.data('list-id');
     var url = list_id ? '/api/1/list/update' : '/api/1/list/create';
     var name = form.find('input[name=name]').val();
     var privacy = form.find('select[name=privacy]').val();
     var owner_id = form.find('select[name=owner]').val();
-    var admin_ids = [];
     var member_ids = [];
     if (!name.length) {
         alert('please input list name.');
@@ -1481,16 +1641,18 @@ function submitCreateList(form) {
         alert('please select owner.');
         return;
     }
-    form.find('#create-list-admins > li.member').each(function(i, ele){
-        admin_ids.push($(ele).data('id'));
-    });
     form.find('#create-list-members > li.member').each(function(i, ele){
         member_ids.push($(ele).data('id'));
     });
     if (list_id) {
-        form.fadeOut(this.speed);
+        form.fadeOut(c.SPEED);
+        app.parts.listmembers.empty();
+        this.renderMember(owner_id);
+        for (var i = 0; i < member_ids.length; i++) {
+            this.renderMember(member_ids[i]);
+        }
     } else {
-        that.submitFinalize(form);
+        app.submitFinalize(form);
     }
     return this.ajax({
         type: 'post',
@@ -1500,15 +1662,13 @@ function submitCreateList(form) {
             name: name,
             privacy: privacy,
             owner_id: owner_id,
-            admin_ids: admin_ids,
             member_ids: member_ids
         },
         dataType: 'json'
     })
     .pipe(function(data){
         if (data.success) {
-            that.statusUpdate('create list ' + data.list_id);
-            return that.ajax({
+            return app.ajax({
                 type: 'get',
                 url: '/api/1/list/' + data.list_id,
                 dataType: 'json'
@@ -1517,13 +1677,11 @@ function submitCreateList(form) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('get list ' + data.list.doc.name);
-            that.registList(data.list);
+            app.registList(data.list);
         }
     });
 }
 function submitDeleteList(form) {
-    var that = this;
     var list_id = form.data('list-id');
     return this.ajax({
         type: 'post',
@@ -1535,8 +1693,7 @@ function submitDeleteList(form) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('delete list ' + data.list_id);
-            that.refresh();
+            app.refresh();
             form.fadeOut();
         }
     });
@@ -1550,73 +1707,55 @@ function registList(list) {
 }
 
 // MainMenu
-function tasksFilterGenerate() {
-    var that = this;
-    var my = this.parts.mainmenu.find('.my').parent().data('val');
-    var star = this.parts.mainmenu.find('.icon-star-on').parent().data('val');
-    var tasksOn = this.parts.mainmenu.find('.icon-tasks-on').parent().data('val');
-    var tasksOff = this.parts.mainmenu.find('.icon-tasks-off').parent().data('val');
-    var progress = this.parts.mainmenu.find('.icon-progress').parent().data('val');
-    var recycle = this.parts.mainmenu.find('.icon-recycle').parent().data('val');
-    var selectors = {
-        my: '.my',
-        star: '.icon-star-on',
-        tasksOn: '.icon-tasks-on',
-        tasksOff: '.icon-tasks-off',
-        recycle: '.icon-recycle',
-        progress: '.icon-progress'
-    };
-    var func = function(ul){
-        if (that.current_list) {
-            if (ul.data('list-id') !== that.current_list.id) {
+function tasksFilterGenerate(cond) {
+    if (!cond) {
+        cond = app.cond;
+    }
+    var func = function(ul, task){
+        var list_id, task_id;
+        if (task) {
+            list_id = task.list.id;
+            task_id = task.id;
+        } else {
+            list_id = ul.data('list-id');
+            task_id = ul.data('id');
+            task = app.listmap[list_id].taskmap[task_id];
+        }
+        if (cond.list_id && cond.list_id !== list_id) {
+            return false;
+        }
+        if (cond.star && !task.star) {
+            return false;
+        }
+        if (typeof cond.status === 'number' && cond.status !== task.status) {
+            return false;
+        }
+        if (typeof cond.status_ignore === 'number' && cond.status_ignore === task.status) {
+            return false;
+        }
+        if (typeof cond.closed === 'number' && cond.closed !== task.closed) {
+            return false;
+        }
+        if (cond.registrant && !app.isMe(task.registrant_id)) {
+            return false;
+        }
+        if (typeof cond.assign === 'boolean') {
+            var assign;
+            if (task.assign_ids.length) {
+                assign = app.findMe(task.assign_ids) ? true : false;
+            } else {
+                assign = app.isMe(task.registrant_id);
+            }
+            if (cond.assign !== assign) {
                 return false;
             }
         }
-        else if (that.current_filter) {
-            var list_id = ul.data('list-id');
-            var task_id = ul.data('id');
-            var list = that.listmap[list_id];
-            var task = that.listmap[list_id].taskmap[task_id];
-            if (that.current_filter == "list-comment") {
-                if (!that.tasksCommentFilter(ul)) {
-                    return false;
-                }
-            } else if (that.current_filter === "list-todo") {
-                if (!that.tasksTodoFilter(list, task)) {
-                    return false;
-                }
-            } else if (that.current_filter === "list-request") {
-                if (!that.tasksRequestFilter(list, task)) {
-                    return false;
-                }
-            }
-            else if (that.current_filter === 'list-watch') {
-                star = 0;
-            }
-        }
-        else {
-            // ERROR
-        }
-        
-        if (!my && ul.find(selectors["my"]).length === 0) {
+        // todo
+        if (cond.todo && !app.needCount(task)) {
             return false;
         }
-        if (!star && ul.find(selectors["star"]).length === 0) {
-            return false;
-        }
-        if (!tasksOn && ul.find(selectors["tasksOn"]).length === 0) {
-            return false;
-        }
-        if (!tasksOff && ul.find(selectors["tasksOff"]).length === 0) {
-            return false;
-        }
-        if (!progress && ul.find(selectors["progress"]).length === 0) {
-            return false;
-        }
-        if (recycle && ul.find(selectors["recycle"]).length > 0) {
-            return false;
-        }
-        if (!recycle && ul.find(selectors["recycle"]).length === 0) {
+        // notify
+        if (cond.notify && !app.needNotify(task)) {
             return false;
         }
         return true;
@@ -1634,9 +1773,6 @@ function tasksCommentFilter(li) {
     return false;
 }
 function tasksTodoFilter(list, task) {
-    if (list.id in this.account.state.ignore_badge_list) {
-        return false;
-    }
     return this.needCount(task);
 }
 function tasksRequestFilter(list, task) {
@@ -1658,97 +1794,31 @@ function tasksRequestFilter(list, task) {
     }
     return true;
 }
-function clickTaskmenuSort(e, ele) {
+function taskmenuSortClick(e, ele) {
     this.sortTask(ele.data('id'));
 }
-function clickTaskmenuSwitch(e, ele) {
-    var type = ele.data('id');
-    var val = ele.data('val');
-    var id = ele.attr('id');
-    var selectors = {
-        description: '.content',
-        comment: 'ul.comments'
-    };
-    var selector = selectors[type];
-    if (val) {
-        ele.data('val', 0);
-        ele.addClass('on');
-        this.parts.tasks.find(selector).slideUp(this.speed);
-    }
-    else {
-        ele.data('val', 1);
-        ele.removeClass('on');
-        this.parts.tasks.find(selector).slideDown(this.speed);
-    }
-    this.updateAccount({
-        ns: 'state.button',
-        method: 'set',
-        key: id,
-        val: ele.data('val')
-    });
-}
-function clickTaskmenuFilter(e, ele) {
-    var that = this;
-    var id = ele.data('id');
-    var val = ele.data('val');
-    var selectors = {
-        my: '',
-        star: '.icon-star-on',
-        tasksOn: '.icon-tasks-on',
-        tasksOff: '.icon-tasks-off',
-        progress: '.icon-progress',
-        recycle: '.icon-recycle'
-    };
-    var selector = selectors[id];
-    if (id === 'recycle') {
-        this.parts.mainmenu.find('.icon-star-on').parent().removeClass('on').data('val', 1);
-        this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
-        this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
-        if (val) {
-            this.parts.mainmenu.find('.icon-trash').parent().fadeIn('slow');
-        } else {
-            this.parts.mainmenu.find('.icon-trash').parent().fadeOut('slow');
-        }
-    }
-    if (id === 'tasksOn') {
-        this.parts.mainmenu.find('.icon-progress').parent().removeClass('on').data('val', 1);
-        this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
-    } else if (id === 'tasksOff') {
-        this.parts.mainmenu.find('.icon-progress').parent().removeClass('on').data('val', 1);
-        this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
-    } else if (id === 'progress') {
-        this.parts.mainmenu.find('.icon-tasks-on').parent().removeClass('on').data('val', 1);
-        this.parts.mainmenu.find('.icon-tasks-off').parent().removeClass('on').data('val', 1);
-    }
-    if (val) {
-            ele.data('val', '');
-            ele.addClass('on');
-    }
-    else {
-            ele.data('val', 1);
-            ele.removeClass('on');
-    }
-    this.filterTask();
-}
-function clickTaskmenuTrash(e, ele) {
-    
-}
-function clickCreateTaskDuePlus(e, ele) {
+function createTaskDuePlusClick(e, ele) {
     var due = $('#create-task-date');
     var date = due.datepicker("getDate") || new Date();
     date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
     due.datepicker("setDate", date);
 }
-function clickCreateTaskDueMinus(e, ele) {
+function createTaskDuePlusMonthClick(e, ele) {
+    var due = $('#create-task-date');
+    var date = due.datepicker("getDate") || new Date();
+    date.setMonth(date.getMonth() + 1);
+    due.datepicker("setDate", date);
+}
+function createTaskDueMinusClick(e, ele) {
     var due = $('#create-task-date');
     var date = due.datepicker("getDate") || new Date();
     date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
     due.datepicker("setDate", date);
 }
-function clickCreateTaskDueDelete(e, ele) {
+function createTaskDueDeleteClick(e, ele) {
     $('#create-task-date').val('');
 }
-function clickCreateTaskDueToday(e, ele) {
+function createTaskDueTodayClick(e, ele) {
     var due = $('#create-task-date');
     due.datepicker("setDate", new Date());
 }
@@ -1756,37 +1826,52 @@ function openCallbackCreateTask(e, ele) {
     var list_id = this.current_list
                 ? this.current_list.id
                 : $(ele).parent().data('list-id');
+    if (!list_id) {
+        return;
+    }
     var list = this.listmap[list_id];
     var ul = $('#create-task-assign');
-    ul.html(this.template.assign);
-    var member_ids = [list.doc.owner_id].concat(list.doc.admin_ids).concat(list.doc.member_ids);
+    ul.empty();
+    ul.hide();
+    var select = $('#create-task-requester');
+    select.empty();
+    var member_ids = [list.doc.owner_id].concat(list.doc.member_ids);
     for (var i = 0, max = member_ids.length; i < max; i++) {
         var id = member_ids[i];
         var url = this.getProfileImageUrl(id);
         var friend = this.friend_ids[id];
-        var li = $('<li></li>');
+        var li = $('<li/>');
+        var label = $('<label/>');
         var input = $('<input type="checkbox" name="assign" value="">');
         input.val(id);
-        li.append(input)
+        label.append(input);
         if (url) {
             $('<img>')
             .attr('src', url)
             .attr('class', 'twitter_profile_image')
-            .appendTo(li);
+            .appendTo(label);
         }
-        li.append($('<span></span>').text(friend.screen_name));
+        label.append($('<span></span>').text(friend.screen_name));
+        li.append(label);
         ul.append(li);
+        
+        $('<option/>')
+            .val(id)
+            .text(friend.screen_name)
+            .appendTo(select);
     }
+    select.val(this.findMe(member_ids));
     if (!member_ids.length) {
         ul.append($('<li>no member.</li>'));
     }
+    ul.slideDown();
     var form = $('#create-task-window');
-    form.find('footer input[type=checkbox], footer label').show();
     var h1 = form.find('h1:first');
     h1.text(h1.data('text-default'));
+    var save = form.find('button.save:first');
+    save.text(c.lcText(save, 'default'));
     this.resetCreateTask(form);
-    form.find('input[type=text]:first').get(0).focus();
-    form.find('input[type=text]').val('');
+    // form.find('input[type=text]:first').get(0).focus();
     form.data('list-id', list.id);
     form.data('task-id', 0);
 }
@@ -1795,6 +1880,7 @@ function openCallbackCreateTaskWithMember(e, ele) {
     var id = $(ele).data('member-id');
     var ul = $('#create-task-assign');
     ul.find('input[value="' + id + '"]').attr('checked', true);
+    $('#create-task-requester').val($(ele).data('requester-id'));
 }
 function openCallbackEditTask(e, ele) {
     this.openCallbackCreateTask(e, ele);
@@ -1807,17 +1893,24 @@ function openCallbackEditTask(e, ele) {
     form.find('footer input[type=checkbox], footer label').hide();
     var h1 = form.find('h1:first');
     h1.text(h1.data('text-edit'));
+    var save = form.find('button.save:first');
+    save.text(c.lcText(save, 'edit'));
     form.data('list-id', list_id);
     form.data('task-id', task_id);
     form.find('input[name=title]').val(task.title || '');
-    form.find('textarea[name=description]').val(task.description || '');
-    form.find('input[name=due]').val(task.due || '');
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(task.due)) {
+        var due_date = $.datepicker.parseDate('mm/dd/yy', task.due);
+        $('#create-task-date').datepicker('setDate', due_date);
+    } else {
+        form.find('input[name=due]').val('');
+    }
     if (task.assign_ids) {
         for (var i = 0; i < task.assign_ids.length; i++) {
             var id = task.assign_ids[i];
             form.find('input[value="' + id + '"]').attr('checked', true);
         }
     }
+    $('#create-task-requester').val(div.parent().data('requester-id'));
 }
 function openCallbackClearTrash(e, ele) {
     var form = $('#clear-trash-window');
@@ -1825,7 +1918,6 @@ function openCallbackClearTrash(e, ele) {
     form.find('button').get(0).focus();
 }
 function submitCreateTask(form) {
-    var that = this;
     
     var task_id = form.data('task-id');
     var list;
@@ -1837,12 +1929,13 @@ function submitCreateTask(form) {
     }
     var url = task_id ? '/api/1/task/update' : '/api/1/task/create';
     var title = form.find('input[name=title]').val();
-    var description = form.find('textarea[name=description]').val();
-    var due = form.find('input[name=due]').val();
+    var due = form.find('input[name=due]').datepicker("getDate");
+    due = $.datepicker.formatDate('mm/dd/yy', due);
     if (!title.length) {
         alert('please input task title.');
         return;
     }
+    var requester_id = $('#create-task-requester').val();
     var registrant_id = this.findMeFromList(list);
     if (!registrant_id) {
         alert("can't find registrant.");
@@ -1853,9 +1946,10 @@ function submitCreateTask(form) {
         assign_ids.push(ele.value);
     });
     if (task_id) {
-        form.fadeOut(this.speed);
+        form.find('input[name=title]').val('');
+        form.hide('drop', {}, c.SPEED);
     } else {
-        that.submitFinalize(form);
+        app.submitFinalize(form);
     }
     return this.ajax({
         type: 'post',
@@ -1863,9 +1957,9 @@ function submitCreateTask(form) {
         data: {
             list_id: list.id,
             task_id: task_id,
+            requester_id: requester_id,
             registrant_id: registrant_id,
             title: title,
-            description: description,
             due: due,
             assign_ids: (assign_ids.length ? assign_ids : 0)
         },
@@ -1873,34 +1967,29 @@ function submitCreateTask(form) {
     })
     .done(function(data){
         if (data.success) {
-            // FIXME: 
+            var task, li;
             if (!task_id) {
-                that.statusUpdate('create a task.');
-                var task = data.task;
+                task = data.task;
+                task.list = list;
                 list.taskmap[task.id] = task;
                 list.doc.tasks.push(task);
-                var li = that.renderTask(list, task);
-                that.taskli[list.id + '-' + task.id] = li;
-                var filter = that.tasksFilterGenerate();
-                if (!filter(li)) {
-                    li.delay(500).slideUp('slow');
-                }
+                li = app.renderTask(list, task);
             }
             else {
-                that.statusUpdate('update a task.');
-                // FIXME
-                var task = data.task;
-                $.extend(that.listmap[list.id].taskmap[task.id], data.task);
-                var li = that.taskli[list.id + '-' + task.id];
-                var li2 = that.createTaskElement(list, task);
-                li.replaceWith(li2);
+                task = $.extend(app.listmap[list.id].taskmap[data.task.id], data.task);
+                task.list = list;
+                var li = app.createTaskElement(list, task);
+                // console.log(li);
+                // li.effect("highlight", {}, c.SPEED);
             }
-            that.renderBadge(list);
+            if (!app.current_filter.call(app, null, task)) {
+                app.taskli[list.id + '-' + task.id].delay(500).slideUp('slow');
+            }
+            app.renderBadge(list);
         }
     });
 }
 function submitClearTrash(form) {
-    var that = this;
     var list_id = form.data('list-id');
     var list = this.listmap[list_id];
     var owner_id = this.findMeFromList(list);
@@ -1915,13 +2004,12 @@ function submitClearTrash(form) {
     })
     .done(function(data){
         if (data.success) {
-            that.statusUpdate('clear trash ' + data.count + ' tasks remove.');
-            var list = that.listmap[list_id];
+            var list = app.listmap[list_id];
             var tasks = [];
             for (var i = 0; i < list.doc.tasks.length; i++) {
                 var task = list.doc.tasks[i];
                 if (task.closed) {
-                    that.taskli[list.id + '-' + task.id].remove();
+                    app.taskli[list.id + '-' + task.id].remove();
                     delete list.taskmap[task.id];
                 } else {
                     tasks.push(task);
@@ -1929,9 +2017,13 @@ function submitClearTrash(form) {
             }
             list.doc.tasks = tasks;
         }
-        form.fadeOut(that.speed, function(){
-            $('#recycle-button').click();
-        });
+        form.fadeOut(c.SPEED);
+        var li = $('#closed-task-switch');
+        if (!li.data('closed')) {
+            app.switchClosedClick({
+                currentTarget: li
+            });
+        }
     });
 }
 function resetCreateTask(form) {
@@ -1976,21 +2068,40 @@ function createAssignList(friend) {
 }
 function renderTask(list, task) {
     var li = this.createTaskElement(list, task);
-    this.parts.tasks.prepend(li);
+    app.parts.tasks.prepend(li);
+    this.updateCounter(null, task);
     return li;
 }
 function createTaskElement(list, task) {
-    var that = this;
-    var li = $(this.template.task);
+    var li = $(app.template.task);
     li.data('list-id', list.id);
     li.data('id', task.id);
     li.data('updated', task.updated);
-    var due = 0;
+    var due_epoch = 0;
     if (task.due) {
         var mdy = task.due.split('/');
-        due = mdy[2] * 10000 + mdy[0] * 100 + mdy[1];
+        var label = mdy[0] + '/' + mdy[1];
+        var now = new Date();
+        if (now.getFullYear() != mdy[2]) {
+            if (c.LANG === 'ja') {
+                label = mdy[2] + '/' + label;
+            } else {
+                label = label + '/' + mdy[2];
+            }
+        }
+        li.find('.due').text(label);
+        var due = new Date(mdy[2], mdy[0] - 1, mdy[1]);
+        due_epoch = due.getTime();
+        if (now.getTime() > due_epoch) {
+            li.find('.due').addClass('over');
+        }
+    } else {
+        li.find('.due').text('-');
     }
-    li.data('due', due);
+    li.data('due', due_epoch);
+    if (task.comments.length) {
+        li.find('.comments').text('(' + task.comments.length + ')');
+    }
     if (list.id in this.account.state.sort.task) {
         var sort = this.account.state.sort.task[list.id];
         if (task.id in sort) {
@@ -1999,123 +2110,78 @@ function createTaskElement(list, task) {
             li.data('sort', 0);
         }
     }
-    this.taskli[list.id + '-' + task.id] = li;
     li.find('.title').text(task.title);
-    li.find('.due').text(task.due);
-    if ("registrant_id" in task) {
-        var url = that.getProfileImageUrl(task.registrant_id);
-        var img = $('<img/>').attr('src', url);
-        img.css('twitter_profile_image');
-        li.find('.assign')
-            .append(img)
-            .append($('<span class="icon icon-right"/>'));
-        if (this.isMe(task.registrant_id)) {
-            li.find('.assign').addClass('my');
-        }
+    var responser;
+    if ("requester_id" in task) {
+        $('<img data-init="guide" data-guide-en="Requester" data-guide-ja="依頼者"/>')
+            .attr('src', app.getProfileImageUrl(task.requester_id))
+            .addClass('twitter_profile_image')
+            .appendTo(li.find('.assign'))
+        li.data('requester-id', task.requester_id);
+        responser = [task.requester_id];
     }
-    if ("assign_ids" in task && task.assign_ids && task.assign_ids.length) {
+    if (task.assign_ids.length) {
+        li.find('.assign').prepend($('<span class="icon icon-left"/>'));
         for (var i = 0; i < task.assign_ids.length; i++) {
             var assign_id = task.assign_ids[i];
-            var url = that.getProfileImageUrl(assign_id);
-            var img = $('<img/>').attr('src', url);
-            img.css('twitter_profile_image');
-            li.find('.assign').append(img);
-            if (this.isMe(assign_id)) {
-                li.find('.assign').addClass('my');
-            }
+            var url = app.getProfileImageUrl(assign_id);
+            var img = $('<img data-init="guide" data-guide-en="Assignee" data-guide-ja="担当者"/>')
+                .attr('src', url)
+                .addClass('twitter_profile_image');
+            li.find('.assign').prepend(img);
         }
-    } else {
-        li.find('.assign').append($('<span class="icon icon-address-off"/>'));
+        responser = task.assign_ids;
     }
-    
-    
-    var content = $('<div class="content"></div>');
-    if (task.description) {
-        var make_link = function(href, text) {
-            var a = document.createElement('a');
-            a.href = href;
-            a.target = '_blank';
-            a.appendChild(document.createTextNode(text));
-            var div = document.createElement('div');
-            div.appendChild(a);
-            return div.innerHTML;
-        };
-        var pre = $('<pre class="description"></pre>').text(task.description);
-        var re = new RegExp('(?:https?://[\\x21-\\x7e]+)', 'g');
-        pre.html(pre.html().replace(re, function(m0){ return make_link(m0, m0) }));
-        content.append(pre);
+    if (task.status === 2 && task.assign_ids.length) {
+        var url = app.getProfileImageUrl(task.requester_id);
+        var img = $('<img data-init="guide" data-guide-en="Approver" data-guide-ja="承認者"/>')
+            .attr('src', url)
+            .addClass('twitter_profile_image');
+        li.find('.assign').prepend($('<span class="icon icon-left"/>')).prepend(img);
+        responser = [task.requester_id];
     }
-    var comments = $('<ul class="comments"></ul>');
-    if (task.comments) {
-        for (var i = 0; i < task.comments.length; i++) {
-            var comment = task.comments[i];
-            this.renderComment(list.id, task.id, comment, comments);
+    li.data('responser-ids', responser.sort().join(','));
+    li.mouseover(function(){
+        if (app.active === 'comment') {
+            return;
         }
-    }
-    var commentBox = $(document.createElement('div'));
-    var form = $(document.createElement('form'));
-    var text = $(document.createElement('textarea'));
-    form.append(text);
-    commentBox.attr('class', 'commentBox');
-    commentBox.append(form);
-    commentBox.hide();
-    text.keydown(function(e){
-        if (e.keyCode === 13) {
-            e.stopPropagation();
-            e.preventDefault();
-            if (text.val().length) {
-                that.submitComment(list.id, task.id, text, form, comments);
-            }
+        if (app.current_taskli) {
+            app.current_taskli.removeClass('selected');
+        }
+        app.current_task = task;
+        app.current_taskli = li;
+        li.addClass('selected');
+        $('#list-name').text(list.doc.name);
+        $('#task-name').text(task.title);
+        if (task.description) {
+            $('#task-description').text(task.description);
         } else {
-            
+            $('#task-description').text('');
         }
-    });
-    text.keypress(function(e){
-        if (e.keyCode === 13) {
-            e.preventDefault();
-        }
-    })
-    text.keyup(function(e){
-        if (e.keyCode === 13) {
-            e.preventDefault();
-        }
-    })
-    text.autogrow({single: true});
-    text.click(function(e){
-        e.stopPropagation();
-    });
-    
-    // form.bind('submit', function(){
-    //     try {
-    //         that.submitComment(list.id, task.id, text, form, comments);
-    //     } catch(e) {
-    //         console.log(e);
-    //     }
-    //     return false;
-    // });
-    
-    li.click(function(){
-        if (content.css('display') === 'none') {
-            content.show();
-        }
-        commentBox.slideToggle(that.speed, function(){
-            if (commentBox.css('display') !== 'none') {
-                text.get(0).focus();
+        app.parts.commentbox
+            .attr('disabled', false)
+            .data('list-id', list.id)
+            .data('task-id', task.id);
+        app.parts.comment.empty();
+        if (task.comments) {
+            for (var i = 0, max_i = task.comments.length; i < max_i; i++) {
+                var comment = task.comments[i];
+                app.renderComment(list.id, task.id, comment);
             }
-        });
-    });
-    content.append(comments);
-    content.append(commentBox);
-    if ("mainmenu-switch-description" in this.account.state.button) {
-        if (!this.account.state.button["mainmenu-switch-description"]) {
-            content.hide();
         }
-    }
-    li.append(content);
-    li.find('> .action').click($.proxy(this.clickTaskAction, this));
-    li.find('.grip').click(function(e){
-        e.stopPropagation();
+        app.parts.comment.scrollTop(app.parts.comment.height());
+        app.commentHeightResize();
     });
+    li.find('.grip').hover(function(e){
+        if (app.parts.tasks.hasClass('sortable')) {
+            li.removeAttr('draggable');
+        } else {
+            li.attr('draggable', true);
+        }
+    }, function(e){
+        li.removeAttr('draggable');
+    });
+    li.removeAttr('draggable');
     if (task.status === 1) {
         li.find('> .icon-tasks-off')
         .removeClass('icon-tasks-off')
@@ -2128,27 +2194,49 @@ function createTaskElement(list, task) {
     }
     if (task.closed) {
         li.addClass('delete');
-        li.find('> .icon-delete')
-        .removeClass('icon-delete')
-        .addClass('icon-recycle');
+        li.find('> .icon-delete').hide();
         li.hide();
+    } else {
+        li.find('> .icon-recycle').hide();
     }
     if (list.id + ':' + task.id in this.account.state.watch) {
         li.find('> .icon-star-off')
         .removeClass('icon-star-off')
         .addClass('icon-star-on');
+        task.star = true;
     }
-    this.initEventGuide(li);
+    app.initElements(li);
+    li.get(0).addEventListener('dragstart', function(e){
+        app.dragging = true;
+        app.parts.guide.hide();
+        app.parts.listnav.show('drop', {}, c.SPEED);
+        e.dataTransfer.setData('Text', list.id + ':' + task.id);
+        app.dragtask = task;
+    }, false);
+    li.get(0).addEventListener('dragend', function(e){
+        if (app.dragging) {
+            app.dragging = false;
+            app.parts.listnav.hide('drop', {}, c.SPEED);
+            e.dataTransfer.clearData();
+        }
+    }, false);
+    var key = list.id + '-' + task.id;
+    if (key in app.taskli) {
+        app.taskli[key].after(li).remove();
+        app.taskli[key] = li;
+    } else {
+        app.taskli[key] = li;
+    }
     return li;
 }
-function clickTaskAction(e) {
-    var that = this;
+function taskActionClick(e) {
     e.stopPropagation();
     var div = $(e.currentTarget);
     var li = div.parent();
     var list_id = li.data('list-id');
     var task_id = li.data('id');
-    var list = that.listmap[list_id];
+    var list = app.listmap[list_id];
+    var task = list.taskmap[task_id];
     var registrant_id = this.findMeFromList(list);
     if (!registrant_id) {
         alert("can't find registrant_id.");
@@ -2156,25 +2244,27 @@ function clickTaskAction(e) {
     }
     if (div.hasClass('icon-delete')) {
         li.addClass('delete');
-        div.addClass('icon-recycle').removeClass('icon-delete');
+        div.hide();
+        li.find('> .icon-recycle').show();
         this.modifyTask({
             registrant_id: registrant_id,
             list_id: list_id,
             task_id: task_id,
             closed: 1
         });
-        li.slideUp(that.speed);
+        li.slideUp(c.SPEED);
     }
     else if (div.hasClass('icon-recycle')) {
         li.removeClass('delete');
-        div.addClass('icon-delete').removeClass('icon-recycle');
+        div.hide();
+        li.find('> .icon-delete').show();
         this.modifyTask({
             registrant_id: registrant_id,
             list_id: list_id,
             task_id: task_id,
             closed: 0
         });
-        li.slideUp(that.speed);
+        li.slideUp(c.SPEED);
     }
     else if (div.hasClass('icon-tasks-off')) {
         li.removeClass('delete');
@@ -2221,6 +2311,9 @@ function clickTaskAction(e) {
             key: 'watch',
             val: list_id + ':' + task_id
         });
+        var oldtask = $.extend({}, task);
+        task.star = false;
+        this.updateCounter(oldtask, task);
     }
     else if (div.hasClass('icon-star-off')) {
         div.removeClass('icon-star-off').addClass('icon-star-on');
@@ -2231,25 +2324,30 @@ function clickTaskAction(e) {
             key: 'watch',
             val: list_id + ':' + task_id
         });
+        var oldtask = $.extend({}, task);
+        task.star = true;
+        this.updateCounter(oldtask, task);
     }
-    else if (div.hasClass('icon-edit')) {
-        this.clickOpenButton(e, div);
+    else if (div.hasClass('icon-edit') || div.hasClass('due')) {
+        this.openClick(e, div);
     }
     else if (div.hasClass('assign')) {
-        this.clickOpenButton(e, div);
+        this.openClick(e, div);
     }
     
     var filter = this.tasksFilterGenerate();
     if (!filter(li)) {
-        li.slideUp(that.speed);
+        li.slideUp(c.SPEED);
     }
 }
-function submitComment(list_id, task_id, text, form, comments) {
-    var that = this;
+function submitComment() {
+    
+    var list_id = app.parts.commentbox.data('list-id');
+    var task_id = app.parts.commentbox.data('task-id');
+    var comment = app.parts.commentbox.val();
     
     var list = this.listmap[list_id];
     var owner_id = this.findMeFromList(list);
-    var comment = text.val();
     return this.ajax({
         type: 'post',
         url: '/api/1/comment/create',
@@ -2263,49 +2361,51 @@ function submitComment(list_id, task_id, text, form, comments) {
     })
     .done(function(data){
         if (data.success) {
-            // FIXME: 
-            that.statusUpdate('create a comment.');
             // FIXME
-            $.extend(that.listmap[list_id].taskmap[data.task.id], data.task);
-            that.taskli[list_id + '-' + data.task.id].data('updated', data.task.updated);
+            $.extend(app.listmap[list_id].taskmap[data.task.id], data.task);
+            app.taskli[list_id + '-' + data.task.id].data('updated', data.task.updated);
+            app.taskli[list_id + '-' + data.task.id].find('.comments').text('(' + data.task.comments.length + ')');
             var li = $('<li/>');
             li.text(comment);
-            that.renderComment(list_id, task_id, {
+            app.renderComment(list_id, task_id, {
                 id: data.comment_id,
                 time: (new Date()).getTime(),
                 owner_id: owner_id,
                 comment: comment
-            }, comments);
-            text.delay(500).val('');
+            });
+            app.parts.commentbox.val('').css('height', '16px');
         }
     });
 }
-function renderComment(list_id, task_id, comment, comments) {
-    var that = this;
-    var li = $('<li/>');
+function renderComment(list_id, task_id, comment) {
+    var li = $('<li class="clearfix"/>');
     var friend = this.friend_ids[comment.owner_id];
+    var img = $('<img>').attr('src', friend.profile_image_url);
+    var msg = $('<div/>');
     var name = $('<span class="name"></span>').text(friend.screen_name);
-    var date = $('<span class="date"></span>').text(this.timestamp(comment.time));
-    var message = $('<span class="comment"/>').text(comment.comment);
+    var date = $('<span class="date"></span>').text(c.timestamp(comment.time));
+    var message = $('<span class="comment"/>').html(c.autoLink(comment.comment));
     var del = $('<span class="action icon icon-delete"></span>');
     del.click(function(e){
         e.stopPropagation();
-        that.deleteComment(list_id, task_id, comment);
+        app.deleteComment(list_id, task_id, comment);
         li.remove();
+        // app.parts.commentbox.focus();
     });
-    li.append(name);
-    li.append(message);
-    li.append($('<br>'));
-    li.append(date);
-    li.append(del);
+    li.append(img);
+    li.append(msg);
+    msg.append(name);
+    msg.append(message);
+    msg.append($('<br>'));
+    msg.append(date);
+    msg.append(del);
     if (this.listReadLastTime(list_id) < comment.time) {
         li.addClass('unread');
-        this.unread_comment_count++;
+        // this.unread_comment_count++;
     }
-    comments.append(li);
+    app.parts.comment.append(li);
 }
 function deleteComment(list_id, task_id, comment) {
-    var that = this;
     var list = this.listmap[list_id];
     var owner_id = this.findMeFromList(list);
     return this.ajax({
@@ -2321,10 +2421,13 @@ function deleteComment(list_id, task_id, comment) {
     })
     .done(function(data){
         if (data.success) {
-            // FIXME: 
-            that.statusUpdate('delete a comment.');
             // FIXME
-            $.extend(that.listmap[list_id].taskmap[data.task.id], data.task);
+            $.extend(app.listmap[list_id].taskmap[data.task.id], data.task);
+            if (data.task.comments.length) {
+                app.taskli[list_id + '-' + data.task.id].find('.comments').text('(' + data.task.comments.length + ')');
+            } else {
+                app.taskli[list_id + '-' + data.task.id].find('.comments').text('');
+            }
         }
     });
 }
@@ -2337,11 +2440,11 @@ function renderMember(id) {
     li.append(img);
     li.data('member-id', id);
     li.data('url', url);
-    li.data('method', 'open');
+    li.data('bind', 'open');
     li.data('id', 'create-task-window');
     li.data('callback', 'createTaskWithMember');
     li.get(0).addEventListener("click", this, false);
-    this.parts.listmembers.append(li);
+    app.parts.listmembers.append(li);
 }
 
 })(this, this, document);

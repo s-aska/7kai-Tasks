@@ -12,9 +12,11 @@ sub get {
     }
     my $account = DoubleSpark::Account->new($c);
     $account->set_social_accounts($c);
+    unless (scalar(@{$account->{codes}})) {
+        return $c->render_json({success => 0});
+    }
     $account->set_lists($c);
     $account->{lang} = $c->lang;
-    # infof("Account GET " . $c->session->get('screen_name'));
     $c->render_json({success => 1, account => $account->to_hashref});
 }
 

@@ -288,12 +288,13 @@ img.twitter_profile_image32 {
     -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
 }
 .pulldown .pulldown-menu li {
-    padding: 10px 10px 10px 10px;
-    color: #36c;
+    padding: 6px;
+    color: #323223;
     font-size: 14px;
+    text-decoration: underline;
 }
 .pulldown .pulldown-menu li:hover {
-    background-color: #e6ecf8;
+    background-color: #ffffcc;
 }
 /********** header **********/
 body > header {
@@ -366,13 +367,12 @@ body > header nav > ul > li.menu > ul {
     top: 28px;
 }
 body > header nav > ul > li.menu > ul li:hover {
-    background-color: #e6ecf8;
+    background-color: #ffffcc;
 }
 body > header nav > ul > li.menu > ul li a {
     display: block;
-    color: #36c;
+    color: #323232;
     font-size: 14px;
-    text-decoration: none;
 }
 #notification-badge > span {
     display: inline-block;
@@ -441,7 +441,7 @@ body > header nav > ul > li.menu > ul li a {
 }
 /********** wrapper **********/
 body > div {
-    border-top: 1px solid #d2d2d2;
+    border-top: 1px solid gray;
 }
 
 /********** aside **********/
@@ -451,10 +451,7 @@ body > div > aside {
     width: 180px;
     border-right: 1px solid gray;
     font-size: 14px;
-    background-color: white;
-    box-shadow: 2px 0px 2px rgba(0,0,0,0.4);
-    -moz-box-shadow: 2px 0px 2px rgba(0,0,0,0.4);
-    -webkit-box-shadow: 2px 0px 2px rgba(0,0,0,0.4);
+    background-color: #F9F9F9;
 }
 body > div > aside header nav ul {
     padding: 9px 4px 9px 8px;
@@ -482,16 +479,16 @@ body > div > aside article ul.menu li {
     padding-left: 10px;
     padding-bottom: 2px;
     font-size: 12px;
-    line-height: 1;
+    line-height: 1.4;
 }
 body > div > aside article ul.menu li.action {
-    color: #1e57ff;
+    color: #323232;
     cursor: pointer;
+    text-decoration: underline;
 }
 body > div > aside article ul.menu li.action:hover,
 body > div > aside article ul.menu li.selected {
-    text-decoration: underline;
-    background-color: #e0e0ff;
+    background-color: #DCE8EB;
 }
 body > div > aside article ul.menu li hr {
     border-width: 1px 0px 0px 0px;
@@ -507,7 +504,7 @@ body > div > aside article ul.menu li hr {
 #list-members li {
     float: left;
     cursor: pointer;
-    border: 1px solid white;
+    border: 1px solid #f9f9f9;
     height: 32px;
 }
 #list-members li:hover {
@@ -555,7 +552,7 @@ body > div > aside article ul.menu li hr {
     font-size: 9px;
     font-weight: bold;
 }
-#infomation {
+#summary {
     position: fixed;
     bottom: 25px;
     left: 0;
@@ -563,25 +560,26 @@ body > div > aside article ul.menu li hr {
     padding-top: 10px;
     padding-bottom: 6px;
     font-size: 12px;
-    line-height: 1.2;
+    line-height: 1.4;
     background-color: #323232;
     color: white;
 }
-#infomation li {
+#summary li {
     padding-left: 10px;
     padding-top: 2px;
 }
-#infomation li .action {
+#summary li .action {
     text-decoration: underline;
 }
-#infomation li .action:hover,
-#infomation li .selected {
-    color: #9999ff;
+#summary li .action:hover,
+#summary li .selected {
+    color: #323232;
+    background-color: white;
 }
-#infomation > li {
+#summary > li {
     padding-bottom: 4px;
 }
-#infomation li ul li {
+#summary li ul li {
     
 }
 /********** article **********/
@@ -590,9 +588,9 @@ body > div > article {
 body > div > article > header {
     width: 548px;
     padding: 4px 4px 4px 8px;
-    border-bottom: 1px solid #cecece;
     font-size: 12px;
     background-color: #f9f9f9;
+    border-bottom: 1px solid #cecece;
 }
 body > div > article > header > div {
     float: right;
@@ -601,13 +599,16 @@ body > div > article > header > div {
 body > div > article > header > div > span {
     display: inline-block;
     min-width: 50px;
-    border: 1px solid gray;
     padding: 2px;
-    background-color: white;
+    text-decoration: underline;
+    cursor: pointer;
 }
-body > div > article > header > div > ul {
-    border: 1px solid gray;
+body > div > article > header > div.pulldown > ul.pulldown-menu {
     z-index: 1;
+    background-color: #f9f9f9;
+}
+body > div > article > header > div.pulldown > ul.pulldown-menu li {
+    font-size: 12px;
 }
 
 /********** article section **********/
@@ -673,11 +674,12 @@ body > div > article section > ul li div.comments {
 }
 body > div > article section > ul li div.comment {
     float: right;
-    padding-top: 5px;
+    padding-top: 6px;
     padding-left: 5px;
     font-size: 9px;
-    color: #1e57ff;
+    color: #323232;
     cursor: pointer;
+    text-decoration: underline;
 }
 body > div > article section > ul li div.due {
     float: right;
@@ -700,40 +702,6 @@ body > div > article section > ul li div.assign:hover {
 }
 body > div > article section > ul li div.assign img {
     width: 16px;
-}
-body > div > article section > ul.timeline {
-    cursor: pointer;
-}
-body > div > article section > ul.timeline li {
-    line-height: 1.6;
-}
-
-body > div > article section > ul.timeline li span {
-    display: block;
-    float: left;
-    margin-right: 6px;
-}
-body > div > article section > ul.timeline li span.list {
-    color: #1E57FF;
-}
-body > div > article section > ul.timeline li span.date {
-    color: gray;
-    font-size: 10px;
-    margin-top: 4px;
-}
-body > div > article section > ul.timeline li span.action {
-}
-body > div > article section > ul.timeline li span.code {
-    height: 16px;
-    width: 16px;
-    margin-top: 3px;
-    vertical-align: baseline;
-    background-repeat: no-repeat;
-    background-position: 0px 0px;
-    background-size:  16px 16px;
-    -o-background-size:  16px 16px;
-    -moz-background-size:  16px 16px;
-    -webkit-background-size: 16px 16px;
 }
 /********** comment **********/
 #comment {
@@ -843,16 +811,18 @@ form.modal {
     position: absolute;
     z-index: 1;
     top: 120px;
-    left: 180px;
-    border: 1px solid #8f8f8f;
+    left: 190px;
+    border: 3px solid #323232;
+    border-radius: 6px;
+    -moz-border-radius: 6px;
     font-size: 12px;
-    background: #ededed;
+    background-color: #F9F9F9;
     box-shadow: 6px 6px 6px rgba(0,0,0,0.4);
     -moz-box-shadow: 6px 6px 6px rgba(0,0,0,0.4);
     -webkit-box-shadow: 6px 6px 6px rgba(0,0,0,0.4);
 }
 form.modal article {
-    margin: 10px 10px 10px 10px;
+    margin: 10px;
     padding-bottom: 10px;
     border-bottom: 1px solid gray;
 }
@@ -861,8 +831,7 @@ form.modal article.clearfix ul {
 }
 form.modal h1 {
     padding: 8px;
-    border-bottom: 1px solid gray;
-    background: #2d2d2d;
+    background-color: #323232;
     color: white;
     cursor: move;
 }
@@ -874,7 +843,7 @@ form.modal li.label-first {
     font-size: 14px;
 }
 form.modal li.label {
-    padding-top: 6px;
+    padding-top: 10px;
     padding-bottom: 4px;
     font-size: 14px;
 }
@@ -894,77 +863,60 @@ form.modal footer nav ul li button#save {
     -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 -5px 12px, inset rgba(0, 0, 0, 1) 0 1px 3px, rgba(255, 255, 255, 0.4) 0 1px;
     -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 -5px 12px, inset rgba(0, 0, 0, 1) 0 1px 3px, rgba(255, 255, 255, 0.4) 0 1px;
 }
-form nav.tabgroup {
-    border-bottom: 1px solid gray;
-}
-form nav.tabgroup ul {
-    margin-top: 10px;
-    margin-left: 10px;
-    border-left: 1px solid gray;
-}
-form nav.tabgroup li {
-    float: left;
-    padding: 4px;
-    border-top: 1px solid gray;
-    border-right: 1px solid gray;
-}
-form nav.tabgroup li:hover {
-    cursor: pointer;
-    background: -o-gradient(top, from(#fcea6c), to(#f7d208));
-    background: -moz-gradient(top, from(#fcea6c), to(#f7d208));
-    background: -webkit-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));
-}
 form.confirm {
     z-index: 1001;
 }
 #delete-list-window {
-    background: #fed7d6;
+    border-color: #D00303;
+    background-color: #fed7d6;
 }
 #delete-list-window article {
-    background: #fec1c1;
+    background-color: #fed7d6;
+    padding: 10px;
+    border-bottom: 1px solid #D00303;
+    font-size: 16px;
+    font-weight: bold;
 }
 #delete-list-window h1 {
-    background: #febaba;
-    background: -o-linear-gradient(top, #fee1e1, #febaba);
-    background: -moz-linear-gradient(top, #fee1e1, #febaba);
-    background: -webkit-gradient(linear, left top, left bottom, from(#fee1e1), to(#febaba));
+    background-color: #D00303;
+    border-bottom: none;
+    color: white;
+}
+#comment-window {
+    left: 440px;
+}
+#comment-window textarea {
+    width: 280px;
+    font-size: 14px;
 }
 
 /********** create-task **********/
 #create-list-window {
-    width: 300px;
+    width: 240px;
 }
-#create-list-admins,
+#create-list-window input {
+    width: 210px;
+}
 #create-list-members {
     max-height: 200px;
     overflow-y: auto;
 }
-#create-list-admins li,
 #create-list-members li {
     position: relative;
+    padding: 2px 0 2px 2px;
     margin-bottom: 2px;
 }
-#create-list-admins img,
 #create-list-members img {
     margin-right: 2px;
     vertical-align: middle;
 }
-#create-list-admins li:hover,
 #create-list-members li:hover {
     background-color: #fcea6c;
 }
-#create-list-admins .icon-delete,
 #create-list-members .icon-delete {
     position: absolute;
     right: 4px;
     cursor: pointer;
-}
-#list-settings-window {
-    width: 300px;
-}
-#list-settings-window article {
-    max-height: 300px;
-    overflow-y: auto;
 }
 #create-task-assign {
     width: 240px;

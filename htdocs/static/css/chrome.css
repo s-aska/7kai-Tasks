@@ -33,9 +33,10 @@ time, mark, audio, video, button {
 html, body {
     line-height: 1;
     overflow: hidden;
+    color: #323232;
 }
 html, body, button {
-    font-family:  "Hiragino Kaku Gothic Pro",Vernada,arial,sans-serif;
+    font-family: "Hiragino Kaku Gothic Pro",Vernada,arial,sans-serif;
 }
 ul {
     list-style: none;
@@ -89,12 +90,26 @@ button:disabled {
 .clearfix {
     zoom:1;
 } /* IE6, IE7 */
-.box {
-    /* display: -moz-box; */
-    display: -webkit-box;
+body > div.box {
+    display: block;
+    min-width: 1110px;
+}
+body > div.box > aside {
+    float: left;
+}
+body > div.box > article {
+    float: left;
+}
+body > div.box > #comment {
+    float: left;
 }
 .icon {
     width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+}
+.icon-wide {
+    width: 32px;
     height: 16px;
     background-repeat: no-repeat;
 }
@@ -105,7 +120,8 @@ button:disabled {
     padding-right: 2px;
     background-repeat: no-repeat;
 }
-span.icon {
+span.icon,
+span.icon-wide {
     display: inline-block;
     vertical-align: bottom;
 }
@@ -115,8 +131,14 @@ span.icon {
 .icon-a-z {
     background-image: url(/static/img/a-z.png);
 }
-.icon-create {
+.icon-create { /* 非推奨 */
     background-image: url(/static/img/create.png);
+}
+.icon-plus {
+    background-image: url(/static/img/create.png);
+}
+.icon-plus-1-m {
+    background-image: url(/static/img/plus-1-m.png);
 }
 .icon-minus {
     background-image: url(/static/img/minus.png);
@@ -126,6 +148,9 @@ span.icon {
 }
 .icon-right {
     background-image: url(/static/img/right.png);
+}
+.icon-left {
+    background-image: url(/static/img/left.png);
 }
 .icon-star-on {
     background-image: url(/static/img/star_on.png);
@@ -151,8 +176,17 @@ span.icon {
 .icon-trash {
     background-image: url(/static/img/trash.png);
 }
+.icon-pulldown {
+    background-image: url(/static/img/pulldown.png);
+}
 .icon-settings {
     background-image: url(/static/img/settings.png);
+}
+.icon-preference {
+    background-image: url(/static/img/preference.png);
+}
+.icon-preference-white {
+    background-image: url(/static/img/preference-white.png);
 }
 .icon-grip {
     background-image: url(/static/img/grip.png);
@@ -162,6 +196,9 @@ span.icon {
 }
 .icon-edit {
     background-image: url(/static/img/edit.png);
+}
+.icon-equal {
+    background-image: url(/static/img/equal.png);
 }
 .icon-search {
     background-image: url(/static/img/search.png);
@@ -228,234 +265,366 @@ img.twitter_profile_image {
     width: 16px;
     height: 16px;
 }
-
+img.twitter_profile_image32 {
+    width: 32px;
+    height: 32px;
+}
+.pulldown {
+    position: relative;
+}
+.pulldown .pulldown-menu {
+    display: none;
+    position: absolute;
+    z-index: 5;
+    right: 0;
+    background: white;
+    cursor: pointer;
+    color: #323232;
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+    border-bottom: 1px solid gray;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+    -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+    -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+}
+.pulldown .pulldown-menu li {
+    padding: 6px;
+    color: #323223;
+    font-size: 14px;
+    text-decoration: underline;
+}
+.pulldown .pulldown-menu li:hover {
+    background-color: #ffffcc;
+}
 /********** header **********/
 body > header {
     padding: 2px;
     height: 24px;
-    background-color: #e1e1e1;
-    border-bottom: 1px solid gray;
-    font-size: 12px;
+    background-color: #323232;
+    border-bottom: 1px solid black;
+    font-size: 13px;
     line-height: 1.6;
+    color: white;
 }
-body > header h1 {
+body > header > h1 {
     padding: 4px 0px 0px 8px;
 }
-body > header h1 span.version {
+body > header > h1 span.version {
     padding-left: 4px;
     font-size: 10px;
+    color: #ccc;
 }
-body > header p {
+body > header > p {
     position: absolute;
     top: 6px;
     left: 246px;
+    float: left;
+}
+body > header a {
+    font-size: 12px;
+    color: white;
 }
 body > header nav {
     position: absolute;
-    top: 4px;
-    right: 10px;
+    top: 0px;
+    right: 5px;
 }
-body > header nav ul li {
+body > header nav > ul > li {
     float: left;
-    margin: 0px 0px 0px 10px;
+    position: relative;
 }
-body > header nav ul li img {
+body > header nav > ul > li.menu:hover {
+    background-color: white;
+    color: #323232;
+}
+body > header nav > ul > li.guide {
+    margin-top: 3px;
+    margin-right: 10px;
+}
+body > header nav > ul > li.account {
+    padding: 2px 10px 2px 10px;
+}
+body > header nav > ul > li.account > img {
+    width: 24px;
+    height: 24px;
     margin-right: 4px;
-    vertical-align: middle;
+    vertical-align: -7px;
 }
-body > header nav ul li a {
-    color: #1e57ff;
-    font-weight: bold;
-    text-decoration: none;
+body > header nav > ul > li.settings {
+    padding: 2px 5px 6px 5px;
 }
-body > header nav ul li.member-name {
+body > header nav > ul > li.settings > span {
+    font-family: arial, sans-serif;
+}
+body > header nav > ul > li.settings:hover > span {
+    background-image: url(/static/img/preference.png);
+}
+body > header nav > ul > li.menu > ul {
+    display: none;
+    position: absolute;
+    z-index: 2;
+    right: 0;
+    top: 28px;
+}
+body > header nav > ul > li.menu > ul li:hover {
+    background-color: #ffffcc;
+}
+body > header nav > ul > li.menu > ul li a {
+    display: block;
+    color: #323232;
+    font-size: 14px;
+}
+#notification-badge > span {
+    display: inline-block;
+    margin-top: 2px;
+    min-width: 16px;
+    padding: 4px 4px 1px 4px;
+    background-color: rgba(190, 190, 190, 1);
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    font-size: 12px;
+    text-align: center;
+}
+#notification-badge > span.active {
+    background-color: rgba(208, 0, 24, 1);
+}
+#notification-badge > div > h1 {
+    padding: 10px 0 0 10px;
+}
+#notification-badge > div > p {
+    padding: 0 0 0 10px;
+}
+#notification-badge > div > ul {
+    width: 360px;
+    padding: 4px 4px 0 4px;
+}
+#notification-badge > div > ul > li {
+    
+}
+#notification-badge > div > ul > li {
+    font-size: 11px;
+    margin: 0 0 4px 0;
+    padding: 0;
+    line-height: 1;
+    cursor: pointer;
+    font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+}
+#notification-badge > div > ul > li:hover {
+    background-color: #fcea6c;
+}
+#notification-badge > div > ul > li img {
+    display: block;
+    float: left;
+    width: 32px;
+    height: 32px;
+    vertical-align: top;
+}
+#notification-badge > div > ul > li span.screen_name {
+    margin-left: 4px;
+    font-size: 12px;
     font-weight: bold;
+    color: #1E57FF;
+}
+#notification-badge > div > ul > li span.action {
+    margin-left: 4px;
+    color: #333333;
+}
+#notification-badge > div > ul > li span.list {
+    margin-left: 4px;
+    font-weight: bold;
+    color: #1E57FF;
+}
+#notification-badge > div > ul > li span.date {
+    color: gray;
+    margin-left: 4px;
+    font-size: 10px;
+}
+/********** wrapper **********/
+body > div {
+    border-top: 1px solid gray;
 }
 
 /********** aside **********/
 body > div > aside {
-    width: 240px;
+    position: relative;
+    /*z-index: 2;*/
+    width: 180px;
     border-right: 1px solid gray;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
-    font-size: 16px;
+    font-size: 14px;
+    background-color: #F9F9F9;
 }
 body > div > aside header nav ul {
-    padding: 8px 4px 8px 8px;
-    background-color: #f9f9f9;
+    padding: 9px 4px 9px 8px;
     border-bottom: 1px solid #cecece;
-}
-body > div > aside header nav ul li {
-    float: left;
-    font-size: 12px;
-    line-height: 0.8; /* ハックぽくでいやだけど.. */
-    margin-right: 4px;
-}
-body > div > aside > nav {
-    position: relative;
-    overflow-y: auto;
-    line-height: 1.6;
-}
-body > div > aside > nav ul li {
-    position: relative;
-    padding: 8px 0px 8px 32px;
-    border-bottom: 1px solid #cecece;
+    background-color: #eaeaea;
     cursor: pointer;
+    line-height: 1.2;
 }
-body > div > aside > nav ul li:hover {
+body > div > aside header nav ul:hover {
     background-color: #fcea6c;
 }
-body > div > aside > nav ul li.selected {
+body > div > aside article {
+    padding: 5px;
+}
+body > div > aside article h2 {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 4px;
+    margin-bottom: 2px;
+}
+body > div > aside article h2.members {
+    margin-top: 0px;
+}
+body > div > aside article ul.menu li {
+    padding-left: 10px;
+    padding-bottom: 2px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+body > div > aside article ul.menu li.action {
+    color: #323232;
+    cursor: pointer;
+    text-decoration: underline;
+}
+body > div > aside article ul.menu li.action:hover,
+body > div > aside article ul.menu li.selected {
+    background-color: #DCE8EB;
+}
+body > div > aside article ul.menu li hr {
+    border-width: 1px 0px 0px 0px;
+    border-style: solid;
+    border-color: gray;
+    margin-right: 10px;
+    height: 1px;
+}
+#current-list-name {
+    display: inline-block;
+    padding-right: 8px;
+}
+#list-members li {
+    float: left;
+    cursor: pointer;
+    border: 1px solid #f9f9f9;
+    height: 32px;
+}
+#list-members li:hover {
+    border: 1px solid #fcea6c;
+}
+
+#select-list-panel {
+    position: absolute;
+    display: none;
+    z-index: 3;
+    width: 180px;
+    overflow-y: auto;
+    background-color: #eaeaea;
+}
+#select-list-panel li {
+    position: relative;
+    padding: 4px 0px 4px 8px;
+    border-bottom: 1px solid #cecece;
+    cursor: pointer;
+    line-height: 1.6;
+}
+#select-list-panel li:hover {
+    background-color: #fcea6c;
+}
+#select-list-panel li.selected {
     background-color: #f7d208;
 }
-body > div > aside > nav ul li.updated {
+#select-list-panel li.updated {
     background-color: #c1c1c1;
 }
-body > div > aside > nav ul li.filter {
-    background-image: url(/static/img/search.png);
+#select-list-panel li.action {
     background-repeat: no-repeat;
-    background-position: 10px 12px;
+    background-position: 6px 6px;
+    padding-left: 24px;
 }
-body > div > aside > nav ul li.icon {
-    background-repeat: no-repeat;
-    background-position: 10px 12px;
-}
-body > div > aside > nav ul li .badge {
+#select-list-panel li .badge {
     position: absolute;
     right: 12px;
-    margin-top: 2px;
+    margin-top: 0px;
     padding: 4px 8px 2px 8px;
     border-radius: 10px;
     -moz-border-radius: 10px;
     background-color: red;
     color: white;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: bold;
 }
-body > div > aside > nav ul li.project .icon-settings {
-    display: none;
-    position: absolute;
-    top: 12px;
-    right: 12px;
-}
-body > div > aside > nav ul li.project:hover .badge {
-    display: none !important;
-}
-body > div > aside > nav ul li.project:hover .icon-settings {
-    display: block;
-}
-body > div > aside > nav .icon-prev {
+#summary {
     position: fixed;
-    top: 78px;
-    left: 215px;
+    bottom: 25px;
+    left: 0;
+    width: 180px;
+    padding-top: 10px;
+    padding-bottom: 6px;
+    font-size: 12px;
+    line-height: 1.4;
+    background-color: #323232;
+    color: white;
 }
-body > div > aside > nav .icon-next {
-    position: fixed;
-    bottom: 31px;
-    left: 215px;
+#summary li {
+    padding-left: 10px;
+    padding-top: 2px;
 }
-
+#summary li .action {
+    text-decoration: underline;
+}
+#summary li .action:hover,
+#summary li .selected {
+    color: #323232;
+    background-color: white;
+}
+#summary > li {
+    padding-bottom: 4px;
+}
+#summary li ul li {
+    
+}
 /********** article **********/
 body > div > article {
 }
-body > div > article nav {
-    padding: 8px 4px 8px 8px;
-    border-bottom: 1px solid #cecece;
+body > div > article > header {
+    width: 548px;
+    padding: 4px 4px 4px 8px;
     font-size: 12px;
     background-color: #f9f9f9;
-    width: 700px;
+    border-bottom: 1px solid #cecece;
 }
-body > div > article nav ul {
+body > div > article > header > div {
+    float: right;
+    margin: 4px;
 }
-body > div > article nav ul li {
-    float: left;
-    margin: 0px 4px 0px 0px;
-    line-height: 0.8; /* ハックぽくでいやだけど.. */
+body > div > article > header > div > span {
+    display: inline-block;
+    min-width: 50px;
+    padding: 2px;
+    text-decoration: underline;
+    cursor: pointer;
 }
-body > div > article nav ul li.label {
-    padding: 4px 4px 4px 4px;
+body > div > article > header > div.pulldown > ul.pulldown-menu {
+    z-index: 1;
+    background-color: #f9f9f9;
 }
-body > div > article nav ul li.action {
-    padding: 4px 4px 4px 4px;
-    min-height: 16px;
-    background-position: 6px 4px;
-    border: 1px solid gray;
-    border-radius: 3px;
-    -moz-border-radius: 3px;
-    text-shadow: rgba(255, 255, 255, 0.4) 0 1px;
-    background: -o-linear-gradient(top, #ffffff, #e1e1e1);
-    background: -moz-linear-gradient(top, #ffffff, #e1e1e1);
-    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
-}
-body > div > article nav ul li.action span {
-}
-body > div > article nav ul li span.icon,
-body > div > article nav ul li span.icon-with {
-    display: block;
-    min-width: 16px;
-    height: 16px;
-    background-repeat: no-repeat;
-    background-position: 0 0;
-}
-body > div > article nav ul li span.icon-with {
-    padding-left: 18px;
-    padding-right: 2px;
-}
-body > div > article nav ul li input.icon-search {
-    margin: 0;
-    padding: 2px 2px 0px 22px;
-    height: 20px;
-    width: 80px;
-    border-radius: 10px;
-    -moz-border-radius: 10px;
-    font-size: 14px;
-    background-repeat: no-repeat;
-    background-position: 4px 4px;
+body > div > article > header > div.pulldown > ul.pulldown-menu li {
+    font-size: 12px;
 }
 
 /********** article section **********/
 body > div > article section {
     overflow-y: auto;
-    width: 700px;
+    width: 540px;
     padding: 10px 10px 10px 10px;
     font-size: 14px;
 }
-body > div > article section header li {
-    float: left;
-    padding-left: 4px;
-}
-body > div > article section header li:first-child {
-    padding-left: 10px;
-}
-body > div > article section header li.twitter_profile_image {
-    /*width: 32px;*/
-    cursor: pointer;
-}
-body > div > article section header li.twitter_profile_image img {
-    width: 32px;
-    height: 32px;
-    vertical-align: bottom;
-    border: 2px solid gray;
-}
-body > div > article section header li.twitter_profile_image img:hover {
-    border: 2px solid #f7d208;
-}
-body > div > article section h1 {
-    float: left;
-    margin-bottom: 4px;
-    font-size: 16px;
-}
-#edit-list-link {
-    float: left;
-    display: inline-block;
-    padding-left: 4px;
-    color: #1e57ff;
-    font-size: 12px;
-    font-weight: bold;
+body > div > article section > ul {
 }
 body > div > article section > ul li {
     border-bottom: 1px solid gray;
+    font-size: 12px;
     line-height: 1;
+    background-color: white;
 }
 body > div > article section > ul li.delete {
     background-color: #eaeaea;
@@ -463,7 +632,7 @@ body > div > article section > ul li.delete {
 body > div > article section > ul li.clearfix {
     padding: 2px 0;
 }
-body > div > article section > ul li.clearfix:hover {
+body > div > article section > ul li.selected {
     background-color: #FFFFCC;
 }
 body > div > article section > ul li.clearfix > div {
@@ -472,14 +641,6 @@ body > div > article section > ul li.clearfix > div {
 body > div > article section > ul li.clearfix > div.right {
     float: right;
     margin-right: 5px;
-}
-body > div > article section > ul li div.grip {
-    margin-top: 3px;
-    width: 16px;
-    height: 16px;
-}
-body > div > article section > ul.sortable li div.grip {
-    cursor: url(/static/img/openhand.cur), move;
 }
 body > div > article section > ul li div.action {
     margin-top: 3px;
@@ -492,16 +653,44 @@ body > div > article section > ul li div.action {
 body > div > article section > ul li div.action:hover {
     -webkit-transform: rotate(-25deg);
 }
+body > div > article section > ul li div.grip {
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+}
+body > div > article section > ul li div.grip {
+    cursor: url(/static/img/openhand.cur), move;
+}
 body > div > article section > ul li div.title {
     padding-top: 5px;
     padding-left: 4px;
 }
-body > div > article section > ul li.clearfix div.due {
+body > div > article section > ul li div.comments {
+    padding-top: 5px;
+    padding-left: 2px;
+    font-size: 9px;
+    line-height: 12px;
+    color: gray;
+}
+body > div > article section > ul li div.comment {
+    float: right;
+    padding-top: 6px;
+    padding-left: 5px;
+    font-size: 9px;
+    color: #323232;
+    cursor: pointer;
+    text-decoration: underline;
+}
+body > div > article section > ul li div.due {
     float: right;
     padding-top: 5px;
-    /*padding-right: 5px;*/
+    font-size: 12px;
+    cursor: pointer;
 }
-body > div > article section > ul li.clearfix div.icon-delete {
+body > div > article section > ul li div.over {
+    color: red;
+}
+body > div > article section > ul li div.icon-delete {
     
 }
 body > div > article section > ul li div.assign {
@@ -514,98 +703,79 @@ body > div > article section > ul li div.assign:hover {
 body > div > article section > ul li div.assign img {
     width: 16px;
 }
-body > div > article section > ul li .content {
-    clear: both;
-    margin-left: 90px;
-    width: 420px;
-    max-height: 200px;
+/********** comment **********/
+#comment {
+    border-left: 1px solid gray;
+    padding: 10px;
+    word-wrap: break-word;
+}
+#comment h1 {
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+#comment h2 {
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: bold;
+}
+#comment ul {
+    margin-top: 8px;
+    margin-bottom: 4px;
+    border-top: 2px solid gray;
     overflow-y: auto;
 }
-body > div > article section > ul li .description {
-    margin: 0px 0px 4px 0px;
-    padding: 6px;
-    border: 1px dotted gray;
-}
-body > div > article section > ul li ul.comments {
-    margin: 0px 0px 0px 0px;
-}
-body > div > article section > ul li ul.comments li {
+#comment ul li {
     position: relative;
-    padding-right: 20px;
-    padding-bottom: 4px;
-    border: none;
+    padding: 4px 4px 4px 4px;
     font-size: 12px;
+    min-height: 32px;
+    border-bottom: 1px solid gray;
 }
-body > div > article section > ul li ul.comments li img {
-    float: left;
+#comment ul li:hover {
+    background-color: #FFFFCC;
+}
+#comment ul li img {
+    position: absolute;
     width: 32px;
     margin-right: 4px;
 }
-body > div > article section > ul li ul.comments li span.name,
-body > div > article section > ul li ul.comments li span.date,
-body > div > article section > ul li ul.comments li span.change {
+#comment ul li div {
+    margin-left: 36px;
+    margin-right: 18px;
+    line-height: 1.4;
+}
+#comment ul li span.name {
+    padding-right: 4px;
+    font-weight: bold;
+}
+#comment ul li span.date,
+#comment ul li span.change {
     color: gray;
 }
-body > div > article section > ul li ul.comments li span.name {
-    padding-right: 6px;
-}
-body > div > article section > ul li ul.comments li span.comment {
+#comment ul li span.comment {
     white-space: pre-wrap;
 }
-body > div > article section > ul li ul.comments li input[type=text] {
-    /*width: 300px;*/
+#comment ul li span.date {
+    font-size: 10px;
 }
-body > div > article section > ul li ul.comments li span.icon-delete {
+#comment ul li span.icon-delete {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 4px;
+    right: 4px;
 }
-body > div > article section > ul li ul.comments li.unread {
+#comment ul li.unread {
     background-color: #fcea6c;
 }
-body > div > article section > ul li .commentBox {
-    clear: both;
+#comment p {
+    font-size: 12px;
 }
-body > div > article section > ul li .commentBox textarea {
+#comment textarea {
     height: 14px;
     width: 100%;
     resize: none;
 }
-body > div > article section > ul.timeline {
-    cursor: pointer;
-}
-body > div > article section > ul.timeline li {
-    line-height: 1.6;
-}
 
-body > div > article section > ul.timeline li span {
-    display: block;
-    float: left;
-    margin-right: 6px;
-}
-body > div > article section > ul.timeline li span.list {
-    color: #1E57FF;
-}
-body > div > article section > ul.timeline li span.date {
-    color: gray;
-    font-size: 10px;
-    margin-top: 4px;
-}
-body > div > article section > ul.timeline li span.action {
-    /*cursor: default;*/
-}
-body > div > article section > ul.timeline li span.code {
-    height: 16px;
-    width: 16px;
-    margin-top: 3px;
-    vertical-align: baseline;
-    background-repeat: no-repeat;
-    background-position: 0px 0px;
-    background-size:  16px 16px;
-    -o-background-size:  16px 16px;
-    -moz-background-size:  16px 16px;
-    -webkit-background-size: 16px 16px;
-}
 /********** footer **********/
 body > footer {
     display: block;
@@ -639,47 +809,41 @@ body > footer div.disp {
 form.modal {
     display: none;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 600px;
-    margin-top: -130px;
-    margin-left: -300px;
-    z-index: 1000;
+    z-index: 1;
+    top: 120px;
+    left: 190px;
+    border: 3px solid #323232;
+    border-radius: 6px;
+    -moz-border-radius: 6px;
     font-size: 12px;
-    border: 1px solid #8f8f8f;
-    background: #ededed;
-    box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
-    -moz-box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
-    -webkit-box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
+    background-color: #F9F9F9;
+    box-shadow: 6px 6px 6px rgba(0,0,0,0.4);
+    -moz-box-shadow: 6px 6px 6px rgba(0,0,0,0.4);
+    -webkit-box-shadow: 6px 6px 6px rgba(0,0,0,0.4);
 }
 form.modal article {
-    margin: 10px 10px 10px 10px;
-    padding: 10px;
-    box-shadow: inset 0px 1px 3px rgba(0,0,0,0.4);
-    -moz-box-shadow: inset 0px 1px 3px rgba(0,0,0,0.4);
-    -webkit-box-shadow: inset 0px 1px 3px rgba(0,0,0,0.4);
-    border-radius: 3px;
-    -moz-border-radius: 3px;
-    background: #e1e1e1;
+    margin: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid gray;
+}
+form.modal article.clearfix ul {
+    float: left;
 }
 form.modal h1 {
     padding: 8px;
-    background: #bababa;
-    border-bottom: 1px solid gray;
-    background: -o-linear-gradient(top, #ffffff, #e1e1e1);
-    background: -moz-linear-gradient(top, #ffffff, #e1e1e1);
-    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e1e1e1));
+    background-color: #323232;
+    color: white;
     cursor: move;
 }
 form.modal input {
-    font-size: 16px;
+    font-size: 14px;
 }
 form.modal li.label-first {
     padding-bottom: 4px;
     font-size: 14px;
 }
 form.modal li.label {
-    padding-top: 6px;
+    padding-top: 10px;
     padding-bottom: 4px;
     font-size: 14px;
 }
@@ -691,7 +855,7 @@ form.modal footer nav ul {
 }
 form.modal footer nav ul li {
     display: inline-block;
-    margin: 0 0px;
+    margin: 0 0;
 }
 form.modal footer nav ul li button#save {
     background: #B5B5B5;
@@ -699,84 +863,81 @@ form.modal footer nav ul li button#save {
     -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 -5px 12px, inset rgba(0, 0, 0, 1) 0 1px 3px, rgba(255, 255, 255, 0.4) 0 1px;
     -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 -5px 12px, inset rgba(0, 0, 0, 1) 0 1px 3px, rgba(255, 255, 255, 0.4) 0 1px;
 }
-form nav.tabgroup {
-    border-bottom: 1px solid gray;
-}
-form nav.tabgroup ul {
-    margin-top: 10px;
-    margin-left: 10px;
-    border-left: 1px solid gray;
-}
-form nav.tabgroup li {
-    float: left;
-    padding: 4px;
-    border-top: 1px solid gray;
-    border-right: 1px solid gray;
-}
-form nav.tabgroup li:hover {
-    cursor: pointer;
-    background: -o-gradient(top, from(#fcea6c), to(#f7d208));
-    background: -moz-gradient(top, from(#fcea6c), to(#f7d208));
-    background: -webkit-gradient(linear, left top, left bottom, from(#fcea6c), to(#f7d208));
-}
 form.confirm {
     z-index: 1001;
 }
+#delete-list-window {
+    border-color: #D00303;
+    background-color: #fed7d6;
+}
+#delete-list-window article {
+    background-color: #fed7d6;
+    padding: 10px;
+    border-bottom: 1px solid #D00303;
+    font-size: 16px;
+    font-weight: bold;
+}
+#delete-list-window h1 {
+    background-color: #D00303;
+    border-bottom: none;
+    color: white;
+}
+#comment-window {
+    left: 440px;
+}
+#comment-window textarea {
+    width: 280px;
+    font-size: 14px;
+}
 
 /********** create-task **********/
-#create-task-window textarea,
-#create-task-window input[name=title] {
-    width: 90%;
-}
-#create-list-window .icon {
-    display: inline-block;
-    height: 16px;
-    width: 16px;
-}
-#create-task-window div {
-    display: -webkit-box;
-    
-}
-#create-task-window div ul {
-    width: 50%;
-}
 #create-list-window {
-    width: 300px;
+    width: 240px;
 }
-#create-list-admins,
+#create-list-window input {
+    width: 210px;
+}
 #create-list-members {
     max-height: 200px;
     overflow-y: auto;
 }
-#create-list-admins li,
 #create-list-members li {
     position: relative;
+    padding: 2px 0 2px 2px;
     margin-bottom: 2px;
 }
-#create-list-admins img,
 #create-list-members img {
     margin-right: 2px;
     vertical-align: middle;
 }
-#create-list-admins li:hover,
 #create-list-members li:hover {
     background-color: #fcea6c;
 }
-#create-list-admins .icon-delete,
 #create-list-members .icon-delete {
     position: absolute;
     right: 4px;
     cursor: pointer;
 }
-#list-settings-window {
-    width: 300px;
-}
-#list-settings-window article {
-    max-height: 300px;
+#create-task-assign {
+    width: 240px;
+    max-height: 200px;
     overflow-y: auto;
 }
+
 /********** guide **********/
 #guide {
+    display: none;
+    position: absolute;
+    left: 40px;
+    margin: 20px 0 0 0;
+    padding: 6px;
+    border: 1px solid gray;
+    background: white;
+    color: gray;
+    font-size: 12px;
+    z-index: 9999;
+}
+#digest {
     display: none;
     position: absolute;
     margin: 20px 0 0 0;
@@ -787,10 +948,13 @@ form.confirm {
     font-size: 12px;
     z-index: 9999;
 }
-
+#digest-title {
+    font-weight: bold;
+    color: black;
+}
 /********** .ui **********/
 .ui-widget {
-    font-size: 0.5em;
+    font-size: 12px;
 }
 .ui-datepicker {
     line-height: 1.2;
@@ -812,8 +976,8 @@ form.confirm {
 }
 ::-webkit-scrollbar-button:start:decrement,
 ::-webkit-scrollbar-button:end:increment {
-    display: block;
-    height: 10px
+    display: none;
+    /*height: 10px;*/
 }
 ::-webkit-scrollbar-thumb:vertical,
 ::-webkit-scrollbar-thumb:horizontal {

@@ -145,7 +145,7 @@ sub set_lists {
     my ($self, $c) = @_;
     
     unless (scalar(@{$self->{codes}})) {
-        warnf("has not social accounts " . $c->session->get('screen_name'));
+        warnf("has not social accounts %s", $c->session->get('screen_name'));
         return;
     }
     

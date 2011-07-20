@@ -11,6 +11,7 @@ sub index {
 
 sub signout {
     my ($class, $c) = @_;
+    infof("[%s] sign out", $c->session->get('screen_name'));
     $c->session->expire;
     $c->redirect('/');
 }
@@ -23,10 +24,8 @@ sub viewer {
     }
 
     if ($c->session->get('account')) {
-        infof("logined " . $c->session->get('screen_name'));
-        
-        my $tmpl = $c->req->param('tmpl') || 'mock2';
-        
+        infof("[%s] sign in", $c->session->get('screen_name'));
+        my $tmpl = $c->req->param('tmpl') || 'viewer';
         $c->render("chrome/$tmpl.tt", {
             screen_name => $c->session->get('screen_name'),
             profile_image_url => $c->session->get('profile_image_url')
