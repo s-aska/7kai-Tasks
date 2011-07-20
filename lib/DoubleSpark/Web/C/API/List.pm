@@ -66,10 +66,11 @@ sub update {
     my $owner_id = $c->req->param('owner_id');
     my @member_ids = $c->req->param('member_ids[]');
     
-    return $c->res_403 if ! length $name;
+    return $c->res_403() if ! length $name;
     
     my $doc_id = $list_id;
     my $doc = $c->open_list_doc($account, 'member', $list_id);
+    return $doc unless (ref $doc) eq 'HASH';
     $doc->{name} = $name;
     if ($account->has_role_owner($doc) && $owner_id) {
         $doc->{owner_id} = $owner_id;
@@ -117,6 +118,7 @@ sub delete {
     
     my ($id) = $list_id=~/(\d+)/;
     my $doc = $c->open_list_doc($account, 'owner', $list_id);
+    return $doc unless (ref $doc) eq 'HASH';
     my $txn = $c->db->txn_scope;
     $c->db->delete('list', {
         list_id => $id
@@ -141,6 +143,7 @@ sub clear {
     my $success;
     my $target_task;
     my $doc = $c->open_list_doc($account, 'member', $list_id);
+    return $doc unless (ref $doc) eq 'HASH';
     my $num = scalar(@{$doc->{tasks}});
     @{$doc->{tasks}} = grep { !$_->{closed} } @{$doc->{tasks}};
     my $count = $num - scalar(@{$doc->{tasks}});

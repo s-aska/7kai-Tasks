@@ -395,7 +395,11 @@ function initElementCommentBox(element) {
 }
 function initElementFormWindow(element) {
     var form = $(element);
+    var reset = form.data('reset');
     form.find('button.cancel').click(function(){
+        if (reset) {
+            app.exec(reset, [form]);
+        }
         form.hide('drop');
         return false;
     });
@@ -403,7 +407,6 @@ function initElementFormWindow(element) {
         var input = $(this);
         if (e.keyCode == 27) {
             if (e.shiftKey) {
-                var reset = form.data('reset');
                 if (reset) {
                     app.exec(reset, [form]);
                 } else {
@@ -412,6 +415,9 @@ function initElementFormWindow(element) {
                 }
             } else {
                 document.activeElement.blur();
+                if (reset) {
+                    app.exec(reset, [form]);
+                }
                 form.hide('drop');
             }
         }
@@ -739,7 +745,7 @@ function refresh(option) {
                     var id = app.account.state.last_read_list;
                     app.parts.lists.find('> li[data-list-id="' + id + '"]:first').click();
                 } else {
-                    app.parts.lists.find('li.project:first').click();
+                    app.parts.lists.find('li:first').click();
                 }
                 app.notificationCheckDone(data);
             };
@@ -970,6 +976,7 @@ function switchList(e) {
     app.showList(id);
     app.parts.listonly.show();
     app.parts.summary.find('.selected').removeClass('selected');
+    $('#create-task-button').attr('disabled', false);
 }
 function switchFilterListClick(e) {
     var li = $(e.currentTarget);
@@ -980,19 +987,22 @@ function switchFilterListClick(e) {
     }
     app.parts.summary.find('.selected').removeClass('selected');
     li.addClass('selected');
-    this.cond = $.extend({}, this.cond_default);
-    for (var key in this.cond) {
+    app.cond = $.extend({}, app.cond_default);
+    for (var key in app.cond) {
         var val = li.data(key.replace('_', '-'));
         if (typeof val !== 'undefined') {
-            this.cond[key] = val;
+            app.cond[key] = val;
         }
     }
-    if (!this.cond.list_id) {
+    if (!app.cond.list_id) {
         app.parts.listonly.hide();
         app.parts.listname.text(listname);
-        this.current_list = null;
+        app.current_list = null;
+        $('#create-task-button').attr('disabled', true);
+    } else {
+        $('#create-task-button').attr('disabled', false);
     }
-    this.filterTask();
+    app.filterTask();
 }
 function switchClosedClick(e) {
     this.switchFilterListClick(e);

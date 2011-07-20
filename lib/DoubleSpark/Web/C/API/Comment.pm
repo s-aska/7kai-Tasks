@@ -14,6 +14,7 @@ sub create {
     my $task_id = $c->req->param('task_id');
     my $comment = $c->req->param('comment');
     my $doc = $c->open_list_doc($account, 'member', $list_id);
+    return $doc unless (ref $doc) eq 'HASH';
     my $success;
     my $target_task;
     my $comment_id;
@@ -56,6 +57,7 @@ sub delete {
     my $success;
     my $target_task;
     my $doc = $c->open_list_doc($account, 'member', $list_id);
+    return $doc unless (ref $doc) eq 'HASH';
     for my $task (@{$doc->{tasks}}) {
         if ($task->{id} == $task_id) {
             last unless $task->{comments};

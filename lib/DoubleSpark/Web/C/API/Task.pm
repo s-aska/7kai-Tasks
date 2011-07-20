@@ -16,6 +16,7 @@ sub create {
     my $list_id = $c->req->param('list_id');
     my @assign_ids = $c->req->param('assign_ids[]');
     my $doc = $c->open_list_doc($account, 'member', $list_id);
+    return $doc unless (ref $doc) eq 'HASH';
     my $task_id = ++$doc->{last_task_id};
     $doc->{tasks} = [] unless $doc->{tasks};
     my $task = {
@@ -55,6 +56,7 @@ sub update {
     my $target_task;
     my $action = 'update-task';
     my $doc = $c->open_list_doc($account, 'member', $list_id);
+    return $doc unless (ref $doc) eq 'HASH';
     for my $task (@{$doc->{tasks}}) {
         if ($task->{id} == $task_id) {
             my @keys = qw(status closed title description due requester_id);
@@ -119,6 +121,8 @@ sub move {
     my $target_task;
     my $src_doc = $c->open_list_doc($account, 'member', $src_list_id);
     my $dst_doc = $c->open_list_doc($account, 'member', $dst_list_id);
+    return $src_doc unless (ref $src_doc) eq 'HASH';
+    return $dst_doc unless (ref $dst_doc) eq 'HASH';
     @{$src_doc->{tasks}} = grep {
         my $task = $_;
         if ($task->{id} == $task_id) {
@@ -126,7 +130,7 @@ sub move {
         }
         $task->{id} == $task_id ? 0 : 1;
     } @{$src_doc->{tasks}};
-    die 'NotFound' unless $target_task;
+    return $c->res_404() unless $target_task;
     $target_task->{id} = ++$dst_doc->{last_task_id};
     push @{$dst_doc->{tasks}}, $target_task;
     $c->save_list_doc($account, $dst_doc);
