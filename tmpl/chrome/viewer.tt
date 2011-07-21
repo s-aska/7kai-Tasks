@@ -8,9 +8,9 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
 <script type="text/javascript" src="/static/js/jquery.autogrow-textarea.js"></script>
 <script type="text/javascript" src="/static/js/h5utils.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/css/chrome.css" media="all">
+<link rel="stylesheet" type="text/css" href="/static/css/chrome-dev.css" media="all">
 <script type="text/javascript" src="/static/js/chrome-core.js"></script>
-<script type="text/javascript" src="/static/js/chrome.js"></script>
+<script type="text/javascript" src="/static/js/chrome-dev.js"></script>
 [% IF is_ff(c) %]
 <link rel="stylesheet" type="text/css" href="/static/css/firefox.css" media="all">
 [% END %]
@@ -335,11 +335,7 @@ location.href = '/';
 </button>
 <div class="pulldown" data-init="pulldown">
 <a data-init="localize" data-text-ja="並び替え">Sort</a>: <span></span>
-<ul class="pulldown-menu"
-    data-init="sortable"
-    data-update="sortUpdateTask"
-    data-handle="div.grip"
->
+<ul class="pulldown-menu">
 <li
     class="action"
     data-init="click,localize"
@@ -382,7 +378,11 @@ location.href = '/';
 </header>
 <section>
 <p id="task-not-found-message" style="position: absolute; z-index: -1;margin: 4px;">task not found.</p>
-<ul class="task">
+<ul class="task"
+    data-init="sortable"
+    data-update="sortUpdateTask"
+    data-handle="div.grip"
+>
 <li class="clearfix" draggable="true">
 <div class="grip icon-grip"
     data-init="guide"
