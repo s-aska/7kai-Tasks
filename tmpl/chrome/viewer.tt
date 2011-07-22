@@ -694,6 +694,7 @@ comment</div>
     class="modal"
     data-init="formWindow"
     data-submit="submitComment"
+    data-reset="resetComment"
 >
 <header>
 <h1 data-init="localize" data-text-ja="コメント">Comment</h1>

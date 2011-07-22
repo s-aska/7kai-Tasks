@@ -26,6 +26,7 @@ var app = {
     guide: true,
     dragging: false,
     dragtask: null,
+    commentopen: null,
     current_list: null,
     current_task: null,
     current_taskli: null,
@@ -160,6 +161,7 @@ var app = {
     submitCreateTask: submitCreateTask,
     submitClearTrash: submitClearTrash,
     resetCreateTask: resetCreateTask,
+    resetComment: resetComment,
     
     // MainContents
     registAssign: registAssign,
@@ -377,7 +379,6 @@ function initElementSortable(element) {
 }
 function initElementCommentBox(element) {
     var ele = $(element);
-    ele.attr('disabled', true);
     ele.keydown(function(e){
         if (e.keyCode === 13 && !e.shiftKey) {
             e.stopPropagation();
@@ -387,6 +388,7 @@ function initElementCommentBox(element) {
             }
         } else if (e.keyCode === 27) {
             app.parts.commentbox.val('');
+            app.commentopen = false;
             $('#comment-window').hide('drop');
         }
     });
@@ -1478,7 +1480,12 @@ function openClick(e, ele) {
 }
 function openCommentClick(e, ele) {
     var top = ele.offset().top + ele.height() + 20;
-    
+    var div = $(ele);
+    var list_id = div.parent().data('list-id');
+    var task_id = div.parent().data('id');
+    app.parts.commentbox.data('list-id', list_id);
+    app.parts.commentbox.data('task-id', task_id);
+    app.commentopen = true;
     var form = app.modals[ele.data('id')];
     if (form.css('display') === 'none') {
         form
@@ -2022,6 +2029,9 @@ function resetCreateTask(form) {
     form.find('input[type=text], textarea').val('');
     $('#create-task-assign').find('input[type=checkbox].').attr('checked', false);
 }
+function resetComment(form) {
+    app.commentopen = false;
+}
 
 // MainContents
 function registAssign(friends) {
@@ -2134,7 +2144,7 @@ function createTaskElement(list, task) {
     }
     li.data('responser-ids', responser.sort().join(','));
     li.mouseover(function(){
-        if (app.active === 'comment') {
+        if (app.commentopen) {
             return;
         }
         if (app.current_taskli) {
@@ -2150,10 +2160,6 @@ function createTaskElement(list, task) {
         } else {
             $('#task-description').text('');
         }
-        app.parts.commentbox
-            .attr('disabled', false)
-            .data('list-id', list.id)
-            .data('task-id', task.id);
         app.parts.comment.empty();
         if (task.comments) {
             for (var i = 0, max_i = task.comments.length; i < max_i; i++) {
