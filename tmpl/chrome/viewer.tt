@@ -8,9 +8,9 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
 <script type="text/javascript" src="/static/js/jquery.autogrow-textarea.js"></script>
 <script type="text/javascript" src="/static/js/h5utils.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/css/chrome-dev.css" media="all">
+<link rel="stylesheet" type="text/css" href="/static/css/chrome.css" media="all">
 <script type="text/javascript" src="/static/js/chrome-core.js"></script>
-<script type="text/javascript" src="/static/js/chrome-dev.js"></script>
+<script type="text/javascript" src="/static/js/chrome.js"></script>
 [% IF is_ff(c) %]
 <link rel="stylesheet" type="text/css" href="/static/css/firefox.css" media="all">
 [% END %]
