@@ -109,9 +109,9 @@ function autoLink(text) {
         var a = d.createElement('a');
         a.href = url;
         a.target = '_blank';
-        a.cendChild(d.createTextNode(url));
+        a.append(d.createTextNode(url));
         var div = d.createElement('div');
-        div.cendChild(a);
+        div.append(a);
         return div.innerHTML;
     });
 }

@@ -602,6 +602,7 @@ function syncTwitterContact(user_id, cursor, screen_name) {
     });
 }
 function lookupUnknownMembers(unknownMembers, callback) {
+    console.log(unknownMembers);
     this.ajax({
         type: 'get',
         url: '/api/1/contact/lookup_twitter',
@@ -623,6 +624,8 @@ function lookupUnknownMembers(unknownMembers, callback) {
                 app.friends["@" + friend.screen_name] = meta;
                 app.friend_ids["tw-" + friend.id] = meta;
             }
+            callback.call();
+        } else {
             callback.call();
         }
     });
@@ -693,7 +696,7 @@ function refresh(option) {
             
             var humanmap = {};
             var unknownCheck = function(id){
-                if (!(id in app.friend_ids) && !(id in humanmap)) {
+                if (id && !(id in app.friend_ids) && !(id in humanmap)) {
                     humanmap[id] = true;
                     unknownMembers.push(id);
                 }
@@ -2389,6 +2392,9 @@ function submitComment() {
 }
 function renderComment(list_id, task_id, comment) {
     var li = $('<li class="clearfix"/>');
+    if (!comment.owner_id) {
+        console.log(comment);
+    }
     var friend = this.friend_ids[comment.owner_id];
     var img = $('<img>').attr('src', friend.profile_image_url);
     var msg = $('<div/>');

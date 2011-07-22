@@ -14,7 +14,15 @@ sub lookup_twitter {
         $_=~s|^tw-||g;
     }
     my $nt = $c->twitter;
-    my $res = $nt->lookup_users({ user_id => \@user_ids });
+    my $res;
+    eval {
+        $res = $nt->lookup_users({ user_id => \@user_ids });
+    }; if($@) {
+        warnf('twitter lookup_users error: %s', $@);
+        return $c->render_json({
+            success => 0
+        });
+    }
     $c->render_json({
         success => 1,
         friends => $res

@@ -7,6 +7,7 @@ use 5.008001;
 
 use AnyEvent::CouchDB ();
 use Facebook::Graph;
+use Log::Minimal;
 #use Net::Dropbox::API;
 use Net::Twitter::Lite;
 #use Scope::Container;
@@ -156,3 +157,4 @@ sub res_403 {
 }
 
 1;
+
