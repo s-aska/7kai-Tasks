@@ -148,7 +148,6 @@ var app = {
     tasksFilterGenerate: tasksFilterGenerate,
     tasksCommentFilter: tasksCommentFilter,
     tasksTodoFilter: tasksTodoFilter,
-    tasksRequestFilter: tasksRequestFilter,
     taskmenuSortClick: taskmenuSortClick,
     createTaskDuePlusClick: createTaskDuePlusClick,
     createTaskDuePlusMonthClick: createTaskDuePlusMonthClick,
@@ -1101,7 +1100,7 @@ function needCount(task) {
     if (task.closed) {
         return false;
     }
-    var my_order = this.isMe(task.registrant_id);
+    var my_order = this.isMe(task.requester_id);
     if (task.status === 2) {
         if (my_order) {
             return true;
@@ -1748,7 +1747,7 @@ function tasksFilterGenerate(cond) {
         if (typeof cond.closed === 'number' && cond.closed !== task.closed) {
             return false;
         }
-        if (cond.registrant && !app.isMe(task.registrant_id)) {
+        if (cond.registrant && !app.isMe(task.requester_id)) {
             return false;
         }
         if (typeof cond.assign === 'boolean') {
@@ -1756,7 +1755,7 @@ function tasksFilterGenerate(cond) {
             if (task.assign_ids.length) {
                 assign = app.findMe(task.assign_ids) ? true : false;
             } else {
-                assign = app.isMe(task.registrant_id);
+                assign = app.isMe(task.requester_id);
             }
             if (cond.assign !== assign) {
                 return false;
@@ -1786,25 +1785,6 @@ function tasksCommentFilter(li) {
 }
 function tasksTodoFilter(list, task) {
     return this.needCount(task);
-}
-function tasksRequestFilter(list, task) {
-    // closed
-    if (task.closed) {
-        return false;
-    }
-    // 自分以外が登録
-    if ("registrant" in task) {
-        if (!this.isMe(task.registrant_id)) {
-            return false;
-        }
-    }
-    // 自分が担当
-    if (task.assign_ids) {
-        if (this.findMe(task.assign_ids)) {
-            return false;
-        }
-    }
-    return true;
 }
 function taskmenuSortClick(e, ele) {
     this.sortTask(ele.data('id'));
