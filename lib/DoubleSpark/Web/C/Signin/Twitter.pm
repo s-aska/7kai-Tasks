@@ -2,17 +2,18 @@ package DoubleSpark::Web::C::Signin::Twitter;
 use strict;
 use warnings;
 use Log::Minimal;
+use JSON::XS;
 
 sub oauth {
     my ($class, $c) = @_;
     
     my $nt = $c->twitter;
     my $url = $nt->get_authentication_url(callback => $c->config->{Twitter}->{callback});
-    
     $c->session->set('tw_request', {
         request_token        => $nt->request_token,
         request_token_secret => $nt->request_token_secret
     });
+    infof('create twitter oauth session');
     
     $c->redirect($url);
 }
@@ -20,43 +21,107 @@ sub oauth {
 sub callback {
     my ($class, $c) = @_;
 
-    if ($c->session->get('tw_account')) {
-        return $c->redirect('/chrome/viewer');
-    }
-
     my $tw_request = $c->session->remove('tw_request');
     unless ($tw_request) {
         if ($c->session->get('account')) {
-            return $c->redirect('/chrome/viewer');
+            warnf('missing twitter oauth session and signed');
+            return $c->redirect('/');
         } else {
+            warnf('missing twitter oauth session');
             return $c->redirect('/signin/twitter/oauth');
         }
     }
 
-    my $nt = $c->twitter;
-    $nt->request_token($tw_request->{request_token});
-    $nt->request_token_secret($tw_request->{request_token_secret});
-    
     my $verifier = $c->req->param('oauth_verifier');
     unless ($verifier) {
+        warnf('denied twitter oauth');
         return $c->redirect('/', { twitter_denied => 1 });
     }
 
     eval {
+        my $nt = $c->twitter;
+        $nt->request_token($tw_request->{request_token});
+        $nt->request_token_secret($tw_request->{request_token_secret});
+
         my ($access_token, $access_token_secret, $user_id, $screen_name) =
             $nt->request_access_token(verifier => $verifier);
-        my $res = $nt->show_user($user_id);
-        $c->session->set('tw_account', {
-            user_id => $user_id,
-            name => $res->{name} || '',
-            screen_name => $screen_name,
-            profile_image_url => $res->{profile_image_url} || ''
-        });
+        
+        my $code = "tw-$user_id";
+        my $user = $nt->show_user($user_id);
+        my $icon = $user->{profile_image_url};
+
+        my $tw_account = $c->db->single('tw_account', { code => $code });
+        
+        my $account = $c->account;
+        
+        # 既存Twアカウント
+        if ($tw_account) {
+            
+            # screen_name更新
+            if ($tw_account->name ne $screen_name) {
+                infof('update twitter screen_name %s to %s', $tw_account->name, $screen_name);
+                $tw_account->update({ name => $screen_name });
+            }
+            
+            # 移行
+            if ($account && $account->account_id != $tw_account->account_id) {
+                $tw_account->update({ account_id => $account->account_id });
+                infof('move tw_account %s aid:%s to aid:%s',
+                    $screen_name,
+                    $tw_account->account_id,
+                    $account->account_id);
+                $c->session->set('sign', {
+                        account_id => $account->account_id,
+                        code       => $code,
+                        name       => $screen_name,
+                        icon       => $icon });
+                $c->session->set('notice', 'tw_account_move');
+            } else {
+                infof('signin from twitter %s', $screen_name);
+                $c->session->set('sign', {
+                        account_id => $tw_account->account_id,
+                        code       => $code,
+                        name       => $screen_name,
+                        icon       => $icon });
+            }
+        }
+        
+        # 新規Twアカウント
+        else {
+            
+            # 追加
+            if ($account) {
+                infof('add tw_account aid:%s tw:%s', $account->account_id, $screen_name);
+                $c->session->set('notice', 'tw_account_add');
+            }
+            
+            # 新規作成
+            else {
+                $account = $c->create_account($code, $screen_name);
+                infof('new tw_account aid:%s tw:%s', $account->account_id, $screen_name);
+                $c->session->set('notice', 'tw_account_create');
+            }
+            
+            my $tw_account = $c->db->insert('tw_account', {
+                account_id => $account->account_id,
+                code       => $code,
+                name       => $screen_name,
+                created_on => \'now()',
+                updated_on => \'now()'
+            });
+            
+            $c->session->set('sign', {
+                account_id => $account->account_id,
+                code       => $code,
+                name       => $screen_name,
+                icon       => $icon });
+        }
     };if ($@) {
+        critf('signin.twitter.callback %s', $@);
         $c->redirect('/', { twitter_error => 1 });
     } else {
         $c->session->regenerate_session_id(1);
-        $c->redirect('/chrome/viewer');
+        $c->redirect('/');
     }
 }
 

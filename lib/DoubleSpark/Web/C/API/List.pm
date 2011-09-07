@@ -1,13 +1,12 @@
 package DoubleSpark::Web::C::API::List;
 use strict;
 use warnings;
-use DoubleSpark::Account;
 use Log::Minimal;
 
-sub get {
+sub retrieve {
     my ($class, $c) = @_;
-    
-    my $account = DoubleSpark::Account->new($c);
+
+    my $account = $c->account;
     my $list_id = $c->{args}->{list_id};
     my $docs = $c->open_list_docs($account, 'member', [$list_id]);
     $c->render_json({
@@ -18,127 +17,116 @@ sub get {
 
 sub create {
     my ($class, $c) = @_;
-    
-    my $account = DoubleSpark::Account->new($c);
+
+    my $res = $c->validate(
+        name => [qw/NOT_NULL/, [qw/LENGTH 1 20/]],
+        owner => [qw/NOT_NULL OWNER/],
+        { members => [qw/members/] }, [qw/MEMBERS/],
+    );
+    return $res if $res;
+
     my $name = $c->req->param('name');
-    my $owner_id = $c->req->param('owner_id');
-    my @member_ids = $c->req->param('member_ids[]');
-    my $privacy = $c->req->param('privacy') || 'closed';
-    
-    return $c->res_403 if ! length $name;
-    return $c->res_403 if $privacy!~/^(open|closed|secret)$/;
-    
+    my $owner = $c->req->param('owner');
+    my @members = $c->req->param('members');
+
     my $txn = $c->db->txn_scope;
     my $list = $c->db->insert('list', {
-        owner => $owner_id,
+        code => $owner,
+        data => {
+            name => $name,
+            owner => $owner,
+            members => \@members,
+            tasks => []
+        },
         created_on => \'now()'
     });
-    for my $member_id (@member_ids) {
+    for my $member (@members) {
         $c->db->insert('list_member', {
             list_id => $list->list_id,
-            member => $member_id,
+            code => $member,
             created_on => \'now()'
         });
     }
-    my $doc_id = 'list-' . $list->list_id;
-    $c->save_doc({
-        _id => $doc_id,
-        name => $name,
-        privacy => $privacy,
-        owner_id => $owner_id,
-        member_ids => \@member_ids,
-        tasks => []
-    });
     $txn->commit;
-    infof("[%s] list create", $c->session->get('screen_name'));
+    infof('[%s] create list: %s', $c->sign_name, $name);
     $c->render_json({
         success => 1,
-        list_id => $doc_id
+        list => $list->as_hashref
     });
 }
 
 sub update {
     my ($class, $c) = @_;
-    
-    my $account = DoubleSpark::Account->new($c);
-    my $list_id = $c->req->param('list_id');
-    my $name = $c->req->param('name');
-    my $owner_id = $c->req->param('owner_id');
-    my @member_ids = $c->req->param('member_ids[]');
-    
-    return $c->res_403() if ! length $name;
-    
-    my $doc_id = $list_id;
-    my $doc = $c->open_list_doc($account, 'member', $list_id);
-    return $doc unless (ref $doc) eq 'HASH';
-    $doc->{name} = $name;
-    if ($account->has_role_owner($doc) && $owner_id) {
-        $doc->{owner_id} = $owner_id;
-    }
-    $doc->{member_ids} = \@member_ids;
-    $c->save_list_doc($account, $doc);
-    
+
+    my $res = $c->validate(
+        list_id => [qw/NOT_NULL LIST_ROLE_MEMBER/],
+        name => [qw/NOT_NULL/, [qw/LENGTH 1 20/]],
+        { members => [qw/members/] }, [qw/MEMBERS/],
+    );
+    return $res if $res;
+
+    my $list = $c->stash->{list};
+
+    my $args = { data => $list->data };
+    $list->data->{name}    = $c->req->param('name');
+    $list->data->{members} = [ $c->req->param('members') ];
+
+    # update database
+    my $txn = $c->db->txn_scope;
+    $list->update($args);
     my $members = {};
-    for my $member (@member_ids) {
-        $members->{$member}++;
+    for my $member (@{ $list->data->{members} }) {
+        $members->{ $member }++;
     }
-    my ($id) = $list_id=~/(\d+)/;
     my $list_member = $c->db->search('list_member', {
-        list_id => $id
+        list_id => $list->list_id
     });
     for my $member ($list_member->all) {
-        my $id = $member->member;
-        if (delete $members->{$id}) {
-            
-        } else {
+        unless (delete $members->{ $member->code }) {
+            debugf('[%s] unassign member %s from list %s', $c->sign_name, $member->code, $list->data->{name});
             $member->delete;
         }
     }
-    for my $member_id (keys %$members) {
+    for my $code (keys %$members) {
+        debugf('[%s] assign member %s from list %s', $c->sign_name, $code, $list->data->{name});
         $c->db->insert('list_member', {
-            list_id => $id,
-            member => $member_id,
+            list_id => $list->list_id,
+            code => $code,
             created_on => \'now()'
         });
     }
-    infof("[%s] list update", $c->session->get('screen_name'));
+    $txn->commit;
+
+    infof("[%s] update list %s", $c->sign_name, $list->data->{name});
+
     $c->render_json({
         success => 1,
-        list_id => $list_id
+        list => $list->as_hashref
     });
 }
 
 sub delete {
     my ($class, $c) = @_;
-    
-    my $account = DoubleSpark::Account->new($c);
-    my $list_id = $c->req->param('list_id');
-    
-    $c->res_403 if $list_id!~/^list-\d+/;
-    
-    my ($id) = $list_id=~/(\d+)/;
-    my $doc = $c->open_list_doc($account, 'owner', $list_id);
-    return $doc unless (ref $doc) eq 'HASH';
-    my $txn = $c->db->txn_scope;
-    $c->db->delete('list', {
-        list_id => $id
-    });
-    $c->remove_doc($doc);
-    $txn->commit;
-    infof("[%s] list delete", $c->session->get('screen_name'));
-    $c->render_json({
-        success => 1,
-        list_id => $list_id
-    });
+
+    my $res = $c->validate(
+        list_id => [qw/NOT_NULL LIST_ROLE_OWNER/],
+    );
+    return $res if $res;
+
+    my $list = $c->stash->{list};
+    my $name = $list->data->{name};
+    $list->delete;
+    infof("[%s] delete list %s", $c->sign_name, $name);
+    $c->render_json({ success => 1 });
 }
 
 sub clear {
     my ($class, $c) = @_;
-    
-    my $account = DoubleSpark::Account->new($c);
+
+    my $account = $c->account;
     my $owner_id = $c->req->param('owner_id');
     my $list_id = $c->req->param('list_id');
-    
+
     # FXIME: role check
     my $success;
     my $target_task;

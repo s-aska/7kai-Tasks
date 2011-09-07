@@ -1,13 +1,12 @@
 package DoubleSpark::Web::C::API::Comment;
 use strict;
 use warnings;
-use DoubleSpark::Account;
 use Log::Minimal;
 
 sub create {
     my ($class, $c) = @_;
     
-    my $account = DoubleSpark::Account->new($c);
+    my $account = $c->account;
     my $account_id = $account->{account_id};
     my $owner_id = $c->req->param('owner_id');
     my $list_id = $c->req->param('list_id');
@@ -47,7 +46,7 @@ sub create {
 sub delete {
     my ($class, $c) = @_;
     
-    my $account = DoubleSpark::Account->new($c);
+    my $account = $c->account;
     my $owner_id = $c->req->param('owner_id');
     my $list_id = $c->req->param('list_id');
     my $task_id = $c->req->param('task_id');

@@ -10,6 +10,6 @@ builder {
         path => qr{^(?:/static/|/robot\.txt$|/favicon.ico$)},
         root => File::Spec->catdir(dirname(__FILE__), 'htdocs');
     enable 'Plack::Middleware::ReverseProxy';
-    enable "Plack::Middleware::Scope::Container";
+    enable 'Plack::Middleware::Log::Minimal', autodump => 1;
     DoubleSpark::Web->to_app();
 };

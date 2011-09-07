@@ -4,38 +4,82 @@ use warnings;
 use JSON;
 use Log::Minimal;
 
-sub get {
+sub info {
     my ($class, $c) = @_;
-    
-    unless ($c->session->get('account')) {
-        return $c->render_json({success => 0});
+
+    my $account = $c->account;
+
+    $c->render_json({
+        success => 1,
+        sign    => $c->sign,
+        account => $account->get_columns
+    });
+}
+
+sub info_with_all {
+    my ($class, $c) = @_;
+
+    my $account = $c->account;
+
+    # サブアカウント取得
+    my $tw_accounts = $c->db->search('tw_account', {
+        account_id => $account->account_id
+    });
+    my $fb_accounts = $c->db->search('fb_account', {
+        account_id => $account->account_id
+    });
+    my $email_accounts = $c->db->search('email_account', {
+        account_id => $account->account_id
+    });
+    my @sub_accounts = map { $_->get_columns }
+        ($tw_accounts->all, $fb_accounts->all, $email_accounts->all);
+    my @codes = map { $_->{code} } @sub_accounts;
+
+
+    unless (@codes) {
+        # sub account nothing...
+        critf('missing sub accounts aid:%s', $account->account_id);
+        die 'missing sub accounts';
     }
-    my $account = DoubleSpark::Account->new($c);
-    $account->set_social_accounts($c);
-    unless (scalar(@{$account->{codes}})) {
-        return $c->render_json({success => 0});
+
+    # リスト取得
+    my $my_lists = $c->db->search('list', {
+        code => \@codes
+    });
+    my $list_members = $c->db->search('list_member', {
+        code => \@codes
+    });
+    my %ids;
+    for ($my_lists->all, $list_members->all) {
+        $ids{$_->list_id}++;
     }
-    $account->set_lists($c);
-    $account->{lang} = $c->lang;
-    $c->render_json({success => 1, account => $account->to_hashref});
+    my @lists = map { $_->as_hashref }
+        $c->db->search('list', { list_id => [keys %ids] })->all;
+
+    $c->render_json({
+        success      => 1,
+        sign         => $c->sign,
+        account      => $account->data,
+        sub_accounts => \@sub_accounts,
+        lists        => \@lists
+    });
 }
 
 sub update {
     my ($class, $c) = @_;
-    
-    my $doc = DoubleSpark::Account->new($c)->to_hashref;
-    my $doc_id = 'account-' . $doc->{account_id};
-    my $method = $c->req->param('method') || 'set';
-    my $type   = $c->req->param('type') || 'string';
-    my $ns     = $c->req->param('ns');
-    my $key    = $c->req->param('key');
-    my $val    = $c->req->param('val');
-    
+
+    my $account = $c->account;
+    my $method  = $c->req->param('method') || 'set';
+    my $type    = $c->req->param('type') || 'string';
+    my $ns      = $c->req->param('ns');
+    my $key     = $c->req->param('key');
+    my $val     = $c->req->param('val');
+
     if ($type eq 'json') {
         $val = decode_json($val);
     }
-    
-    my $data = $doc;
+
+    my $data = $account->data;
     for (split /\./, $ns) {
         unless (exists $data->{$_}) {
             $data->{$_} = {};
@@ -49,9 +93,12 @@ sub update {
     } elsif ($method eq '-') {
         delete $data->{$key}->{$val};
     }
-    $c->save_doc($doc);
-    
-    $c->render_json({success => 1});
+    $account->update({ data => $account->data });
+
+    $c->render_json({
+        success => 1,
+        account => $account->data
+    });
 }
 
 1;

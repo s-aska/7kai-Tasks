@@ -1,0 +1,246 @@
+/*****************************************************
+1. reset
+2. base
+3. header
+4. footer
+5. aside
+6. article
+*****************************************************/
+
+/********** common **********/
+a, button {
+    cursor: pointer;
+}
+form {
+    padding: 0 !important;
+}
+form.modal {
+    display: none;
+    margin-top: -200px;
+}
+h4, h5 {
+    line-height: 1;
+    margin-bottom: 6px;
+}
+.sq16 {
+    width: 16px;
+    height: 16px;
+}
+.sq24 {
+    width: 24px;
+    height: 24px;
+}
+.sq36 {
+    width: 36px;
+    height: 36px;
+}
+.left {
+    float: left;
+}
+
+/********** icon **********/
+.icon {
+    width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+}
+.icon-plus {
+    background-image: url(/static/img/plus.png);
+}
+.icon-plus-1-m {
+    background-image: url(/static/img/plus-1-m.png);
+}
+.icon-minus {
+    background-image: url(/static/img/minus.png);
+}
+.icon-cross {
+    background-image: url(/static/img/cross.png);
+}
+.icon-equal {
+    background-image: url(/static/img/equal.png);
+}
+.icon-up {
+    background-image: url(/static/img/up.png);
+}
+.icon-down {
+    background-image: url(/static/img/down.png);
+}
+.icon-right {
+    background-image: url(/static/img/right.png);
+}
+.icon-left {
+    background-image: url(/static/img/left.png);
+}
+.icon-star {
+    background-image: url(/static/img/star.png);
+}
+.icon-star-off {
+    background-image: url(/static/img/star_off.png);
+}
+.icon-tasks {
+    background-image: url(/static/img/tasks.png);
+}
+.icon-tasks-half {
+    background-image: url(/static/img/tasks_half.png);
+}
+.icon-tasks-off {
+    background-image: url(/static/img/tasks_off.png);
+}
+.icon-trash {
+    background-image: url(/static/img/trash.png);
+}
+.icon-pulldown {
+    background-image: url(/static/img/pulldown.png);
+}
+.icon-settings {
+    background-image: url(/static/img/settings.png);
+}
+.icon-grip {
+    background-image: url(/static/img/grip.png);
+}
+.icon-address-off {
+    background-image: url(/static/img/address_off.png);
+}
+.icon-edit {
+    background-image: url(/static/img/edit.png);
+}
+.icon-calendar {
+    background-image: url(/static/img/calendar.png);
+}
+.icon-openhand {
+    background-image: url(/static/img/openhand.png);
+}
+.icon-refresh {
+    background-image: url(/static/img/refresh.png);
+}
+.icon-email {
+    background-image: url(/static/img/email.png);
+}
+.icon-email24 {
+    width: 24px;
+    height: 24px;
+    background-image: url(/static/img/email24.png);
+}
+
+/********** layout **********/
+body {
+    overflow: hidden;
+}
+body > .topbar ul li a.profile-name .profile-icon {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+}
+body > .topbar ul li a.profile-name {
+    display: block;
+    padding-left: 42px;
+}
+body > .row {
+    width: 1060px;
+    margin: 60px auto 0 auto;
+}
+body > .row > .columns {
+    background-color: #eeeeee;
+}
+body > .row > .columns .topbar {
+    position: relative;
+    z-index: 1;
+}
+body > .row > .columns .topbar .container {
+    width: auto;
+}
+body > .row > .columns > .container {
+    padding: 10px;
+    width: auto;
+}
+body > .row > .columns > .container > h2 {
+    margin-bottom: 6px;
+    font-size: 14px;
+    line-height: 14px;
+}
+body > .row > .columns > .container > ul,
+body > .row > .columns > .container > dl {
+    margin-bottom: 8px;
+}
+body > .row > .columns > .container ul.members li {
+    padding: 2px 0;
+}
+body > .row > .columns > .container ul.members li img {
+    padding-right: 6px;
+    vertical-align: middle;
+}
+/*.columns .topbar .fill {
+    background: #606060;
+    background-color: #606060;
+}
+.columns .topbar ul li ul {
+    background: #606060;
+    background-color: #606060;
+}*/
+ul.tasks li {
+    padding: 4px;
+    cursor: pointer;
+}
+ul.tasks li:hover {
+    background-color: #fefecc;
+}
+ul.tasks li div {
+    float: left;
+}
+ul.tasks li div.due {
+    float: right;
+    margin-right: 4px;
+}
+ul.tasks li div.delete {
+    float: right;
+}
+ul.tasks li div.recent-comment {
+    clear: both;
+    margin-left: 48px;
+}
+
+#register-list-window .member {
+    display: none;
+}
+#register-list-window ul.members li {
+    margin-bottom: 0;
+    padding: 4px 4px 2px 4px;
+    cursor: pointer;
+}
+#register-list-window ul.members li:hover {
+    background-color: #fefed6;
+}
+#register-list-window ul.members li div {
+    float: left;
+}
+#register-list-window ul.members li div.name {
+    float: left;
+    padding-left: 4px;
+}
+#register-list-window ul.members li div.icon-cross {
+    float: right;
+}
+#register-list-window .description {
+    width: 220px;
+    height: 210px;
+    margin-left: 20px;
+    padding-left: 10px;
+    border-left: 1px solid gray;
+}
+
+#register-task-window ul.assign li {
+    margin-bottom: 4px;
+}
+#register-task-window ul.assign li > label > div {
+    float: left;
+}
+#register-task-window ul.assign li > label > div.icon {
+    padding-left: 4px;
+}
+#register-task-window ul.assign li > label > div.name {
+    padding-left: 4px;
+}
+
+

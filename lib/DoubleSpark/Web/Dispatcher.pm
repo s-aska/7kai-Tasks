@@ -3,18 +3,70 @@ use strict;
 use warnings;
 use Amon2::Web::Dispatcher::RouterSimple;
 
-connect '/' => { controller => 'Root', action => 'index' };
-connect '/signin/twitter/:action' => { controller => 'Signin::Twitter' };
-connect '/signout' => { controller => 'Root', action => 'signout' };
-connect '/chrome/viewer' => { controller => 'Root', action => 'viewer' };
-connect '/chrome/mock' => { controller => 'Root', action => 'mock' };
+sub get($;$$) { connect_with_method('GET', @_) }
+sub post($;$$) { connect_with_method('POST', @_) }
 
-connect '/api/1/account/' => { controller => 'API::Account', action=> 'get' }, { method => 'GET' };
-connect '/api/1/account/:action' => { controller => 'API::Account' };
-connect '/api/1/contact/:action' => { controller => 'API::Contact' };
-connect '/api/1/list/:action' => { controller => 'API::List' }, { method => 'POST' };
-connect '/api/1/list/:list_id' => { controller => 'API::List', action => 'get' }, { method => 'GET' };
-connect '/api/1/task/:action' => { controller => 'API::Task' }, { method => 'POST' };
-connect '/api/1/comment/:action' => { controller => 'API::Comment' }, { method => 'POST' };
+get '/' => 'Root#index';
+get '/mock' => 'Root#mock';
+
+get '/signout' => 'Root#signout';
+
+get '/signin/twitter/oauth' => 'Signin::Twitter#oauth';
+get '/signin/twitter/callback' => 'Signin::Twitter#callback';
+
+get '/api/1/account/info'          => 'API::Account#info';
+get '/api/1/account/info_with_all' => 'API::Account#info_with_all';
+post '/api/1/account/update'       => 'API::Account#update';
+
+post '/api/1/list/create' => 'API::List#create';
+post '/api/1/list/update' => 'API::List#update';
+post '/api/1/list/delete' => 'API::List#delete';
+post '/api/1/list/clear'  => 'API::List#clear';
+
+post '/api/1/task/create' => 'API::Task#create';
+post '/api/1/task/update' => 'API::Task#update';
+post '/api/1/task/move'   => 'API::Task#move';
+
+post '/api/1/comment/create' => 'API::Comment#create';
+post '/api/1/comment/delete' => 'API::Comment#delete';
+
+if ($ENV{PLACK_ENV} eq 'development') {
+    warn router->as_string;
+}
+
+sub connect_with_method {
+    my ($method, $path, $dest, $opt) = @_;
+    $opt->{method} = $method;
+    if (ref $dest) {
+        connect $path => $dest, $opt;
+    } elsif (not $dest) {
+        connect $path => {}, $opt;
+    } else {
+        my %dest;
+        my ($controller, $action) = split('#', $dest);
+        $dest{controller} = $controller;
+        $dest{action} = $action if defined $action;
+        connect $path => \%dest, $opt;
+    }
+}
 
 1;
+
+# sub connect_with_method {
+#     my ($method, $path, $dest_str, $opt) = @_;
+#     $opt->{method} = $method;
+#     my %dest;
+#     if ($dest_str) {
+#         my ($controller, $action) = split('#', $dest_str);
+#         $dest{controller} = $controller;
+#         $dest{action} = $action if defined $action;
+#         connect $path => \%dest, $opt;
+#     } else {
+#         my ($controller, $action) = $path=~m|^/(.*?)([^/]*)$|;
+#         $dest{controller} = $controller
+#                             ? join('::', map { ucfirst $_ } grep /./, split '/', $controller)
+#                             : 'Root';
+#         $dest{action} = $action || 'index';
+#         connect $path => \%dest, $opt;
+#     }
+# }

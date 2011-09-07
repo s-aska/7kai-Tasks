@@ -1,2 +1,5 @@
 User-Agent: *
-Allow: /
+Disallow: /api/
+Disallow: /signin
+Disallow: /chrome
+Disallow: /mock

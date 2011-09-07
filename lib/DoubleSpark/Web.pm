@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use parent qw/DoubleSpark Amon2::Web/;
 use File::Spec;
+use FormValidator::Lite;
+use Log::Minimal;
 
 # load all controller classes
 use Module::Find ();
@@ -27,21 +29,7 @@ use Text::Xslate;
         'function' => {
             c => sub { Amon2->context() },
             uri_with => sub { Amon2->context()->req->uri_with(@_) },
-            uri_for  => sub { Amon2->context()->uri_for(@_) },
-            lang => sub {
-                my $c = Amon2->context();
-                return $c->lang;
-            },
-            is_ff => sub {
-                my $c = Amon2->context();
-                return 1 if $c->req->user_agent =~/Firefox/;
-                return ;
-            },
-            is_opera => sub {
-                my $c = Amon2->context();
-                return 1 if $c->req->user_agent =~/Opera/;
-                return ;
-            }
+            uri_for  => sub { Amon2->context()->uri_for(@_) }
         },
         %$view_conf
     });
@@ -76,15 +64,107 @@ __PACKAGE__->add_trigger(
 __PACKAGE__->add_trigger(
     BEFORE_DISPATCH => sub {
         my ( $c ) = @_;
-        # ...
-        return;
+
+        return if $c->req->path eq '/';
+        return if $c->req->path =~m|^/signin|;
+        return if $c->req->path eq '/signout';
+
+        unless ($c->sign) {
+            warnf('unsigned api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
+            $c->res_403();
+        }
     },
 );
 
-sub res_403 {
-    my ($self) = @_;
+# web context method
+sub sign {
+    my $c = shift;
+
+    unless ($c->{sign}) {
+        if (my $sign = $c->session->get('sign')) {
+            my $account = $c->db->single('account', {
+                account_id => $sign->{account_id}
+            });
+            if ($account) {
+                $c->{account} = $account;
+                $c->{sign} = $sign;
+            } else {
+                $c->session->remove('sign');
+                critf('missing account in database %s', $sign->{account_id});
+            }
+        } else {
+            debugf('missing sign in session');
+        }
+    }
+    $c->{sign};
+}
+
+sub sign_name {
+    my $c = shift;
     
-    $self->create_response( 403, [], ['Forbidden'] );
+    my $sign = $c->sign;
+    
+    $sign ? $sign->{name} : '-';
+}
+
+sub account {
+    my $c = shift;
+
+    $c->sign unless $c->{account};
+
+    $c->{account};
+}
+
+sub validate {
+    my ($c, @rule) = @_;
+    my $validator = FormValidator::Lite->new($c->req);
+    $validator->load_constraints('+DoubleSpark::Web::FormValidator::Lite::Constraint');
+    local $DoubleSpark::Web::FormValidator::Lite::Constraint::Context = $c;
+    $validator->check(@rule);
+    if ($validator->has_error) {
+        # このアクセスはアタックである可能性があります。
+        warnf('[%s] validate error...', $c->sign_name);
+        for my $key (keys %{ $validator->errors }) {
+            my $rules = join ' and ', keys %{ $validator->errors->{ $key } };
+            warnf('[%s] validate error %s incorrect %s', $c->sign_name, $key, $rules);
+        }
+        return $c->res_403();
+    }
+    return;
+}
+
+sub stash {
+    my $c = shift;
+    $c->{stash} ||= {};
+    $c->{stash};
+}
+
+sub res_304 {
+    my $c = shift;
+
+    my $content = 'Not Modified';
+    $c->create_response(
+        304,
+        [
+            'Content-Type' => 'text/plain',
+            'Content-Length' => length($content),
+        ],
+        [$content]
+    );
+}
+
+sub res_403 {
+    my $c = shift;
+
+    my $content = 'Forbidden';
+    $c->create_response(
+        403,
+        [
+            'Content-Type' => 'text/plain',
+            'Content-Length' => length($content),
+        ],
+        [$content]
+    );
 }
 
 1;

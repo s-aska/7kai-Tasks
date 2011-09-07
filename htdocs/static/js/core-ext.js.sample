@@ -1,0 +1,7 @@
+(function(ns, w, d) {
+
+var c = ns.c;
+
+
+
+})(this, this, document);

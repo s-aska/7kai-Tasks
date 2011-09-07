@@ -2,7 +2,7 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     NAME          => 'DoubleSpark',
-    AUTHOR        => 'Some Person <person@example.com>',
+    AUTHOR        => 'Shinichiro Aska <s.aska.org@gmail.com>',
     VERSION_FROM  => 'lib/DoubleSpark.pm',
     PREREQ_PM     => {
         'Amon2'                           => '2.37',
@@ -12,13 +12,16 @@ WriteMakefile(
         'HTML::FillInForm::Lite'          => '1.09',
         'Time::Piece'                     => '1.20',
 
-        'AnyEvent::CouchDB'               => '1.24',
-        'Facebook::Graph'                 => '1.0300',
-        'Log::Minimal'                    => '0.08',
-        'Net::Twitter::Lite'              => '0.10004',
-        'Path::Class'                     => '0.24',
-        'Sub::Retry'                      => '0.03',
-        'Teng'                            => '0.11',
+        'Email::Valid::Loose'                 => '0.05',
+        'Facebook::Graph'                     => '1.0300',
+        'FormValidator::Lite'                 => '0.25',
+        'Log::Minimal'                        => '0.08',
+        'Net::Twitter::Lite'                  => '0.10004',
+        'Path::Class'                         => '0.24',
+        'Plack::Middleware::Scope::Container' => '0.01',
+        'Scope::Container'                    => '0.04',
+        'Sub::Retry'                          => '0.03',
+        'Teng'                                => '0.11',
     },
     MIN_PERL_VERSION => '5.008001',
     (-d 'xt' and $ENV{AUTOMATED_TESTING} || $ENV{RELEASE_TESTING}) ? (
