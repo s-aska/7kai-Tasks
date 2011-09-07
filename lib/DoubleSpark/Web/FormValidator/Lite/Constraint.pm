@@ -1,14 +1,12 @@
 package DoubleSpark::Web::FormValidator::Lite::Constraint;
+use Amon2;
 use Email::Valid::Loose;
 use FormValidator::Lite::Constraint;
 use FormValidator::Lite::Constraint::Date;
 use Log::Minimal;
 
-# DoubleSpark::Web(Amon2::Context)
-# $DoubleSpark::Web::FormValidator::Lite::Constraint::Context;
-
 rule OWNER => sub {
-    my $c = $DoubleSpark::Web::FormValidator::Lite::Constraint::Context;
+    my $c = Amon2->context();
     my $owner = $_;
     if (my $account = $c->account) {
         my $codes = $account->codes;
@@ -26,7 +24,7 @@ rule OWNER => sub {
 };
 
 rule MEMBERS => sub {
-    my $c = $DoubleSpark::Web::FormValidator::Lite::Constraint::Context;
+    my $c = Amon2->context();
     if (my $account = $c->account) {
         for my $member (@{ $_ }) {
             if ($member=~m|^tw-\d+$|) {
@@ -51,7 +49,7 @@ rule MEMBERS => sub {
 };
 
 rule MEMBER => sub {
-    my $c = $DoubleSpark::Web::FormValidator::Lite::Constraint::Context;
+    my $c = Amon2->context();
     if ($_=~m|^tw-\d+$|) {
         debugf('[%s] valid member %s', $c->sign_name, $_);
     }
@@ -68,23 +66,18 @@ rule MEMBER => sub {
 };
 
 rule LIST_ROLE_OWNER => sub {
-    my $c = $DoubleSpark::Web::FormValidator::Lite::Constraint::Context;
-
+    my $c = Amon2->context();
     if (my $account = $c->account) {
-        
         my $list = $c->db->single('list', { list_id => $_ });
         unless ($list) {
             warnf('[%s] missing list %s', $c->sign_name, $_);
             return;
         }
-        
-        # owner
         if ($list->is_owner($account)) {
             debugf('[%s] list owner %s', $c->sign_name, $list->data->{name});
             $c->stash->{list} = $list;
             return 1;
         }
-        
         warnf('[%s] list not assign %s', $c->sign_name, $list->data->{name});
         return;
     } else {
@@ -94,10 +87,8 @@ rule LIST_ROLE_OWNER => sub {
 };
 
 rule LIST_ROLE_MEMBER => sub {
-    my $c = $DoubleSpark::Web::FormValidator::Lite::Constraint::Context;
-
+    my $c = Amon2->context();
     if (my $account = $c->account) {
-        
         my $list = $c->db->single('list', {
             list_id => $_
         });
@@ -105,21 +96,16 @@ rule LIST_ROLE_MEMBER => sub {
             warnf('[%s] missing list %s', $c->sign_name, $_);
             return;
         }
-        
-        # owner
         if ($list->is_owner($account)) {
             debugf('[%s] list owner %s', $c->sign_name, $list->data->{name});
             $c->stash->{list} = $list;
             return 1;
         }
-        
-        # member
         if ($list->is_member($account)) {
             debugf('[%s] list member %s', $c->sign_name, $list->data->{name});
             $c->stash->{list} = $list;
             return 1;
         }
-        
         warnf('[%s] list not assign %s', $c->sign_name, $list->data->{name});
         return;
     } else {
@@ -129,7 +115,7 @@ rule LIST_ROLE_MEMBER => sub {
 };
 
 rule 'DATE_LOOSE' => sub {
-    my $c = $DoubleSpark::Web::FormValidator::Lite::Constraint::Context;
+    my $c = Amon2->context();
     my ($d1, $d2, $d3) = split '/', $_;
     if (length $d1 == 4) {
         $c->stash->{date_loose} = join('/', $d2, $d3, $d1);

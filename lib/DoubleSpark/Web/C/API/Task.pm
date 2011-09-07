@@ -14,7 +14,7 @@ sub create {
         due        => [qw/DATE_LOOSE/],
         { assign => [qw/assign/] }, [qw/MEMBERS/],
     );
-    return $res if $res;
+    return $c->res_403() unless $res;
 
     my $title      = $c->req->param('title');
     my $requester  = $c->req->param('requester');

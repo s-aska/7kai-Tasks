@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css" media="all">
+<link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap-1.2.0.min.css">
 <link rel="stylesheet" href="/static/css/app.css" media="all">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
@@ -13,15 +14,9 @@
 <script src="/static/js/app-base.js"></script>
 <script src="/static/js/app-constants.js"></script>
 <script src="/static/js/app-page-viewer.js"></script>
-<!-- [% IF 0 %] -->
-<script src="../htdocs/static/js/core.js"></script>
-<script src="../htdocs/static/js/app-base.js"></script>
-<link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap-1.2.0.min.css">
-<link rel="stylesheet" href="../htdocs/static/css/app.css" media="all">
-<!-- [% END %] -->
 </head>
 <body>
-<div class="topbar" data-init="topBar">
+<div class="topbar" data-setup="topBar">
   <div class="fill">
     <div class="container">
       <h3><a href="/">7kai Tasks</a></h3>
@@ -29,21 +24,21 @@
         <li>
           <a
             href="/"
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="今日迄 (1件)"
           >Todo</a>
         </li>
         <li class="active">
           <a
             href="/"
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="確認待ち (1件)"
           >Verify</a>
         </li>
         <li class="">
           <a
             href="/"
-            data-init="localize,click"
+            data-setup="localize,click"
             data-text-ja="依頼中 (12件)"
             data-click="hide,show"
             data-show-id="task-verify"
@@ -53,7 +48,7 @@
         <li class="">
           <a
             href="/"
-            data-init="localize,click"
+            data-setup="localize,click"
             data-text-ja="スター (3件)"
             data-click="hide,show"
             data-show-id="task-verify"
@@ -65,13 +60,13 @@
         <li class="">
           <a
             href="/"
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="お知らせ (12件)"
           >Request</a>
         </li>
         <li
           class="menu"
-          data-init="menu"
+          data-setup="menu"
         >
           <a href="#" class="menu profile-name"><img class="profile-icon" src="[% sign.icon %]">[% sign.name %]</a>
           <ul class="menu-dropdown" style="display: none; ">
@@ -89,18 +84,18 @@
 <div class="row">
   <div
     class="span4 columns"
-    data-init="stretch,leftColumn"
+    data-setup="stretch,leftColumn"
   >
     <div class="topbar">
       <div class="fill">
         <div class="container">
           <ul class="nav">
-            <li class="menu" data-init="menu">
+            <li class="menu" data-setup="menu">
               <a class="menu list-name">su_aska</a>
               <ul class="menu-dropdown lists" style="display: none;">
                 <li class="divider"></li>
                 <li><a
-                  data-init="localize,click"
+                  data-setup="localize,click"
                   data-text-ja="新しいリスト"
                   data-click="createList"
                 >New List</a></li>
@@ -156,10 +151,10 @@
       <h2>Settings</h2>
         <ul class="unstyled">
           <li>
-            <label>
+            <label style="float: none;">
               <input type="checkbox" name="mute" value="1">
               <span
-                data-init="localize"
+                data-setup="localize"
                 data-text-ja="ミュート"
               >Mute</span>
             </label>
@@ -168,24 +163,24 @@
       <h2>Menu</h2>
       <ul class="unstyled">
         <li><a class="action"
-            data-init="localize,click"
+            data-setup="localize,click"
             data-click="createList"
             data-text-ja="リストを作成..."
         >New List...</a></li>
         <li><a class="action"
-            data-init="localize,click"
+            data-setup="localize,click"
             data-click="editList"
             data-text-ja="リストを編集..."
         >Edit List...</a></li>
         <li><a class="action"
             id="closed-task-switch"
-            data-init="click,localize"
+            data-setup="click,localize"
             data-bind="switchClosed"
             data-closed="1"
             data-text-ja="完了済のタスクを表示切替"
         >Toggle Show closed Task</a></li>
         <li><a class="action"
-            data-init="click,localize"
+            data-setup="click,localize"
             data-bind="open"
             data-id="clear-trash-window"
             data-callback="clearTrash"
@@ -194,7 +189,7 @@
         <li><hr></li>
         <li><a
             class="action"
-            data-init="localize,click"
+            data-setup="localize,click"
             data-click="show"
             data-show-id="delete-list-window"
             data-text-ja="リストを削除"
@@ -204,20 +199,20 @@
   </div>
   <div
     class="span8 columns"
-    data-init="stretch"
+    data-setup="stretch"
   >
     <div class="topbar">
       <div class="fill">
         <div class="container">
           <ul class="nav">
             <li><a
-              data-init="localize,click"
+              data-setup="localize,click"
               data-click="createTask"
               data-text-ja="＋新しいタスク"
             >+ New Task</a></li>
           </ul>
           <ul class="nav secondary-nav">
-            <li class="menu" data-init="menu">
+            <li class="menu" data-setup="menu">
               <a href="#" class="menu">Sort</a>
               <ul class="menu-dropdown" style="display: none; ">
                 <li><a href="#">Title</a></li>
@@ -266,14 +261,14 @@
   </div>
   <div
     class="span6 columns"
-    data-init="stretch"
+    data-setup="stretch"
   >
     <div class="topbar">
       <div class="fill">
         <div class="container">
           <ul class="nav">
             <li><a
-              data-init="localize,click"
+              data-setup="localize,click"
               data-click="show"
               data-show-id="register-task-window"
               data-text-ja="タスクを編集"
@@ -291,19 +286,19 @@
       </dl>
       <form class="form-stacked">
         <label
-          data-init="localize"
+          data-setup="localize"
           data-text-ja="コメントを添える"
         >Comment on this task</label>
         <textarea style="width: 310px; height: 56px; margin-bottom: 6px;"></textarea>
         <div class="">
           <button
             class="btn primary"
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="タスク完了"
           >Comment &amp; Close</button>
           <button
             class="btn"
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="タスク差し戻し"
           >Comment &amp; Revert</button>
         </div>
@@ -315,19 +310,19 @@
 <form
   id="register-list-window"
   class="modal form-stacked"
-  data-init="ui,submit,registerListWindow"
+  data-setup="ui,submit,registerListWindow"
   data-show-callback="dom.autofocus"
   data-ui="draggable"
   data-submit="registerList"
 >
   <div class="modal-header">
     <h3
-      data-init="localize"
+      data-setup="localize"
       data-text-ja="リスト登録"
     >Register List</h3>
     <a
       class="close"
-      data-init="click"
+      data-setup="click"
       data-click="hide"
       data-hide-id="register-list-window"
     >×</a>
@@ -338,7 +333,7 @@
         <input type="hidden" name="list_id" value="">
         <div class="clearfix">
           <label for=""
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="リスト名"
           >Name</label>
           <div class="input">
@@ -347,7 +342,7 @@
         </div>
         <div class="clearfix owner-field">
           <label for=""
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="オーナー"
           >Owner</label>
           <div class="input owner">
@@ -356,7 +351,7 @@
         </div>
         <div class="clearfix member twitter-member">
           <label for=""
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="メンバー (Twitter)"
           >Member (Twitter)</label>
           <div class="input owner">
@@ -380,7 +375,7 @@
         </ul>
         <div class="clearfix member facebook-member">
           <label for=""
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="メンバー (Facebook)"
           >Member (Facebook)</label>
           <div class="input owner">
@@ -404,7 +399,7 @@
         </ul>
         <div class="clearfix member email-member">
           <label for=""
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="メンバー (E-mail)"
           >Member (E-mail)</label>
           <div class="input owner">
@@ -430,13 +425,13 @@
       <div class="left description">
         <ul>
           <li
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="メンバーに何も送信されません。"></li>
           <li
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="登録されたリストは左カラム上部メニューからご選択下さい。"></li>
           <li
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="フォームは自動で閉じません。"></li>
         </ul>
       </div>
@@ -445,12 +440,12 @@
   <div class="modal-footer">
     <button
       class="btn primary"
-      data-init="localize"
+      data-setup="localize"
       data-text-ja="登録"
     >Register</button>
     <button
       class="btn secondary"
-      data-init="localize,click"
+      data-setup="localize,click"
       data-text-ja="閉じる"
       data-click="hide"
       data-hide-id="register-list-window"
@@ -461,37 +456,37 @@
 <form
   id="delete-list-window"
   class="modal form-stacked"
-  data-init="ui,submit"
+  data-setup="ui,submit"
   data-ui="draggable"
   data-submit="deleteList"
 >
   <div class="modal-header">
     <h3
-      data-init="localize"
+      data-setup="localize"
       data-text-ja="リスト削除"
     >Delete List</h3>
     <a
       class="close"
-      data-init="click"
+      data-setup="click"
       data-click="hide"
       data-hide-id="delete-list-window"
     >×</a>
   </div>
   <div class="modal-body">
     <p
-      data-init="localize"
+      data-setup="localize"
       data-text-ja="本当にリストを削除しますか？"
     >Do you really want to delete the list?</p>
   </div>
   <div class="modal-footer">
     <button
       class="btn danger"
-      data-init="localize"
+      data-setup="localize"
       data-text-ja="削除"
     >Delete</button>
     <button
       class="btn secondary"
-      data-init="localize,click"
+      data-setup="localize,click"
       data-text-ja="キャンセル"
       data-click="hide"
       data-hide-id="delete-list-window"
@@ -502,18 +497,18 @@
 <form
   id="register-task-window"
   class="modal form-stacked"
-  data-init="submit,registerTaskWindow"
+  data-setup="submit,registerTaskWindow"
   data-submit="registerTask"
   data-show-callback="dom.autofocus"
 >
   <div class="modal-header">
     <h3
-      data-init="localize"
+      data-setup="localize"
       data-text-ja="タスク登録"
     >Register Task</h3>
     <a
       class="close"
-      data-init="click"
+      data-setup="click"
       data-click="hide"
       data-hide-id="register-task-window"
     >×</a>
@@ -526,7 +521,7 @@
         <input type="hidden" name="registrant" value="">
         <div class="clearfix">
           <label for=""
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="タイトル"
           >Title</label>
           <div class="input">
@@ -535,7 +530,7 @@
         </div>
         <div class="clearfix">
           <label for=""
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="期日"
           >Due</label>
           <div class="input">
@@ -544,7 +539,7 @@
         </div>
         <div class="clearfix">
           <label for=""
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="依頼者"
           >Requester</label>
           <div class="input">
@@ -555,7 +550,7 @@
       <div class="left" style="margin-left: 20px;">
         <div class="clearfix">
           <label for=""
-            data-init="localize"
+            data-setup="localize"
             data-text-ja="担当者"
           >Assign</label>
           <div class="input">
@@ -577,13 +572,13 @@
     <button
       href="#"
       class="btn primary"
-      data-init="localize"
+      data-setup="localize"
       data-text-ja="登録"
     >Register</button>
     <button
       href="#"
       class="btn secondary"
-      data-init="localize,click"
+      data-setup="localize,click"
       data-text-ja="閉じる"
       data-click="hide"
       data-hide-id="register-task-window"
@@ -595,29 +590,29 @@
 <div id="notice" class="modal">
   <div class="modal-header">
     <h3>Notice</h3>
-    <a class="close" data-init="click" data-click="hide" data-hide-id="notice">×</a>
+    <a class="close" data-setup="click" data-click="hide" data-hide-id="notice">×</a>
   </div>
   <div class="modal-body">
     [% IF notice == 'tw_account_add' %]
     <p
-      data-init="localize"
+      data-setup="localize"
       data-text-ja="Twitter Account を追加しました。"
     >Success Add Twitter Account.</p>
     [% ELSIF notice == 'tw_account_create' %]
     <p
-      data-init="localize"
+      data-setup="localize"
       data-text-ja="ようこそ。 早速「＋新しいタスク」からタスクを登録してみましょう。"
     >Welcome! Let's +New Task</p>
     [% ELSIF notice == 'tw_account_move' %]
     <p
-      data-init="localize"
+      data-setup="localize"
       data-text-ja="Twitter Account を割り当て直しました。"
     >Success Move Twitter Account.</p>
     [% ELSE %]
     [% END %]
   </div>
   <div class="modal-footer">
-    <a class="btn primary" data-init="click" data-click="hide" data-hide-id="notice">Close</a>
+    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="notice">Close</a>
   </div>
 </div>
 [% END %]

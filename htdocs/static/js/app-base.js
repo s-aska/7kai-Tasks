@@ -17,13 +17,13 @@ var app = ns.app = {
     },
     
     // DOM initialize methods
-    // data-init="hoge" => app.init.hoge(element)
-    init: {
+    // data-setup="hoge" => app.setup.hoge(element)
+    setup: {
         
     },
     
     // DOM click methods
-    // data-init="click" data-click="hoge" => app.click.hoge(element)
+    // data-setup="click" data-click="hoge" => app.click.hoge(element)
     click: {
         
     },
@@ -39,7 +39,7 @@ var app = ns.app = {
 };
 
 c.addEvents('resize');
-c.addEvents('init');
+c.addEvents('setup');
 
 $(d).ready(function(){
     app.run();
@@ -50,8 +50,8 @@ $(d).ready(function(){
 
 app.run = function(){
     c.init();
-    app.dom.init();
-    c.fireEvent('init');
+    app.dom.setup();
+    c.fireEvent('setup');
 }
 
 app.handleEvent = function(e){
@@ -92,16 +92,16 @@ app.ajax = function(option){
     });
 }
 
-app.dom.init = function(context){
-    $('*[data-init]', context).each(function(){
+app.dom.setup = function(context){
+    $('*[data-setup]', context).each(function(){
         var ele = $(this);
-        var methods = ele.data('init').split(',');
+        var methods = ele.data('setup').split(',');
         for (var i = 0, max_i = methods.length; i < max_i; i++) {
-            if (!(methods[i] in app.init)) {
+            if (!(methods[i] in app.setup)) {
                 console.log(methods[i]);
                 continue;
             }
-            app.init[methods[i]].call(app, $(this));
+            app.setup[methods[i]].call(app, $(this));
         }
     });
 }
@@ -138,25 +138,43 @@ app.dom.reset = function(form){
 app.dom.autofocus = function(form){
     form.find('[data-autofocus]').focus();
 }
+app.dom.hover = function(ele, over, out, delay){
+    var timer;
+    ele.hover(function(){
+        if (timer) {
+            clearTimeout(timer);
+            timer = null;
+        } else {
+            over.apply(this, arguments);
+        }
+    }, function(){
+        var that = this,
+            args = $.makeArray(arguments);
+        timer = setTimeout(function(){
+            out.apply(that, args);
+            timer = null;
+        }, delay);
+    });
+}
 
-app.init.localize = function(ele){
+app.setup.localize = function(ele){
     ele.text(ele.data('text-' + c.lang));
 }
-app.init.click = function(ele){
+app.setup.click = function(ele){
     ele.get(0).addEventListener("click", app, false);
 }
-app.init.submit = function(ele) {
+app.setup.submit = function(ele) {
     ele.get(0).addEventListener("submit", app, false);
 }
-app.init.menu = function(ele){
+app.setup.menu = function(ele){
     var ul = ele.find('> ul');
-    ele.hover(function(){
+    app.dom.hover(ele, function(){
         ul.slideDown('fast');
     }, function(){
         ul.slideUp('fast');
-    });
+    }, 500);
 }
-app.init.stretch = function(ele){
+app.setup.stretch = function(ele){
     var callback = function(){
         ele.height(
             $(w).height()
@@ -168,7 +186,7 @@ app.init.stretch = function(ele){
     c.addListener('resize', callback);
     callback.call();
 }
-app.init.ui = function(ele){
+app.setup.ui = function(ele){
     var uis = ele.data('ui').split(',');
     for (var i = 0, max_i = uis.length; i < max_i; i++) {
         var ui = uis[i];

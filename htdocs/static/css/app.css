@@ -22,6 +22,9 @@ h4, h5 {
     line-height: 1;
     margin-bottom: 6px;
 }
+.row {
+    margin-left: 0;
+}
 .sq16 {
     width: 16px;
     height: 16px;
@@ -144,6 +147,9 @@ body > .row {
 body > .row > .columns {
     background-color: #eeeeee;
 }
+body > .row > .columns:first-child {
+    margin-left: 0;
+}
 body > .row > .columns .topbar {
     position: relative;
     z-index: 1;
@@ -171,14 +177,6 @@ body > .row > .columns > .container ul.members li img {
     padding-right: 6px;
     vertical-align: middle;
 }
-/*.columns .topbar .fill {
-    background: #606060;
-    background-color: #606060;
-}
-.columns .topbar ul li ul {
-    background: #606060;
-    background-color: #606060;
-}*/
 ul.tasks li {
     padding: 4px;
     cursor: pointer;

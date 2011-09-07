@@ -71,7 +71,12 @@ __PACKAGE__->add_trigger(
 
         unless ($c->sign) {
             warnf('unsigned api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
-            $c->res_403();
+            return $c->res_403();
+        }
+
+        if ($c->req->header('X-Requested-With') ne 'XMLHttpRequest') {
+            warnf('no ajax api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
+            return $c->res_403();
         }
     },
 );
@@ -79,7 +84,6 @@ __PACKAGE__->add_trigger(
 # web context method
 sub sign {
     my $c = shift;
-
     unless ($c->{sign}) {
         if (my $sign = $c->session->get('sign')) {
             my $account = $c->db->single('account', {
@@ -101,17 +105,13 @@ sub sign {
 
 sub sign_name {
     my $c = shift;
-    
     my $sign = $c->sign;
-    
     $sign ? $sign->{name} : '-';
 }
 
 sub account {
     my $c = shift;
-
     $c->sign unless $c->{account};
-
     $c->{account};
 }
 
@@ -119,18 +119,17 @@ sub validate {
     my ($c, @rule) = @_;
     my $validator = FormValidator::Lite->new($c->req);
     $validator->load_constraints('+DoubleSpark::Web::FormValidator::Lite::Constraint');
-    local $DoubleSpark::Web::FormValidator::Lite::Constraint::Context = $c;
     $validator->check(@rule);
     if ($validator->has_error) {
-        # このアクセスはアタックである可能性があります。
+        # ATTACK
         warnf('[%s] validate error...', $c->sign_name);
         for my $key (keys %{ $validator->errors }) {
             my $rules = join ' and ', keys %{ $validator->errors->{ $key } };
             warnf('[%s] validate error %s incorrect %s', $c->sign_name, $key, $rules);
         }
-        return $c->res_403();
+        return;
     }
-    return;
+    return 1;
 }
 
 sub stash {

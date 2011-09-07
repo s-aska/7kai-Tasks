@@ -38,7 +38,7 @@ c.addListener('registerTask', function(list, task){
 });
 
 // セットアップ
-c.addListener('init', function(){
+c.addListener('setup', function(){
     app.ajax({
         url: '/api/1/account/info_with_all'
     })
@@ -253,7 +253,7 @@ app.getRegistrant = function(list){
 // ----------------------------------------------------------------------
 // トップバー機能(ってなんだよ...)
 // ----------------------------------------------------------------------
-app.init.topBar = function(ele){
+app.setup.topBar = function(ele){
     
     var filter_list = ele.find('.container > ul:first');
     
@@ -266,7 +266,7 @@ app.init.topBar = function(ele){
 // ----------------------------------------------------------------------
 // リスト管理
 // ----------------------------------------------------------------------
-app.init.leftColumn = function(ele){
+app.setup.leftColumn = function(ele){
     
     // リスト表示
     (function(){
@@ -371,7 +371,7 @@ app.init.leftColumn = function(ele){
 }
 
 // リスト登録
-app.init.registerListWindow = function(form){
+app.setup.registerListWindow = function(form){
     
     var id_input                = form.find('input[name=list_id]');
     var name_input              = form.find('input[name=name]');
@@ -577,7 +577,7 @@ app.submit.registerList = function(form){
 }
 
 // リスト削除
-app.init.deleteListWindow = function(form){
+app.setup.deleteListWindow = function(form){
     
 }
 app.submit.deleteList = function(form){
@@ -604,7 +604,7 @@ app.submit.deleteList = function(form){
 // ----------------------------------------------------------------------
 // タスク管理
 // ----------------------------------------------------------------------
-app.init.centerColumn = function(ele){
+app.setup.centerColumn = function(ele){
     
     
     
@@ -612,7 +612,7 @@ app.init.centerColumn = function(ele){
     
     
 }
-app.init.registerTaskWindow = function(form){
+app.setup.registerTaskWindow = function(form){
     
     // 
     var assign_list = form.find('ul.assign');
@@ -709,7 +709,7 @@ app.submit.registerTask = function(form){
 // ----------------------------------------------------------------------
 // コメント管理
 // ----------------------------------------------------------------------
-app.init.rightColumn = function(ele){
+app.setup.rightColumn = function(ele){
     
 }
 

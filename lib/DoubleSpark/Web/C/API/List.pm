@@ -23,7 +23,7 @@ sub create {
         owner => [qw/NOT_NULL OWNER/],
         { members => [qw/members/] }, [qw/MEMBERS/],
     );
-    return $res if $res;
+    return $c->res_403() unless $res;
 
     my $name = $c->req->param('name');
     my $owner = $c->req->param('owner');
@@ -63,7 +63,7 @@ sub update {
         name => [qw/NOT_NULL/, [qw/LENGTH 1 20/]],
         { members => [qw/members/] }, [qw/MEMBERS/],
     );
-    return $res if $res;
+    return $c->res_403() unless $res;
 
     my $list = $c->stash->{list};
 
@@ -83,12 +83,18 @@ sub update {
     });
     for my $member ($list_member->all) {
         unless (delete $members->{ $member->code }) {
-            debugf('[%s] unassign member %s from list %s', $c->sign_name, $member->code, $list->data->{name});
+            debugf('[%s] unassign member %s from list %s',
+                $c->sign_name,
+                $member->code,
+                $list->data->{name});
             $member->delete;
         }
     }
     for my $code (keys %$members) {
-        debugf('[%s] assign member %s from list %s', $c->sign_name, $code, $list->data->{name});
+        debugf('[%s] assign member %s from list %s',
+            $c->sign_name,
+            $code,
+            $list->data->{name});
         $c->db->insert('list_member', {
             list_id => $list->list_id,
             code => $code,
@@ -111,7 +117,7 @@ sub delete {
     my $res = $c->validate(
         list_id => [qw/NOT_NULL LIST_ROLE_OWNER/],
     );
-    return $res if $res;
+    return $c->res_403() unless $res;
 
     my $list = $c->stash->{list};
     my $name = $list->data->{name};
