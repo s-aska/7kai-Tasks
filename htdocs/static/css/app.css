@@ -7,40 +7,6 @@
 6. article
 *****************************************************/
 
-/********** common **********/
-a, button {
-    cursor: pointer;
-}
-form {
-    padding: 0 !important;
-}
-form.modal {
-    display: none;
-    margin-top: -200px;
-}
-h4, h5 {
-    line-height: 1;
-    margin-bottom: 6px;
-}
-.row {
-    margin-left: 0;
-}
-.sq16 {
-    width: 16px;
-    height: 16px;
-}
-.sq24 {
-    width: 24px;
-    height: 24px;
-}
-.sq36 {
-    width: 36px;
-    height: 36px;
-}
-.left {
-    float: left;
-}
-
 /********** icon **********/
 .icon {
     width: 16px;
@@ -125,6 +91,40 @@ h4, h5 {
     background-image: url(/static/img/email24.png);
 }
 
+/********** common **********/
+a, button {
+    cursor: pointer;
+}
+form {
+    padding: 0 !important;
+}
+form.modal {
+    display: none;
+    margin-top: -200px;
+}
+h4, h5 {
+    line-height: 1;
+    margin-bottom: 6px;
+}
+.row {
+    margin-left: 0;
+}
+.sq16 {
+    width: 16px;
+    height: 16px;
+}
+.sq24 {
+    width: 24px;
+    height: 24px;
+}
+.sq32 {
+    width: 32px;
+    height: 32px;
+}
+.left {
+    float: left;
+}
+
 /********** layout **********/
 body {
     overflow: hidden;
@@ -185,6 +185,9 @@ ul.tasks li {
 ul.tasks li:hover {
     background-color: #fefecc;
 }
+ul.tasks li.selected {
+    background-color: #fefecc;
+}
 ul.tasks li div {
     float: left;
 }
@@ -194,7 +197,7 @@ ul.tasks li div.human {
 ul.tasks li div.human span {
     display: inline-block;
 }
-ul.tasks li div.title {
+ul.tasks li div.name {
     margin-left: 4px;
 }
 ul.tasks li div.due {
@@ -208,7 +211,18 @@ ul.tasks li div.recent-comment {
     clear: both;
     margin-left: 48px;
 }
-
+ul.comments li {
+    margin-bottom: 4px;
+}
+ul.comments li span.name {
+    display: inline-block;
+    padding-right: 4px;
+    font-weight: bold;
+    color: black;
+}
+ul.comments li .date {
+    font-size: 12px;
+}
 #register-list-window .member {
     display: none;
 }

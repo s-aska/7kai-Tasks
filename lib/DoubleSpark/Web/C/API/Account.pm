@@ -53,8 +53,11 @@ sub info_with_all {
     for ($my_lists->all, $list_members->all) {
         $ids{$_->list_id}++;
     }
-    my @lists = map { $_->as_hashref }
-        $c->db->search('list', { list_id => [keys %ids] })->all;
+    my @lists;
+    if (%ids) {
+        @lists = map { $_->as_hashref }
+            $c->db->search('list', { list_id => [keys %ids] })->all;
+    }
 
     $c->render_json({
         success      => 1,

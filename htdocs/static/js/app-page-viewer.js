@@ -146,7 +146,7 @@ c.addListener('setup', function(){
         var last_list_id = localStorage.getItem('last_list_id');
         if (last_list_id && (last_list_id in app.data.list_map)) {
             c.fireEvent('openList', app.data.list_map[last_list_id]);
-        } else {
+        } else if (data.lists.length) {
             c.fireEvent('openList', data.lists[0]);
         }
         
@@ -273,6 +273,14 @@ app.getIcon = function(code, size){
         src = size === 16 ? '/static/img/email.png' : '/static/img/email24.png';
     }
     return $('<img/>').attr('src', src).addClass('sq' + size);
+}
+app.getScreenName = function(code){
+    var friend = app.data.friends[code];
+    if (friend) {
+        return friend.screen_name;
+    } else {
+        return code;
+    }
 }
 
 app.updateAccount = function(params, refresh){
@@ -699,7 +707,7 @@ app.setup.centerColumn = function(ele){
             // human
             (function(){
                 var div = li.find('.human');
-                div.prepend(app.getIcon(task.registrant, 16));
+                div.prepend(app.getIcon(task.requester, 16));
                 if (task.assign.length) {
                     div.prepend($('<span class="icon icon-left"/>'));
                     $.each(task.assign, function(i, assign){
@@ -712,8 +720,8 @@ app.setup.centerColumn = function(ele){
                 }
             })();
             
-            // title
-            li.find('.title').text(task.title);
+            // name
+            li.find('.name').text(task.name);
 
             // FIXME: リファクタリング
             if (task.due) {
@@ -740,7 +748,14 @@ app.setup.centerColumn = function(ele){
             li.find('.recent-comment').hide();
             
             li.click(function(){
+                if (app.data.current_task) {
+                    var task_id = app.data.current_task.id;
+                    if (task_id in app.data.taskli_map) {
+                        app.data.taskli_map[task_id].removeClass('selected');
+                    }
+                }
                 c.fireEvent('openTask', task);
+                li.addClass('selected');
             });
             
             // FIXME: 表示条件との照合
@@ -766,7 +781,7 @@ app.setup.registerTaskWindow = function(form){
     var assign_input = form.find('input[name=assign]');
     var assign_list = form.find('ul.assign');
     var assign_template = assign_list.html();
-    var title_input = form.find('input[name=title]');
+    var name_input = form.find('input[name=name]');
     var due_input = form.find('input[name=due]');
     var requester_select = form.find('select[name=requester]');
     var registrant_input = form.find('input[name=registrant]');
@@ -784,6 +799,7 @@ app.setup.registerTaskWindow = function(form){
     
     var setup = function(list){
         assign_list.empty();
+        requester_select.empty();
         var assigns = [list.owner].concat(list.members);
         for (var i = 0, max_i = assigns.length; i < max_i; i++) {
             var assign = assigns[i];
@@ -834,11 +850,16 @@ app.setup.registerTaskWindow = function(form){
         }
         setup(task.list);
         
-        title_input.val(task.title);
+        name_input.val(task.name);
         due_input.val(task.due);
         requester_select.val(task.requester);
         task_id_input.val(task.id);
         form.find('input[name=assign]').val(task.assign);
+        
+        if (task.due) {
+            var due_date = $.datepicker.parseDate('mm/dd/yy', task.due);
+            due_input.datepicker('setDate', due_date);
+        }
         
         app.dom.show(form);
         
@@ -913,17 +934,76 @@ app.updateTask = function(params){
 // ----------------------------------------------------------------------
 app.setup.rightColumn = function(ele){
     
+    var list_id_input = ele.find('input[name=list_id]');
+    var task_id_input = ele.find('input[name=task_id]');
+    var registrant_input = ele.find('input[name=registrant]');
+    var list_name = ele.find('.list_name');
+    var task_name = ele.find('.task_name');
+    var ul = ele.find('ul.comments');
+    var template = ul.html();
     
     c.addListener('openTask', function(task){
-        var list_name = ele.find('.list_name');
-        var task_title = ele.find('.task_title');
+        list_id_input.val(task.list.id);
+        task_id_input.val(task.id);
+        registrant_input.val(app.getRegistrant(task.list));
         list_name.text(task.list.name);
-        task_title.text(task.title);
-        
+        task_name.text(task.name);
+        ul.empty();
+        var li = $(template);
+        li.find('.icon').append(app.getIcon(task.registrant, 32));
+        li.find('.name').text(app.getScreenName(task.registrant));
+        li.find('.message').text(ul.data('text-create-task-' + c.lang));
+        li.find('.date').text(c.date.relative(task.created));
+        li.prependTo(ul);
+        var comments = [].concat(task.comments).concat(task.history);
+        comments.sort(function(a, b) {
+            return (parseInt(a.date, 10) || 0) - (parseInt(b.date, 10) || 0);
+        });
+        $.each(comments, function(i, comment){
+            var li = $(template);
+            li.find('.icon').append(app.getIcon(comment.code, 32));
+            li.find('.name').text(app.getScreenName(comment.code));
+            if (comment.action) {
+                li.find('.message').text(ul.data('text-' + comment.action + '-' + c.lang));
+            } else {
+                li.find('.message').text(comment.message);
+            }
+            li.find('.date').text(c.date.relative(comment.date));
+            li.prependTo(ul);
+        });
     });
-    
-    
-    
+}
+app.submit.registerComment = function(form){
+    var task_id = form.find('input[name=task_id]').val();
+    var list_id = form.find('input[name=list_id]').val();
+    var list = app.data.list_map[list_id];
+    if (!list) {
+        alert('unknown list ' + list_id);
+        return;
+    }
+    app.ajax({
+        type: 'POST',
+        url: '/api/1/comment/create',
+        data: form.serialize(),
+        dataType: 'json'
+    })
+    .done(function(data){
+        if (data.success === 1) {
+            app.dom.reset(form);
+            c.fireEvent('registerTask', list, data.task);
+            c.fireEvent('openTask', data.task);
+            // c.fireEvent('openList', data.list);
+            // form.find('ul.members').empty();
+            if (task_id) {
+                // app.dom.show($('#update-task-twipsy'));
+                // app.dom.hide(form);
+            } else {
+                // app.dom.show($('#create-task-twipsy'));
+            }
+        } else {
+            // 現在 ステータスコード 200 の例外ケースは無い
+        }
+    });
 }
 
 

@@ -279,7 +279,7 @@
         <div class="icon icon-tasks-off"></div>
         <div class="icon icon-star-off"></div>
         <div class="human"></div>
-        <div class="title">アイコン作成</div>
+        <div class="name">アイコン作成</div>
         <div class="icon icon-cross delete"></div>
         <div class="due">8/23</div>
         <div class="recent-comment">
@@ -307,18 +307,20 @@
       </div>
     </div>
     <div class="container">
-      <dl>
-        <dt>リスト</dt>
-        <dd class="list_name">su_aska's list</dd>
-        <dt>タイトル</dt>
-        <dd class="task_title">アイコン作成</dd>
-      </dl>
-      <form class="form-stacked">
+      <h2>[<span class="list_name">-</span>] <span class="task_name">-</span></h2>
+      <form
+        class="form-stacked"
+        data-setup="submit"
+        data-submit="registerComment"
+      >
+        <input type="hidden" name="list_id" value="">
+        <input type="hidden" name="task_id" value="">
+        <input type="hidden" name="registrant" value="">
         <label
           data-setup="localize"
           data-text-ja="コメントを添える"
         >Comment on this task</label>
-        <textarea style="width: 310px; height: 56px; margin-bottom: 6px;"></textarea>
+        <textarea name="message" style="width: 310px; height: 56px; margin-bottom: 6px;"></textarea>
         <div class="">
           <button
             class="btn primary"
@@ -332,6 +334,40 @@
           >Comment &amp; Revert</button>
         </div>
       </form>
+      <ul
+        class="unstyled comments"
+
+        data-text-create-task-en="create the task of the"
+        data-text-create-task-ja="タスクを作成"
+        data-text-update-task-en="update the task of the"
+        data-text-update-task-ja="タスクを更新"
+        data-text-clear-task-en="clear the task of the"
+        data-text-clear-task-ja="完了済タスクを削除"
+
+        data-text-reopen-task-en="update (fix => open) the task of the"
+        data-text-reopen-task-ja="タスクを更新 (処理済 => 未着手)"
+        data-text-start-task-en="start the task of the"
+        data-text-start-task-ja="タスクに着手"
+        data-text-fix-task-en="fix the task of the"
+        data-text-fix-task-ja="タスクを処理"
+        data-text-close-task-en="close the task of the"
+        data-text-close-task-ja="タスクを完了"
+
+        data-text-rereopen-task-en="update (close => open) the task of the"
+        data-text-rereopen-task-ja="タスクを更新 (完了 => 未着手)"
+        data-text-restart-task-en="update (close => start) the task of the"
+        data-text-restart-task-ja="タスクを更新 (処理済 => 着手)"
+        data-text-refix-task-en="update (close => fix) the task of the"
+        data-text-refix-task-ja="タスクを更新 (完了 => 処理済)"
+      >
+        <li class="clearfix">
+          <div class="left icon sq32"></div>
+          <div class="left" style="margin-left: 4px;">
+            <div><span class="name"></span><span class="message"></span></div>
+            <div class="date"></div>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </div>
@@ -554,7 +590,7 @@
             data-text-ja="タイトル"
           >Title</label>
           <div class="input">
-            <input type="text" name="title" value="" data-autofocus="true" required>
+            <input type="text" name="name" value="" data-autofocus="true" required>
           </div>
         </div>
         <div class="clearfix">

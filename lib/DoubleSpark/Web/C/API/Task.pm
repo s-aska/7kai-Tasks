@@ -2,13 +2,14 @@ package DoubleSpark::Web::C::API::Task;
 use strict;
 use warnings;
 use Log::Minimal;
+use Time::HiRes;
 
 sub create {
     my ($class, $c) = @_;
     
     my $res = $c->validate(
         list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
-        title      => [qw/NOT_NULL/, [qw/LENGTH 1 30/]],
+        name      => [qw/NOT_NULL/, [qw/LENGTH 1 30/]],
         requester  => [qw/NOT_NULL MEMBER/],
         registrant => [qw/NOT_NULL OWNER/],
         due        => [qw/DATE_LOOSE/],
@@ -16,7 +17,7 @@ sub create {
     );
     return $c->res_403() unless $res;
 
-    my $title      = $c->req->param('title');
+    my $name      = $c->req->param('name');
     my $requester  = $c->req->param('requester');
     my $registrant = $c->req->param('registrant');
     my @assign     = $c->req->param('assign');
@@ -28,20 +29,20 @@ sub create {
         requester => $requester,
         registrant => $registrant,
         assign => \@assign,
-        title => $title,
+        name => $name,
         due => $due,
         status => 0,
         closed => 0,
         comments => [],
         history => [],
-        created => time,
-        updated => time,
+        created => int(Time::HiRes::time * 1000),
+        updated => int(Time::HiRes::time * 1000),
         sort => $task_id
     };
     push @{ $list->data->{tasks} }, $task;
     # warn Dumper($list->data); use Data::Dumper;
     $list->update({ data => $list->data });
-    infof('[%s] list [%s] create task: %s', $c->sign_name, $list->data->{name}, $title);
+    infof('[%s] list [%s] create task: %s', $c->sign_name, $list->data->{name}, $name);
     $c->render_json({
         success => 1,
         task => $task
@@ -54,7 +55,7 @@ sub update {
     my $res = $c->validate(
         list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
         task_id    => [qw/NOT_NULL/],
-        title      => [[qw/LENGTH 1 30/]],
+        name      => [[qw/LENGTH 1 30/]],
         requester  => [qw/MEMBER/],
         registrant => [qw/NOT_NULL OWNER/],
         due        => [qw/DATE_LOOSE/],
@@ -68,7 +69,7 @@ sub update {
     for my $task (@{ $list->data->{tasks} }) {
         next if $task->{id} ne $task_id;
 
-        my @keys = qw(status closed title requester);
+        my @keys = qw(status closed name requester);
         for my $key (@keys) {
             my $val = $c->req->param($key);
             if (defined $val) {
@@ -97,14 +98,14 @@ sub update {
                     : 're' . $status_action_map->{$task->{status}};
         }
         # by form
-        if (defined $c->req->param('title')) {
+        if (defined $c->req->param('name')) {
             $task->{assign} = [ $c->req->param('assign') ];
         }
-        $task->{updated} = time;
+        $task->{updated} = int(Time::HiRes::time * 1000);
         push @{$task->{history}}, {
-            id      => $registrant,
+            code    => $registrant,
             action  => $action,
-            date    => time * 1000
+            date    => int(Time::HiRes::time * 1000)
         };
         $target_task = $task;
         last;
@@ -115,7 +116,7 @@ sub update {
     $list->update({ data => $list->data });
 
     infof('[%s] list [%s] update task: %s',
-        $c->sign_name, $list->data->{name}, $target_task->{title});
+        $c->sign_name, $list->data->{name}, $target_task->{name});
 
     $c->render_json({
         success => 1,
