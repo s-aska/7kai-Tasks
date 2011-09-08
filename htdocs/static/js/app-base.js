@@ -6,8 +6,11 @@ var app = ns.app = {
         friends: {},
         assigns: {},
         current_list: null,
+        current_task: null,
         last_list_id: null,
         list_map: {},
+        task_map: {},
+        taskli_map: {},
         sub_accounts: []
     },
     
@@ -16,7 +19,7 @@ var app = ns.app = {
         
     },
     
-    // DOM initialize methods
+    // DOM setup methods
     // data-setup="hoge" => app.setup.hoge(element)
     setup: {
         

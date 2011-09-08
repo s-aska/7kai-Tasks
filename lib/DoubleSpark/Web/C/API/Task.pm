@@ -24,9 +24,10 @@ sub create {
     my $list       = $c->stash->{list};
     my $task_id    = ++$list->data->{last_task_id};
     my $task = {
-        id => $task_id,
+        id => $list->list_id . ':' . $task_id,
         requester => $requester,
         registrant => $registrant,
+        assign => \@assign,
         title => $title,
         due => $due,
         status => 0,
@@ -38,8 +39,8 @@ sub create {
         sort => $task_id
     };
     push @{ $list->data->{tasks} }, $task;
-    warn Dumper($list->data); use Data::Dumper;
-#    $list->update({ data => $list->data });
+    # warn Dumper($list->data); use Data::Dumper;
+    $list->update({ data => $list->data });
     infof('[%s] list [%s] create task: %s', $c->sign_name, $list->data->{name}, $title);
     $c->render_json({
         success => 1,
@@ -47,71 +48,80 @@ sub create {
     });
 }
 
-# sub update {
-#     my ($class, $c) = @_;
-#     
-#     my $account = $c->account;
-#     my $registrant_id = $c->req->param('registrant_id');
-#     my $list_id = $c->req->param('list_id');
-#     my $task_id = $c->req->param('task_id');
-#     
-#     my $success;
-#     my $target_task;
-#     my $action = 'update-task';
-#     my $doc = $c->open_list_doc($account, 'member', $list_id);
-#     return $doc unless (ref $doc) eq 'HASH';
-#     for my $task (@{$doc->{tasks}}) {
-#         if ($task->{id} == $task_id) {
-#             my @keys = qw(status closed title description due requester_id);
-#             for my $key (@keys) {
-#                 my $val = $c->req->param($key);
-#                 if (defined $val) {
-#                     $task->{$key} = $val=~/^\d+$/ ? int($val) : $val;
-#                 }
-#             }
-#             my $status = $c->req->param('status');
-#             my $closed = $c->req->param('closed');
-#             my $status_action_map = {
-#                 0 => 'reopen-task',
-#                 1 => 'start-task',
-#                 2 => 'fix-task'
-#             };
-#             if (defined $status) {
-#                 $action = $status_action_map->{$status};
-#             } elsif (defined $closed) {
-#                 $action = $closed ? 'close-task' : 're' . $status_action_map->{$task->{status}};
-#             }
-#             if ($c->req->param('assign_ids[]')) {
-#                 my @assign_ids = $c->req->param('assign_ids[]');
-#                 $task->{assign_ids} = \@assign_ids;
-#             } elsif (defined $c->req->param('assign_ids')) {
-#                 $task->{assign_ids} = [];
-#             }
-#             $task->{updated} = time;
-#             push @{$task->{history}}, {
-#                 id      => $registrant_id,
-#                 action  => $action,
-#                 date    => time * 1000
-#             };
-#             my $max_history = $c->config->{max_history} || 20;
-#             if (scalar(@{$task->{history}}) > $max_history) {
-#                 @{$task->{history}} =
-#                     splice(@{$task->{history}}, scalar(@{$task->{history}}) - $max_history);
-#             }
-#             $target_task = $task;
-#             $success++;
-#             last;
-#         }
-#     }
-#     
-#     return $c->res_404() unless $success;
-#     $c->save_list_doc($account, $doc);
-#     infof("[%s] task update %s", $c->session->get('screen_name'), $action);
-#     $c->render_json({
-#         success => $success,
-#         task => $target_task
-#     });
-# }
+sub update {
+    my ($class, $c) = @_;
+    
+    my $res = $c->validate(
+        list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
+        task_id    => [qw/NOT_NULL/],
+        title      => [[qw/LENGTH 1 30/]],
+        requester  => [qw/MEMBER/],
+        registrant => [qw/NOT_NULL OWNER/],
+        due        => [qw/DATE_LOOSE/],
+        { assign => [qw/assign/] }, [qw/MEMBERS/],
+    );
+    return $c->res_403() unless $res;
+
+    my $target_task;
+    my $task_id = $c->req->param('task_id');
+    my $list    = $c->stash->{list};
+    for my $task (@{ $list->data->{tasks} }) {
+        next if $task->{id} ne $task_id;
+
+        my @keys = qw(status closed title requester);
+        for my $key (@keys) {
+            my $val = $c->req->param($key);
+            if (defined $val) {
+                $task->{$key} = $val=~/^\d+$/ ? int($val) : $val;
+            }
+        }
+
+        if (my $due = $c->stash->{date_loose}) {
+            $task->{due} = $due;
+        }
+
+        my $action     = 'update-task';
+        my $registrant = $c->req->param('registrant');
+        my $status     = $c->req->param('status');
+        my $closed     = $c->req->param('closed');
+        my $status_action_map = {
+            0 => 'reopen-task',
+            1 => 'start-task',
+            2 => 'fix-task'
+        };
+        if (defined $status) {
+            $action = $status_action_map->{$status};
+        } elsif (defined $closed) {
+            $action = $closed
+                    ? 'close-task'
+                    : 're' . $status_action_map->{$task->{status}};
+        }
+        # by form
+        if (defined $c->req->param('title')) {
+            $task->{assign} = [ $c->req->param('assign') ];
+        }
+        $task->{updated} = time;
+        push @{$task->{history}}, {
+            id      => $registrant,
+            action  => $action,
+            date    => time * 1000
+        };
+        $target_task = $task;
+        last;
+    }
+
+    return $c->res_404() unless $target_task;
+
+    $list->update({ data => $list->data });
+
+    infof('[%s] list [%s] update task: %s',
+        $c->sign_name, $list->data->{name}, $target_task->{title});
+
+    $c->render_json({
+        success => 1,
+        task => $target_task
+    });
+}
 # 
 # sub move {
 #     my ($class, $c) = @_;

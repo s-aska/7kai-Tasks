@@ -178,6 +178,7 @@ body > .row > .columns > .container ul.members li img {
     vertical-align: middle;
 }
 ul.tasks li {
+    margin-bottom: 0;
     padding: 4px;
     cursor: pointer;
 }
@@ -186,6 +187,15 @@ ul.tasks li:hover {
 }
 ul.tasks li div {
     float: left;
+}
+ul.tasks li div.human {
+    height: 16px;
+}
+ul.tasks li div.human span {
+    display: inline-block;
+}
+ul.tasks li div.title {
+    margin-left: 4px;
 }
 ul.tasks li div.due {
     float: right;

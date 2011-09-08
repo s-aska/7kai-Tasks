@@ -199,7 +199,7 @@
   </div>
   <div
     class="span8 columns"
-    data-setup="stretch"
+    data-setup="stretch,centerColumn"
   >
     <div class="topbar">
       <div class="fill">
@@ -223,6 +223,45 @@
               </ul>
             </li>
           </ul>
+          <div
+            id="create-task-twipsy"
+            class="twipsy left"
+            style="display: none; top: 40px; left: -84px;"
+            data-show-effect="bounce"
+            data-show-speed="fast"
+            data-show-callback="dom.hide"
+            data-hide-speed="fast"
+            data-hide-option='{"direction":"right"}'
+          >
+            <div class="twipsy-arrow"></div>
+            <div class="twipsy-inner">New Task!</div>
+          </div>
+          <!-- <div
+            id="update-task-twipsy"
+            class="twipsy below"
+            style="display: none; top: 44px; left: 10x;"
+            data-show-effect="bounce"
+            data-show-speed="fast"
+            data-show-callback="dom.hide"
+            data-hide-speed="fast"
+            data-hide-option='{"direction":"up"}'
+          >
+            <div class="twipsy-arrow"></div>
+            <div class="twipsy-inner">Update List!</div>
+          </div>
+          <div
+            id="delete-task-twipsy"
+            class="twipsy below"
+            style="display: none; top: 44px; left: 10x;"
+            data-show-effect="bounce"
+            data-show-speed="fast"
+            data-show-callback="dom.hide"
+            data-hide-speed="fast"
+            data-hide-option='{"direction":"up"}'
+          >
+            <div class="twipsy-arrow"></div>
+            <div class="twipsy-inner">Delete List!</div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -239,17 +278,8 @@
         <div class="icon icon-grip"></div>
         <div class="icon icon-tasks-off"></div>
         <div class="icon icon-star-off"></div>
-        <div class="icon icon-address-off"></div>
+        <div class="human"></div>
         <div class="title">アイコン作成</div>
-        <div class="icon icon-cross delete"></div>
-        <div class="due">8/23</div>
-      </li>
-      <li class="clearfix">
-        <div class="icon icon-grip"></div>
-        <div class="icon icon-tasks-off"></div>
-        <div class="icon icon-star-off"></div>
-        <div class="icon icon-address-off"></div>
-        <div class="">アイコン作成</div>
         <div class="icon icon-cross delete"></div>
         <div class="due">8/23</div>
         <div class="recent-comment">
@@ -261,7 +291,7 @@
   </div>
   <div
     class="span6 columns"
-    data-setup="stretch"
+    data-setup="stretch,rightColumn"
   >
     <div class="topbar">
       <div class="fill">
@@ -269,8 +299,7 @@
           <ul class="nav">
             <li><a
               data-setup="localize,click"
-              data-click="show"
-              data-show-id="register-task-window"
+              data-click="editTask"
               data-text-ja="タスクを編集"
             >Edit Task</a></li>
           </ul>
@@ -280,9 +309,9 @@
     <div class="container">
       <dl>
         <dt>リスト</dt>
-        <dd>su_aska's list</dd>
+        <dd class="list_name">su_aska's list</dd>
         <dt>タイトル</dt>
-        <dd>アイコン作成</dd>
+        <dd class="task_title">アイコン作成</dd>
       </dl>
       <form class="form-stacked">
         <label
