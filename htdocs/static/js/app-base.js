@@ -7,13 +7,27 @@ var app = ns.app = {
         assigns: {},
         current_list: null,
         current_task: null,
+        current_sort: {
+            column: null,
+            reverse: null
+        },
         last_list_id: null,
         list_map: {},
         task_map: {},
         taskli_map: {},
         sub_accounts: []
     },
+
+    // Utility
+    util: {
+        
+    },
     
+    // API Call
+    api: {
+        
+    },
+
     // DOM methods
     dom: {
         
@@ -96,7 +110,7 @@ app.ajax = function(option){
 }
 
 app.dom.setup = function(context){
-    $('*[data-setup]', context).each(function(){
+    $('[data-setup]', context).each(function(){
         var ele = $(this);
         var methods = ele.data('setup').split(',');
         for (var i = 0, max_i = methods.length; i < max_i; i++) {
@@ -196,6 +210,13 @@ app.setup.ui = function(ele){
         var option = ele.data('ui-' + ui);
         ele[ui].call(ele, option);
     }
+}
+app.setup.escclose = function(ele){
+    ele.keydown(function(e){
+        if (e.keyCode === 27) {
+            app.dom.hide(ele);
+        }
+    });
 }
 
 app.click.show = function(ele){

@@ -22,6 +22,7 @@ ns.app.option = {
     // フレンド再取得するまでの期間
     friends_reload_threshold: 24 * 60 * 60 * 1000
     
+    
 };
 
 })(this, this, document);

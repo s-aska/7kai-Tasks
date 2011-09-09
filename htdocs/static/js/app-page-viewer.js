@@ -17,11 +17,20 @@ c.addEvents('openTask');
 c.addEvents('createTask');   // 登録フォーム表示(新規モード)
 c.addEvents('editTask');     // 登録フォーム表示(編集モード)
 c.addEvents('clearTask');
+c.addEvents('sortTask');
+c.addEvents('filterTask');
+
+c.addEvents('checkStar');
+c.addEvents('checkMute');
 
 // イベントのキャッシュコントロール
 c.addListener('openList', function(list){
     console.log(list);
     app.data.current_list = list;
+
+    c.fireEvent('filterTask', {
+        list_id: list.id
+    });
 });
 c.addListener('registerList', function(list){
     console.log(list);
@@ -36,9 +45,38 @@ c.addListener('openTask', function(task){
     console.log(task);
     app.data.current_task = task;
 });
-c.addListener('registerTask', function(list, task){
+c.addListener('registerTask', function(task, list){
     console.log(task);
+
+    // リスト
     task.list = list;
+
+    // 期日
+    if (task.due) {
+        task.due_date = $.datepicker.parseDate('mm/dd/yy', task.due);
+        task.due_epoch = task.due_date.getTime();
+    } else {
+        task.due_epoch = 0;
+    }
+
+    // 履歴・コメント
+    task.actions = [].concat(task.comments).concat(task.history).sort(function(a, b) {
+        return (Number(a.date) || 0) - (Number(b.date) || 0);
+    });
+
+    // 直近の履歴・コメント
+    $.each(task.actions, function(i, action){
+        if (!app.util.findMe([action.code])) {
+            task.recent = action;
+            return false;
+        }
+    });
+
+    // 更新前の状態
+    if (task.id in app.data.task_map) {
+        task.before = app.data.task_map[task.id];
+    }
+
     app.data.task_map[task.id] = task;
     if (app.data.current_task && task.id === app.data.current_task.id) {
         app.data.current_task = task;
@@ -138,7 +176,7 @@ c.addListener('setup', function(){
         $.each(data.lists, function(i, list){
             c.fireEvent('registerList', list);
             $.each(list.tasks, function(i, task){
-                c.fireEvent('registerTask', list, task);
+                c.fireEvent('registerTask', task, list);
             });
         });
         
@@ -149,10 +187,7 @@ c.addListener('setup', function(){
         } else if (data.lists.length) {
             c.fireEvent('openList', data.lists[0]);
         }
-        
-        
-        
-        
+        c.fireEvent('sortTask', 'updated', true);
     });
 });
 
@@ -246,24 +281,7 @@ c.addListener('registerTwitterFriends', function(code, friends){
     }
 });
 
-app.getRegistrant = function(list){
-    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
-        var sub_account = app.data.sub_accounts[i];
-        if (sub_account.code === list.owner) {
-            return sub_account.code;
-        }
-        for (var l = 0, max_l = list.members.length; l < max_l; l++) {
-            var member = list.members[l];
-            if (sub_account.code === member) {
-                return sub_account.code;
-            }
-        }
-    }
-    // 自分がアサインされていない!?
-    console.log('missing registrant...');
-}
-
-app.getIcon = function(code, size){
+app.util.getIcon = function(code, size){
     var src;
     var friend = app.data.friends[code];
     if (friend) {
@@ -272,9 +290,12 @@ app.getIcon = function(code, size){
     else if (/@/.test(code)) {
         src = size === 16 ? '/static/img/email.png' : '/static/img/email24.png';
     }
+    else {
+        src = '/static/img/address.png';
+    }
     return $('<img/>').attr('src', src).addClass('sq' + size);
 }
-app.getScreenName = function(code){
+app.util.getScreenName = function(code){
     var friend = app.data.friends[code];
     if (friend) {
         return friend.screen_name;
@@ -282,8 +303,106 @@ app.getScreenName = function(code){
         return code;
     }
 }
+app.util.findMe = function(codes){
+    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
+        var sub_account = app.data.sub_accounts[i];
+        for (var ii = 0, max_ii = codes.length; ii < max_ii; ii++) {
+            if (sub_account.code === codes[ii]) {
+                return sub_account.code;
+            }
+        }
+    }
+    return false;
+}
+app.util.findOthers = function(codes){
+    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
+        var sub_account = app.data.sub_accounts[i];
+        for (var ii = 0, max_ii = codes.length; ii < max_ii; ii++) {
+            if (sub_account.code !== codes[ii]) {
+                return codes[ii];
+            }
+        }
+    }
+    return false;
+}
+app.util.getRegistrant = function(list){
+    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
+        var sub_account = app.data.sub_accounts[i];
+        if (sub_account.code === list.owner) {
+            return sub_account.code;
+        }
+        for (var ii = 0, max_ii = list.members.length; ii < max_ii; ii++) {
+            var member = list.members[ii];
+            if (sub_account.code === member) {
+                return sub_account.code;
+            }
+        }
+    }
+    // 自分がアサインされていない!?
+    console.log('missing registrant...');
+}
+app.util.taskFilter = function(task, condition){
+    if (!condition.closed) {
+        if (task.closed) {
+            return false;
+        }
+    }
+    if (condition.list_id) {
+        if (condition.list_id !== task.list.id) {
+            return false;
+        }
+    }
+    if (condition.todo) {
+        if (task.status === 2) {
+            return false;
+        }
+        if (task.assign.length) {
+            if (!app.util.findMe(task.assign)) {
+                return false;
+            }
+        } else {
+            if (!app.util.findMe([task.requester])) {
+                return false;
+            }
+        }
+        if (task.due_epoch && task.due_epoch > (new Date()).getTime()) {
+            return false;
+        }
+        if (task.list.id in app.data.state.mute) {
+            return false;
+        }
+    }
+    if (condition.verify) {
+        if (!app.util.findMe([task.requester])) {
+            return false;
+        }
+        if (!app.util.findOthers(task.assign)) {
+            return false;
+        }
+        if (task.status !== 2) {
+            return false;
+        }
+    }
+    if (condition.request) {
+        if (!app.util.findMe([task.requester])) {
+            return false;
+        }
+        if (!app.util.findOthers(task.assign)) {
+            return false;
+        }
+        if (task.status === 2) {
+            return false;
+        }
+    }
+    if (condition.watch) {
+        if (!(task.id in app.data.state.watch)) {
+            return false;
+        }
+    }
+    return true;
+}
 
-app.updateAccount = function(params, refresh){
+app.api.updateAccount = function(params, refresh){
     return app.ajax({
         type: 'post',
         url: '/api/1/account/update',
@@ -295,6 +414,27 @@ app.updateAccount = function(params, refresh){
             if (refresh) {
                 app.refresh();
             }
+        }
+    });
+}
+app.api.updateTask = function(params){
+    var list = app.data.list_map[params.list_id];
+    if (!list) {
+        alert('unknown list ' + params.list_id);
+        return;
+    }
+    app.ajax({
+        type: 'POST',
+        url: '/api/1/task/update',
+        data: params,
+        dataType: 'json'
+    })
+    .done(function(data){
+        if (data.success === 1) {
+            c.fireEvent('registerTask', data.task, list);
+            c.fireEvent('openTask', data.task);
+        } else {
+            // 現在 ステータスコード 200 の例外ケースは無い
         }
     });
 }
@@ -310,6 +450,57 @@ app.setup.topBar = function(ele){
     c.addListener('openList', function(list){
         filter_list.find('> li').removeClass('active');
     });
+}
+app.setup.taskCounter = function(ele){
+    var count = 0;
+    var condition = ele.data('counter-condition');
+    c.addListener('registerTask', function(task){
+        var before = (task.before && app.util.taskFilter(task.before, condition)) ? 1 : 0;
+        var after = app.util.taskFilter(task, condition) ? 1 : 0;
+        var add = after - before;
+        if (add) {
+            count+= add;
+            ele.text(count);
+        }
+    });
+    c.addListener('checkMute', function(){
+        count = 0;
+        for (var task_id in app.data.task_map) {
+            if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
+                count++;
+            }
+        }
+        ele.text(count);
+    });
+}
+app.setup.starCounter = function(ele){
+    var count = 0;
+    c.addListener('registerTask', function(task){
+        // 初回かつOn
+        if (!task.before && app.util.taskFilter(task, {watch: 1})) {
+            count++;
+            ele.text(count);
+        }
+    });
+    c.addListener('checkStar', function(checked){
+        count+= checked ? 1 : -1;
+        ele.text(count);
+    });
+}
+app.setup.notificationCounter = function(ele){
+    
+}
+app.setup.filterTask = function(ele){
+    c.addListener('filterTask', function(){
+        ele.parent().removeClass('active');
+    });
+    c.addListener('openList', function(){
+        ele.parent().removeClass('active');
+    });
+}
+app.click.filterTask = function(ele){
+    c.fireEvent('filterTask', ele.data('filter-condition'));
+    ele.parent().addClass('active');
 }
 
 // ----------------------------------------------------------------------
@@ -334,7 +525,7 @@ app.setup.leftColumn = function(ele){
                     name = name + ' (owner)';
                 }
                 var li = $('<li/>');
-                li.append(app.getIcon(code, 24));
+                li.append(app.util.getIcon(code, 24));
                 li.append($('<span/>').text(name));
                 ul.append(li);
             }
@@ -348,21 +539,17 @@ app.setup.leftColumn = function(ele){
                 return;
             }
             var method = checkbox.attr('checked') ? '+' : '-';
-            app.ajax({
-                type: 'POST',
-                url: '/api/1/account/update',
-                data: {
-                    ns: 'state',
-                    method: method,
-                    key: 'mute',
-                    val: list.id
-                },
-                dataType: 'json'
+            app.api.updateAccount({
+                ns: 'state',
+                method: method,
+                key: 'mute',
+                val: list.id
             })
             .done(function(data){
                 console.log(data);
                 if (data.success === 1) {
                     app.data.state.mute = data.account.state.mute;
+                    c.fireEvent('checkMute', list, checkbox.attr('checked'));
                 } else {
                     // 現在 ステータスコード 200 の例外ケースは無い
                 }
@@ -391,7 +578,6 @@ app.setup.leftColumn = function(ele){
             cache[list.id] = li;
         });
         c.addListener('removeList', function(list){
-            console.log(list);
             var remove_li = cache[list.id];
             var next_li = remove_li.next() || remove_li.prev();
             remove_li.remove();
@@ -407,6 +593,9 @@ app.setup.leftColumn = function(ele){
             }
         });
     })();
+
+    // 
+    
 }
 
 // リスト登録
@@ -651,7 +840,7 @@ app.setup.centerColumn = function(ele){
         var template = ul.html();
         ul.empty();
         
-        c.addListener('registerTask', function(list, task){
+        c.addListener('registerTask', function(task){
             var li = $(template);
             
             // status
@@ -668,11 +857,10 @@ app.setup.centerColumn = function(ele){
                 var status = task.status === 2 ? 0 : task.status + 1;
                 ele.click(function(e){
                     e.stopPropagation();
-                    task.status = status;
-                    app.updateTask({
-                        list_id: list.id,
+                    app.api.updateTask({
+                        list_id: task.list.id,
                         task_id: task.id,
-                        registrant: app.getRegistrant(list),
+                        registrant: app.util.getRegistrant(task.list),
                         status: status
                     });
                 });
@@ -695,28 +883,29 @@ app.setup.centerColumn = function(ele){
                         app.data.state.watch[task.id] = 1;
                         ele.removeClass('icon-star-off').addClass('icon-star');
                     }
-                    app.updateAccount({
+                    app.api.updateAccount({
                         ns: 'state',
                         method: method,
                         key: 'watch',
                         val: task.id
                     });
+                    c.fireEvent('checkStar', method === '+');
                 });
             })();
 
             // human
             (function(){
                 var div = li.find('.human');
-                div.prepend(app.getIcon(task.requester, 16));
+                div.prepend(app.util.getIcon(task.requester, 16));
                 if (task.assign.length) {
                     div.prepend($('<span class="icon icon-left"/>'));
                     $.each(task.assign, function(i, assign){
-                        div.prepend(app.getIcon(assign, 16));
+                        div.prepend(app.util.getIcon(assign, 16));
                     });
                 }
                 if (task.status == 2 && task.assign.length) {
                     div.prepend($('<span class="icon icon-left"/>'));
-                    div.prepend(app.getIcon(task.registrant, 16));
+                    div.prepend(app.util.getIcon(task.requester, 16));
                 }
             })();
             
@@ -743,23 +932,26 @@ app.setup.centerColumn = function(ele){
                 li.find('.due').text('-');
             }
             
-            
-            
-            li.find('.recent-comment').hide();
+            if (task.recent) {
+                var div = li.find('.recent-comment');
+                div.find('.icon').append(app.util.getIcon(task.recent.code, 16));
+                var date = c.date.relative(task.recent.date);
+                if (task.recent.message) {
+                    div.find('.message span').text(task.recent.message + ' ' + date);
+                } else {
+                    div.find('.message span').text(
+                        $('#messages').data('text-' + task.recent.action + '-' + c.lang)
+                        + ' ' + date);
+                }
+            } else {
+                li.find('.recent-comment').hide();
+            }
             
             li.click(function(){
-                if (app.data.current_task) {
-                    var task_id = app.data.current_task.id;
-                    if (task_id in app.data.taskli_map) {
-                        app.data.taskli_map[task_id].removeClass('selected');
-                    }
-                }
                 c.fireEvent('openTask', task);
-                li.addClass('selected');
             });
             
             // FIXME: 表示条件との照合
-            
             if (task.id in app.data.taskli_map) {
                 app.data.taskli_map[task.id].after(li);
                 app.data.taskli_map[task.id].remove();
@@ -769,6 +961,52 @@ app.setup.centerColumn = function(ele){
             app.data.taskli_map[task.id] = li;
         });
         
+        c.addListener('openTask', function(task){
+            ul.find('> li').removeClass('selected');
+            if (task.id in app.data.taskli_map) {
+                app.data.taskli_map[task.id].addClass('selected');
+            }
+        });
+        
+        c.addListener('sortTask', function(column, reverse){
+            var tasks = [];
+            for (var task_id in app.data.task_map) {
+                tasks.push(app.data.task_map[task_id]);
+            }
+            tasks.sort(function(a, b){
+                return (Number(a[column]) || 0) - (Number(b[column]) || 0);
+            });
+            if (app.data.current_sort.column === column
+                && app.data.current_sort.reverse === reverse) {
+                reverse = reverse ? false : true;
+            }
+            if (reverse) {
+                tasks.reverse();
+            }
+            for (var i = 0, max_i = tasks.length; i < max_i; i++) {
+                ul.append(app.data.taskli_map[tasks[i].id]);
+            }
+            app.data.current_sort.column = column;
+            app.data.current_sort.reverse = reverse;
+        });
+        
+        c.addListener('filterTask', function(condition){
+            for (var task_id in app.data.task_map) {
+                var task = app.data.task_map[task_id];
+                var li = app.data.taskli_map[task_id];
+                if (app.util.taskFilter(task, condition)) {
+                    if (!li.is(':visible')) {
+                        li.slideDown('fast');
+                    }
+                } else {
+                    if (li.is(':visible')) {
+                        li.slideUp('fast');
+                    }
+                }
+            }
+            
+            
+        });
         
     })();
     
@@ -824,9 +1062,10 @@ app.setup.registerTaskWindow = function(form){
         }
         
         // 依頼者のデフォルトは自分
-        var registrant = app.getRegistrant(list);
+        var registrant = app.util.getRegistrant(list);
         requester_select.val(registrant);
         registrant_input.val(registrant);
+        task_id_input.val('');
         list_id_input.val(list.id);
     };
     
@@ -857,8 +1096,7 @@ app.setup.registerTaskWindow = function(form){
         form.find('input[name=assign]').val(task.assign);
         
         if (task.due) {
-            var due_date = $.datepicker.parseDate('mm/dd/yy', task.due);
-            due_input.datepicker('setDate', due_date);
+            due_input.datepicker('setDate', task.due_date);
         }
         
         app.dom.show(form);
@@ -874,6 +1112,9 @@ app.click.editTask = function(){
     } else {
         alert('app.data.current_task is null.');
     }
+}
+app.click.sortTask = function(ele){
+    c.fireEvent('sortTask', ele.data('sort-column'), ele.data('sort-reverse'));
 }
 app.submit.registerTask = function(form){
     var task_id = form.find('input[name=task_id]').val();
@@ -892,8 +1133,8 @@ app.submit.registerTask = function(form){
     })
     .done(function(data){
         if (data.success === 1) {
-            c.fireEvent('registerTask', list, data.task);
-            // c.fireEvent('openList', data.list);
+            c.fireEvent('registerTask', data.task, list);
+            c.fireEvent('openTask', data.task);
             app.dom.reset(form);
             // form.find('ul.members').empty();
             if (task_id) {
@@ -907,33 +1148,11 @@ app.submit.registerTask = function(form){
         }
     });
 }
-app.updateTask = function(params){
-    var list = app.data.list_map[params.list_id];
-    if (!list) {
-        alert('unknown list ' + params.list_id);
-        return;
-    }
-    app.ajax({
-        type: 'POST',
-        url: '/api/1/task/update',
-        data: params,
-        dataType: 'json'
-    })
-    .done(function(data){
-        if (data.success === 1) {
-            c.fireEvent('registerTask', list, data.task);
-        } else {
-            // 現在 ステータスコード 200 の例外ケースは無い
-        }
-    });
-}
-
 
 // ----------------------------------------------------------------------
 // コメント管理
 // ----------------------------------------------------------------------
 app.setup.rightColumn = function(ele){
-    
     var list_id_input = ele.find('input[name=list_id]');
     var task_id_input = ele.find('input[name=task_id]');
     var registrant_input = ele.find('input[name=registrant]');
@@ -945,26 +1164,22 @@ app.setup.rightColumn = function(ele){
     c.addListener('openTask', function(task){
         list_id_input.val(task.list.id);
         task_id_input.val(task.id);
-        registrant_input.val(app.getRegistrant(task.list));
+        registrant_input.val(app.util.getRegistrant(task.list));
         list_name.text(task.list.name);
         task_name.text(task.name);
         ul.empty();
         var li = $(template);
-        li.find('.icon').append(app.getIcon(task.registrant, 32));
-        li.find('.name').text(app.getScreenName(task.registrant));
-        li.find('.message').text(ul.data('text-create-task-' + c.lang));
+        li.find('.icon').append(app.util.getIcon(task.registrant, 32));
+        li.find('.name').text(app.util.getScreenName(task.registrant));
+        li.find('.message').text($('#messages').data('text-create-task-' + c.lang));
         li.find('.date').text(c.date.relative(task.created));
         li.prependTo(ul);
-        var comments = [].concat(task.comments).concat(task.history);
-        comments.sort(function(a, b) {
-            return (parseInt(a.date, 10) || 0) - (parseInt(b.date, 10) || 0);
-        });
-        $.each(comments, function(i, comment){
+        $.each(task.actions, function(i, comment){
             var li = $(template);
-            li.find('.icon').append(app.getIcon(comment.code, 32));
-            li.find('.name').text(app.getScreenName(comment.code));
+            li.find('.icon').append(app.util.getIcon(comment.code, 32));
+            li.find('.name').text(app.util.getScreenName(comment.code));
             if (comment.action) {
-                li.find('.message').text(ul.data('text-' + comment.action + '-' + c.lang));
+                li.find('.message').text($('#messages').data('text-' + comment.action + '-' + c.lang));
             } else {
                 li.find('.message').text(comment.message);
             }
@@ -990,16 +1205,9 @@ app.submit.registerComment = function(form){
     .done(function(data){
         if (data.success === 1) {
             app.dom.reset(form);
-            c.fireEvent('registerTask', list, data.task);
+            c.fireEvent('registerTask', data.task, list);
             c.fireEvent('openTask', data.task);
-            // c.fireEvent('openList', data.list);
-            // form.find('ul.members').empty();
-            if (task_id) {
-                // app.dom.show($('#update-task-twipsy'));
-                // app.dom.hide(form);
-            } else {
-                // app.dom.show($('#create-task-twipsy'));
-            }
+            // app.dom.show($('#create-comment-twipsy'));
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
         }
