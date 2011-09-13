@@ -13,6 +13,15 @@
     height: 16px;
     background-repeat: no-repeat;
 }
+span.icon {
+    display: inline-block;
+}
+.icon-with {
+    background-repeat: no-repeat;
+}
+.icon-create-task {
+    background-image: url(/static/img/create-task.png);
+}
 .icon-plus {
     background-image: url(/static/img/plus.png);
 }
@@ -67,6 +76,9 @@
 .icon-grip {
     background-image: url(/static/img/grip.png);
 }
+.icon-address {
+    background-image: url(/static/img/address.png);
+}
 .icon-address-off {
     background-image: url(/static/img/address_off.png);
 }
@@ -105,6 +117,13 @@ form.modal {
 h4, h5 {
     line-height: 1;
     margin-bottom: 6px;
+}
+label {
+    cursor: pointer;
+}
+.focused {
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 1.2);
 }
 .row {
     margin-left: 0;
@@ -177,16 +196,30 @@ body > .row > .columns > .container ul.members li img {
     padding-right: 6px;
     vertical-align: middle;
 }
+.leftColumn a.active {
+    color: #0050A3;
+    text-decoration: underline !important;
+}
+
+/*
+    center
+*/
 ul.tasks li {
     margin-bottom: 0;
     padding: 4px;
     cursor: pointer;
+}
+ul.tasks li.closed {
+    background-color: #CCC;
 }
 ul.tasks li:hover {
     background-color: #fefecc;
 }
 ul.tasks li.selected {
     background-color: #fefecc;
+}
+ul.tasks li.closed.selected {
+    background-color: #E0E0B1;
 }
 ul.tasks li div {
     float: left;
@@ -227,6 +260,9 @@ ul.comments {
 }
 ul.comments li {
     margin-bottom: 4px;
+}
+ul.comments li:last-child {
+    margin-bottom: 0;
 }
 ul.comments li span.message {
     color: #333;

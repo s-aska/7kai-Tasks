@@ -63,6 +63,7 @@ rule MEMBER => sub {
         warnf('[%s] invalid member %s', $c->sign_name, $_);
         return;
     }
+    return 1;
 };
 
 rule LIST_ROLE_OWNER => sub {

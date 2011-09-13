@@ -34,8 +34,8 @@ sub new {
         },
         Facebook => {
             postback => "$args->{base_url}/signin/facebook/callback",
-            app_id_file => '',
-            secret_file => ''
+            app_id_file => 'config/fb.key',
+            secret_file => 'config/fb.secret'
         },
         Dropbox => {
             key_file => '',

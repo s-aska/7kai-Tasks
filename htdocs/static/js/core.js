@@ -127,6 +127,9 @@ c.date.relative = function(epoch){
         return day + ' day' + s + ' ago';
     }
 }
+c.date.ymd = function(date){
+    return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
+}
 c.dom.text = function(ele, key){
     if (key) {
         return ele.data('text-' + key + '-' + c.lang);

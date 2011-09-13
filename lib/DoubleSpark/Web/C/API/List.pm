@@ -1,7 +1,9 @@
 package DoubleSpark::Web::C::API::List;
 use strict;
 use warnings;
+use Encode;
 use Log::Minimal;
+use JSON::XS;
 
 sub retrieve {
     my ($class, $c) = @_;
@@ -22,12 +24,14 @@ sub create {
         name => [qw/NOT_NULL/, [qw/LENGTH 1 20/]],
         owner => [qw/NOT_NULL OWNER/],
         { members => [qw/members/] }, [qw/MEMBERS/],
+        users => [qw/NOT_NULL/]
     );
     return $c->res_403() unless $res;
 
     my $name = $c->req->param('name');
     my $owner = $c->req->param('owner');
     my @members = $c->req->param('members');
+    my $users = decode_json(encode_utf8($c->req->param('users')));
 
     my $txn = $c->db->txn_scope;
     my $list = $c->db->insert('list', {
@@ -36,6 +40,7 @@ sub create {
             name => $name,
             owner => $owner,
             members => \@members,
+            users => $users,
             tasks => []
         },
         created_on => \'now()'
@@ -62,6 +67,7 @@ sub update {
         list_id => [qw/NOT_NULL LIST_ROLE_MEMBER/],
         name => [qw/NOT_NULL/, [qw/LENGTH 1 20/]],
         { members => [qw/members/] }, [qw/MEMBERS/],
+        users => [qw/NOT_NULL/],
     );
     return $c->res_403() unless $res;
 
@@ -70,6 +76,7 @@ sub update {
     my $args = { data => $list->data };
     $list->data->{name}    = $c->req->param('name');
     $list->data->{members} = [ $c->req->param('members') ];
+    $list->data->{users}   = decode_json(encode_utf8($c->req->param('users')));
 
     # update database
     my $txn = $c->db->txn_scope;
@@ -128,24 +135,26 @@ sub delete {
 
 sub clear {
     my ($class, $c) = @_;
+    
+    my $res = $c->validate(
+        list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/]
+    );
+    return $c->res_403() unless $res;
 
-    my $account = $c->account;
-    my $owner_id = $c->req->param('owner_id');
-    my $list_id = $c->req->param('list_id');
+    my $list = $c->stash->{list};
 
-    # FXIME: role check
-    my $success;
-    my $target_task;
-    my $doc = $c->open_list_doc($account, 'member', $list_id);
-    return $doc unless (ref $doc) eq 'HASH';
-    my $num = scalar(@{$doc->{tasks}});
-    @{$doc->{tasks}} = grep { !$_->{closed} } @{$doc->{tasks}};
-    my $count = $num - scalar(@{$doc->{tasks}});
-    $c->save_list_doc($account, $doc);
-    infof("[%s] list clear", $c->session->get('screen_name'));
+    @{ $list->data->{tasks} } = grep {
+        !$_->{closed}
+    } @{ $list->data->{tasks} };
+
+    $list->update({ data => $list->data });
+
+    infof('[%s] clear list [%s]',
+        $c->sign_name, $list->data->{name});
+
     $c->render_json({
-        success => $count ? 1 : 0,
-        count => $count
+        success => 1,
+        list => $list->as_hashref
     });
 }
 

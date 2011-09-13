@@ -18,6 +18,7 @@ CREATE TABLE tw_account (
     , account_id BIGINT UNSIGNED NOT NULL
     , code VARCHAR(256) character set ascii NOT NULL UNIQUE COMMENT 'tw-user_id'
     , name VARCHAR(20) character set ascii NOT NULL UNIQUE
+    , data MEDIUMBLOB NOT NULL
     , created_on DATETIME NOT NULL
     , updated_on DATETIME NOT NULL
     , FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE
@@ -26,7 +27,8 @@ CREATE TABLE fb_account (
     fb_account_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
     , account_id BIGINT UNSIGNED NOT NULL
     , code VARCHAR(256) character set ascii NOT NULL UNIQUE COMMENT 'fb-id'
-    , name VARCHAR(20) NOT NULL
+    , name VARCHAR(256) NOT NULL
+    , data MEDIUMBLOB NOT NULL
     , created_on DATETIME NOT NULL
     , updated_on DATETIME NOT NULL
     , FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE

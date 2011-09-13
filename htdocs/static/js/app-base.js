@@ -3,14 +3,15 @@
 var app = ns.app = {
     
     data: {
-        friends: {},
-        assigns: {},
+        users: {},
+        assigns: [],
         current_list: null,
         current_task: null,
         current_sort: {
             column: null,
             reverse: null
         },
+        current_filter: null,
         last_list_id: null,
         list_map: {},
         task_map: {},
@@ -57,6 +58,7 @@ var app = ns.app = {
 
 c.addEvents('resize');
 c.addEvents('setup');
+c.addEvents('selectTab');
 
 $(d).ready(function(){
     app.run();
@@ -71,15 +73,10 @@ app.run = function(){
     c.fireEvent('setup');
 }
 
-app.handleEvent = function(e){
-    var ele = $(e.currentTarget);
-    if (ele.data(e.type)) {
-        e.preventDefault(); // form submit を止められない
-        e.stopPropagation();
-    }
-    var methods = ele.data(e.type).split(',');
+app.calls = function(ele, type){
+    var methods = ele.data(type).split(',');
     for (var i = 0, max_i = methods.length; i < max_i; i++) {
-        app[e.type][methods[i]].call(app, ele, e);
+        app[type][methods[i]].call(app, ele);
     }
 }
 app.ajax = function(option){
@@ -132,7 +129,7 @@ app.dom.show = function(target){
             return function(){
                 func.call(app, target);
             }
-        })(c.obj.get(app, target.data('show-callback')));
+        })(c.obj.get(app, callback));
     }
     return target.show(effect, option, speed, callback);
 }
@@ -140,7 +137,15 @@ app.dom.hide = function(target){
     var effect = target.data('hide-effect') || 'drop';
     var option = target.data('hide-option') || {};
     var speed  = target.data('hide-speed')  || null;
-    return target.hide(effect, option, speed);
+    var callback = target.data('hide-callback') || null;
+    if (callback) {
+        callback = (function(func){
+            return function(){
+                func.call(app, target);
+            }
+        })(c.obj.get(app, callback));
+    }
+    return target.hide(effect, option, speed, callback);
 }
 app.dom.toggle = function(target){
     if (target.is(':visible')) {
@@ -154,6 +159,9 @@ app.dom.reset = function(form){
 }
 app.dom.autofocus = function(form){
     form.find('[data-autofocus]').focus();
+}
+app.dom.blur = function(form){
+    document.activeElement.blur();
 }
 app.dom.hover = function(ele, over, out, delay){
     var timer;
@@ -178,10 +186,16 @@ app.setup.localize = function(ele){
     ele.text(ele.data('text-' + c.lang));
 }
 app.setup.click = function(ele){
-    ele.get(0).addEventListener("click", app, false);
+    ele.click(function(e){
+        e.preventDefault();
+        app.calls(ele, 'click');
+    });
 }
 app.setup.submit = function(ele) {
-    ele.get(0).addEventListener("submit", app, false);
+    ele.submit(function(e){
+        e.preventDefault(); // stop submit
+        app.calls(ele, 'submit');
+    });
 }
 app.setup.menu = function(ele){
     var ul = ele.find('> ul');
@@ -192,12 +206,15 @@ app.setup.menu = function(ele){
     }, 500);
 }
 app.setup.stretch = function(ele){
+    var padding = ele.data('stretch-padding') || 0;
+    console.log(padding);
     var callback = function(){
         ele.height(
             $(w).height()
             - ele.offset().top
             - parseInt(ele.css('paddingTop'), 10)
             - parseInt(ele.css('paddingBottom'), 10)
+            - padding
         );
     };
     c.addListener('resize', callback);
@@ -215,6 +232,71 @@ app.setup.escclose = function(ele){
     ele.keydown(function(e){
         if (e.keyCode === 27) {
             app.dom.hide(ele);
+        }
+    });
+}
+app.setup.dateplus = function(ele){
+    ele.keydown(function(e){
+        if (e.keyCode === 37) {
+            var date = ele.datepicker("getDate") || new Date();
+            date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
+            ele.datepicker("setDate", date);
+        } else if (e.keyCode === 38) {
+            var date = ele.datepicker("getDate") || new Date();
+            date.setTime(date.getTime() - (7 * 24 * 60 * 60 * 1000));
+            ele.datepicker("setDate", date);
+        } else if (e.keyCode === 39) {
+            var date = ele.datepicker("getDate") || new Date();
+            date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
+            ele.datepicker("setDate", date);
+        } else if (e.keyCode === 40) {
+            var date = ele.datepicker("getDate") || new Date();
+            date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000));
+            ele.datepicker("setDate", date);
+        }
+    });
+}
+app.setup.shortcut = function(ele){
+    $(d).keydown(function(e){
+        if (document.activeElement.tagName === 'BODY'
+            && e.keyCode === ele.data('shortcut-code')) {
+            ele.click();
+        } else {
+            console.log(document.activeElement.tagName);
+        }
+    });
+}
+app.setup.tabMenu = function(ele){
+    var my_id = ele.data('tab-id'),
+        my_group = ele.data('tab-group');
+
+    ele.click(function(){
+        c.fireEvent('selectTab', my_group, my_id);
+    });
+
+    c.addListener('selectTab', function(group, id){
+        if (group !== my_group) {
+            return;
+        }
+        if (id === my_id) {
+            ele.parent().addClass('active');
+        } else {
+            ele.parent().removeClass('active');
+        }
+    });
+}
+app.setup.tabContent = function(ele){
+    var my_id = ele.data('tab-id'),
+        my_group = ele.data('tab-group');
+
+    c.addListener('selectTab', function(group, id){
+        if (group !== my_group) {
+            return;
+        }
+        if (id === my_id) {
+            ele.show();
+        } else {
+            ele.hide();
         }
     });
 }

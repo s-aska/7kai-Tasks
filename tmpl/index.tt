@@ -1,11 +1,122 @@
-[% WRAPPER 'include/layout_pc.tt' WITH page = 'signin' %]
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>7kai Tasks</title>
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css" media="all">
+<link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap-1.2.0.min.css">
+<link rel="stylesheet" href="/static/css/app.css" media="all">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
+<script src="/static/js/jquery.autogrow-textarea.js"></script>
+<script src="/static/js/h5utils.js"></script>
+<script src="/static/js/core.js"></script>
+<script src="/static/js/app-base.js"></script>
+<script src="/static/js/app-constants.js"></script>
+<script src="/static/js/app-page-signin.js"></script>
+</head>
+<body>
+<div class="topbar" data-setup="topBar">
+  <div class="fill">
+    <div class="container">
+      <h3><a href="/">7kai Tasks</a></h3>
+    </div>
+  </div>
+</div>
 
-<nav>
-<ul>
-<li><a href="/signin/twitter/oauth">Sign in with Twitter</a></li>
-<li><a href="/signin/facebook/oauth">Sign in with Facebook (...comming soon...)</a></li>
-<li><a href="/signin/email/input">Sign in with E-mail (...comming soon...)</a></li>
-</ul>
-</nav>
+<div class="modal" style="">
+  <div class="modal-header">
+    <h3>Sign In</h3>
+  </div>
+  <div class="modal-body">
+    <ul class="tabs">
+      <li class="active">
+        <a
+          data-setup="tabMenu"
+          data-tab-id="social"
+          data-tab-group="signin"
+        >Twitter / Facebook</a>
+      </li>
+      <li>
+        <a
+          data-setup="tabMenu"
+          data-tab-id="email"
+          data-tab-group="signin"
+        >E-mail</a>
+      </li>
+    </ul>
+    <div
+      style="text-align: center;"
+      data-setup="tabContent"
+      data-tab-id="social"
+      data-tab-group="signin"
+    >
+      <form method="post" action="/signin/twitter/signin">
+        <div><button class="btn large primary">Connect with Twitter</button></div>
+      </form>
+      <form method="post" action="/signin/facebook/signin">
+        <div><button class="btn large primary">Connect with Facebook</button></div>
+      </form>
+    </div>
+    <div
+      style="display: none;"
+      data-setup="tabContent"
+      data-tab-id="email"
+      data-tab-group="signin"
+    >
+      <form
+        data-setup="signup"
+      >
+        <div class="clearfix">
+          <label for="xlInput">E-mail</label>
+          <div class="input">
+            <input class="xlarge" id="xlInput" name="email" size="30" type="text">
+          </div>
+        </div>
+        <div class="clearfix">
+          <label for="xlInput">Password</label>
+          <div class="input">
+            <input class="xlarge" id="xlInput" name="password" size="30" type="password">
+          </div>
+        </div>
+        <div class="actions">
+          <button
+            class="btn primary"
+            data-setup="click"
+            data-click="signin"
+          >Sign In</button> or 
+          <button
+            class="btn primary"
+            data-setup="click"
+            data-click="signup"
+          >Sign Up</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-[% END %]
+<form
+  class="modal"
+  data-setup="submit,verify"
+  data-submit="verify"
+>
+  <div class="modal-header">
+    <h3>E-mail Verify</h3>
+  </div>
+  <div class="modal-body">
+    <p>Please enter the code sent to your email.</p>
+    <div class="clearfix">
+      <label for="xlInput">CODE</label>
+      <div class="input">
+        <input type="text" name="code" value="">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn primary">Verify</button>
+  </div>
+</form>
+
+</body>
+</html>

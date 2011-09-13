@@ -1,7 +1,7 @@
 package DoubleSpark::Web::C::API::Account;
 use strict;
 use warnings;
-use JSON;
+use JSON::XS;
 use Log::Minimal;
 
 sub info {
@@ -31,7 +31,11 @@ sub info_with_all {
     my $email_accounts = $c->db->search('email_account', {
         account_id => $account->account_id
     });
-    my @sub_accounts = map { $_->get_columns }
+    my @sub_accounts = map {
+        $_ = $_->get_columns;
+        $_->{data} = decode_json($_->{data}) if $_->{data};
+        $_;
+    }
         ($tw_accounts->all, $fb_accounts->all, $email_accounts->all);
     my @codes = map { $_->{code} } @sub_accounts;
 
@@ -59,12 +63,18 @@ sub info_with_all {
             $c->db->search('list', { list_id => [keys %ids] })->all;
     }
 
+    my %ext;
+    if (my $fb_account = $c->session->get('fb_account')) {
+        $ext{friends} = $fb_account->{friends}->{data};
+    }
+
     $c->render_json({
         success      => 1,
         sign         => $c->sign,
         account      => $account->data,
         sub_accounts => \@sub_accounts,
-        lists        => \@lists
+        lists        => \@lists,
+        %ext
     });
 }
 

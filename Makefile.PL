@@ -12,6 +12,8 @@ WriteMakefile(
         'HTML::FillInForm::Lite'          => '1.09',
         'Time::Piece'                     => '1.20',
 
+        'Crypt::SaltedHash'                   => '0.06',
+        'Email::Sender'                       => '0.110001',
         'Email::Valid::Loose'                 => '0.05',
         'Facebook::Graph'                     => '1.0300',
         'FormValidator::Lite'                 => '0.25',

@@ -58,6 +58,7 @@ __PACKAGE__->add_trigger(
     AFTER_DISPATCH => sub {
         my ( $c, $res ) = @_;
         $res->header( 'X-Content-Type-Options' => 'nosniff' );
+        $res->header( 'X-Frame-Options' => 'SAMEORIGIN' );
     },
 );
 
@@ -109,6 +110,12 @@ sub sign_name {
     $sign ? $sign->{name} : '-';
 }
 
+sub sign_code {
+    my $c = shift;
+    my $sign = $c->sign;
+    $sign ? $sign->{code} : undef;
+}
+
 sub account {
     my $c = shift;
     $c->sign unless $c->{account};
@@ -118,6 +125,7 @@ sub account {
 sub validate {
     my ($c, @rule) = @_;
     my $validator = FormValidator::Lite->new($c->req);
+    $validator->load_constraints(qw/Email/);
     $validator->load_constraints('+DoubleSpark::Web::FormValidator::Lite::Constraint');
     $validator->check(@rule);
     if ($validator->has_error) {

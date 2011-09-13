@@ -81,7 +81,7 @@ sub update {
             $task->{due} = $due;
         }
 
-        my $action     = 'update-task';
+        my $action;
         my $registrant = $c->req->param('registrant');
         my $status     = $c->req->param('status');
         my $closed     = $c->req->param('closed');
@@ -91,7 +91,7 @@ sub update {
             2 => 'fix-task'
         };
         if (defined $status) {
-            $action = $status_action_map->{$status};
+            $action = $status_action_map->{$status} or die "unknown status $status";
         } elsif (defined $closed) {
             $action = $closed
                     ? 'close-task'
@@ -102,11 +102,13 @@ sub update {
             $task->{assign} = [ $c->req->param('assign') ];
         }
         $task->{updated} = int(Time::HiRes::time * 1000);
-        push @{$task->{history}}, {
-            code    => $registrant,
-            action  => $action,
-            date    => int(Time::HiRes::time * 1000)
-        };
+        if ($action) {
+            push @{$task->{history}}, {
+                code    => $registrant,
+                action  => $action,
+                date    => int(Time::HiRes::time * 1000)
+            };
+        }
         $target_task = $task;
         last;
     }

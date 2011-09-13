@@ -11,8 +11,15 @@ get '/mock' => 'Root#mock';
 
 get '/signout' => 'Root#signout';
 
-get '/signin/twitter/oauth' => 'Signin::Twitter#oauth';
+post '/signin/twitter/signin' => 'Signin::Twitter#signin';
 get '/signin/twitter/callback' => 'Signin::Twitter#callback';
+
+post '/signin/facebook/signin' => 'Signin::Facebook#signin';
+get '/signin/facebook/callback' => 'Signin::Facebook#callback';
+
+post '/signin/email/signup' => 'Signin::Email#signup';
+post '/signin/email/verify' => 'Signin::Email#verify';
+post '/signin/email/signin' => 'Signin::Email#signin';
 
 get '/api/1/account/info'          => 'API::Account#info';
 get '/api/1/account/info_with_all' => 'API::Account#info_with_all';
@@ -29,6 +36,8 @@ post '/api/1/task/move'   => 'API::Task#move';
 
 post '/api/1/comment/create' => 'API::Comment#create';
 post '/api/1/comment/delete' => 'API::Comment#delete';
+
+post '/api/1/twitter/update_friends' => 'API::Twitter#update_friends';
 
 if ($ENV{PLACK_ENV} eq 'development') {
     warn router->as_string;
