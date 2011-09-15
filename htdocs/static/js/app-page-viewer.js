@@ -31,6 +31,7 @@ c.addEvents('clickNotification');
 // イベントのキャッシュコントロール
 c.addListener('openList', function(list){
     app.data.current_list = list;
+    localStorage.setItem('last_list_id', list.id);
     c.fireEvent('filterTask', {
         list_id: list.id
     });
@@ -227,10 +228,12 @@ app.api.getMe = function(option){
             return app.data.state.sort.list[a.id] - app.data.state.sort.list[b.id];
         });
         
+        var tasks = 0;
         $.each(data.lists, function(i, list){
             c.fireEvent('registerList', list);
             c.fireEvent('registerFriends', list.users);
             $.each(list.tasks, function(i, task){
+                tasks++;
                 c.fireEvent('registerTask', task, list);
             });
         });
@@ -246,12 +249,13 @@ app.api.getMe = function(option){
             c.fireEvent('openList', app.data.list_map[last_list_id]);
         } else if (data.lists.length) {
             c.fireEvent('openList', data.lists[0]);
-            if (!data.lists[0].tasks.length) {
-                app.dom.show($('#welcome'));
-            }
         }
         if (option.setup) {
-            c.fireEvent('sortTask', 'updated', true);
+            if (!tasks) {
+                app.dom.show($('#welcome'));
+            } else {
+                c.fireEvent('sortTask', 'updated', true);
+            }
         }
     });
 }
@@ -512,6 +516,10 @@ app.api.moveTask = function(src_list_id, task_id, dst_list_id){
             }
         }
     });
+}
+
+app.setup.messages = function(ele){
+    app.data.messages = ele;
 }
 
 // ----------------------------------------------------------------------
@@ -1195,7 +1203,7 @@ app.setup.centerColumn = function(ele){
                     div.find('.message span').text(task.recent.message + ' ' + date);
                 } else {
                     div.find('.message span').text(
-                        $('#messages').data('text-' + task.recent.action + '-' + c.lang)
+                        app.data.messages.data('text-' + task.recent.action + '-' + c.lang)
                         + ' ' + date);
                 }
             } else {
@@ -1546,7 +1554,7 @@ app.setup.rightColumn = function(ele){
         li.find('.icon:first').append(app.util.getIcon(task.registrant, 32));
         li.find('.icon:last').remove();
         li.find('.name').text(app.util.getName(task.registrant));
-        li.find('.message').text($('#messages').data('text-create-task-' + c.lang));
+        li.find('.message').text(app.data.messages.data('text-create-task-' + c.lang));
         li.find('.date').text(c.date.relative(task.created_on));
         li.prependTo(ul);
         $.each(task.actions, function(i, comment){
@@ -1554,7 +1562,7 @@ app.setup.rightColumn = function(ele){
             li.find('.icon:first').append(app.util.getIcon(comment.code, 32));
             li.find('.name').text(app.util.getName(comment.code));
             if (comment.action) {
-                li.find('.message').text($('#messages').data('text-' + comment.action + '-' + c.lang));
+                li.find('.message').text(app.data.messages.data('text-' + comment.action + '-' + c.lang));
                 li.find('.icon:last').remove();
             } else {
                 li.find('.message').text(comment.message);

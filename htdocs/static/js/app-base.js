@@ -16,8 +16,10 @@ var app = ns.app = {
         list_map: {},
         task_map: {},
         taskli_map: {},
-        sub_accounts: []
+        sub_accounts: [],
+        messages: null
     },
+
 
     // Utility
     util: {

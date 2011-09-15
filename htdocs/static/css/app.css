@@ -164,6 +164,7 @@ body > .row {
     margin: 60px auto 0 auto;
 }
 body > .row > .columns {
+    position: relative;
     background-color: #eeeeee;
 }
 body > .row > .columns:first-child {

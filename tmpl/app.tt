@@ -167,47 +167,47 @@
               </ul>
             </li>
           </ul>
-          <div
-            id="create-list-twipsy"
-            class="twipsy below"
-            style="display: none; top: 44px; left: 10x;"
-            data-show-effect="bounce"
-            data-show-speed="fast"
-            data-show-callback="dom.hide"
-            data-hide-speed="fast"
-            data-hide-option='{"direction":"up"}'
-          >
-            <div class="twipsy-arrow"></div>
-            <div class="twipsy-inner">New List!</div>
-          </div>
-          <div
-            id="update-list-twipsy"
-            class="twipsy below"
-            style="display: none; top: 44px; left: 10x;"
-            data-show-effect="bounce"
-            data-show-speed="fast"
-            data-show-callback="dom.hide"
-            data-hide-speed="fast"
-            data-hide-option='{"direction":"up"}'
-          >
-            <div class="twipsy-arrow"></div>
-            <div class="twipsy-inner">Update List!</div>
-          </div>
-          <div
-            id="delete-list-twipsy"
-            class="twipsy below"
-            style="display: none; top: 44px; left: 10x;"
-            data-show-effect="bounce"
-            data-show-speed="fast"
-            data-show-callback="dom.hide"
-            data-hide-speed="fast"
-            data-hide-option='{"direction":"up"}'
-          >
-            <div class="twipsy-arrow"></div>
-            <div class="twipsy-inner">Delete List!</div>
-          </div>
         </div>
       </div>
+    </div>
+    <div
+      id="create-list-twipsy"
+      class="twipsy below"
+      style="display: none; top: 44px; left: 10x;"
+      data-show-effect="bounce"
+      data-show-speed="fast"
+      data-show-callback="dom.hide"
+      data-hide-speed="fast"
+      data-hide-option='{"direction":"up"}'
+    >
+      <div class="twipsy-arrow"></div>
+      <div class="twipsy-inner">New List!</div>
+    </div>
+    <div
+      id="update-list-twipsy"
+      class="twipsy below"
+      style="display: none; top: 44px; left: 10x;"
+      data-show-effect="bounce"
+      data-show-speed="fast"
+      data-show-callback="dom.hide"
+      data-hide-speed="fast"
+      data-hide-option='{"direction":"up"}'
+    >
+      <div class="twipsy-arrow"></div>
+      <div class="twipsy-inner">Update List!</div>
+    </div>
+    <div
+      id="delete-list-twipsy"
+      class="twipsy below"
+      style="display: none; top: 44px; left: 10x;"
+      data-show-effect="bounce"
+      data-show-speed="fast"
+      data-show-callback="dom.hide"
+      data-hide-speed="fast"
+      data-hide-option='{"direction":"up"}'
+    >
+      <div class="twipsy-arrow"></div>
+      <div class="twipsy-inner">Delete List!</div>
     </div>
     <div class="container">
       <h2>Members</h2>
@@ -348,21 +348,21 @@
               </ul>
             </li>
           </ul>
-          <div
-            id="create-task-twipsy"
-            class="twipsy left"
-            style="display: none; top: 40px; left: -84px;"
-            data-show-effect="bounce"
-            data-show-speed="fast"
-            data-show-callback="dom.hide"
-            data-hide-speed="fast"
-            data-hide-option='{"direction":"right"}'
-          >
-            <div class="twipsy-arrow"></div>
-            <div class="twipsy-inner">New Task!</div>
-          </div>
         </div>
       </div>
+    </div>
+    <div
+      id="create-task-twipsy"
+      class="twipsy left"
+      style="display: none; top: 36px; left: -84px;"
+      data-show-effect="bounce"
+      data-show-speed="fast"
+      data-show-callback="dom.hide"
+      data-hide-speed="fast"
+      data-hide-option='{"direction":"right"}'
+    >
+      <div class="twipsy-arrow"></div>
+      <div class="twipsy-inner">New Task!</div>
     </div>
     <ul class="unstyled tasks">
       <li class="clearfix" draggable="true">
@@ -807,21 +807,24 @@
     <ul class="tabs">
       <li class="active">
         <a
-          data-setup="tabMenu"
+          data-setup="localize,tabMenu"
+          data-text-ja="メニュー"
           data-tab-id="menu"
           data-tab-group="help"
         >Menu</a>
       </li>
       <li>
         <a
-          data-setup="tabMenu"
+          data-setup="localize,tabMenu"
+          data-text-ja="メニュー"
           data-tab-id="icon"
           data-tab-group="help"
         >Icon</a>
       </li>
       <li>
         <a
-          data-setup="tabMenu"
+          data-setup="localize,tabMenu"
+          data-text-ja="ショートカットキー"
           data-tab-id="shortcut-key"
           data-tab-group="help"
         >Shortcut Key</a>
@@ -833,16 +836,22 @@
         data-tab-id="menu"
         data-tab-group="help"
       >
-        <h4>Menu</h4>
+        <h4
+          data-setup="localize"
+          data-text-ja="メニュー"
+        >Menu</h4>
         <dl>
-          <dt>Todo</dt>
-          <dd>Today task. ( Excluding others, and future, and fixed )</dd>
-          <dt>Verify</dt>
-          <dd>Requested someone fixed task.</dd>
-          <dt>Request</dt>
-          <dd>Requested someone not fixed task.</dd>
-          <dt>Star</dt>
-          <dd>Checked star task.</dd>
+          <dt
+            data-setup="localize"
+            data-text-ja="今日迄"
+          >Todo</dt>
+          <dd>自分が担当で処理していないタスク. (期日が未来を除く)</dd>
+          <dt>確認待ち</dt>
+          <dd>依頼した処理済みのタスク.</dd>
+          <dt>依頼中</dt>
+          <dd>依頼したタスク.</dd>
+          <dt>スター</dt>
+          <dd>☆マークをつけたタスク.</dd>
         </dl>
       </div>
       <div
@@ -851,30 +860,45 @@
         data-tab-id="icon"
         data-tab-group="help"
       >
-        <h4>Icon</h4>
+        <h4
+          data-setup="localize"
+          data-text-ja="アイコン"
+        >Icon</h4>
         <ul class="unstyled">
           <li>
             <span class="icon icon-tasks-off"></span>
             <span
-              data-setup2="localize"
-              data-text-ja="未着手"
+              data-setup="localize"
+              data-text-ja="未着手 (クリックで変更)"
             >Open ( Rotation button )</span>
           </li>
           <li>
             <span class="icon icon-tasks-half"></span>
-            <span>In Progress</span>
+            <span
+              data-setup="localize"
+              data-text-ja="処理中"
+            >In Progress</span>
           </li>
           <li>
             <span class="icon icon-tasks"></span>
-            <span>Fixed</span>
+            <span
+              data-setup="localize"
+              data-text-ja="処理済"
+            >Fixed</span>
           </li>
           <li>
             <span class="icon icon-star"></span>
-            <span>Star On ( Toggle button )</span>
+            <span
+              data-setup="localize"
+              data-text-ja="スター有効"
+            >Star On ( Toggle button )</span>
           </li>
           <li>
-            <span class="icon icon-star"></span>
-            <span>Star Off</span>
+            <span class="icon icon-star-off"></span>
+            <span
+              data-setup="localize"
+              data-text-ja="スター無効"
+            >Star Off</span>
           </li>
           <li>
             <span class="icon icon-address"></span>
@@ -882,7 +906,10 @@
             <span class="icon"></span>
             <span class="icon"></span>
             <span class="icon"></span>
-            <span>Requester ( Requester must be assign or fixed )</span>
+            <span
+              data-setup="localize"
+              data-text-ja="依頼者 ( 依頼者は担当者を設定又は処理する )"
+            >Requester ( Requester must be assign or fixed )</span>
           </li>
           <li>
             <span class="icon icon-address"></span>
@@ -890,7 +917,10 @@
             <span class="icon icon-address"></span>
             <span class="icon"></span>
             <span class="icon"></span>
-            <span>Assign &lt; Requester ( Assign must be fixed )</span>
+            <span
+              data-setup="localize"
+              data-text-ja="担当者 < 依頼者 ( 担当者は処理する )"
+            >Assign &lt; Requester ( Assign must be fixed )</span>
           </li>
           <li>
             <span class="icon icon-address"></span>
@@ -898,7 +928,10 @@
             <span class="icon icon-address"></span>
             <span class="icon icon-left"></span>
             <span class="icon icon-address"></span>
-            <span>Requester &lt; Assign &lt; Requester ( Requester must be verify )</span>
+            <span
+              data-setup="localize"
+              data-text-ja="依頼者 < 担当者 < 依頼者 ( 依頼者は確認し閉じる )"
+            >Requester &lt; Assign &lt; Requester ( Requester must be verify )</span>
           </li>
         </ul>
       </div>
@@ -908,43 +941,91 @@
         data-tab-id="shortcut-key"
         data-tab-group="help"
       >
-        <h4>Shortcut Key</h4>
+        <h4
+        data-setup="localize"
+        data-text-ja="ショートカットキー"
+        >Shortcut Key</h4>
         <div class="clearfix">
         <dl style="float: left;">
           <dt>[C]</dt>
-          <dd>Create a New Task.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="新しいタスクを作成"
+          >Create a New Task.</dd>
           <dt>[ESC]</dt>
-          <dd>Close Some Window.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="ウィンドウを閉じる"
+          >Close Some Window.</dd>
           <dt>[T]</dt>
-          <dd>Open Today.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="[今日迄]を開く"
+          >Open Today.</dd>
           <dt>[V]</dt>
-          <dd>Open Verify.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="[確認待ち]を開く"
+          >Open Verify.</dd>
           <dt>[R]</dt>
-          <dd>Open Request.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="[依頼中]を開く"
+          >Open Request.</dd>
           <dt>[S]</dt>
-          <dd>Open Star.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="[スター]を開く"
+          >Open Star.</dd>
         </dl>
         <dl style="float: left; margin-left: 10px; padding-left: 10px; border-left: 1px dotted gray;">
           <dt>[1-9]</dt>
-          <dd>Select List.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="リストを開く(数字は上からの順番)"
+          >Select List.</dd>
           <dt>[Down]</dt>
-          <dd>Select Next Task.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="次のタスクを選択"
+          >Select Next Task.</dd>
           <dt>[Up]</dt>
-          <dd>Select Previous Task.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="前のタスクを選択"
+          >Select Previous Task.</dd>
+          <dt>[Right]</dt>
+          <dd
+            data-setup="localize"
+            data-text-ja="期日を１日延長"
+          >Due + 1 day.</dd>
+          <dt>[Left]</dt>
+          <dd
+            data-setup="localize"
+            data-text-ja="期日を１日短縮"
+          >Due - 1 day.</dd>
         </dl>
         <dl style="float: left; margin-left: 10px; padding-left: 10px; border-left: 1px dotted gray;">
           <dt>[Space]</dt>
-          <dd>Progress Status a Task.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="タスクの状態を進める"
+          >Progress Status a Task.</dd>
           <dt>[Enter]</dt>
-          <dd>Closed a Task.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="タスクを閉じる"
+          >Closed a Task.</dd>
           <dt>[E]</dt>
-          <dd>Edit a Selected Task.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="タスクを編集"
+          >Edit a Selected Task.</dd>
           <dt>[M]</dt>
-          <dd>Select comment textarea.</dd>
-          <dt>[Right]</dt>
-          <dd>Due + 1 day.</dd>
-          <dt>[Left]</dt>
-          <dd>Due - 1 day.</dd>
+          <dd
+            data-setup="localize"
+            data-text-ja="コメント欄を選択"
+          >Select comment textarea.</dd>
         </dl>
         </div>
       </div>
@@ -1017,7 +1098,9 @@
   <input type="hidden" name="mode" value="add">
 </form>
 
-<div id="messages"
+<div
+  data-setup="messages"
+
   data-text-create-task-en="create the task of the"
   data-text-create-task-ja="タスクを作成"
   data-text-update-task-en="update the task of the"
