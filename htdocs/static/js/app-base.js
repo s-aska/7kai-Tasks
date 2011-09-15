@@ -113,7 +113,6 @@ app.ajax = function(option){
 }
 
 app.dom.setup = function(context){
-    console.log(app);
     $('[data-setup]', context).each(function(){
         var ele = $(this);
         var methods = ele.data('setup').split(',');
@@ -214,7 +213,6 @@ app.setup.menu = function(ele){
 }
 app.setup.stretch = function(ele){
     var padding = ele.data('stretch-padding') || 0;
-    console.log(padding);
     var callback = function(){
         ele.height(
             $(w).height()
@@ -268,8 +266,6 @@ app.setup.shortcut = function(ele){
         if (document.activeElement.tagName === 'BODY'
             && e.keyCode === ele.data('shortcut-code')) {
             ele.click();
-        } else {
-            console.log(document.activeElement.tagName);
         }
     });
 }

@@ -37,11 +37,9 @@ c.addListener('openList', function(list){
     });
 });
 c.addListener('registerList', function(list){
-    console.log(list);
     app.data.list_map[list.id] = list;
 });
 c.addListener('deleteList', function(list){
-    console.log(list);
     delete app.data.list_map[list.id];
 });
 c.addListener('clearList', function(list){
@@ -59,12 +57,9 @@ c.addListener('clearList', function(list){
 });
 
 c.addListener('openTask', function(task){
-    console.log(task);
     app.data.current_task = task;
 });
 c.addListener('registerTask', function(task, list){
-    console.log(task);
-
     // リスト
     task.list = list;
 
@@ -107,7 +102,6 @@ c.addListener('registerTask', function(task, list){
     else {
         task.person = task.requester;
     }
-    console.log(task.person);
 
     app.data.task_map[task.id] = task;
     if (app.data.current_task && task.id === app.data.current_task.id) {
@@ -152,16 +146,15 @@ c.addListener('registerFriends', function(friends, owner){
 
 // セットアップ
 c.addListener('setup', function(option){
-    app.api.getMe({setup: true});
+    app.api.me({setup: true});
 });
 
 c.addListener('clickNotification', function(option){
     app.data.current_filter = { list_id: option.list_id };
-    app.api.getMe(option);
+    app.api.me(option);
 });
 
-app.api.getMe = function(option){
-    console.log(option);
+app.api.me = function(option){
     app.ajax({
         url: '/api/1/account/me'
     })
@@ -174,7 +167,6 @@ app.api.getMe = function(option){
             , diff
             , status;
         
-        console.log(data);
         
         app.data.sign = data.sign;
         app.data.state = data.account.state;
@@ -187,8 +179,6 @@ app.api.getMe = function(option){
         // localStorageのfriendsリストを更新
         for (var i = 0, max_i = data.sub_accounts.length; i < max_i; i++) {
             sub_account = data.sub_accounts[i];
-
-            console.log('find sub account ' + sub_account.name + ' ' + sub_account.code);
 
             c.fireEvent('registerSubAccount', sub_account);
 
@@ -262,9 +252,6 @@ app.api.getMe = function(option){
 
 // フレンド同期機能
 app.friendFetchTwitter = function(user_id, cursor, cache){
-
-    console.log('[' + user_id + '] twitter friends get from api.');
-
     app.ajax({
         url: 'https://api.twitter.com/1/statuses/friends.json',
         data: {
@@ -290,7 +277,6 @@ app.friendFetchTwitter = function(user_id, cursor, cache){
         
         // last
         else {
-            console.log('[' + user_id + '] twitter friends save to server.');
             c.fireEvent('registerFriends', cache, 'tw-' + user_id);
             app.ajax({
                 url: '/api/1/twitter/update_friends',
@@ -385,12 +371,8 @@ app.util.getRegistrant = function(list){
             }
         }
     }
-    // 自分がアサインされていない!?
-    console.log('missing registrant...');
 }
 app.util.taskFilter = function(task, condition){
-    console.log(task);
-    console.log(condition);
     if (condition.closed) {
         if (!task.closed) {
             return false;
@@ -643,7 +625,6 @@ app.setup.leftColumn = function(ele){
         checkbox.click(function(){
             var list = app.data.current_list;
             if (!list) {
-                console.log('リストを選択していないと指定出来ません。');
                 return;
             }
             var method = checkbox.attr('checked') ? '+' : '-';
@@ -654,7 +635,6 @@ app.setup.leftColumn = function(ele){
                 val: list.id
             })
             .done(function(data){
-                console.log(data);
                 if (data.success === 1) {
                     app.data.state.mute = data.account.state.mute;
                     c.fireEvent('checkMute', list, checkbox.attr('checked'));
@@ -717,11 +697,9 @@ app.setup.leftColumn = function(ele){
                 var next_id = next_li.data('id');
                 if (next_id in app.data.list_map) {
                     c.fireEvent('openList', app.data.list_map[next_id]);
-                } else {
-                    console.log('ここに来たらバグですね...');
                 }
             } else {
-                console.log('表示するリストが無くなった...');
+                
             }
         });
     })();
@@ -858,7 +836,6 @@ app.setup.registerListWindow = function(form){
                 if (value.code in dup) {
                     return false;
                 } else if (!(value.owner in sub_map)) {
-                    console.log(value.owner);
                     return false;
                 } else if (matcher.test( value.value )) {
                     dup[value.code] = 1;
@@ -943,7 +920,6 @@ app.submit.registerList = function(form){
     var url = id ? '/api/1/list/update' : '/api/1/list/create';
     var users = [];
     var owner = form.find('[name="owner"]').val();
-    console.log(owner);
     users.push({
         code: owner,
         name: app.util.getName(owner),
@@ -958,7 +934,6 @@ app.submit.registerList = function(form){
             icon: app.util.getIconUrl(code)
         });
     });
-    console.log(users);
     form.find('input[name="users"]').val(JSON.stringify(users));
     app.ajax({
         type: 'POST',
@@ -967,7 +942,6 @@ app.submit.registerList = function(form){
         dataType: 'json'
     })
     .done(function(data){
-        console.log(data);
         if (data.success === 1) {
             c.fireEvent('registerList', data.list);
             c.fireEvent('openList', data.list);
@@ -1022,7 +996,6 @@ app.submit.clearList = function(form){
         dataType: 'json'
     })
     .done(function(data){
-        console.log(data);
         if (data.success === 1) {
             c.fireEvent('clearList', data.list);
             c.fireEvent('openList', data.list);
@@ -1047,7 +1020,6 @@ app.submit.deleteList = function(form){
         dataType: 'json'
     })
     .done(function(data){
-        console.log(data);
         if (data.success === 1) {
             c.fireEvent('deleteList', app.data.current_list);
             app.dom.show($('#delete-list-twipsy'));
@@ -1178,7 +1150,7 @@ app.setup.centerColumn = function(ele){
             // FIXME: リファクタリング
             if (task.due) {
                 var mdy = task.due.split('/');
-                var label = mdy[0] + '/' + mdy[1];
+                var label = Number(mdy[0]) + '/' + Number(mdy[1]);
                 var now = new Date();
                 if (now.getFullYear() != mdy[2]) {
                     if (c.LANG === 'ja') {
@@ -1291,8 +1263,6 @@ app.setup.centerColumn = function(ele){
                 var task = app.data.task_map[task_id];
                 var li = app.data.taskli_map[task_id];
                 if (app.util.taskFilter(task, condition)) {
-                    console.log(li);
-                    console.log(li.is(':visible'));
                     if (!li.is(':visible')) {
                         li.slideDown('fast');
                     }

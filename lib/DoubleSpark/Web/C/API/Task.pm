@@ -78,10 +78,6 @@ sub update {
             }
         }
 
-        if (my $due = $c->stash->{date_loose}) {
-            $task->{due} = $due;
-        }
-
         my $action;
         my $registrant = $c->req->param('registrant');
         my $status     = $c->req->param('status');
@@ -98,9 +94,17 @@ sub update {
                     ? 'close-task'
                     : 're' . $status_action_map->{$task->{status}};
         }
+
+        if (my $due = $c->stash->{date_loose}) {
+            $task->{due} = $due;
+        }
+
         # by form
         if (defined $c->req->param('name')) {
             $task->{assign} = [ $c->req->param('assign') ];
+             unless ($c->stash->{date_loose}) {
+                $task->{due} = '';
+            }
         }
         if ($action) {
             push @{$task->{history}}, {

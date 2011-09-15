@@ -51,7 +51,6 @@ sub me {
             list_id => [keys %ids],
             actioned_on => { '>' => $if_modified_since } });
         unless ($count or ($account->modified_on > $if_modified_since)) {
-            warn "304";
             return $c->res_304();
         }
     }
