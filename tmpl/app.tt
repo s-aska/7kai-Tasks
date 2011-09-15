@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>7kai Tasks</title>
-<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css" media="all">
-<link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap-1.2.0.min.css">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css" media="all">
+<link rel="stylesheet" href="/static/css/bootstrap-1.2.0.min.css">
 <link rel="stylesheet" href="/static/css/app.css" media="all">
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
 <script src="/static/js/jquery.autogrow-textarea.js"></script>
 <script src="/static/js/h5utils.js"></script>
 <script src="/static/js/core.js"></script>
@@ -152,9 +152,14 @@
           <ul class="nav">
             <li class="menu" data-setup="menu">
               <a class="menu list-name">su_aska</a>
-              <ul class="menu-dropdown lists" style="display: none;">
-                <li class="divider"></li>
-                <li><a
+              <ul
+                class="menu-dropdown lists"
+                style="display: none;"
+                data-setup="sortable"
+                data-sortable-update="sortable.list"
+              >
+                <li class="nosortable divider"></li>
+                <li class="nosortable"><a
                   data-setup="localize,click"
                   data-text-ja="新しいリスト"
                   data-click="createList"
@@ -318,7 +323,7 @@
                   <a
                     data-setup="localize,click"
                     data-click="sortTask"
-                    data-sort-column="updated"
+                    data-sort-column="updated_on"
                     data-sort-reverse="true"
                     data-text-ja="更新日時"
                   >Updated</a>
@@ -360,7 +365,7 @@
       </div>
     </div>
     <ul class="unstyled tasks">
-      <li class="clearfix">
+      <li class="clearfix" draggable="true">
         <div class="icon icon-grip"></div>
         <div class="icon icon-tasks-off"></div>
         <div class="icon icon-star-off"></div>
@@ -407,7 +412,9 @@
           data-setup="localize"
           data-text-ja="コメントを添える"
         >Comment on this task</label>
-        <textarea id="comment" name="message" style="width: 310px; height: 56px; margin-bottom: 6px;" required></textarea>
+        <textarea
+          name="message"
+          style="width: 310px; height: 56px; margin-bottom: 6px;" required></textarea>
         <div class="">
           <button
             class="btn primary"
@@ -423,6 +430,7 @@
       >
         <li class="clearfix" style="position: relative;">
           <div class="icon sq32" style="position: absolute;"></div>
+          <div class="icon icon-cross" style="position: absolute; right: -10px;"></div>
           <div class="" style="margin-left: 40px;">
             <div><span class="message"></span></div>
             <div><span class="date"></span><span class="name"></span></div>
@@ -466,10 +474,10 @@
         <div class="clearfix">
           <label for=""
             data-setup="localize"
-            data-text-ja="リスト名"
-          >Name</label>
+            data-text-ja="リスト名 (1-20文字)"
+          >Name (1-20 characters)</label>
           <div class="input">
-            <input type="text" name="name" value="" required data-autofocus="true">
+            <input type="text" name="name" value="" required maxlength="20" data-autofocus="true">
           </div>
         </div>
         <div class="clearfix owner-field">
@@ -538,13 +546,19 @@
         <ul>
           <li
             data-setup="localize"
-            data-text-ja="メンバーに何も送信されません。"></li>
+            data-text-ja="メンバーに何も送信されません。">
+            no notice.
+          </li>
           <li
             data-setup="localize"
-            data-text-ja="登録されたリストは左カラム上部メニューからご選択下さい。"></li>
+            data-text-ja="登録されたリストは左カラム上部メニューからご選択下さい。">
+            list show to left menu.
+          </li>
           <li
             data-setup="localize"
-            data-text-ja="フォームは自動で閉じません。"></li>
+            data-text-ja="フォームは自動で閉じません。">
+            no auto close.
+          </li>
         </ul>
       </div>
     </div>
@@ -649,10 +663,10 @@
         <div class="clearfix">
           <label for=""
             data-setup="localize"
-            data-text-ja="タイトル"
-          >Title</label>
+            data-text-ja="タイトル (1-30文字)"
+          >Title (1-30 characters)</label>
           <div class="input">
-            <input type="text" name="name" value="" data-autofocus="true" required>
+            <input type="text" name="name" value="" required maxlength="30" data-autofocus="true">
           </div>
         </div>
         <div class="clearfix">
@@ -970,7 +984,23 @@
       data-setup="localize"
       data-text-ja="Twitter Account を割り当て直しました。"
     >Success Move Twitter Account.</p>
+    [% ELSIF notice == 'fb_account_add' %]
+    <p
+      data-setup="localize"
+      data-text-ja="Facebook Account を追加しました。"
+    >Success Add Facebook Account.</p>
+    [% ELSIF notice == 'fb_account_create' %]
+    <p
+      data-setup="localize"
+      data-text-ja="ようこそ。 早速「＋新しいタスク」からタスクを登録してみましょう。"
+    >Welcome! Let's +New Task</p>
+    [% ELSIF notice == 'fb_account_move' %]
+    <p
+      data-setup="localize"
+      data-text-ja="Facebook Account を割り当て直しました。"
+    >Success Move Facebook Account.</p>
     [% ELSE %]
+    <p>Unknown Notice Error.</p>
     [% END %]
   </div>
   <div class="modal-footer">
@@ -1011,6 +1041,11 @@
   data-text-refix-task-en="update (close => fix) the task of the"
   data-text-refix-task-ja="タスクを更新 (完了 => 処理済)"
 ></div>
+
+<div
+  id="receiver"
+  style="display: none;"
+  data-setup="receiver"></div>
 
 </body>
 </html>

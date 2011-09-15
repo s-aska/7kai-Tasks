@@ -5,18 +5,6 @@ use Encode;
 use Log::Minimal;
 use JSON::XS;
 
-sub retrieve {
-    my ($class, $c) = @_;
-
-    my $account = $c->account;
-    my $list_id = $c->{args}->{list_id};
-    my $docs = $c->open_list_docs($account, 'member', [$list_id]);
-    $c->render_json({
-        success => 1,
-        list => $docs->[0]
-    });
-}
-
 sub create {
     my ($class, $c) = @_;
 
@@ -43,7 +31,9 @@ sub create {
             users => $users,
             tasks => []
         },
-        created_on => \'now()'
+        actioned_on => int(Time::HiRes::time * 1000),
+        created_on => \'now()',
+        updated_on => \'now()'
     });
     for my $member (@members) {
         $c->db->insert('list_member', {
@@ -73,14 +63,13 @@ sub update {
 
     my $list = $c->stash->{list};
 
-    my $args = { data => $list->data };
     $list->data->{name}    = $c->req->param('name');
     $list->data->{members} = [ $c->req->param('members') ];
     $list->data->{users}   = decode_json(encode_utf8($c->req->param('users')));
 
     # update database
     my $txn = $c->db->txn_scope;
-    $list->update($args);
+    $list->update({ data => $list->data, actioned_on => int(Time::HiRes::time * 1000) });
     my $members = {};
     for my $member (@{ $list->data->{members} }) {
         $members->{ $member }++;
@@ -147,7 +136,7 @@ sub clear {
         !$_->{closed}
     } @{ $list->data->{tasks} };
 
-    $list->update({ data => $list->data });
+    $list->update({ data => $list->data, actioned_on => int(Time::HiRes::time * 1000) });
 
     infof('[%s] clear list [%s]',
         $c->sign_name, $list->data->{name});
@@ -159,6 +148,3 @@ sub clear {
 }
 
 1;
-
-__END__
-

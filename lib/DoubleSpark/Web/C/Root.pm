@@ -7,6 +7,7 @@ sub index {
     my ($class, $c) = @_;
 
     if (my $sign = $c->sign) {
+        $c->account->update({ authenticated_on => \'now()' });
         my $notice = $c->session->remove('notice');
         $c->render('app.tt', { sign => $sign, notice => $notice });
     } else {

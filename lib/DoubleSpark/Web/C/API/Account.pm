@@ -3,20 +3,9 @@ use strict;
 use warnings;
 use JSON::XS;
 use Log::Minimal;
+use Time::HiRes;
 
-sub info {
-    my ($class, $c) = @_;
-
-    my $account = $c->account;
-
-    $c->render_json({
-        success => 1,
-        sign    => $c->sign,
-        account => $account->get_columns
-    });
-}
-
-sub info_with_all {
+sub me {
     my ($class, $c) = @_;
 
     my $account = $c->account;
@@ -39,7 +28,6 @@ sub info_with_all {
         ($tw_accounts->all, $fb_accounts->all, $email_accounts->all);
     my @codes = map { $_->{code} } @sub_accounts;
 
-
     unless (@codes) {
         # sub account nothing...
         critf('missing sub accounts aid:%s', $account->account_id);
@@ -58,23 +46,27 @@ sub info_with_all {
         $ids{$_->list_id}++;
     }
     my @lists;
+    if (my $if_modified_since = $c->req->param('if_modified_since')) {
+        my $count = $c->db->count('list', '*', {
+            list_id => [keys %ids],
+            actioned_on => { '>' => $if_modified_since } });
+        unless ($count or ($account->modified_on > $if_modified_since)) {
+            warn "304";
+            return $c->res_304();
+        }
+    }
     if (%ids) {
         @lists = map { $_->as_hashref }
             $c->db->search('list', { list_id => [keys %ids] })->all;
-    }
-
-    my %ext;
-    if (my $fb_account = $c->session->get('fb_account')) {
-        $ext{friends} = $fb_account->{friends}->{data};
     }
 
     $c->render_json({
         success      => 1,
         sign         => $c->sign,
         account      => $account->data,
+        modified_on  => $account->modified_on,
         sub_accounts => \@sub_accounts,
-        lists        => \@lists,
-        %ext
+        lists        => \@lists
     });
 }
 
@@ -106,7 +98,11 @@ sub update {
     } elsif ($method eq '-') {
         delete $data->{$key}->{$val};
     }
-    $account->update({ data => $account->data });
+    $account->update({
+        data => $account->data,
+        modified_on => int(Time::HiRes::time * 1000),
+        updated_on => \'now()'
+    });
 
     $c->render_json({
         success => 1,
@@ -115,6 +111,3 @@ sub update {
 }
 
 1;
-
-__END__
-

@@ -20,15 +20,17 @@ c.addEvents('editTask');     // 登録フォーム表示(編集モード)
 c.addEvents('clearTask');
 c.addEvents('sortTask');
 c.addEvents('filterTask');
+c.addEvents('moveTask');
+c.addEvents('moveTaskCancel');
 
 c.addEvents('checkStar');
 c.addEvents('checkMute');
 
+c.addEvents('clickNotification');
+
 // イベントのキャッシュコントロール
 c.addListener('openList', function(list){
-    console.log(list);
     app.data.current_list = list;
-
     c.fireEvent('filterTask', {
         list_id: list.id
     });
@@ -78,7 +80,7 @@ c.addListener('registerTask', function(task, list){
 
     // 履歴・コメント
     task.actions = [].concat(task.comments).concat(task.history).sort(function(a, b) {
-        return (Number(a.date) || 0) - (Number(b.date) || 0);
+        return (Number(a.time) || 0) - (Number(b.time) || 0);
     });
 
     // 直近の履歴・コメント
@@ -148,14 +150,19 @@ c.addListener('registerFriends', function(friends, owner){
 });
 
 // セットアップ
-c.addListener('setup', function(){
-    
-    // Shortcut Key
-    
-    
-    
+c.addListener('setup', function(option){
+    app.api.getMe({setup: true});
+});
+
+c.addListener('clickNotification', function(option){
+    app.data.current_filter = { list_id: option.list_id };
+    app.api.getMe(option);
+});
+
+app.api.getMe = function(option){
+    console.log(option);
     app.ajax({
-        url: '/api/1/account/info_with_all'
+        url: '/api/1/account/me'
     })
     .done(function(data){
         var friends
@@ -194,7 +201,7 @@ c.addListener('setup', function(){
                     name: sub_account.name,
                     icon: sub_account.data.icon
                 };
-                if (data.sign.code === sub_account.code) {
+                if (option.setup && data.sign.code === sub_account.code) {
                     app.friendFetchTwitter(sub_account.code.substring(3), '-1', []);
                 }
             }
@@ -216,6 +223,10 @@ c.addListener('setup', function(){
             }
         }
         
+        data.lists.sort(function(a, b){
+            return app.data.state.sort.list[a.id] - app.data.state.sort.list[b.id];
+        });
+        
         $.each(data.lists, function(i, list){
             c.fireEvent('registerList', list);
             c.fireEvent('registerFriends', list.users);
@@ -226,7 +237,12 @@ c.addListener('setup', function(){
         
         // 
         var last_list_id = localStorage.getItem('last_list_id');
-        if (last_list_id && (last_list_id in app.data.list_map)) {
+        if (option.list_id && (option.list_id in app.data.list_map)) {
+            c.fireEvent('openList', app.data.list_map[option.list_id]);
+            if (option.task_id in app.data.task_map) {
+                c.fireEvent('openTask', app.data.task_map[option.task_id]);
+            }
+        } else if (last_list_id && (last_list_id in app.data.list_map)) {
             c.fireEvent('openList', app.data.list_map[last_list_id]);
         } else if (data.lists.length) {
             c.fireEvent('openList', data.lists[0]);
@@ -234,9 +250,11 @@ c.addListener('setup', function(){
                 app.dom.show($('#welcome'));
             }
         }
-        c.fireEvent('sortTask', 'updated', true);
+        if (option.setup) {
+            c.fireEvent('sortTask', 'updated', true);
+        }
     });
-});
+}
 
 // フレンド同期機能
 app.friendFetchTwitter = function(user_id, cursor, cache){
@@ -367,6 +385,8 @@ app.util.getRegistrant = function(list){
     console.log('missing registrant...');
 }
 app.util.taskFilter = function(task, condition){
+    console.log(task);
+    console.log(condition);
     if (condition.closed) {
         if (!task.closed) {
             return false;
@@ -375,6 +395,9 @@ app.util.taskFilter = function(task, condition){
         if (task.closed) {
             return false;
         }
+    }
+    if (task.list.id in app.data.state.mute) {
+        return false;
     }
     if (condition.list_id) {
         if (condition.list_id !== task.list.id) {
@@ -395,9 +418,6 @@ app.util.taskFilter = function(task, condition){
             }
         }
         if (task.due_epoch && task.due_epoch > (new Date()).getTime()) {
-            return false;
-        }
-        if (task.list.id in app.data.state.mute) {
             return false;
         }
     }
@@ -461,11 +481,35 @@ app.api.updateTask = function(params){
     .done(function(data){
         if (data.success === 1) {
             c.fireEvent('registerTask', data.task, list);
-            if (app.data.current_task.id === data.task.id) {
+            if (app.data.current_task && app.data.current_task.id === data.task.id) {
                 c.fireEvent('openTask', data.task);
             }
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
+        }
+    });
+}
+app.api.moveTask = function(src_list_id, task_id, dst_list_id){
+    if (src_list_id === dst_list_id) {
+        alert("Can't be moved to the same list.");
+        return;
+    }
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/task/move',
+        data: {
+            task_id: task_id,
+            src_list_id: src_list_id,
+            dst_list_id: dst_list_id
+        },
+        dataType: 'json'
+    })
+    .done(function(data){
+        if (data.success === 1) {
+            c.fireEvent('registerTask', data.task, app.data.list_map[dst_list_id]);
+            if (app.data.current_task.id === data.task.id) {
+                c.fireEvent('openTask', data.task);
+            }
         }
     });
 }
@@ -539,6 +583,25 @@ app.click.addTwitter = function(){
 app.click.addFacebook = function(){
     $('#add-facebook').submit();
 }
+app.sortable.list = function(ele){
+    var sort = {};
+    var lists = ele.find('> li');
+    var count = lists.length;
+    lists.each(function(i, element) {
+        var li = $(element);
+        if (li.data('id')) {
+            sort[li.data('id')] = count;
+            count--;
+        }
+    });
+    app.api.updateAccount({
+        ns: 'state.sort',
+        method: 'set',
+        type: 'json',
+        key: 'list',
+        val: JSON.stringify(sort)
+    });
+}
 
 // ----------------------------------------------------------------------
 // リスト管理
@@ -598,6 +661,14 @@ app.setup.leftColumn = function(ele){
     (function(){
         var cache = {};
         var ul = ele.find('ul.lists:first');
+        c.addListener('moveTask', function(task){
+            app.data.dragtask = task;
+            ul.slideDown('fast');
+        });
+        c.addListener('moveTaskCancel', function(task){
+            app.data.dragtask = null;
+            ul.slideUp('fast');
+        });
         c.addListener('registerList', function(list){
             var li = $('<li/>')
                 .data('id', list.id)
@@ -606,6 +677,22 @@ app.setup.leftColumn = function(ele){
                         c.fireEvent('openList', list);
                     })
                 );
+            
+            // Task Move
+            li.get(0).addEventListener('dragover', function(e){
+                if (list.id === app.data.dragtask.list.id) {
+                    return true;
+                }
+                if (e.preventDefault) {
+                    e.preventDefault();
+                }
+                return false;
+            });
+            li.get(0).addEventListener('drop', function(e){
+                ul.slideUp('fast');
+                app.api.moveTask(app.data.dragtask.list.id, app.data.dragtask.id, list.id);
+            }, false);
+            
             if (list.id in cache) {
                 cache[list.id].after(li);
                 cache[list.id].remove();
@@ -907,6 +994,11 @@ app.setup.switchClosed = function(ele){
             ele.removeClass('active');
         }
     });
+    c.addListener('clickNotification', function(option){
+        if (ele.hasClass('active')) {
+            ele.click();
+        }
+    });
 }
 app.submit.clearList = function(form){
     if (!app.data.current_list) {
@@ -973,6 +1065,18 @@ app.setup.centerColumn = function(ele){
             var li = $(template);
             
             li.data('id', task.id);
+            
+            // Task Move
+            li.get(0).addEventListener('dragstart', function(e){
+                c.fireEvent('moveTask', task);
+                e.dataTransfer.setData("text", task.id);
+            }, false);
+            li.get(0).addEventListener('dragend', function(e){
+                c.fireEvent('moveTaskCancel');
+                e.dataTransfer.clearData();
+            }, false);
+            
+            
             
             // closed
             (function(){
@@ -1086,7 +1190,7 @@ app.setup.centerColumn = function(ele){
             if (task.recent) {
                 var div = li.find('.recent-comment');
                 div.find('.icon').append(app.util.getIcon(task.recent.code, 16));
-                var date = c.date.relative(task.recent.date);
+                var date = c.date.relative(task.recent.time);
                 if (task.recent.message) {
                     div.find('.message span').text(task.recent.message + ' ' + date);
                 } else {
@@ -1179,6 +1283,8 @@ app.setup.centerColumn = function(ele){
                 var task = app.data.task_map[task_id];
                 var li = app.data.taskli_map[task_id];
                 if (app.util.taskFilter(task, condition)) {
+                    console.log(li);
+                    console.log(li.is(':visible'));
                     if (!li.is(':visible')) {
                         li.slideDown('fast');
                     }
@@ -1262,15 +1368,9 @@ app.setup.centerColumn = function(ele){
             } else if (e.keyCode === 69) { // E
                 var task = app.data.current_task;
                 c.fireEvent('editTask', task);
-            } else if (e.keyCode === 77) { // M
-                e.preventDefault();
-                $('#comment').focus();
             }
         });
     })();
-    
-    
-    
 }
 app.setup.registerTaskWindow = function(form){
     
@@ -1422,6 +1522,18 @@ app.setup.rightColumn = function(ele){
     var task_name = ele.find('.task_name');
     var ul = ele.find('ul.comments');
     var template = ul.html();
+    ul.empty();
+    
+    // Shortcut
+    $(d).keydown(function(e){
+        if (!app.data.current_task) {
+            return;
+        }
+        if (e.keyCode === 77) { // M
+            e.preventDefault();
+            ele.find('textarea:first').focus();
+        }
+    });
     
     c.addListener('openTask', function(task){
         list_id_input.val(task.list.id);
@@ -1431,21 +1543,42 @@ app.setup.rightColumn = function(ele){
         task_name.text(task.name);
         ul.empty();
         var li = $(template);
-        li.find('.icon').append(app.util.getIcon(task.registrant, 32));
+        li.find('.icon:first').append(app.util.getIcon(task.registrant, 32));
+        li.find('.icon:last').remove();
         li.find('.name').text(app.util.getName(task.registrant));
         li.find('.message').text($('#messages').data('text-create-task-' + c.lang));
-        li.find('.date').text(c.date.relative(task.created));
+        li.find('.date').text(c.date.relative(task.created_on));
         li.prependTo(ul);
         $.each(task.actions, function(i, comment){
             var li = $(template);
-            li.find('.icon').append(app.util.getIcon(comment.code, 32));
+            li.find('.icon:first').append(app.util.getIcon(comment.code, 32));
             li.find('.name').text(app.util.getName(comment.code));
             if (comment.action) {
                 li.find('.message').text($('#messages').data('text-' + comment.action + '-' + c.lang));
+                li.find('.icon:last').remove();
             } else {
                 li.find('.message').text(comment.message);
+                li.find('.icon:last').click(function(){
+                    app.ajax({
+                        type: 'POST',
+                        url: '/api/1/comment/delete',
+                        data: {
+                            list_id: task.list.id,
+                            task_id: task.id,
+                            comment_id: comment.id
+                        },
+                        dataType: 'json'
+                    })
+                    .done(function(data){
+                        if (data.success === 1) {
+                            li.hide('fade');
+                        } else {
+                            // 現在 ステータスコード 200 の例外ケースは無い
+                        }
+                    });
+                });
             }
-            li.find('.date').text(c.date.relative(comment.date));
+            li.find('.date').text(c.date.relative(comment.time));
             li.prependTo(ul);
         });
     });
@@ -1477,6 +1610,14 @@ app.submit.registerComment = function(form){
     });
 }
 
-
+// ----------------------------------------------------------------------
+// イベント受信
+// ----------------------------------------------------------------------
+app.setup.receiver = function(ele){
+    ele.get(0).addEventListener('extentionsEvent', function() {
+        var data = JSON.parse(ele.text());
+        c.fireEvent(data.event, data.option);
+    }, false);
+}
 
 })(this, this, document);

@@ -64,15 +64,12 @@ sub callback {
         # 既存Twアカウント
         if ($tw_account) {
 
-            # screen_name更新
-            if ($tw_account->name ne $screen_name) {
-                infof('update twitter screen_name %s to %s', $tw_account->name, $screen_name);
-                $tw_account->data->{icon} = $icon;
-                $tw_account->update({
-                    name => $screen_name,
-                    data => $tw_account->data
-                });
-            }
+            $tw_account->data->{icon} = $icon;
+            $tw_account->update({
+                name             => $screen_name,
+                data             => $tw_account->data,
+                authenticated_on => \'now()'
+            });
 
             # 移行
             if ($account && $account->account_id != $tw_account->account_id) {
@@ -116,12 +113,13 @@ sub callback {
             }
 
             my $tw_account = $c->db->insert('tw_account', {
-                account_id => $account->account_id,
-                code       => $code,
-                name       => $screen_name,
-                data       => { icon => $icon },
-                created_on => \'now()',
-                updated_on => \'now()'
+                account_id       => $account->account_id,
+                code             => $code,
+                name             => $screen_name,
+                data             => { icon => $icon },
+                authenticated_on => \'now()',
+                created_on       => \'now()',
+                updated_on       => \'now()'
             });
 
             $c->session->set('sign', {

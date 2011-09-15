@@ -17,13 +17,14 @@ sub create {
     );
     return $c->res_403() unless $res;
 
-    my $name      = $c->req->param('name');
+    my $name       = $c->req->param('name');
     my $requester  = $c->req->param('requester');
     my $registrant = $c->req->param('registrant');
     my @assign     = $c->req->param('assign');
     my $due        = $c->stash->{date_loose};
     my $list       = $c->stash->{list};
     my $task_id    = ++$list->data->{last_task_id};
+    my $time       = int(Time::HiRes::time * 1000);
     my $task = {
         id => $list->list_id . ':' . $task_id,
         requester => $requester,
@@ -35,13 +36,12 @@ sub create {
         closed => 0,
         comments => [],
         history => [],
-        created => int(Time::HiRes::time * 1000),
-        updated => int(Time::HiRes::time * 1000),
+        created_on => $time,
+        updated_on => $time,
         sort => $task_id
     };
     push @{ $list->data->{tasks} }, $task;
-    # warn Dumper($list->data); use Data::Dumper;
-    $list->update({ data => $list->data });
+    $list->update({ data => $list->data, actioned_on => $time });
     infof('[%s] list [%s] create task: %s', $c->sign_name, $list->data->{name}, $name);
     $c->render_json({
         success => 1,
@@ -66,6 +66,7 @@ sub update {
     my $target_task;
     my $task_id = $c->req->param('task_id');
     my $list    = $c->stash->{list};
+    my $time    = int(Time::HiRes::time * 1000);
     for my $task (@{ $list->data->{tasks} }) {
         next if $task->{id} ne $task_id;
 
@@ -101,21 +102,21 @@ sub update {
         if (defined $c->req->param('name')) {
             $task->{assign} = [ $c->req->param('assign') ];
         }
-        $task->{updated} = int(Time::HiRes::time * 1000);
         if ($action) {
             push @{$task->{history}}, {
-                code    => $registrant,
-                action  => $action,
-                date    => int(Time::HiRes::time * 1000)
+                code   => $registrant,
+                action => $action,
+                time   => $time
             };
         }
+        $task->{updated_on} = $time;
         $target_task = $task;
         last;
     }
 
     return $c->res_404() unless $target_task;
 
-    $list->update({ data => $list->data });
+    $list->update({ data => $list->data, actioned_on => $time });
 
     infof('[%s] list [%s] update task: %s',
         $c->sign_name, $list->data->{name}, $target_task->{name});
@@ -125,38 +126,48 @@ sub update {
         task => $target_task
     });
 }
-# 
-# sub move {
-#     my ($class, $c) = @_;
-#     
-#     my $account = $c->account;
-#     my $src_list_id = $c->req->param('src_list_id');
-#     my $dst_list_id = $c->req->param('dst_list_id');
-#     my $task_id = $c->req->param('task_id');
-#     
-#     my $target_task;
-#     my $src_doc = $c->open_list_doc($account, 'member', $src_list_id);
-#     my $dst_doc = $c->open_list_doc($account, 'member', $dst_list_id);
-#     return $src_doc unless (ref $src_doc) eq 'HASH';
-#     return $dst_doc unless (ref $dst_doc) eq 'HASH';
-#     @{$src_doc->{tasks}} = grep {
-#         my $task = $_;
-#         if ($task->{id} == $task_id) {
-#             $target_task = $task;
-#         }
-#         $task->{id} == $task_id ? 0 : 1;
-#     } @{$src_doc->{tasks}};
-#     return $c->res_404() unless $target_task;
-#     $target_task->{id} = ++$dst_doc->{last_task_id};
-#     push @{$dst_doc->{tasks}}, $target_task;
-#     $c->save_list_doc($account, $dst_doc);
-#     $account = DoubleSpark::Account->new($c);
-#     $c->save_list_doc($account, $src_doc);
-#     infof("[%s] task move", $c->session->get('screen_name'));
-#     $c->render_json({
-#         success => 1,
-#         task => $target_task
-#     });
-# }
+
+sub move {
+    my ($class, $c) = @_;
+    
+    my $res = $c->validate(
+        src_list_id => [qw/NOT_NULL LIST_ROLE_MEMBER/],
+        dst_list_id => [qw/NOT_NULL LIST_ROLE_MEMBER/],
+        task_id     => [qw/NOT_NULL/],
+    );
+    return $c->res_403() unless $res;
+
+    my $src_list_id = $c->req->param('src_list_id');
+    my $dst_list_id = $c->req->param('dst_list_id');
+    my $task_id     = $c->req->param('task_id');
+    my $src_list    = $c->db->single('list', { list_id => $src_list_id });
+    my $dst_list    = $c->db->single('list', { list_id => $dst_list_id });
+    my $time        = int(Time::HiRes::time * 1000);
+
+    my $target_task;
+    @{ $src_list->data->{tasks} } = grep {
+        if ($_->{id} eq $task_id) {
+            $target_task = $_;
+        }
+        $_->{id} eq $task_id ? 0 : 1;
+    } @{ $src_list->data->{tasks} };
+    return $c->res_404() unless $target_task;
+
+    push @{ $dst_list->data->{tasks} }, $target_task;
+
+    $src_list->update({ data => $src_list->data, actioned_on => $time });
+    $dst_list->update({ data => $dst_list->data, actioned_on => $time });
+
+    infof('[%s] list [%s] move task: %s to %s',
+        $c->sign_name,
+        $src_list->data->{name},
+        $target_task->{name},
+        $dst_list->data->{name});
+
+    $c->render_json({
+        success => 1,
+        task => $target_task
+    });
+}
 
 1;

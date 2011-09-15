@@ -4,40 +4,47 @@
 <meta charset="utf-8">
 <title>7kai Tasks Checker Options</title>
 <link rel="stylesheet" type="text/css" href="style.css" media="screen">
-<script src="jquery-1.6.1.min.js"></script>
+<script src="jquery-1.6.4.min.js"></script>
 <script>
 var bg;
 $(document).ready(function() {
     bg = chrome.extension.getBackgroundPage();
-    if (bg.tasks.localizer.lang != 'en') {
-        bg.tasks.localizer.localize($);
-    }
-    bg.tasks.startOptionPage($);
+    bg.app.data.optionWindow = window;
+    bg.app.dom.setup(document.body);
 });
 </script>
 </head>
 <body id="option-page">
+<div data-setup="option">
 <h1>7kai Tasks Checker Options.</h2>
-<h2 data-text-ja="通知設定">Notification</h2>
+<h2
+  data-setup="localize"
+  data-text-ja="通知設定"
+>Notification</h2>
 <ul>
 <li>
 <label>
-<input type="checkbox" id="notification-off" value="1">
-<span data-text-ja="通知OFF">Notification off.</span>
+<input type="checkbox" name="notification-off" value="1">
+<span
+  data-setup="localize"
+  data-text-ja="通知OFF"
+>Notification off.</span>
 </label>
 </li>
 <li>
-<span data-text-ja="通知を">Auto close Notification after </span><input type="number" min="0" max="60" id="notification-auto-close" value=""> <span data-text-ja="秒後に閉じる（0秒場合、自動的に閉じない）">sec. (0 is no auto close.)</span>
+<span
+  data-setup="localize"
+  data-text-ja="通知を"
+>Auto close Notification after </span>
+<input type="number" min="0" max="60" name="notification-auto-close" value="">
+<span
+  data-setup="localize"
+  data-text-ja="秒後に閉じる（0秒場合、自動的に閉じない）"
+>sec. (0 is no auto close.)</span>
 </li>
-<!-- <li>
-<label>
-<input type="checkbox" id="notification-requested-by-me" value="1">
-<span data-text-ja="自分が人に依頼したタスクの進捗を通知する(オフの場合自分が担当のタスクについてのみ通知)">Enable notification the progress of tasks that requested by yourself.</span>
-</label>
-</li> -->
-<li><p data-text-ja="※バッジカウントの設定はサイトのアカウント設定から行います。">* Badge option please account setting page.</p></li>
-<li><button data-callback="saveOption">save</button></li>
+<li><button data-setup="click" data-click="save">save and close</button></li>
 <li><div id="msg"></div></li>
 </ul>
+</div>
 </body>
 </html>

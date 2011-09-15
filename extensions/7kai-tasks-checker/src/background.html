@@ -1,25 +1,20 @@
 <html>
 <head>
 <meta charset="utf-8">
-<script type="text/javascript" src="jquery-1.6.1.min.js"></script>
-<script type="text/javascript" src="localizer.js"></script>
-<script type="text/javascript" src="main.js"></script>
+<script type="text/javascript" src="jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="app.js"></script>
 <script>
-var tasks;
 $(document).ready(function() {
-    tasks = new Tasks();
-    tasks.startBackground();
+    app.dom.setup();
 });
 </script>
 </head>
 <body>
-<div id="text"
+<div data-setup="messages"
     data-text-create-task-en="create the task of the"
     data-text-create-task-ja="タスクを作成"
     data-text-update-task-en="update the task of the"
     data-text-update-task-ja="タスクを更新"
-    data-text-clear-task-en="clear the task of the"
-    data-text-clear-task-ja="完了済タスクを削除"
 
     data-text-reopen-task-en="update (fix => open) the task of the"
     data-text-reopen-task-ja="タスクを更新 (処理済 => 未着手)"
@@ -43,8 +38,7 @@ $(document).ready(function() {
     data-text-update-list-ja="リストを更新"
     data-text-create-comment-en="commented on a task in"
     data-text-create-comment-ja="コメント"
-    data-text-delete-comment-en="remove the comment of the"
-    data-text-delete-comment-ja="コメントを削除"
 ></div>
+<div data-setup="background"></div>
 </body>
 </html>

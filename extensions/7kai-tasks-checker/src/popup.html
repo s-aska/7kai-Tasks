@@ -4,36 +4,45 @@
 <meta charset="utf-8">
 <title>7kai Tasks Checker</title>
 <link rel="stylesheet" type="text/css" href="style.css" media="screen">
-<script type="text/javascript" src="jquery-1.6.1.min.js"></script>
+<script type="text/javascript" src="jquery-1.6.4.min.js"></script>
 <script>
-var bg;
 $(document).ready(function() {
-    bg = chrome.extension.getBackgroundPage();
-    bg.tasks.parts.notifications = $('article ul');
-    bg.tasks.parts.guide = $('#digest');
-    $('nav li').each(function(i, ele){
-        ele.addEventListener("click", bg.tasks, false);
-    });
-    bg.tasks.refreshPopupPage();
+    var bg = chrome.extension.getBackgroundPage();
+    bg.app.data.popupWindow = window;
+    bg.app.dom.setup(document.body);
 });
 </script>
 </head>
 <body id="popup-page">
+<div data-setup="popup">
 <nav>
 <ul>
-<li data-callback="openServicePage">Open Tasks</li>
-<li data-callback="openOptionPage">Options</li>
+<li
+  data-setup="click"
+  data-click="openSite"
+>Open Tasks</li>
+<li
+  data-setup="click"
+  data-click="openOption"
+>Options</li>
 </ul>
 </nav>
 <h2>Notifications</h2>
 <article>
-<ul>
-<li>loading...</li>
+<ul class="actions">
+<li
+  class="clearfix"
+  data-setup="click"
+  data-click="notification"
+>
+  <img src="">
+  <span class="action"></span>
+  <span class="list"></span>
+  <br>
+  <span class="date"></span>
+  <span class="name"></span>
+</li>
 </ul>
 </article>
-<div id="digest">
-<p id="digest-title"></p>
-<p id="digest-comment"></p>
-</div>
 </body>
 </html>

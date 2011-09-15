@@ -21,9 +21,8 @@ post '/signin/email/signup' => 'Signin::Email#signup';
 post '/signin/email/verify' => 'Signin::Email#verify';
 post '/signin/email/signin' => 'Signin::Email#signin';
 
-get '/api/1/account/info'          => 'API::Account#info';
-get '/api/1/account/info_with_all' => 'API::Account#info_with_all';
-post '/api/1/account/update'       => 'API::Account#update';
+get '/api/1/account/me'      => 'API::Account#me';
+post '/api/1/account/update' => 'API::Account#update';
 
 post '/api/1/list/create' => 'API::List#create';
 post '/api/1/list/update' => 'API::List#update';

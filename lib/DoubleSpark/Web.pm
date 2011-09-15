@@ -75,7 +75,8 @@ __PACKAGE__->add_trigger(
             return $c->res_403();
         }
 
-        if ($c->req->header('X-Requested-With') ne 'XMLHttpRequest') {
+        if ( ( $c->req->user_agent || '' ) !~ /Chrome/ and
+            ( $c->req->header('X-Requested-With') || '' ) ne 'XMLHttpRequest' ) {
             warnf('no ajax api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
             return $c->res_403();
         }

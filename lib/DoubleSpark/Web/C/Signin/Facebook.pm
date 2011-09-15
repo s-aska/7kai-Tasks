@@ -58,11 +58,9 @@ sub callback {
 
             # update
             $fb_account->update({
-                name         => $name,
-                data         => {
-                    friends => \@friends
-                },
-                updated_on   => \'now()'
+                name             => $name,
+                data             => { friends => \@friends },
+                authenticated_on => \'now()'
             });
 
             # 移行
@@ -107,14 +105,13 @@ sub callback {
             }
 
             my $fb_account = $c->db->insert('fb_account', {
-                account_id => $account->account_id,
-                code       => $code,
-                name       => $name,
-                data       => {
-                    friends => \@friends
-                },
-                created_on => \'now()',
-                updated_on => \'now()'
+                account_id       => $account->account_id,
+                code             => $code,
+                name             => $name,
+                data             => { friends => \@friends },
+                authenticated_on => \'now()',
+                created_on       => \'now()',
+                updated_on       => \'now()'
             });
 
             $c->session->set('sign', {

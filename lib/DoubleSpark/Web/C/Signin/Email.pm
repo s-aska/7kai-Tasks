@@ -78,6 +78,7 @@ sub verify {
         infof('reset password email_account email:%s', $email);
         $c->db->update('email_account', {
             password_saltedhash => $password,
+            authenticated_on    => \'now()',
             updated_on          => \'now()'
         }, {
             email_account_id    => $email_account->email_account_id
@@ -96,6 +97,7 @@ sub verify {
             name                => $local_part,
             code                => $email_request->{email},
             password_saltedhash => $password,
+            authenticated_on    => \'now()',
             created_on          => \'now()',
             updated_on          => \'now()'
         });
@@ -129,6 +131,8 @@ sub signin {
         warnf('invalid password email:%s', $email);
         return $c->res_403();
     }
+
+    $email_account->update({ authenticated_on => \'now()' });
 
     my ($local_part, $domain_part) = split '@', $email;
 

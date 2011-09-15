@@ -2,25 +2,12 @@
 <html>
 <head>
 <meta charset="utf-8">
-<script type="text/javascript" src="jquery-1.6.1.min.js"></script>
+<script type="text/javascript" src="jquery-1.6.4.min.js"></script>
 <script>
-var bg;
 $(document).ready(function() {
-    bg = chrome.extension.getBackgroundPage();
-    bg.tasks.parts.notify = $('#notify-page');
-    bg.tasks.startNotifyPage();
-    bg.tasks.parts.notify.click(function(e){
-        window.close();
-        bg.tasks.openListPage(e, bg.tasks.parts.notify);
-    });
-    if (bg.tasks.option.notification_auto_close) {
-        var timer = setTimeout(function(){
-            window.close();
-        }, bg.tasks.option.notification_auto_close * 1000);
-        bg.tasks.parts.notify.mousemove(function(){
-            clearTimeout(timer);
-        });
-    }
+    var bg = chrome.extension.getBackgroundPage();
+    bg.app.data.notifyWindow = window;
+    bg.app.dom.setup(document.body);
 });
 </script>
 <style>
@@ -54,7 +41,16 @@ body:hover {
 }
 </style>
 </head>
-<body id="notify-page">
-<img src="http://a3.twimg.com/profile_images/1196259408/askaorg_normal.png"><h1>7kai Tasks Notification</h1><p><span class="screen_name">su_aska</span> <span class="action">update the task of the</span> <span class="list">7kai Tasks</span> <span class="date">(12 secs ago)</span></p>
+<body>
+<div data-setup="notify">
+<img src="http://a3.twimg.com/profile_images/1196259408/askaorg_normal.png">
+<h1>7kai Tasks Notification</h1>
+<p>
+  <span class="screen_name">su_aska</span>
+  <span class="action">update the task of the</span>
+  <span class="list">7kai Tasks</span>
+  <span class="date">(12 secs ago)</span>
+</p>
+</div>
 </body>
 </html>

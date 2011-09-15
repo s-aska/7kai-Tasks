@@ -53,6 +53,10 @@ var app = ns.app = {
     // 
     callback: {
         
+    },
+    
+    sortable: {
+        
     }
 };
 
@@ -107,6 +111,7 @@ app.ajax = function(option){
 }
 
 app.dom.setup = function(context){
+    console.log(app);
     $('[data-setup]', context).each(function(){
         var ele = $(this);
         var methods = ele.data('setup').split(',');
@@ -297,6 +302,20 @@ app.setup.tabContent = function(ele){
             ele.show();
         } else {
             ele.hide();
+        }
+    });
+}
+app.setup.sortable = function(ele){
+    var update = ele.data('sortable-update');
+    ele.sortable({
+        cancel: '.nosortable',
+        cursor: 'url(/static/img/openhand.cur), move',
+        start: function (e, ui) {
+        },
+        stop: function (e, ui) {
+        },
+        update: function(e, ui) {
+            (c.obj.get(app, update))(ele);
         }
     });
 }

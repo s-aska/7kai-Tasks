@@ -1,6 +1,8 @@
 package DoubleSpark::DB;
 use parent 'Teng';
 
+__PACKAGE__->load_plugin('Count');
+
 package DoubleSpark::DB::Row::Account;
 use parent 'Teng::Row';
 
@@ -64,6 +66,7 @@ sub as_hashref {
     my $row = shift;
     my $data = $row->data;
     $data->{id} = $row->list_id;
+    $data->{actioned_on} = int($row->actioned_on);
     $data;
 }
 

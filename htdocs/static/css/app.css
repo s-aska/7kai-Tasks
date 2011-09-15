@@ -264,6 +264,9 @@ ul.comments li {
 ul.comments li:last-child {
     margin-bottom: 0;
 }
+ul.comments li .icon-cross {
+    cursor: pointer;
+}
 ul.comments li span.message {
     color: #333;
     font-size: 11px;

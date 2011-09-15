@@ -15,6 +15,7 @@ use Scope::Container;
 use Sub::Retry;
 use Teng;
 use Teng::Schema::Loader;
+use Time::HiRes;
 
 __PACKAGE__->load_plugin(qw/Web::JSON/);
 
@@ -60,7 +61,7 @@ sub db {
         $schema
             ->get_table('email_account')
             ->add_inflator('password_saltedhash', sub { '********' });
-        $c->{db} = Teng->new(
+        $c->{db} = DoubleSpark::DB->new(
             dbh    => $dbh,
             schema => $schema,
         );
@@ -124,6 +125,7 @@ sub create_account {
             ],
             tasks   => []
         },
+        actioned_on => int(Time::HiRes::time * 1000),
         created_on => \'now()',
         updated_on => \'now()'
     });
