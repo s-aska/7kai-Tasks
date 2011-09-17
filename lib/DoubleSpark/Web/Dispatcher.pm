@@ -23,6 +23,7 @@ post '/signin/email/signin' => 'Signin::Email#signin';
 
 get '/api/1/account/me'      => 'API::Account#me';
 post '/api/1/account/update' => 'API::Account#update';
+post '/api/1/account/delete' => 'API::Account#delete';
 
 post '/api/1/list/create' => 'API::List#create';
 post '/api/1/list/update' => 'API::List#update';
@@ -37,6 +38,8 @@ post '/api/1/comment/create' => 'API::Comment#create';
 post '/api/1/comment/delete' => 'API::Comment#delete';
 
 post '/api/1/twitter/update_friends' => 'API::Twitter#update_friends';
+
+get '/api/1/profile_image/:screen_name' => 'API::ProfileImage#twitter';
 
 if ($ENV{PLACK_ENV} eq 'development') {
     warn router->as_string;

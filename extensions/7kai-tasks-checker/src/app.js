@@ -7,8 +7,8 @@ var app = ns.app = {
         error_badge_color: {color: [190, 190, 190, 255]},
         normal_icon: 'icon-19.png',
         notify_icon: 'icon-19n.png',
-        api_url: 'http://dev.tasks.7kai.org/api/1/account/me',
-        site_url: 'http://dev.tasks.7kai.org/',
+        api_url: 'https://tasks.7kai.org/api/1/account/me',
+        site_url: 'https://tasks.7kai.org',
         interval: 10000,
         lang: (navigator.language === 'ja' ? 'ja' : 'en')
     },
@@ -20,6 +20,7 @@ var app = ns.app = {
     
     data: {
         if_modified_since: 0,
+        if_modified_lists: '',
         option: {},
         users: {},
         list_map: {},
@@ -151,21 +152,29 @@ app.setup.background = function(){
     }
     app.data.if_modified_since =
         Number(localStorage.getItem('org.7kai.tasks.if_modified_since') || 0);
-    app.api.fetch();
+    app.api.fetch({});
     window.setInterval(function(){
-        app.api.fetch(app.data.if_modified_since);
+        app.api.fetch({
+            data: {
+                if_modified_since: app.data.if_modified_since,
+                if_modified_lists: app.data.if_modified_lists
+            }
+        });
     }, app.option.interval);
     
 }
 app.setup.messages = function(ele){
     app.data.text = ele;
 }
-app.api.fetch = function(if_modified_since, callback){
+app.api.fetch = function(option){
+    if (!option.data) {
+        option.data = {
+            if_modified_since: 0
+        };
+    }
     return $.ajax({
         url: app.option.api_url,
-        data: {
-            if_modified_since: if_modified_since
-        },
+        data: option.data,
         dataType: 'json'
     })
     .done(function(data){
@@ -181,6 +190,7 @@ app.api.fetch = function(if_modified_since, callback){
         app.data.sign = data.sign;
         app.data.state = data.account.state;
         app.data.sub_accounts = data.sub_accounts;
+        app.data.if_modified_lists = data.list_ids;
 
         if (!('mute' in app.data.state)) {
             app.data.state.mute = {};
@@ -188,26 +198,22 @@ app.api.fetch = function(if_modified_since, callback){
 
         $.each(data.sub_accounts, function(i, sub_account){
             if (/^tw-[0-9]+$/.test(sub_account.code)) {
-                $.each(data.sub_accounts, function(ii, sub_account){
-                    if (!("friends" in sub_account.data)) {
-                        return;
-                    }
-                    $.each(sub_account.data.friends, function(iii, friend){
-                        app.data.users[friend.code] = {
-                            name: friend.screen_name + ' (' + friend.name + ')',
-                            icon: friend.icon
-                        };
-                    });
+                if (!("friends" in sub_account.data)) {
+                    return;
+                }
+                $.each(sub_account.data.friends, function(iii, friend){
+                    app.data.users[friend.code] = {
+                        name: friend.screen_name + ' (' + friend.name + ')',
+                        icon: friend.icon
+                    };
                 });
             } else if (/^fb-[0-9]+$/.test(sub_account.code)) {
-                $.each(data.sub_accounts, function(ii, sub_account){
-                    $.each(sub_account.data.friends, function(iii, friend){
-                        app.data.users[friend.code] = {
-                            name: friend.name,
-                            icon: 'https://graph.facebook.com/'
-                                + friend.code.substring(3) + '/picture'
-                        };
-                    });
+                $.each(sub_account.data.friends, function(iii, friend){
+                    app.data.users[friend.code] = {
+                        name: friend.name,
+                        icon: 'https://graph.facebook.com/'
+                            + friend.code.substring(3) + '/picture'
+                    };
                 });
             }
         });
@@ -220,6 +226,10 @@ app.api.fetch = function(if_modified_since, callback){
             }
             $.each(list.tasks, function(ii, task){
                 task.list = list;
+                if (task.due) {
+                    var degits = task.due.match(/[0-9]+/g);
+                    task.due_epoch = (new Date(degits[2], degits[0] - 1, degits[1])).getTime();
+                }
                 if (app.util.isCount(task)) {
                     count++;
                 }
@@ -252,13 +262,13 @@ app.api.fetch = function(if_modified_since, callback){
             return Number(b.time) - Number(a.time);
         });
         var notifications = $.grep(actions, function(action){
-            return (Number(action.time) > if_modified_since);
+            return (Number(action.time) > option.data.if_modified_since);
         });
         if (data.modified_on > app.data.if_modified_since) {
             app.data.if_modified_since = data.modified_on;
             localStorage.setItem('org.7kai.tasks.if_modified_since', data.modified_on);
         }
-        if (if_modified_since && notifications.length) {
+        if (option.data.if_modified_since && notifications.length) {
             var recent = notifications[0];
             var key = 'text-' + recent.action + '-' + app.option.lang;
             var action_name = app.data.text.data(key);
@@ -276,8 +286,8 @@ app.api.fetch = function(if_modified_since, callback){
             }
             chrome.browserAction.setIcon({path: app.option.notify_icon});
         }
-        if (callback) {
-            callback(actions);
+        if (option.callback) {
+            option.callback(actions);
         }
         if (count) {
             chrome.browserAction.setBadgeBackgroundColor(app.option.signed_in_badge_color);
@@ -287,7 +297,8 @@ app.api.fetch = function(if_modified_since, callback){
         }
     })
     .fail(function(){
-        
+        chrome.browserAction.setBadgeBackgroundColor(app.option.error_badge_color);
+        chrome.browserAction.setBadgeText({text: ''});
     });
 }
 app.util.isCount = function(task){
@@ -315,7 +326,6 @@ app.util.isTodoTask = function(task){
             return false;
         }
     }
-    // FIXME
     if (task.due_epoch && task.due_epoch > (new Date()).getTime()) {
         return false;
     }
@@ -353,7 +363,7 @@ app.util.isNoticeAction = function(action){
     if (app.util.findMe(task.assign)) {
         return true;
     }
-    if (task.id in app.data.state.watch) {
+    if (task.id in app.data.state.star) {
         return true;
     }
     return false;
@@ -466,10 +476,11 @@ app.click.save = function(ele){
 
 // popup
 app.setup.popup = function(ele){
+    chrome.browserAction.setIcon({path: app.option.normal_icon});
     var ul = ele.find('ul.actions');
     var template = ul.html();
     ul.empty();
-    app.api.fetch(0, function(actions){
+    app.api.fetch({callback: function(actions){
         if (actions.length) {
             $.each(actions, function(i, action){
                 if (i >= 10) {
@@ -493,7 +504,7 @@ app.setup.popup = function(ele){
         } else {
             ul.append($('<li>no notification.</li>'));
         }
-    });
+    }});
 }
 app.click.openSite = function(){
     app.data.popupWindow.close();

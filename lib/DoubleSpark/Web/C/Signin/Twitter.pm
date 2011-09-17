@@ -56,8 +56,7 @@ sub callback {
             $nt->request_access_token(verifier => $verifier);
 
         my $code = "tw-$user_id";
-        my $user = $nt->show_user($user_id);
-        my $icon = $user->{profile_image_url};
+        my $icon = '/api/1/profile_image/' . $screen_name;
 
         my $tw_account = $c->db->single('tw_account', { code => $code });
 

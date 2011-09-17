@@ -21,24 +21,6 @@ __PACKAGE__->load_plugin(qw/Web::JSON/);
 
 sub version { $VERSION }
 
-# sub db_old {
-#     my $self = shift;
-#     unless ( defined $self->{db} ) {
-#         my $conf = $self->config->{DB_OLD}
-#           or die "missing configuration for 'DB'";
-#         my $dbh = DBI->connect(@$conf);
-#         my $schema = Teng::Schema::Loader->load(
-#             namespace => 'DoubleSpark::DB',
-#             dbh       => $dbh,
-#         );
-#         $self->{db} = Teng->new(
-#             dbh    => $dbh,
-#             schema => $schema,
-#         );
-#     }
-#     return $self->{db};
-# }
-#
 sub db {
     my $c = shift;
     unless ( defined $c->{db} ) {
@@ -71,19 +53,15 @@ sub db {
 
 sub twitter {
     my $c = shift;
-    # unless ( defined $c->{twitter} ) {
-        my $conf = $c->config->{Twitter}
-          or die "missing configuration for 'Twitter'";
-        my $key_file = file($c->base_dir(), $conf->{consumer_key_file});
-        my $secret_file = file($c->base_dir(), $conf->{consumer_secret_file});
-        die "not found twitter consumer key $key_file" unless -f $key_file;
-        die "not found twitter consumer secret $secret_file" unless -f $secret_file;
-        $conf->{consumer_key} = $key_file->slurp;
-        $conf->{consumer_secret} = $secret_file->slurp;
-        return Net::Twitter::Lite->new(%{$conf});
-    #     $c->{twitter} = Net::Twitter::Lite->new(%{$conf});
-    # }
-    # return $c->{twitter};
+    my $conf = $c->config->{Twitter}
+      or die "missing configuration for 'Twitter'";
+    my $key_file = file($c->base_dir(), $conf->{consumer_key_file});
+    my $secret_file = file($c->base_dir(), $conf->{consumer_secret_file});
+    die "not found twitter consumer key $key_file" unless -f $key_file;
+    die "not found twitter consumer secret $secret_file" unless -f $secret_file;
+    $conf->{consumer_key} = $key_file->slurp;
+    $conf->{consumer_secret} = $secret_file->slurp;
+    return Net::Twitter::Lite->new(%{$conf});
 }
 
 sub facebook {
@@ -113,17 +91,18 @@ sub create_account {
     $c->db->insert('list', {
         code       => $code,
         data       => {
-            name    => "${name}'s list",
-            owner   => $code,
-            members => [],
-            users   => [
+            name     => "${name}'s list",
+            original => 1,
+            owner    => $code,
+            members  => [],
+            users    => [
                 {
                     icon => $icon,
                     code => $code,
                     name => $name
                 }
             ],
-            tasks   => []
+            tasks    => []
         },
         actioned_on => int(Time::HiRes::time * 1000),
         created_on => \'now()',

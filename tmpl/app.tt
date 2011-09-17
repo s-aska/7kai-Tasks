@@ -81,7 +81,7 @@
             data-setup="click,shortcut,filterTask"
             data-click="filterTask"
             data-shortcut-code="83"
-            data-filter-condition='{"watch":1}'
+            data-filter-condition='{"star":1}'
           >
             <span
               data-setup="localize"
@@ -108,6 +108,20 @@
             >0</span>)
           </a>
         </li> -->
+        <li id="get-the-extensions">
+          <a
+            href="https://chrome.google.com/webstore/detail/dolhpjcchfcnkcanamhgcgbnmcogdank"
+            target="_blank"
+            data-setup="getTheExtensions"
+          >Get the Extensions »</a>
+        </li>
+        <li>
+          <a
+            href="http://www.google.co.jp/chrome"
+            target="_blank"
+            data-setup="getTheChrome"
+          >Get the Google Chrome »</a>
+        </li>
         <li
           class="menu"
           data-setup="menu"
@@ -117,14 +131,9 @@
             <li>
               <a
                 data-setup="click"
-                data-click="addTwitter"
-              >+ Add Twitter</a>
-            </li>
-            <li>
-              <a
-                data-setup="click"
-                data-click="addFacebook"
-              >+ Add Facebook</a>
+                data-click="show"
+                data-show-id="settings-window"
+              >Settings</a>
             </li>
             <li>
               <a
@@ -154,7 +163,7 @@
               <a class="menu list-name">su_aska</a>
               <ul
                 class="menu-dropdown lists"
-                style="display: none;"
+                style="display: none"
                 data-setup="sortable"
                 data-sortable-update="sortable.list"
               >
@@ -216,7 +225,14 @@
       <h2>Settings</h2>
         <ul class="unstyled">
           <li>
-            <label style="float: none;">
+            <label
+              style="float: none;"
+              data-setup="guide"
+              data-guide-id="what-mute"
+              data-guide-option='{"top":-60,"left":100}'
+              data-show-speed="fast"
+              data-hide-speed="fast"
+            >
               <input type="checkbox" name="mute" value="1">
               <span
                 data-setup="localize"
@@ -249,7 +265,7 @@
         >Clear Closed Task</a></li>
         <li><hr></li>
         <li><a
-            class="action"
+            class="action delete-list"
             data-setup="localize,click"
             data-click="show"
             data-show-id="delete-list-window"
@@ -300,6 +316,7 @@
             >New Task</a>
             </li>
             <li><a
+              class="edit-button"
               data-setup="localize,click"
               data-click="editTask"
               data-text-ja="タスクを編集"
@@ -351,20 +368,11 @@
         </div>
       </div>
     </div>
-    <div
-      id="create-task-twipsy"
-      class="twipsy left"
-      style="display: none; top: 36px; left: -84px;"
-      data-show-effect="bounce"
-      data-show-speed="fast"
-      data-show-callback="dom.hide"
-      data-hide-speed="fast"
-      data-hide-option='{"direction":"right"}'
+    <ul
+      class="unstyled tasks"
+      style="overflow: auto;"
+      data-setup="stretch"
     >
-      <div class="twipsy-arrow"></div>
-      <div class="twipsy-inner">New Task!</div>
-    </div>
-    <ul class="unstyled tasks">
       <li class="clearfix" draggable="true">
         <div class="icon icon-grip"></div>
         <div class="icon icon-tasks-off"></div>
@@ -379,6 +387,19 @@
         </div>
       </li>
     </ul>
+    <div
+      id="create-task-twipsy"
+      class="twipsy left"
+      style="display: none; top: 36px; left: -84px;"
+      data-show-effect="bounce"
+      data-show-speed="fast"
+      data-show-callback="dom.hide"
+      data-hide-speed="fast"
+      data-hide-option='{"direction":"right"}'
+    >
+      <div class="twipsy-arrow"></div>
+      <div class="twipsy-inner">New Task!</div>
+    </div>
   </div>
   <div
     class="span6 columns"
@@ -390,14 +411,124 @@
           <ul class="nav">
             <li>
               <a
-                data-setup="localize"
+                data-setup="localize,tabMenu"
                 data-text-ja="コメント＆履歴"
-              >Comments &amp; History</a></li>
+                data-tab-id="comments"
+                data-tab-group="rightColumn"
+              >Comments &amp; Actions</a>
+            </li>
+            <li>
+              <a
+                data-setup="localize,tabMenu"
+                data-text-ja="ショートカットキー"
+                data-tab-id="shortcut-key"
+                data-tab-group="rightColumn"
+              >Shortcut Key</a>
+            </li>
           </ul>
         </div>
       </div>
     </div>
-    <div class="container">
+    <div
+      class="container"
+      style="display: none"
+      data-setup="tabContent"
+      data-tab-id="shortcut-key"
+      data-tab-group="rightColumn"
+    >
+      <h4
+      data-setup="localize"
+      data-text-ja="ショートカットキー"
+      >Shortcut Key</h4>
+      <dl
+        style="overflow: auto"
+        data-setup="stretch"
+        data-stretch-offset="140"
+        data-stretch-padding="10"
+      >
+        <dt>[C]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="新しいタスクを作成"
+        >Create a New Task.</dd>
+        <dt>[ESC]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="ダイアログを閉じる"
+        >Close Some Dialog.</dd>
+        <dt>[T]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="[今日迄]を開く"
+        >Open Today.</dd>
+        <dt>[V]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="[確認待ち]を開く"
+        >Open Verify.</dd>
+        <dt>[R]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="[依頼中]を開く"
+        >Open Request.</dd>
+        <dt>[S]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="[スター]を開く"
+        >Open Star.</dd>
+        <dt>[1-9]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="リストを開く(数字は上からの順番)"
+        >Select List.</dd>
+        <dt>[Down]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="次のタスクを選択"
+        >Select Next Task.</dd>
+        <dt>[Up]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="前のタスクを選択"
+        >Select Previous Task.</dd>
+        <dt>[Right]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="期日を１日延長"
+        >Due + 1 day.</dd>
+        <dt>[Left]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="期日を１日短縮"
+        >Due - 1 day.</dd>
+        <dt>[Space]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="タスクの状態を進める"
+        >Progress Status a Task.</dd>
+        <dt>[Enter]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="タスクを閉じる"
+        >Closed a Task.</dd>
+        <dt>[E]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="タスクを編集"
+        >Edit a Selected Task.</dd>
+        <dt>[M]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="コメント欄を選択"
+        >Select comment textarea.</dd>
+      </dl>
+    </div>
+    <div
+      class="container"
+      data-setup="tabContent"
+      data-tab-id="comments"
+      data-tab-group="rightColumn"
+    >
       <h2>[<span class="list_name">-</span>] <span class="task_name">-</span></h2>
       <form
         class="form-stacked"
@@ -418,6 +549,7 @@
         <div class="">
           <button
             class="btn primary"
+            tabindex="0"
             data-setup="localize"
             data-text-ja="コメント"
           >Comment</button>
@@ -666,7 +798,7 @@
             data-text-ja="タイトル (1-30文字)"
           >Title (1-30 characters)</label>
           <div class="input">
-            <input type="text" name="name" value="" required maxlength="30" data-autofocus="true">
+            <input class="xlarge" type="text" name="name" value="" required maxlength="30" data-autofocus="true">
           </div>
         </div>
         <div class="clearfix">
@@ -779,6 +911,166 @@
   </div>
 </form>
 
+<div
+  id="settings-window"
+  class="modal"
+  data-setup="ui,escclose,settingsWindow"
+  data-ui="draggable"
+  data-show-effect="fade"
+  data-show-speed="fast"
+  data-show-callback="dom.autofocus"
+  data-hide-effect="fade"
+  data-hide-speed="fast"
+  data-hide-callback="dom.blur"
+>
+  <div class="modal-header">
+    <h3
+      data-setup="localize"
+      data-text-ja="設定"
+    >Settings</h3>
+    <a
+      class="close"
+      data-setup="click"
+      data-click="hide"
+      data-hide-id="settings-window"
+    >×</a>
+  </div>
+  <div class="modal-body">
+    <h3>Add Account</h3>
+    <ul class="unstyled">
+      <li style="margin-bottom: 10px;">
+        <a
+          class="btn"
+          data-setup="click"
+          data-click="addTwitter"
+        >Connect with Twitter</a> <!-- ( <a href="https://twitter.com/?lang=en&logged_out=1#!/download" target="_blank">Please sign out before.</a> ) -->
+      </li>
+      <li>
+        <a
+          class="btn"
+          data-setup="click"
+          data-click="addFacebook"
+        >Connect with Facebook</a> <!-- ( <a href="https://www.facebook.com/" target="_blank">Please sign out before.</a> ) -->
+      </li>
+    </ul>
+    
+    <h3>Delete Account</h3>
+    <ul class="unstyled accounts">
+      <li style="margin-bottom: 10px;">
+        <img class="sq24" style="vertical-align: middle;">
+        <span class="name"></span>
+        <button class="btn danger">Delete</button>
+      </li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn secondary"
+      data-setup="localize,click"
+      data-text-ja="閉じる"
+      data-click="hide"
+      data-hide-id="settings-window"
+      data-autofocus="true"
+    >Close</button>
+  </div>
+</div>
+
+<form
+  id="delete-account-window"
+  class="modal form-stacked"
+  data-setup="ui,submit,escclose,removeAccountWindow"
+  data-ui="draggable"
+  data-submit="deleteAccount"
+  data-show-effect="fade"
+  data-show-speed="fast"
+  data-show-callback="dom.autofocus"
+  data-hide-effect="fade"
+  data-hide-speed="fast"
+  data-hide-callback="dom.blur"
+>
+  <div class="modal-header">
+    <h3
+      data-setup="localize"
+      data-text-ja="アカウント削除"
+    >Delete Account</h3>
+    <a
+      class="close"
+      data-setup="click"
+      data-click="hide"
+      data-hide-id="delete-account-window"
+    >×</a>
+  </div>
+  <div class="modal-body">
+    <div class="alert-message warning">
+      <p>
+        <strong
+          data-setup="localize"
+          data-text-ja="警告"
+        >Warning</strong>
+        <span
+          data-setup="localize"
+          data-text-ja="このアカウントがオーナーのリストも全て削除されます。"
+        >The list is owned by this account will be deleted.</span>
+      </p>
+    </div>
+    <p
+      data-setup="localize"
+      data-text-ja="本当にこのアカウントを削除しますか？"
+    >Do you really want to delete the account?</p>
+    <div>
+      <img class="sq24" style="vertical-align: middle;">
+      <span class="name"></span>
+    </div>
+    <input type="hidden" name="code" value="">
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn danger"
+      tabindex="2"
+      data-setup="localize"
+      data-text-ja="削除"
+    >Delete</button>
+    <button
+      class="btn secondary"
+      tabindex="1"
+      data-setup="localize,click"
+      data-text-ja="キャンセル"
+      data-click="hide"
+      data-hide-id="delete-account-window"
+      data-autofocus="true"
+    >Cancel</button>
+  </div>
+</form>
+
+<div
+  id="what-mute"
+  class="popover right"
+  style="display: none;"
+  data-show-effect="fade"
+  data-hide-effect="fade"
+>
+  <div class="arrow"></div>
+  <div class="inner">
+    <h3
+      class="title"
+      data-setup="localize"
+      data-text-ja="ミュートについて"
+    >What's Mute</h3>
+    <div class="content">
+      <ul>
+        <li
+          data-setup="localize"
+          data-text-ja="「今日迄」にカウント・表示されなくなります。"
+        >Will not be displayed on the [Todo].</li>
+        <li
+          data-setup="localize"
+          data-text-ja="デスクトップ通知されなくなります。（ Chrome Extensions利用時 ）"
+        >Does not Desktop Notification. ( Chrome Extensions )</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 <form
   id="help-window"
   class="modal form-stacked"
@@ -816,7 +1108,7 @@
       <li>
         <a
           data-setup="localize,tabMenu"
-          data-text-ja="メニュー"
+          data-text-ja="アイコン"
           data-tab-id="icon"
           data-tab-group="help"
         >Icon</a>
@@ -955,8 +1247,8 @@
           <dt>[ESC]</dt>
           <dd
             data-setup="localize"
-            data-text-ja="ウィンドウを閉じる"
-          >Close Some Window.</dd>
+            data-text-ja="ダイアログを閉じる"
+          >Close Some Dialog.</dd>
           <dt>[T]</dt>
           <dd
             data-setup="localize"
@@ -1044,10 +1336,10 @@
 </form>
 
 [% IF notice %]
-<div id="notice" class="modal">
+<div id="sub-account-notice" class="modal">
   <div class="modal-header">
     <h3>Notice</h3>
-    <a class="close" data-setup="click" data-click="hide" data-hide-id="notice">×</a>
+    <a class="close" data-setup="click" data-click="hide" data-hide-id="sub-account-notice">×</a>
   </div>
   <div class="modal-body">
     [% IF notice == 'tw_account_add' %]
@@ -1085,10 +1377,112 @@
     [% END %]
   </div>
   <div class="modal-footer">
-    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="notice">Close</a>
+    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="sub-account-notice">Close</a>
   </div>
 </div>
 [% END %]
+
+<div
+  id="alert"
+  class="modal"
+  style="display: none;"
+  data-setup="alert"
+  data-show-effect="fade"
+  data-hide-effect="fade"
+>
+  <div class="modal-header">
+    <h3>Error</h3>
+    <a
+      class="close"
+      data-setup="click"
+      data-click="hide"
+      data-hide-id="alert">×</a>
+  </div>
+  <div class="modal-body">
+    <p
+      data-text-error-401-en="Unauthorized, reload soon..."
+      data-text-error-401-ja="認証状態が切れました、再認証して下さい。。"
+      data-text-error-403-en="Your Action Forbidden, auto refresh done."
+      data-text-error-403-ja="許可されていない操作を実行しようとしました。"
+      data-text-error-404-en="Not Found, auto refresh done."
+      data-text-error-404-ja="対象が見つかりませんでした。"
+      data-text-error-500-en="Internal Server Error, Please wait a little..."
+      data-text-error-500-ja="障害が発生しています、しばらくして再度操作して下さい。"
+    ></p>
+  </div>
+  <div class="modal-footer">
+    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="alert">Close</a>
+  </div>
+</div>
+
+<div
+  id="success-delete-account"
+  class="modal"
+  style="display: none;"
+  data-show-effect="fade"
+  data-show-auto-close="5000"
+  data-hide-effect="fade"
+>
+  <div class="modal-header">
+    <h3>Success</h3>
+    <a
+      class="close"
+      data-setup="click"
+      data-click="hide"
+      data-hide-id="success-delete-account">×</a>
+  </div>
+  <div class="modal-body">
+    <p
+      data-setup="localize"
+      data-text-ja="アカウントを削除しました。"
+    >Succeeded Delete Account.</p>
+  </div>
+  <div class="modal-footer">
+    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="success-delete-account">Close</a>
+  </div>
+</div>
+
+<div
+  id="notice-succeeded-sync-twitter"
+  class="alert alert-message success"
+  data-show-option='{"direction":"down"}'
+  data-show-auto-close="5000"
+  data-hide-option='{"direction":"down"}'
+>
+  <a
+    class="close"
+    data-setup="click"
+    data-click="hide"
+    data-hide-id="notice-succeeded-sync-twitter"
+  >×</a>
+  <p>
+    <strong>Info</strong>
+    <span>Succeeded to sync friends' data from Twitter.</span>
+  </p>
+</div>
+
+<div
+  id="notice-failed-sync-twitter"
+  class="alert alert-message error"
+  data-show-option='{"direction":"down"}'
+  data-show-auto-close="5000"
+  data-hide-option='{"direction":"down"}'
+>
+  <a
+    class="close"
+    data-setup="click"
+    data-click="hide"
+    data-hide-id="notice-failed-sync-twitter"
+  >×</a>
+  <p>
+    <strong>Error</strong>
+    <span>Failed to sync friends' data from Twitter.</span>
+  </p>
+</div>
+
+<!-- please upgrade your browser to chrome. -->
+
+<div style="display: none;">
 
 <form id="add-twitter" method="post" action="/signin/twitter/signin">
   <input type="hidden" name="mode" value="add">
@@ -1101,27 +1495,27 @@
 <div
   data-setup="messages"
 
-  data-text-create-task-en="create the task of the"
+  data-text-create-task-en="create the task"
   data-text-create-task-ja="タスクを作成"
-  data-text-update-task-en="update the task of the"
+  data-text-update-task-en="update the task"
   data-text-update-task-ja="タスクを更新"
-  data-text-clear-task-en="clear the task of the"
+  data-text-clear-task-en="clear the task"
   data-text-clear-task-ja="完了済タスクを削除"
 
-  data-text-reopen-task-en="update (fix => open) the task of the"
+  data-text-reopen-task-en="update (fix => open) the task"
   data-text-reopen-task-ja="タスクを更新 (処理済 => 未着手)"
-  data-text-start-task-en="start the task of the"
+  data-text-start-task-en="start the task"
   data-text-start-task-ja="タスクに着手"
-  data-text-fix-task-en="fix the task of the"
+  data-text-fix-task-en="fix the task"
   data-text-fix-task-ja="タスクを処理"
-  data-text-close-task-en="close the task of the"
+  data-text-close-task-en="close the task"
   data-text-close-task-ja="タスクを完了"
 
-  data-text-rereopen-task-en="update (close => open) the task of the"
+  data-text-rereopen-task-en="update (close => open) the task"
   data-text-rereopen-task-ja="タスクを更新 (完了 => 未着手)"
-  data-text-restart-task-en="update (close => start) the task of the"
+  data-text-restart-task-en="update (close => start) the task"
   data-text-restart-task-ja="タスクを更新 (処理済 => 着手)"
-  data-text-refix-task-en="update (close => fix) the task of the"
+  data-text-refix-task-en="update (close => fix) the task"
   data-text-refix-task-ja="タスクを更新 (完了 => 処理済)"
 ></div>
 
@@ -1129,6 +1523,8 @@
   id="receiver"
   style="display: none;"
   data-setup="receiver"></div>
+
+</div>
 
 </body>
 </html>

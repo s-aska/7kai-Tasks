@@ -116,9 +116,10 @@ sub delete {
     return $c->res_403() unless $res;
 
     my $list = $c->stash->{list};
-    my $name = $list->data->{name};
+    return  $c->res_403() if $list->data->{original};
+    
     $list->delete;
-    infof("[%s] delete list %s", $c->sign_name, $name);
+    infof("[%s] delete list %s", $c->sign_name);
     $c->render_json({ success => 1 });
 }
 

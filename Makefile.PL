@@ -17,6 +17,7 @@ WriteMakefile(
         'Email::Valid::Loose'                 => '0.05',
         'Facebook::Graph'                     => '1.0300',
         'FormValidator::Lite'                 => '0.25',
+        'Furl'                                => '0.38',
         'Log::Minimal'                        => '0.08',
         'Net::Twitter::Lite'                  => '0.10004',
         'Path::Class'                         => '0.24',

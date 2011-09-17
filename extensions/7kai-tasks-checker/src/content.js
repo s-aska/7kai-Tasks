@@ -7,6 +7,7 @@ chrome.extension.onRequest.addListener(
         eventDiv.dispatchEvent(customEvent);
     }
 );
-if (document.getElementById('status')) {
-    document.getElementById('status').innerHTML = '';
+var getTheExtensions = document.getElementById('get-the-extensions');
+if (getTheExtensions) {
+    getTheExtensions.parentNode.removeChild(getTheExtensions);
 }

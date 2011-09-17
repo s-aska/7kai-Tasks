@@ -69,6 +69,7 @@ __PACKAGE__->add_trigger(
         return if $c->req->path eq '/';
         return if $c->req->path =~m|^/signin|;
         return if $c->req->path eq '/signout';
+        return if $c->req->path =~m|^/api/1/proxy/|;
 
         unless ($c->sign) {
             warnf('unsigned api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
@@ -153,6 +154,20 @@ sub res_304 {
     my $content = 'Not Modified';
     $c->create_response(
         304,
+        [
+            'Content-Type' => 'text/plain',
+            'Content-Length' => length($content),
+        ],
+        [$content]
+    );
+}
+
+sub res_401 {
+    my $c = shift;
+
+    my $content = 'Unauthorized';
+    $c->create_response(
+        401,
         [
             'Content-Type' => 'text/plain',
             'Content-Length' => length($content),

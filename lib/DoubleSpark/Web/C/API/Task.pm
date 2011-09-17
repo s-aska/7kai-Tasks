@@ -37,8 +37,7 @@ sub create {
         comments => [],
         history => [],
         created_on => $time,
-        updated_on => $time,
-        sort => $task_id
+        updated_on => $time
     };
     push @{ $list->data->{tasks} }, $task;
     $list->update({ data => $list->data, actioned_on => $time });

@@ -16,7 +16,7 @@
 <script src="/static/js/app-page-signin.js"></script>
 </head>
 <body>
-<div class="topbar" data-setup="topBar">
+<div class="topbar">
   <div class="fill">
     <div class="container">
       <h3><a href="/">7kai Tasks</a></h3>
@@ -24,7 +24,11 @@
   </div>
 </div>
 
-<div class="modal" style="">
+<div
+  class="modal"
+  data-setup="signin"
+  data-show-effect="fade"
+>
   <div class="modal-header">
     <h3>Sign In</h3>
   </div>

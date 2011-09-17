@@ -110,9 +110,8 @@ a, button {
 form {
     padding: 0 !important;
 }
-form.modal {
+.modal {
     display: none;
-    margin-top: -200px;
 }
 h4, h5 {
     line-height: 1;
@@ -142,6 +141,13 @@ label {
 }
 .left {
     float: left;
+}
+div.alert {
+    display: none;
+    position: absolute;
+    width: 360px;
+    bottom: 0px;
+    right: 20px;
 }
 
 /********** layout **********/

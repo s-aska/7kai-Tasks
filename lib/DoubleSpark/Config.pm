@@ -49,10 +49,10 @@ sub new {
         Skeleton => {
             Account => {
                 state => {
-                    watch => {},
+                    star => {},
+                    mute => {},
                     sort => {
-                        list => {},
-                        task => {}
+                        list => {}
                     },
                 }
             }

@@ -3,6 +3,8 @@
 var app = ns.app = {
     
     data: {
+        if_modified_since: 0,
+        if_modified_lists: '',
         users: {},
         assigns: [],
         current_list: null,
@@ -62,9 +64,14 @@ var app = ns.app = {
     }
 };
 
-c.addEvents('resize');
 c.addEvents('setup');
-c.addEvents('selectTab');
+c.addEvents('resetup');
+c.addEvents('reset');
+
+c.addEvents('alert');
+
+c.addEvents('resize');    // window resize
+c.addEvents('selectTab'); // tag component
 
 $(d).ready(function(){
     app.run();
@@ -98,16 +105,23 @@ app.ajax = function(option){
             textStatus: textStatus
         });
 
+        // Unauthorized
+        if (jqXHR.status === 401) {
+            c.fireEvent('alert', jqXHR.status);
+            setTimeout(function(){
+                location.reload();
+            }, 3000);
+        }
+
         // Collision
-        if (jqXHR.status === 403 || jqXHR.status === 404) {
-            // soft reload
-            console.log('permission or not found.');
+        else if (jqXHR.status === 403 || jqXHR.status === 404) {
+            c.fireEvent('alert', jqXHR.status);
+            c.fireEvent('resetup');
         }
 
         // Internal Server Error
-        else if (jqXHR.status === 500) {
-            // しばらくして...
-            console.log('error.');
+        else if (jqXHR.status >= 500) {
+            c.fireEvnet('alert', jqXHR.status);
         }
     });
 }
@@ -126,16 +140,26 @@ app.dom.setup = function(context){
     });
 }
 app.dom.show = function(target){
-    var effect   = target.data('show-effect')   || 'drop';
-    var option   = target.data('show-option')   || {};
-    var speed    = target.data('show-speed')    || null;
-    var callback = target.data('show-callback') || null;
+    var effect    = target.data('show-effect')   || 'drop';
+    var option    = target.data('show-option')   || {};
+    var speed     = target.data('show-speed')    || null;
+    var callback  = target.data('show-callback') || null;
+    var autoClose = target.data('show-auto-close') || null;
+    if (target.hasClass('modal')) {
+        var height = target.height();
+        target.css('marginTop', Number(height / 2) * -1 + 'px');
+    }
     if (callback) {
         callback = (function(func){
             return function(){
                 func.call(app, target);
             }
         })(c.obj.get(app, callback));
+    }
+    if (autoClose) {
+        setTimeout(function(){
+            app.dom.hide(target);
+        }, autoClose);
     }
     return target.show(effect, option, speed, callback);
 }
@@ -213,10 +237,11 @@ app.setup.menu = function(ele){
 }
 app.setup.stretch = function(ele){
     var padding = ele.data('stretch-padding') || 0;
+    var offset = ele.data('stretch-offset') || ele.offset().top;
     var callback = function(){
         ele.height(
             $(w).height()
-            - ele.offset().top
+            - offset
             - parseInt(ele.css('paddingTop'), 10)
             - parseInt(ele.css('paddingBottom'), 10)
             - padding
@@ -264,6 +289,7 @@ app.setup.dateplus = function(ele){
 app.setup.shortcut = function(ele){
     $(d).keydown(function(e){
         if (document.activeElement.tagName === 'BODY'
+            && !e.shiftKey
             && e.keyCode === ele.data('shortcut-code')) {
             ele.click();
         }
@@ -316,6 +342,27 @@ app.setup.sortable = function(ele){
             (c.obj.get(app, update))(ele);
         }
     });
+}
+app.setup.alert = function(ele){
+    var p = ele.find('p:first');
+    c.addListener('alert', function(status){
+        p.text(p.data('text-error-' + status + '-' + c.lang));
+        app.dom.show(ele);
+    });
+}
+app.setup.guide = function(ele){
+    
+    var id = ele.data('guide-id');
+    var option = ele.data('guide-option');
+    var guide = $('#' + id);
+    app.dom.hover(ele, function(){
+        var offset = ele.offset();
+        guide.css('top', offset.top + option.top + 'px');
+        guide.css('left', offset.left + option.left + 'px');
+        app.dom.show(guide);
+    }, function(){
+        app.dom.hide(guide);
+    }, 500);
 }
 
 app.click.show = function(ele){
