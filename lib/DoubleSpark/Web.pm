@@ -72,14 +72,14 @@ __PACKAGE__->add_trigger(
         return if $c->req->path =~m|^/api/1/proxy/|;
 
         unless ($c->sign) {
-            warnf('unsigned api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
-            return $c->res_403();
+#            warnf('unsigned api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
+            return $c->res_401();
         }
 
         if ( ( $c->req->user_agent || '' ) !~ /Chrome/ and
             ( $c->req->header('X-Requested-With') || '' ) ne 'XMLHttpRequest' ) {
-            warnf('no ajax api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
-            return $c->res_403();
+#            warnf('no ajax api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
+            return $c->res_401();
         }
     },
 );

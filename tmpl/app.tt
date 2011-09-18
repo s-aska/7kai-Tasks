@@ -456,6 +456,58 @@
           data-setup="localize"
           data-text-ja="ダイアログを閉じる"
         >Close Some Dialog.</dd>
+        <dt
+          data-setup="localize"
+          data-text-ja="[↓]"
+        >[Down]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="次のタスクを選択"
+        >Select Next Task.</dd>
+        <dt
+          data-setup="localize"
+          data-text-ja="[↑]"
+        >[Up]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="前のタスクを選択"
+        >Select Previous Task.</dd>
+        <dt
+          data-setup="localize"
+          data-text-ja="[→]"
+        >[Right]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="期日を１日延長"
+        >Due + 1 day.</dd>
+        <dt
+          data-setup="localize"
+          data-text-ja="[←]"
+        >[Left]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="期日を１日短縮"
+        >Due - 1 day.</dd>
+        <dt>[Space]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="タスクの状態を進める"
+        >Progress Status a Task.</dd>
+        <dt>[Enter]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="タスクを閉じる"
+        >Closed a Task.</dd>
+        <dt>[E]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="タスクを編集"
+        >Edit a Selected Task.</dd>
+        <dt>[M]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="コメント欄を選択"
+        >Select comment textarea.</dd>
         <dt>[T]</dt>
         <dd
           data-setup="localize"
@@ -481,46 +533,6 @@
           data-setup="localize"
           data-text-ja="リストを開く(数字は上からの順番)"
         >Select List.</dd>
-        <dt>[Down]</dt>
-        <dd
-          data-setup="localize"
-          data-text-ja="次のタスクを選択"
-        >Select Next Task.</dd>
-        <dt>[Up]</dt>
-        <dd
-          data-setup="localize"
-          data-text-ja="前のタスクを選択"
-        >Select Previous Task.</dd>
-        <dt>[Right]</dt>
-        <dd
-          data-setup="localize"
-          data-text-ja="期日を１日延長"
-        >Due + 1 day.</dd>
-        <dt>[Left]</dt>
-        <dd
-          data-setup="localize"
-          data-text-ja="期日を１日短縮"
-        >Due - 1 day.</dd>
-        <dt>[Space]</dt>
-        <dd
-          data-setup="localize"
-          data-text-ja="タスクの状態を進める"
-        >Progress Status a Task.</dd>
-        <dt>[Enter]</dt>
-        <dd
-          data-setup="localize"
-          data-text-ja="タスクを閉じる"
-        >Closed a Task.</dd>
-        <dt>[E]</dt>
-        <dd
-          data-setup="localize"
-          data-text-ja="タスクを編集"
-        >Edit a Selected Task.</dd>
-        <dt>[M]</dt>
-        <dd
-          data-setup="localize"
-          data-text-ja="コメント欄を選択"
-        >Select comment textarea.</dd>
       </dl>
     </div>
     <div
