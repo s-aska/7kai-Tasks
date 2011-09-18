@@ -9,7 +9,7 @@ sub create {
     
     my $res = $c->validate(
         list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
-        name      => [qw/NOT_NULL/, [qw/LENGTH 1 30/]],
+        name      => [qw/NOT_NULL/, [qw/LENGTH 1 50/]],
         requester  => [qw/NOT_NULL MEMBER/],
         registrant => [qw/NOT_NULL OWNER/],
         due        => [qw/DATE_LOOSE/],
@@ -41,7 +41,7 @@ sub create {
     };
     push @{ $list->data->{tasks} }, $task;
     $list->update({ data => $list->data, actioned_on => $time });
-    infof('[%s] list [%s] create task: %s', $c->sign_name, $list->data->{name}, $name);
+    infof('[%s] create task', $c->sign_name);
     $c->render_json({
         success => 1,
         task => $task
@@ -54,7 +54,7 @@ sub update {
     my $res = $c->validate(
         list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
         task_id    => [qw/NOT_NULL/],
-        name      => [[qw/LENGTH 1 30/]],
+        name      => [[qw/LENGTH 1 50/]],
         requester  => [qw/MEMBER/],
         registrant => [qw/NOT_NULL OWNER/],
         due        => [qw/DATE_LOOSE/],
@@ -121,8 +121,7 @@ sub update {
 
     $list->update({ data => $list->data, actioned_on => $time });
 
-    infof('[%s] list [%s] update task: %s',
-        $c->sign_name, $list->data->{name}, $target_task->{name});
+    infof('[%s] update task', $c->sign_name);
 
     $c->render_json({
         success => 1,
@@ -161,11 +160,7 @@ sub move {
     $src_list->update({ data => $src_list->data, actioned_on => $time });
     $dst_list->update({ data => $dst_list->data, actioned_on => $time });
 
-    infof('[%s] list [%s] move task: %s to %s',
-        $c->sign_name,
-        $src_list->data->{name},
-        $target_task->{name},
-        $dst_list->data->{name});
+    infof('[%s] move task', $c->sign_name);
 
     $c->render_json({
         success => 1,

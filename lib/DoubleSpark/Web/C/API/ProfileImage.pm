@@ -28,7 +28,6 @@ sub twitter {
             IO::File->new($path)
         );
     }
-    infof('get %s', $filename);
     my $url = sprintf
         'http://api.twitter.com/1/users/profile_image?screen_name=%s&size=',
         $c->{args}->{screen_name};

@@ -17,3 +17,4 @@ src.pem
 src-ld*
 *-ld.sh
 blib
+app.pid

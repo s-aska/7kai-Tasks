@@ -43,7 +43,7 @@ sub create {
         });
     }
     $txn->commit;
-    infof('[%s] create list: %s', $c->sign_name, $name);
+    infof('[%s] create list', $c->sign_name);
     $c->render_json({
         success => 1,
         list => $list->as_hashref
@@ -99,7 +99,7 @@ sub update {
     }
     $txn->commit;
 
-    infof("[%s] update list %s", $c->sign_name, $list->data->{name});
+    infof("[%s] update list", $c->sign_name);
 
     $c->render_json({
         success => 1,
@@ -119,7 +119,7 @@ sub delete {
     return  $c->res_403() if $list->data->{original};
     
     $list->delete;
-    infof("[%s] delete list %s", $c->sign_name);
+    infof('[%s] delete list', $c->sign_name);
     $c->render_json({ success => 1 });
 }
 
@@ -139,8 +139,7 @@ sub clear {
 
     $list->update({ data => $list->data, actioned_on => int(Time::HiRes::time * 1000) });
 
-    infof('[%s] clear list [%s]',
-        $c->sign_name, $list->data->{name});
+    infof('[%s] clear list', $c->sign_name);
 
     $c->render_json({
         success => 1,

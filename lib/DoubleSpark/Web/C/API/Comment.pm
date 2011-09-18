@@ -51,8 +51,7 @@ sub create {
 
     $list->update({ data => $list->data, actioned_on => $time });
 
-    infof('[%s] list [%s] comment task: %s',
-        $c->sign_name, $list->data->{name}, $target_task->{name});
+    infof('[%s] comment task', $c->sign_name);
 
     $c->render_json({
         success => 1,
@@ -91,8 +90,7 @@ sub delete {
 
     $list->update({ data => $list->data, actioned_on => int(Time::HiRes::time * 1000) });
 
-    infof('[%s] list [%s] comment delete',
-        $c->sign_name, $list->data->{name});
+    infof('[%s] comment delete', $c->sign_name);
 
     $c->render_json({
         success => 1,

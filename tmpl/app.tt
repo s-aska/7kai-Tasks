@@ -807,10 +807,10 @@
         <div class="clearfix">
           <label for=""
             data-setup="localize"
-            data-text-ja="タイトル (1-30文字)"
-          >Title (1-30 characters)</label>
+            data-text-ja="タイトル (1-50文字)"
+          >Title (1-50 characters)</label>
           <div class="input">
-            <input class="xlarge" type="text" name="name" value="" required maxlength="30" data-autofocus="true">
+            <input class="xlarge" type="text" name="name" value="" required maxlength="50" data-autofocus="true">
           </div>
         </div>
         <div class="clearfix">

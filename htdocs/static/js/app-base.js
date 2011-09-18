@@ -290,6 +290,9 @@ app.setup.shortcut = function(ele){
     $(d).keydown(function(e){
         if (document.activeElement.tagName === 'BODY'
             && !e.shiftKey
+            && !e.ctrlKey
+            && !e.altKey
+            && !e.metaKey
             && e.keyCode === ele.data('shortcut-code')) {
             ele.click();
         }

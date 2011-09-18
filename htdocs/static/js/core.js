@@ -45,6 +45,9 @@ var c = ns.c = {
 // Method
 c.init = function(){
     c.lang = navigator.language === 'ja' ? 'ja' : 'en';
+    if (location.search.indexOf('lang=en') !== -1) {
+        c.lang = 'en';
+    }
     c.csrf_token = $('input[name=' + c.CSRF_TOKEN_NAME + ']:first').val();
 }
 

@@ -108,7 +108,7 @@ c.addListener('registerFriends', function(friends, owner){
         var friend = friends[i];
         var icon = /^tw-[0-9]+$/.test(friend.code) ?
                      '/api/1/profile_image/'
-                     + (friend.screen_name || friend.name)
+                     + friend.screen_name
                  : /^fb-[0-9]+$/.test(friend.code) ?
                     'https://graph.facebook.com/'
                     + friend.code.substring(3)
@@ -120,6 +120,7 @@ c.addListener('registerFriends', function(friends, owner){
         app.data.users[friend.code] = {
             code: friend.code,
             name: friend.name,
+            screen_name: friend.screen_name,
             icon: icon
         };
         if (owner) {
@@ -147,6 +148,8 @@ c.addListener('registerSubAccount', function(sub_account){
         icon: icon
     };
 });
+
+// セットアップ
 c.addListener('reset', function(){
     app.data.list_map = {};
     app.data.task_map = {};
@@ -155,12 +158,9 @@ c.addListener('reset', function(){
     app.data.current_list = null;
     app.data.current_task = null;
 });
-
 c.addListener('resetup', function(){
     app.api.me({ reset: true });
 });
-
-// セットアップ
 c.addListener('setup', function(option){
     app.api.me({ setup: true });
     // auto reload
@@ -173,9 +173,6 @@ c.addListener('setup', function(option){
         });
     }, 60000);
 });
-
-
-
 c.addListener('clickNotification', function(option){
     app.data.current_filter = { list_id: option.list_id };
     app.api.me(option);
@@ -220,6 +217,10 @@ app.api.me = function(option){
             app.data.state.star = {};
         }
 
+        $.each(data.lists, function(i, list){
+            c.fireEvent('registerFriends', list.users);
+        });
+
         // localStorageのfriendsリストを更新
         for (var i = 0, max_i = data.sub_accounts.length; i < max_i; i++) {
             sub_account = data.sub_accounts[i];
@@ -231,25 +232,25 @@ app.api.me = function(option){
                 if ("friends" in sub_account.data) {
                     c.fireEvent('registerFriends', sub_account.data.friends, sub_account.code);
                 }
-                app.data.users[sub_account.code] = {
-                    code: sub_account.code,
-                    name: sub_account.name,
-                    icon: sub_account.data.icon
-                };
+                // app.data.users[sub_account.code] = {
+                //     code: sub_account.code,
+                //     name: sub_account.name,
+                //     icon: sub_account.data.icon
+                // };
                 if (option.setup && data.sign.code === sub_account.code) {
-                    app.friendFetchTwitter(sub_account.code.substring(3), '-1', []);
+                    // app.friendFetchTwitter(sub_account.code.substring(3), '-1', []);
                 }
             }
 
             // Facebook
             else if (/^fb-[0-9]+$/.test(sub_account.code)) {
                 c.fireEvent('registerFriends', sub_account.data.friends, sub_account.code);
-                app.data.users[sub_account.code] = {
-                    code: sub_account.code,
-                    name: sub_account.name,
-                    icon: 'https://graph.facebook.com/'
-                        + sub_account.code.substring(3) + '/picture'
-                };
+                // app.data.users[sub_account.code] = {
+                //     code: sub_account.code,
+                //     name: sub_account.name,
+                //     icon: 'https://graph.facebook.com/'
+                //         + sub_account.code.substring(3) + '/picture'
+                // };
             }
 
             // E-mail
@@ -268,7 +269,6 @@ app.api.me = function(option){
                 app.data.if_modified_since = list.actioned_on;
             }
             c.fireEvent('registerList', list);
-            c.fireEvent('registerFriends', list.users);
             $.each(list.tasks, function(i, task){
                 tasks++;
                 c.fireEvent('registerTask', task, list);
@@ -351,6 +351,7 @@ app.util.getIconUrl = function(code, size){
     var src;
     var user = app.data.users[code];
     if (user) {
+        console.log(user);
         return user.icon;
     }
     if (/^tw-[0-9]+$/.test(code)) {
@@ -441,9 +442,6 @@ app.util.taskFilter = function(task, condition){
             return false;
         }
     }
-    if (task.list.id in app.data.state.mute) {
-        return false;
-    }
     if (condition.list_id) {
         if (condition.list_id !== task.list.id) {
             return false;
@@ -451,6 +449,9 @@ app.util.taskFilter = function(task, condition){
     }
     
     if (condition.todo) {
+        if (task.list.id in app.data.state.mute) {
+            return false;
+        }
         if (task.status === 2) {
             return false;
         }
@@ -800,10 +801,15 @@ app.setup.leftColumn = function(ele){
             }
             if (e.preventDefault) {
                 e.preventDefault();
+                li.addClass('active');
             }
             return false;
         });
+        li.get(0).addEventListener('dragleave', function(e){
+            li.removeClass('active');
+        });
         li.get(0).addEventListener('drop', function(e){
+            list_ul.find('> li').removeClass('active');
             list_ul.slideUp('fast');
             app.api.moveTask(app.data.dragtask.list.id, app.data.dragtask.id, list.id);
         }, false);
@@ -845,7 +851,7 @@ app.setup.leftColumn = function(ele){
         if (document.activeElement.tagName !== 'BODY') {
             return;
         }
-        if (e.shiftKey || e.ctrlKey || e.altKey) {
+        if (e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) {
             return;
         }
         if (e.keyCode >= 49 && e.keyCode <= 57) { // 1-9
@@ -865,8 +871,6 @@ app.setup.leftColumn = function(ele){
         }
     });
 }
-
-// リスト登録
 app.setup.registerListWindow = function(form){
 
     var id_input                = form.find('input[name=list_id]');
@@ -1022,6 +1026,7 @@ app.setup.registerListWindow = function(form){
     });
 
     c.addListener('createList', function(){
+        id_input.val('');
         owner_field.show();
         modeReset(owner_select.val());
         social_member_list.empty();
@@ -1034,6 +1039,31 @@ app.setup.registerListWindow = function(form){
         option_map = {};
         owner_select.empty();
     });
+}
+app.setup.switchClosed = function(ele){
+    c.addListener('filterTask', function(){
+        ele.removeClass('active');
+    });
+    ele.click(function(){
+        var val = ele.hasClass('active') ? 0 : 1;
+        c.fireEvent('filterTask', {
+            list_id: app.data.current_list.id,
+            closed: val
+        });
+        if (val) {
+            ele.addClass('active');
+        } else {
+            ele.removeClass('active');
+        }
+    });
+    c.addListener('clickNotification', function(option){
+        if (ele.hasClass('active')) {
+            ele.click();
+        }
+    });
+}
+app.setup.deleteListWindow = function(form){
+
 }
 app.click.createList = function(){
     c.fireEvent('createList');
@@ -1088,30 +1118,6 @@ app.submit.registerList = function(form){
         }
     });
 }
-
-// リストクリア
-app.setup.switchClosed = function(ele){
-    c.addListener('filterTask', function(){
-        ele.removeClass('active');
-    });
-    ele.click(function(){
-        var val = ele.hasClass('active') ? 0 : 1;
-        c.fireEvent('filterTask', {
-            list_id: app.data.current_list.id,
-            closed: val
-        });
-        if (val) {
-            ele.addClass('active');
-        } else {
-            ele.removeClass('active');
-        }
-    });
-    c.addListener('clickNotification', function(option){
-        if (ele.hasClass('active')) {
-            ele.click();
-        }
-    });
-}
 app.submit.clearList = function(form){
     if (!app.data.current_list) {
         alert('app.data.current_list is null.');
@@ -1134,11 +1140,6 @@ app.submit.clearList = function(form){
             // 現在 ステータスコード 200 の例外ケースは無い
         }
     });
-}
-
-// リスト削除
-app.setup.deleteListWindow = function(form){
-
 }
 app.submit.deleteList = function(form){
     app.ajax({
@@ -1473,19 +1474,19 @@ app.setup.centerColumn = function(ele){
     });
 
     $(d).keydown(function(e){
-        if (!app.data.current_task) {
-            return;
-        }
         if (document.activeElement.tagName !== 'BODY') {
             return;
         }
-        if (e.shiftKey || e.ctrlKey || e.altKey) {
+        if (e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) {
             return;
         }
         if (e.keyCode === 38) { // Up
-            var id = app.data.current_task.id;
-            var li = taskli_map[id];
-            var next = li.prevAll(':visible:first');
+            var next;
+            if (app.data.current_task) {
+                next = taskli_map[app.data.current_task.id].prevAll(':visible:first');
+            } else {
+                next = ul.find('> li:visible:first');
+            }
             if (next.length) {
                 var next_id = next.data('id');
                 if (!(next_id in app.data.task_map)) {
@@ -1494,9 +1495,12 @@ app.setup.centerColumn = function(ele){
                 c.fireEvent('openTask', app.data.task_map[next_id]);
             }
         } else if (e.keyCode === 40) { // Down
-            var id = app.data.current_task.id;
-            var li = taskli_map[id];
-            var next = li.nextAll(':visible:first');
+            var next;
+            if (app.data.current_task) {
+                next = taskli_map[app.data.current_task.id].nextAll(':visible:first');
+            } else {
+                next = ul.find('> li:visible:first');
+            }
             if (next.length) {
                 var next_id = next.data('id');
                 if (!(next_id in app.data.task_map)) {
@@ -1504,6 +1508,8 @@ app.setup.centerColumn = function(ele){
                 }
                 c.fireEvent('openTask', app.data.task_map[next_id]);
             }
+        } else if (!app.data.current_task) {
+            return;
         } else if (e.keyCode === 37) { // Left
             var task = app.data.current_task;
             var date = task.due_date || new Date();
@@ -1650,7 +1656,7 @@ app.click.editTask = function(){
     if (app.data.current_task) {
         c.fireEvent('editTask', app.data.current_task);
     } else {
-        alert('app.data.current_task is null.');
+        alert('please select a task.');
     }
 }
 app.click.sortTask = function(ele){
@@ -1711,7 +1717,7 @@ app.setup.rightColumn = function(ele){
         if (document.activeElement.tagName !== 'BODY') {
             return;
         }
-        if (e.shiftKey || e.ctrlKey || e.altKey) {
+        if (e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) {
             return;
         }
         if (!app.data.current_task) {
