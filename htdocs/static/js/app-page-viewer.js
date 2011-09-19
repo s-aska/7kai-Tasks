@@ -232,25 +232,14 @@ app.api.me = function(option){
                 if ("friends" in sub_account.data) {
                     c.fireEvent('registerFriends', sub_account.data.friends, sub_account.code);
                 }
-                // app.data.users[sub_account.code] = {
-                //     code: sub_account.code,
-                //     name: sub_account.name,
-                //     icon: sub_account.data.icon
-                // };
                 if (option.setup && data.sign.code === sub_account.code) {
-                    // app.friendFetchTwitter(sub_account.code.substring(3), '-1', []);
+                    app.friendFetchTwitter(sub_account.code.substring(3), '-1', []);
                 }
             }
 
             // Facebook
             else if (/^fb-[0-9]+$/.test(sub_account.code)) {
                 c.fireEvent('registerFriends', sub_account.data.friends, sub_account.code);
-                // app.data.users[sub_account.code] = {
-                //     code: sub_account.code,
-                //     name: sub_account.name,
-                //     icon: 'https://graph.facebook.com/'
-                //         + sub_account.code.substring(3) + '/picture'
-                // };
             }
 
             // E-mail
@@ -351,7 +340,6 @@ app.util.getIconUrl = function(code, size){
     var src;
     var user = app.data.users[code];
     if (user) {
-        console.log(user);
         return user.icon;
     }
     if (/^tw-[0-9]+$/.test(code)) {

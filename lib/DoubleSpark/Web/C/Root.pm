@@ -6,12 +6,14 @@ use Log::Minimal;
 sub index {
     my ($class, $c) = @_;
 
+    my $base = $c->req->param('mobile') ? 'mobile/' : '';
+
     if (my $sign = $c->sign) {
         $c->account->update({ authenticated_on => \'now()' });
         my $notice = $c->session->remove('notice');
-        $c->render('app.tt', { sign => $sign, notice => $notice });
+        $c->render($base . 'app.tt', { sign => $sign, notice => $notice });
     } else {
-        $c->render('index.tt');
+        $c->render($base . 'index.tt');
     }
 }
 
