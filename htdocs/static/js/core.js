@@ -88,7 +88,12 @@ c.ui.hover = function(element, over, out, delay){
 
 // Utility for native objects
 c.string.autolink = function(text){
-    return text.replace(c.REGEXP.URL, function(url){
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(c.REGEXP.URL, function(url){
         var a = d.createElement('a');
         a.href = url;
         a.target = '_blank';

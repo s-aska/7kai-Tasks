@@ -1747,7 +1747,7 @@ app.setup.rightColumn = function(ele){
                 li.find('.message').text(app.data.messages.data('text-' + comment.action + '-' + c.lang));
                 li.find('.icon:last').remove();
             } else {
-                li.find('.message').text(comment.message);
+                li.find('.message').html(c.string.autolink(comment.message));
                 li.find('.icon:last').click(function(){
                     app.ajax({
                         type: 'POST',
