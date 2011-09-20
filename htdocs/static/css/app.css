@@ -102,7 +102,8 @@ span.icon {
     height: 24px;
     background-image: url(/static/img/email24.png);
 }
-
+.clearfix{zoom:1;}.clearfix:before,.clearfix:after{display:table;content:"";}
+.clearfix:after{clear:both;}
 /********** common **********/
 a, button {
     cursor: pointer;

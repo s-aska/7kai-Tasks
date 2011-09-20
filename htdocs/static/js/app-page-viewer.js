@@ -1438,7 +1438,7 @@ app.setup.centerColumn = function(ele){
             var task = app.data.task_map[task_id];
             if (list.id === task.list.id && task.closed) {
                 if (task_id in taskli_map) {
-                    if (task_id === app.data.current_task.id) {
+                    if (app.data.current_task && app.data.current_task.id === task_id) {
                         c.fireEvent('missingTask');
                     }
                     taskli_map[task_id].remove();
@@ -1691,6 +1691,7 @@ app.setup.rightColumn = function(ele){
     var task_id_input    = ele.find('input[name=task_id]');
     var registrant_input = ele.find('input[name=registrant]');
     var button           = ele.find('button');
+    var textarea         = ele.find('textarea');
     var list_name        = ele.find('.list_name');
     var task_name        = ele.find('.task_name');
     var ul               = ele.find('ul.comments');
@@ -1699,6 +1700,11 @@ app.setup.rightColumn = function(ele){
     // 初期化処理
     ul.empty();
     button.attr('disabled', true);
+
+    var textarea_watch = function(){
+        button.attr('disabled', !textarea.val().length)
+    };
+    textarea.change(textarea_watch).keydown(textarea_watch).keyup(textarea_watch);
 
     // Shortcut
     $(d).keydown(function(e){
@@ -1723,7 +1729,8 @@ app.setup.rightColumn = function(ele){
         registrant_input.val(app.util.getRegistrant(task.list));
         list_name.text(task.list.name);
         task_name.text(task.name);
-        button.attr('disabled', false);
+        textarea.val('');
+        textarea.attr('disabled', false);
         ul.empty();
         var li = $(template);
         li.find('.icon:first').append(app.util.getIcon(task.registrant, 32));
@@ -1768,14 +1775,16 @@ app.setup.rightColumn = function(ele){
 
     c.addListener('missingTask', function(){
         ul.empty();
-        button.attr('disabled', true);
+        textarea.val('');
+        textarea.attr('disabled', true);
         list_name.text('-');
         task_name.text('-');
     });
 
     c.addListener('reset', function(){
         ul.empty();
-        button.attr('disabled', true);
+        textarea.val('');
+        textarea.attr('disabled', true);
         list_name.text('-');
         task_name.text('-');
     });
