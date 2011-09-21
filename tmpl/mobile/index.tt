@@ -1,0 +1,30 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>7kai Tasks</title> 
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css" />
+<link rel="stylesheet" href="/static/css/mobile.css" />
+<script src="http://code.jquery.com/jquery-1.6.3.min.js"></script>
+<script src="/static/js/core.js"></script>
+<script src="/static/js/app-mobile-signin.js"></script>
+<script src="http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.js"></script>
+</head> 
+<body> 
+  <div data-role="page" id="signin">
+  	<div data-role="header">
+  		<h1>7kai Tasks</h1>
+  	</div>
+  	<div data-role="content" class="ui-content">	
+  		<div class="content-primary">
+      	<form method="post" action="/signin/twitter/signin">
+          <div><button class="btn large primary">Connect with Twitter</button></div>
+        </form>
+        <form method="post" action="/signin/facebook/signin">
+          <div><button class="btn large primary">Connect with Facebook</button></div>
+        </form>
+      </div>
+  	</div>
+  </div>
+</body>
+</html>

@@ -30,6 +30,9 @@ var app = ns.app = {
     
     // API Call
     api: {
+        account: {},
+        task: {},
+        twitter: {}
         
     },
 
@@ -60,6 +63,10 @@ var app = ns.app = {
     },
     
     sortable: {
+        
+    },
+
+    queue: {
         
     }
 };
@@ -97,16 +104,36 @@ app.ajax = function(option){
         option.data[c.CSRF_TOKEN_NAME] = c.csrf_token;
         option.data["request_time"] = (new Date()).getTime();
     }
+    if (app.option.show_loading) {
+        if (!app.data.loading) {
+            app.data.loading = $('<div id="loading"></div>');
+            app.data.loading.appendTo($('body'));
+            var spinner = new Spinner({
+                color: '#fff'
+            }).spin(app.data.loading.get(0));
+            app.data.loading.data().spinner = spinner;
+        } else {
+            app.data.loading.data().spinner.spin(app.data.loading.get(0));
+        }
+        app.data.loading.show();
+    }
     return $.ajax(option)
     .fail(function(jqXHR, textStatus, errorThrown){
+        console.log(jqXHR.status);
+        console.log(errorThrown);
+        console.log(textStatus);
         console.log({
             status: jqXHR.status,
             thrown: errorThrown,
             textStatus: textStatus
         });
 
+        if (!jqXHR.status) {
+            c.fireEvent('alert', 0);
+        }
+
         // Unauthorized
-        if (jqXHR.status === 401) {
+        else if (jqXHR.status === 401) {
             c.fireEvent('alert', jqXHR.status);
             setTimeout(function(){
                 location.reload();
@@ -116,12 +143,56 @@ app.ajax = function(option){
         // Collision
         else if (jqXHR.status === 403 || jqXHR.status === 404) {
             c.fireEvent('alert', jqXHR.status);
-            c.fireEvent('resetup');
+            setTimeout(function(){
+                c.fireEvent('resetup');
+            }, 3000);
         }
 
         // Internal Server Error
         else if (jqXHR.status >= 500) {
-            c.fireEvnet('alert', jqXHR.status);
+            c.fireEvent('alert', jqXHR.status);
+        }
+    })
+    .always(function(){
+        if (app.option.show_loading) {
+            app.data.loading.data().spinner.stop();
+            app.data.loading.hide();
+        }
+    });
+}
+
+app.queue.push = function(queue){
+    var queues = app.queue.load() || [];
+    localStorage.setItem('queues', JSON.stringify(queues.push(queue)));
+}
+app.queue.load = function(){
+    var queues = localStorage.getItem('queues');
+    if (queues) {
+        return JSON.parse(queues);
+    } else {
+        return null;
+    }
+}
+app.queue.clear = function(){
+    localStorage.removeItem('queues');
+}
+app.util.salvage = function(){
+    var queues = app.queue.load();
+    if (!queues) {
+        return;
+    }
+    
+    return app.ajax({
+        url: '/api/1/account/salvage',
+        type: 'post',
+        data: JSON.stringify(queues),
+        dataType: 'json'
+    })
+    .done(function(data){
+        if (data.success === 1) {
+            app.queue.clear();
+            app.dom.show($('#notice-succeeded-salvage'));
+            c.fireEvent('resetup');
         }
     });
 }

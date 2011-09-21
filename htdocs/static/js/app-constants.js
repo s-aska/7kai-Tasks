@@ -20,8 +20,10 @@ ns.app.option = {
     },
     
     // フレンド再取得するまでの期間
-    friends_reload_threshold: 24 * 60 * 60 * 1000
+    friends_reload_threshold: 24 * 60 * 60 * 1000,
     
+    auto_sync_friends: true,
+    show_loading: false
     
 };
 

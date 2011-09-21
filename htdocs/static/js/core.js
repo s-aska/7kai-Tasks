@@ -44,7 +44,7 @@ var c = ns.c = {
 
 // Method
 c.init = function(){
-    c.lang = navigator.language === 'ja' ? 'ja' : 'en';
+    c.lang = /^ja/.test(navigator.language) ? 'ja' : 'en';
     if (location.search.indexOf('lang=en') !== -1) {
         c.lang = 'en';
     }

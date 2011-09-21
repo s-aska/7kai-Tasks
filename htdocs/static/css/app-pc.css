@@ -1,0 +1,223 @@
+/********** parts **********/
+div.alert {
+    display: none;
+    position: absolute;
+    width: 360px;
+    bottom: 0px;
+    right: 20px;
+}
+
+/********** redefine **********/
+html, body {
+    overflow: hidden;
+}
+a, button, label {
+    cursor: pointer;
+}
+h4, h5 {
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+/********** layout **********/
+.focused {
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 1.2);
+}
+
+/********** topbar **********/
+body > .topbar ul li a.profile-name .profile-icon {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+}
+body > .topbar ul li a.profile-name {
+    display: block;
+    padding-left: 42px;
+}
+
+/********** row, columns **********/
+body > .row {
+    width: 1060px;
+    margin: 60px auto 0 auto;
+}
+body > .row > .columns {
+    position: relative;
+    background-color: #eeeeee;
+}
+body > .row > .columns:first-child {
+    margin-left: 0;
+}
+body > .row > .columns .topbar {
+    position: relative;
+    z-index: 1;
+}
+body > .row > .columns .topbar .container {
+    width: auto;
+}
+body > .row > .columns > .container {
+    padding: 10px;
+    width: auto;
+}
+body > .row > .columns > .container > h2 {
+    margin-bottom: 6px;
+    font-size: 14px;
+    line-height: 14px;
+}
+body > .row > .columns > .container > ul,
+body > .row > .columns > .container > dl {
+    margin-bottom: 8px;
+}
+body > .row > .columns > .container ul.members li {
+    padding: 2px 0;
+}
+body > .row > .columns > .container ul.members li img {
+    padding-right: 6px;
+    vertical-align: middle;
+}
+
+/********** leftColumn **********/
+.leftColumn a.active {
+    color: #0050A3;
+    text-decoration: underline !important;
+}
+
+/********** centerColumn **********/
+ul.tasks li {
+    margin-bottom: 0;
+    padding: 4px;
+    cursor: pointer;
+}
+ul.tasks li.closed {
+    background-color: #CCC;
+}
+ul.tasks li:hover {
+    background-color: #fefecc;
+}
+ul.tasks li.selected {
+    background-color: #fefecc;
+}
+ul.tasks li.closed.selected {
+    background-color: #E0E0B1;
+}
+ul.tasks li div {
+    float: left;
+}
+ul.tasks li div.human {
+    height: 16px;
+}
+ul.tasks li div.human span {
+    display: inline-block;
+}
+ul.tasks li div.name {
+    margin-left: 4px;
+    color: #666;
+    word-wrap: break-word;
+}
+ul.tasks li div.due {
+    float: right;
+    margin-right: 4px;
+}
+ul.tasks li div.delete {
+    float: right;
+}
+ul.tasks li div.recent-comment {
+    position: relative;
+    clear: both;
+    margin-left: 48px;
+    font-size: 11px;
+    color: gray;
+}
+ul.tasks li div.recent-comment .icon {
+    position: absolute;
+}
+ul.tasks li div.recent-comment .message {
+    margin-left: 20px;
+}
+
+/********** rightColumn **********/
+ul.comments {
+    overflow-y: auto;
+    padding-right: 10px;
+}
+ul.comments li {
+    margin-bottom: 4px;
+}
+ul.comments li:last-child {
+    margin-bottom: 0;
+}
+ul.comments li .icon-cross {
+    cursor: pointer;
+}
+ul.comments li span.message {
+    color: #333;
+    font-size: 11px;
+    word-wrap: break-word;
+}
+ul.comments li span.name {
+    display: inline-block;
+    padding-left: 4px;
+    color: #333;
+    font-size: 10px;
+}
+ul.comments li .date {
+    font-size: 10px;
+}
+
+/********** window **********/
+#register-list-window .member {
+    display: none;
+}
+#register-list-window ul.members li {
+    margin-bottom: 0;
+    padding: 4px 4px 2px 4px;
+    cursor: pointer;
+}
+#register-list-window ul.members li:hover {
+    background-color: #fefed6;
+}
+#register-list-window ul.members li div {
+    float: left;
+}
+#register-list-window ul.members li div.name {
+    float: left;
+    padding-left: 4px;
+}
+#register-list-window ul.members li div.icon-cross {
+    float: right;
+}
+#register-list-window .description {
+    width: 220px;
+    height: 210px;
+    margin-left: 20px;
+    padding-left: 10px;
+    border-left: 1px solid gray;
+}
+
+/********** scrollbar **********/
+ul::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    padding: 18px;
+    -webkit-border-radius: 1ex
+}
+ul::-webkit-scrollbar-thumb {
+    background-color: rgba(053,057,071,0.3);
+    padding: 8px;
+    width: 6px;
+    height: 6px;
+    -webkit-border-radius: 1ex;
+}
+ul::-webkit-scrollbar-button:start:decrement,
+ul::-webkit-scrollbar-button:end:increment {
+    display: none;
+    /*height: 10px;*/
+}
+ul::-webkit-scrollbar-thumb:vertical,
+ul::-webkit-scrollbar-thumb:horizontal {
+    height: 3px;
+    width: 3px;
+    margin: 3px;
+}

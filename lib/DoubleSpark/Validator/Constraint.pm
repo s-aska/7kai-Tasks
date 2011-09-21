@@ -1,4 +1,4 @@
-package DoubleSpark::Web::FormValidator::Lite::Constraint;
+package DoubleSpark::Validator::Constraint;
 use Amon2;
 use Email::Valid::Loose;
 use FormValidator::Lite::Constraint;

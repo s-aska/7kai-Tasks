@@ -1,0 +1,154 @@
+/*****************************************************
+1. icon
+2. parts
+3. redefine
+*****************************************************/
+
+/********** icon **********/
+.icon {
+    width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+}
+span.icon {
+    display: inline-block;
+}
+.icon-with {
+    background-repeat: no-repeat;
+}
+.icon-create-task {
+    background-image: url(/static/img/create-task.png);
+}
+.icon-plus {
+    background-image: url(/static/img/plus.png);
+}
+.icon-plus-1-m {
+    background-image: url(/static/img/plus-1-m.png);
+}
+.icon-minus {
+    background-image: url(/static/img/minus.png);
+}
+.icon-cross {
+    background-image: url(/static/img/cross.png);
+}
+.icon-equal {
+    background-image: url(/static/img/equal.png);
+}
+.icon-up {
+    background-image: url(/static/img/up.png);
+}
+.icon-down {
+    background-image: url(/static/img/down.png);
+}
+.icon-right {
+    background-image: url(/static/img/right.png);
+}
+.icon-left {
+    background-image: url(/static/img/left.png);
+}
+.icon-star {
+    background-image: url(/static/img/star.png);
+}
+.icon-star-off {
+    background-image: url(/static/img/star_off.png);
+}
+.icon-tasks {
+    background-image: url(/static/img/tasks.png);
+}
+.icon-tasks-half {
+    background-image: url(/static/img/tasks_half.png);
+}
+.icon-tasks-off {
+    background-image: url(/static/img/tasks_off.png);
+}
+.icon-trash {
+    background-image: url(/static/img/trash.png);
+}
+.icon-pulldown {
+    background-image: url(/static/img/pulldown.png);
+}
+.icon-settings {
+    background-image: url(/static/img/settings.png);
+}
+.icon-grip {
+    background-image: url(/static/img/grip.png);
+}
+.icon-address {
+    background-image: url(/static/img/address.png);
+}
+.icon-address-off {
+    background-image: url(/static/img/address_off.png);
+}
+.icon-edit {
+    background-image: url(/static/img/edit.png);
+}
+.icon-calendar {
+    background-image: url(/static/img/calendar.png);
+}
+.icon-openhand {
+    background-image: url(/static/img/openhand.png);
+}
+.icon-refresh {
+    background-image: url(/static/img/refresh.png);
+}
+.icon-email {
+    background-image: url(/static/img/email.png);
+}
+.icon-email24 {
+    width: 24px;
+    height: 24px;
+    background-image: url(/static/img/email24.png);
+}
+
+/********** parts **********/
+.clearfix {
+    zoom: 1;
+}
+.clearfix:before,
+.clearfix:after {
+    display:table;
+    content:"";
+}
+.clearfix:after {
+    clear:both;
+}
+.sq16 {
+    width: 16px;
+    height: 16px;
+}
+.sq24 {
+    width: 24px;
+    height: 24px;
+}
+.sq32 {
+    width: 32px;
+    height: 32px;
+}
+.left {
+    float: left;
+}
+
+/********** redefine **********/
+form {
+    padding: 0 !important;
+}
+.modal {
+    display: none;
+}
+.row {
+    margin-left: 0;
+}
+
+/********** register-task-window **********/
+#register-task-window ul.assign li {
+    margin-bottom: 4px;
+}
+#register-task-window ul.assign li > label > div {
+    float: left;
+}
+#register-task-window ul.assign li > label > div.icon {
+    padding-left: 4px;
+}
+#register-task-window ul.assign li > label > div.name {
+    padding-left: 4px;
+}

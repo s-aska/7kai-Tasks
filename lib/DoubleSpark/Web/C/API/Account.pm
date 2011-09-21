@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use JSON::XS;
 use Log::Minimal;
-use Time::HiRes;
 
 sub me {
     my ($class, $c) = @_;
@@ -75,80 +74,39 @@ sub me {
     });
 }
 
-sub update {
+sub salvage {
     my ($class, $c) = @_;
 
     my $account = $c->account;
-    my $method  = $c->req->param('method') || 'set';
-    my $type    = $c->req->param('type') || 'string';
-    my $ns      = $c->req->param('ns');
-    my $key     = $c->req->param('key');
-    my $val     = $c->req->param('val');
-
-    if ($type eq 'json') {
-        $val = decode_json($val);
-    }
-
-    my $data = $account->data;
-    for (split /\./, $ns) {
-        unless (exists $data->{$_}) {
-            $data->{$_} = {};
-        }
-        $data = $data->{$_};
-    }
-    if ($method eq 'set') {
-        $data->{$key} = $val=~/^\d+$/ ? int($val) : $val;
-    } elsif ($method eq '+') {
-        $data->{$key}->{$val}++;
-    } elsif ($method eq '-') {
-        delete $data->{$key}->{$val};
-    }
-    $account->update({
-        data => $account->data,
-        modified_on => int(Time::HiRes::time * 1000),
-        updated_on => \'now()'
-    });
-
+    
     $c->render_json({
-        success => 1,
-        account => $account->data
+        success => 1
     });
+}
+
+sub update {
+    my ($class, $c) = @_;
+
+    my $res = DoubleSpark::API::Account->update($c, $c->req);
+    
+    return $c->res_403() unless $res;
+    
+    $c->render_json($res);
 }
 
 sub delete {
     my ($class, $c) = @_;
     
-    my $res = $c->validate(
-        code => [qw/NOT_NULL OWNER/]
-    );
+    my $res = DoubleSpark::API::Account->delete($c, $c->req);
+    
     return $c->res_403() unless $res;
     
-    my $code = $c->req->param('code');
-    
-    my $sub_account = $code=~/^tw-\d+$/ ? $c->db->single('tw_account', { code => $code })
-                    : $code=~/^fb-\d+$/ ? $c->db->single('fb_account', { code => $code })
-                    : $c->db->single('email_account', { code => $code });
-
-    return $c->res_404() unless $sub_account;
-    
-    for ($c->db->search('list', { code => $code })->all) {
-        infof("[%s] delete list %s", $c->sign_name, $_->data->{name});
-        $_->delete;
-    }
-    infof("[%s] delete sub_account %s", $c->sign_name, $code);
-    $sub_account->delete;
-    
-    if ($code eq $c->sign_code) {
+    if ($c->req->param('code') eq $c->sign_code) {
         $c->session->remove('sign');
-        return $c->render_json({
-            success => 1,
-            signout => 1
-        });
+        $res->{signout}++;
     }
     
-    $c->render_json({
-        success => 1
-    });
+    $c->render_json($res);
 }
 
 1;

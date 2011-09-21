@@ -80,35 +80,35 @@ sub facebook {
     return $c->{facebook};
 }
 
-sub create_account {
-    my ($c, $code, $name, $icon) = @_;
-    
-    my $account = $c->db->insert('account', {
-        data       => $c->config->{Skeleton}->{Account},
-        created_on => \'now()',
-        updated_on => \'now()'
-    });
-    $c->db->insert('list', {
-        code       => $code,
-        data       => {
-            name     => "${name}'s list",
-            original => 1,
-            owner    => $code,
-            members  => [],
-            users    => [
-                {
-                    icon => $icon,
-                    code => $code,
-                    name => $name
-                }
-            ],
-            tasks    => []
-        },
-        actioned_on => int(Time::HiRes::time * 1000),
-        created_on => \'now()',
-        updated_on => \'now()'
-    });
-    return $account;
-}
+# sub create_account {
+#     my ($c, $code, $name, $icon) = @_;
+#     
+#     my $account = $c->db->insert('account', {
+#         data       => $c->config->{Skeleton}->{Account},
+#         created_on => \'now()',
+#         updated_on => \'now()'
+#     });
+#     $c->db->insert('list', {
+#         code       => $code,
+#         data       => {
+#             name     => "${name}'s list",
+#             original => 1,
+#             owner    => $code,
+#             members  => [],
+#             users    => [
+#                 {
+#                     icon => $icon,
+#                     code => $code,
+#                     name => $name
+#                 }
+#             ],
+#             tasks    => []
+#         },
+#         actioned_on => int(Time::HiRes::time * 1000),
+#         created_on => \'now()',
+#         updated_on => \'now()'
+#     });
+#     return $account;
+# }
 
 1;

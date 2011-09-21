@@ -1,0 +1,225 @@
+body {
+    -webkit-text-size-adjust: none;
+}
+textarea {
+    font-size: 18px;
+}
+.container {
+    width: 100%;
+}
+a.icon {
+    display: inline-block;
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 16px;
+    width: 16px;
+    margin-bottom: -4px;
+}
+form.modal {
+    width: 300px;
+    margin-left: -150px;
+}
+/* ▾ */
+.gbma {
+    position: relative;
+    top: -1px;
+    border-style: solid dashed dashed;
+    border-color: transparent;
+    border-top-color: #404040;
+    display: -moz-inline-box;
+    display: inline-block;
+    font-size: 0;
+    height: 0;
+    line-height: 0;
+    width: 0;
+    border-width: 3px 3px 0;
+    padding-top: 1px;
+    left: 0;
+}
+#loading {
+    display: none;
+    position: absolute;
+    color: white;
+    background-color: #333;
+    width: 80px;
+    height: 80px;
+    margin-top: -80px;
+    margin-left: -80px;
+    padding-top: 80px;
+    padding-left: 80px;
+    top: 50%;
+    left: 50%;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    z-index: 10009;
+}
+#alert {
+    width: 300px;
+    margin-left: -150px;
+}
+
+/********** wrapper **********/
+#wrapper {
+    position:relative;
+	z-index:1;
+	width:100% ;
+	overflow:hidden;
+}
+
+/********** topbar **********/
+body > .topbar ul li a.profile-name .profile-icon {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+}
+body > .topbar ul li a.profile-name {
+    display: block;
+    padding-left: 42px;
+}
+
+/********** bottombar **********/
+#footer {
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    z-index: 10002;
+    font-size: 12px;
+}
+#footer ul.nav {
+    width: 100%;
+}
+#footer ul.nav li {
+    position: relative;
+    text-align: center;
+}
+#footer ul.nav li a {
+    padding-top: 2px;
+    padding-bottom: 20px;
+}
+
+.badge {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1;
+    padding: .2em .5em;
+    margin-left: -.9em;
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    -webkit-border-radius: 1em;
+    border-radius: 1em;
+    font-family: Helvetica,Arial,sans-serif;
+    text-decoration: none;
+    border: 1px solid #CCC;
+    background: #EEE;
+    font-weight: bold;
+    color: #444;
+    text-shadow: 0 1px 1px #F6F6F6;
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#fdfdfd),to(#eee));
+    background-image: -webkit-linear-gradient(top,#fdfdfd,#eee);
+    background-image: -moz-linear-gradient(top,#fdfdfd,#eee);
+    background-image: -ms-linear-gradient(top,#fdfdfd,#eee);
+    background-image: -o-linear-gradient(top,#fdfdfd,#eee);
+    background-image: linear-gradient(top,#fdfdfd,#eee);
+}
+
+
+
+/********** container **********/
+body > div.container {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+body > div.container div.page {
+    padding: 10px;
+}
+ul.tasks li {
+    margin-bottom: 0;
+    padding: 4px;
+    cursor: pointer;
+}
+ul.tasks li.closed {
+    background-color: #CCC;
+}
+ul.tasks li:hover {
+    background-color: #fefecc;
+}
+ul.tasks li.selected {
+    background-color: #fefecc;
+}
+ul.tasks li.closed.selected {
+    background-color: #E0E0B1;
+}
+ul.tasks li div {
+    float: left;
+}
+ul.tasks li div.human {
+    height: 16px;
+}
+ul.tasks li div.human span {
+    display: inline-block;
+}
+ul.tasks li div.name {
+    margin-left: 4px;
+    color: #666;
+    word-wrap: break-word;
+}
+ul.tasks li div.due {
+    float: right;
+    margin-right: 4px;
+}
+ul.tasks li div.delete {
+    float: right;
+}
+ul.tasks li div.recent-comment {
+    position: relative;
+    clear: both;
+    margin-left: 32px;
+    font-size: 11px;
+    color: gray;
+}
+ul.tasks li div.recent-comment .icon {
+    position: absolute;
+}
+ul.tasks li div.recent-comment .message {
+    margin-left: 20px;
+}
+ul.comments {
+    overflow-y: auto;
+    padding-right: 10px;
+}
+ul.comments li {
+    margin-bottom: 4px;
+}
+ul.comments li:last-child {
+    margin-bottom: 0;
+}
+ul.comments li .icon-cross {
+    cursor: pointer;
+}
+ul.comments li span.message {
+    color: #333;
+    font-size: 11px;
+    word-wrap: break-word;
+}
+ul.comments li span.name {
+    display: inline-block;
+    padding-left: 4px;
+    color: #333;
+    font-size: 10px;
+}
+ul.comments li .date {
+    font-size: 10px;
+}
+
+/********** register-task-window **********/
+
+
+
+
+

@@ -1,6 +1,7 @@
 package DoubleSpark::Web::C::Signin::Facebook;
 use strict;
 use warnings;
+use DoubleSpark::API::Account;
 use Log::Minimal;
 
 sub signin {
@@ -99,7 +100,7 @@ sub callback {
 
             # 新規作成
             else {
-                $account = $c->create_account($code, $name, $icon);
+                $account = DoubleSpark::API::Account->create($c, $code, $name, $icon);
                 infof('new fb_account aid:%s fb:%s', $account->account_id, $name);
                 $c->session->set('notice', 'fb_account_create');
             }

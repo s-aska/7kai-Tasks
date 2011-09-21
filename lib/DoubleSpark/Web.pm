@@ -3,7 +3,9 @@ use strict;
 use warnings;
 use parent qw/DoubleSpark Amon2::Web/;
 use File::Spec;
-use FormValidator::Lite;
+# use FormValidator::Lite;
+use DoubleSpark::Validator;
+use DoubleSpark::Validator::Query;
 use Log::Minimal;
 
 # load all controller classes
@@ -126,20 +128,7 @@ sub account {
 
 sub validate {
     my ($c, @rule) = @_;
-    my $validator = FormValidator::Lite->new($c->req);
-    $validator->load_constraints(qw/Email/);
-    $validator->load_constraints('+DoubleSpark::Web::FormValidator::Lite::Constraint');
-    $validator->check(@rule);
-    if ($validator->has_error) {
-        # ATTACK
-        warnf('[%s] validate error...', $c->sign_name);
-        for my $key (keys %{ $validator->errors }) {
-            my $rules = join ' and ', keys %{ $validator->errors->{ $key } };
-            warnf('[%s] validate error %s incorrect %s', $c->sign_name, $key, $rules);
-        }
-        return;
-    }
-    return 1;
+    DoubleSpark::Validator->validate($c, $c->req, @rule);
 }
 
 sub stash {

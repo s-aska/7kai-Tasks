@@ -1,8 +1,9 @@
 package DoubleSpark::Web::C::Signin::Twitter;
 use strict;
 use warnings;
-use Log::Minimal;
+use DoubleSpark::API::Account;
 use JSON::XS;
+use Log::Minimal;
 
 sub signin {
     my ($class, $c) = @_;
@@ -106,7 +107,8 @@ sub callback {
 
             # 新規作成
             else {
-                $account = $c->create_account($code, $screen_name, $icon);
+                $account = DoubleSpark::API::Account->create($c, $code, $screen_name, $icon);
+                
                 infof('new tw_account aid:%s tw:%s', $account->account_id, $screen_name);
                 $c->session->set('notice', 'tw_account_create');
             }

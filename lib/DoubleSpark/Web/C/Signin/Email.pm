@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Crypt::SaltedHash;
 use Digest::SHA1;
+use DoubleSpark::API::Account;
 use Email::Sender::Simple qw(sendmail);
 use Email::Simple;
 use Email::Simple::Creator;
@@ -90,7 +91,7 @@ sub verify {
             icon       => 'email'
         });
     } else {
-        my $account = $c->create_account($email, $local_part);
+        my $account = DoubleSpark::API::Account->create($c, $email, $local_part);
         infof('new email_account aid:%s email:%s', $account->account_id, $email);
         $c->db->insert('email_account', {
             account_id          => $account->account_id,
