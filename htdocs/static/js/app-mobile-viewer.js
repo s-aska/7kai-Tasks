@@ -560,6 +560,10 @@ app.submit.registerTask = function(form){
     var registrant = form.find('input[name="registrant"]').val();
     var name = form.find('input[name="name"]').val();
     var due = form.find('input[name="due"]').datepicker("getDate");
+    if (!name.length) {
+        alert('please input task title.');
+        return false;
+    }
     if (due) {
         due = c.date.mdy(due);
     }
@@ -569,7 +573,7 @@ app.submit.registerTask = function(form){
     var list = app.data.list_map[list_id];
     if (!list) {
         alert('unknown list ' + list_id);
-        return;
+        return false;
     }
     var api = task_id ? 'task.update' : 'task.create';
     var url = task_id ? '/api/1/task/update' : '/api/1/task/create';

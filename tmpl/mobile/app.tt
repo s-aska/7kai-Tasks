@@ -171,13 +171,13 @@
           data-setup="localize"
           data-text-ja="登録"
         >Register</button>
-        <button
+        <a
           class="btn secondary"
           data-setup="localize,tabMenu"
           data-text-ja="戻る"
           data-tab-id="tasks"
           data-tab-group="main"
-        >Back</button>
+        >Back</a>
       </div>
     </form>
     <div
@@ -211,13 +211,13 @@
             data-setup="localize"
             data-text-ja="コメント"
           >Comment</button>
-          <button
+          <a
             class="btn secondary"
             data-setup="localize,tabMenu"
             data-text-ja="戻る"
             data-tab-id="tasks"
             data-tab-group="main"
-          >Back</button>
+          >Back</a>
         </div>
       </form>
       <ul
