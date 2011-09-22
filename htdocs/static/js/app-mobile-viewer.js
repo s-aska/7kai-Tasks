@@ -64,6 +64,10 @@ app.setup.tasks = function(ul){
     c.addListener('registerTask', function(task){
         var li = $(template);
         
+        if (task.salvage) {
+            li.addClass('salvage');
+        }
+        
         // closed
         (function(){
             var ele = li.find('.delete');
@@ -82,6 +86,9 @@ app.setup.tasks = function(ul){
                     closed: (task.closed ? 0 : 1)
                 });
             });
+            if (task.salvage) {
+                ele.hide();
+            }
         })();
 
         // status
@@ -540,7 +547,80 @@ app.setup.registerTaskWindow = function(form){
 
     });
 }
-
+app.submit.registerTask = function(form){
+    var task_id = form.find('input[name="task_id"]').val();
+    var list_id = form.find('input[name="list_id"]').val();
+    var assign = form.find('input[name="assign"]').map(function(){return $(this).val()}).get();
+    var requester = form.find('select[name="requester"]').val();
+    var registrant = form.find('input[name="registrant"]').val();
+    var name = form.find('input[name="name"]').val();
+    var due = form.find('input[name="due"]').datepicker("getDate");
+    if (due) {
+        due = c.date.mdy(due);
+    }
+    if (typeof assign !== 'object') {
+        assign = assign ? [assign] : [];
+    }
+    var list = app.data.list_map[list_id];
+    if (!list) {
+        alert('unknown list ' + list_id);
+        return;
+    }
+    var api = task_id ? 'task.update' : 'task.create';
+    var url = task_id ? '/api/1/task/update' : '/api/1/task/create';
+    app.ajax({
+        type: 'POST',
+        url: url,
+        data: form.serialize(),
+        dataType: 'json',
+        salvage: true
+    })
+    .done(function(data){
+        if (data.success === 1) {
+            c.fireEvent('registerTask', data.task, list);
+            c.fireEvent('selectTab', 'main', 'tasks');
+            app.data.current_task = null;
+            app.dom.reset(form);
+            if (task_id) {
+                app.dom.hide(form);
+            } else {
+                // app.dom.show($('#create-task-twipsy'));
+            }
+        } else {
+            // 現在 ステータスコード 200 の例外ケースは無い
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        if (!jqXHR.status) {
+            app.queue.push({
+                api: api,
+                req: form.serializeArray()
+            });
+            app.dom.reset(form);
+            var time = (new Date()).getTime();
+            var task = {
+                id: list.id + ':' + (task_id || time),
+                requester: requester,
+                registrant: registrant,
+                assign: assign,
+                name: name,
+                due: due,
+                status: 0,
+                closed: 0,
+                comments: [],
+                history: [],
+                created_on: time,
+                updated_on: time,
+                salvage: true
+            };
+            list.tasks.push(task);
+            c.fireEvent('registerTask', task, list);
+            c.fireEvent('selectTab', 'main', 'tasks');
+            app.data.current_task = null;
+            document.activeElement.blur();
+        }
+    });
+}
 app.setup.comments = function(ele){
     c.addListener('openTask', function(){
         c.fireEvent('selectTab', 'main', 'comments');

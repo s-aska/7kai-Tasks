@@ -102,6 +102,9 @@ ul.tasks li.selected {
 ul.tasks li.closed.selected {
     background-color: #E0E0B1;
 }
+ul.tasks li.salvage {
+    background-color: #ffe0e0;
+}
 ul.tasks li div {
     float: left;
 }

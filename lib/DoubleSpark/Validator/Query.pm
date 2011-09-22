@@ -9,7 +9,14 @@ sub new {
         my %params;
         for (@{ $params }) {
             next if ref $_ ne 'HASH';
-            $params{ $_->{name} } = $_->{value};
+            if (exists $params{ $_->{name} }) {
+                unless (ref $params{ $_->{name} }) {
+                    $params{ $_->{name} } = [ $params{ $_->{name} } ];
+                }
+                push @{ $params{ $_->{name} } }, $_->{value};
+            } else {
+                $params{ $_->{name} } = $_->{value};
+            }
         }
         $params = \%params;
     }

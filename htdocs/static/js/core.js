@@ -138,6 +138,9 @@ c.date.relative = function(epoch){
 c.date.ymd = function(date){
     return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
 }
+c.date.mdy = function(date){
+    return (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+}
 c.dom.text = function(ele, key){
     if (key) {
         return ele.data('text-' + key + '-' + c.lang);

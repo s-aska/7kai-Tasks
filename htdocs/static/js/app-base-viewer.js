@@ -681,6 +681,7 @@ app.setup.rightColumn = function(ele){
             li.find('.name').text(app.util.getName(comment.code));
             if (comment.salvage) {
                 li.addClass('salvage');
+                li.find('.icon:last').remove();
             }
             if (comment.action) {
                 li.find('.message').text(app.data.messages.data('text-' + comment.action + '-' + c.lang));
