@@ -546,17 +546,6 @@ app.setup.comments = function(ele){
         c.fireEvent('selectTab', 'main', 'comments');
     });
 }
-    
-    
-    
-    
-    
-
-
-
-
-
-
 
 // ----------------------------------------------------------------------
 

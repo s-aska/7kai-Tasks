@@ -127,6 +127,9 @@ span.icon {
 .left {
     float: left;
 }
+.salvage {
+    background-color: #ffe0e0;
+}
 
 /********** redefine **********/
 form {

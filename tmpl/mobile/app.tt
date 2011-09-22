@@ -321,75 +321,7 @@
   </div>
 </div>
 
-<div
-  id="alert"
-  class="modal"
-  style="display: none;"
-  data-setup="alert"
-  data-show-effect="fade"
-  data-hide-effect="fade"
->
-  <div class="modal-header">
-    <h3>Error</h3>
-    <a
-      class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="alert">×</a>
-  </div>
-  <div class="modal-body">
-    <p
-      data-text-error-0-en="Is not connected to the Internet."
-      data-text-error-0-ja="インターネットに接続されていません。"
-      data-text-error-401-en="Unauthorized, reload soon..."
-      data-text-error-401-ja="認証状態が切れました、再認証して下さい。"
-      data-text-error-403-en="Your Action Forbidden, auto refresh done."
-      data-text-error-403-ja="許可されていない操作を実行しようとしました。"
-      data-text-error-404-en="Not Found, auto refresh done."
-      data-text-error-404-ja="対象が見つかりませんでした。"
-      data-text-error-500-en="Internal Server Error, Please wait a little..."
-      data-text-error-500-ja="障害が発生しています、しばらくして再度操作して下さい。"
-    ></p>
-  </div>
-  <div class="modal-footer">
-    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="alert">Close</a>
-  </div>
-</div>
-
-<div style="display: none;">
-<form id="add-twitter" method="post" action="/signin/twitter/signin">
-  <input type="hidden" name="mode" value="add">
-</form>
-<form id="add-facebook" method="post" action="/signin/facebook/signin">
-  <input type="hidden" name="mode" value="add">
-</form>
-<div
-  data-setup="messages"
-
-  data-text-create-task-en="create the task"
-  data-text-create-task-ja="タスクを作成"
-  data-text-update-task-en="update the task"
-  data-text-update-task-ja="タスクを更新"
-  data-text-clear-task-en="clear the task"
-  data-text-clear-task-ja="完了済タスクを削除"
-
-  data-text-reopen-task-en="update (fix => open) the task"
-  data-text-reopen-task-ja="タスクを更新 (処理済 => 未着手)"
-  data-text-start-task-en="start the task"
-  data-text-start-task-ja="タスクに着手"
-  data-text-fix-task-en="fix the task"
-  data-text-fix-task-ja="タスクを処理"
-  data-text-close-task-en="close the task"
-  data-text-close-task-ja="タスクを完了"
-
-  data-text-rereopen-task-en="update (close => open) the task"
-  data-text-rereopen-task-ja="タスクを更新 (完了 => 未着手)"
-  data-text-restart-task-en="update (close => start) the task"
-  data-text-restart-task-ja="タスクを更新 (処理済 => 着手)"
-  data-text-refix-task-en="update (close => fix) the task"
-  data-text-refix-task-ja="タスクを更新 (完了 => 処理済)"
-></div>
-</div>
+[% INCLUDE "include/messages.tt" %]
 
 </body>
 </html>

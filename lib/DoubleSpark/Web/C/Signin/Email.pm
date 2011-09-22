@@ -4,6 +4,7 @@ use warnings;
 use Crypt::SaltedHash;
 use Digest::SHA1;
 use DoubleSpark::API::Account;
+use DoubleSpark::Validator;
 use Email::Sender::Simple qw(sendmail);
 use Email::Simple;
 use Email::Simple::Creator;
@@ -13,7 +14,7 @@ use Time::HiRes;
 sub signup {
     my ($class, $c) = @_;
 
-    my $res = $c->validate(
+    my $res = DoubleSpark::Validator->validate($c, $c->req,
         email    => [qw/NOT_NULL EMAIL_LOOSE/],
         password => [qw/NOT_NULL/, [qw/LENGTH 8 128/]]
     );

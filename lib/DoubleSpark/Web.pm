@@ -126,11 +126,6 @@ sub account {
     $c->{account};
 }
 
-sub validate {
-    my ($c, @rule) = @_;
-    DoubleSpark::Validator->validate($c, $c->req, @rule);
-}
-
 sub stash {
     my $c = shift;
     $c->{stash} ||= {};

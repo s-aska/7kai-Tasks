@@ -1398,12 +1398,5 @@
 
 [% INCLUDE "include/messages.tt" %]
 
-<div
-  id="receiver"
-  style="display: none;"
-  data-setup="receiver"></div>
-
-</div>
-
 </body>
 </html>

@@ -1,6 +1,12 @@
 package DoubleSpark::Web::C::API::Account;
 use strict;
 use warnings;
+use DoubleSpark::API::Account;
+use DoubleSpark::API::Comment;
+use DoubleSpark::API::List;
+use DoubleSpark::API::Task;
+use DoubleSpark::Validator::Query;
+use Encode;
 use JSON::XS;
 use Log::Minimal;
 
@@ -78,6 +84,32 @@ sub salvage {
     my ($class, $c) = @_;
 
     my $account = $c->account;
+    
+    my $routes = {
+        'account.update' => 'DoubleSpark::API::Account#update',
+        'task.create'    => 'DoubleSpark::API::Task#create',
+        'task.update'    => 'DoubleSpark::API::Task#update',
+        'comment.create' => 'DoubleSpark::API::Comment#create',
+        'comment.delete' => 'DoubleSpark::API::Comment#delete'
+    };
+    
+    warn $c->req->param('queues');
+    my $queues = decode_json(encode_utf8($c->req->param('queues')));
+    for my $queue (@{ $queues }) {
+        next if ref $queue ne 'HASH';
+        my $match = $routes->{ $queue->{api} };
+        unless ($match) {
+            critf('[%s] uknown api %s', $c->sign_name, $queue->{api});
+            next;
+        }
+        my ($api, $method) = split '#', $match;
+        my $req = DoubleSpark::Validator::Query->new($queue->{req});
+        if ($api->$method($c, $req)) {
+            infof('[%s] salvage success %s', $c->sign_name, $match);
+        } else {
+            warnf('[%s] salvage skip %s', $c->sign_name, $match);
+        }
+    }
     
     $c->render_json({
         success => 1

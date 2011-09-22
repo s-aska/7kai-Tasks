@@ -16,8 +16,10 @@
   </div>
   <div class="modal-body">
     <p
-      data-text-error-0-en="Is not connected to the Internet."
-      data-text-error-0-ja="インターネットに接続されていません。"
+      data-text-error-offline-queue-en="Will be reflected when the Internet connection."
+      data-text-error-offline-queue-ja="インターネット接続時に反映されます。"
+      data-text-error-offline-en="Is not connected to the Internet."
+      data-text-error-offline-ja="インターネットに接続されていません。"
       data-text-error-401-en="Unauthorized, reload soon..."
       data-text-error-401-ja="認証状態が切れました、再認証して下さい。"
       data-text-error-403-en="Your Action Forbidden, auto refresh done."
@@ -155,3 +157,10 @@
   data-text-refix-task-en="update (close => fix) the task"
   data-text-refix-task-ja="タスクを更新 (完了 => 処理済)"
 ></div>
+
+<div
+  id="receiver"
+  style="display: none;"
+  data-setup="receiver"></div>
+
+</div>

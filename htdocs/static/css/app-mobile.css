@@ -19,6 +19,14 @@ form.modal {
     width: 300px;
     margin-left: -150px;
 }
+div.alert {
+    display: none;
+    position: absolute;
+    width: 300px;
+    bottom: 40px;
+    left: 10px;
+}
+
 /* ▾ */
 .gbma {
     position: relative;

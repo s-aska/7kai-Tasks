@@ -425,6 +425,8 @@ app.api.account.me = function(option){
                 c.fireEvent('sortTask', 'updated', true);
             }
         }
+        
+        app.util.salvage();
     });
 }
 app.api.account.update = function(params, refresh){
@@ -677,6 +679,9 @@ app.setup.rightColumn = function(ele){
             var li = $(template);
             li.find('.icon:first').append(app.util.getIcon(comment.code, 32));
             li.find('.name').text(app.util.getName(comment.code));
+            if (comment.salvage) {
+                li.addClass('salvage');
+            }
             if (comment.action) {
                 li.find('.message').text(app.data.messages.data('text-' + comment.action + '-' + c.lang));
                 li.find('.icon:last').remove();
@@ -728,19 +733,22 @@ app.setup.rightColumn = function(ele){
 app.submit.registerComment = function(form){
     var task_id = form.find('input[name=task_id]').val();
     var list_id = form.find('input[name=list_id]').val();
+    var registrant = form.find('input[name=registrant]').val();
     var list = app.data.list_map[list_id];
     if (!list) {
         alert('unknown list ' + list_id);
         return false;
     }
-    if (!form.find('textarea').val().length) {
+    var message = form.find('textarea').val();
+    if (!message.length) {
         return false;
     }
     app.ajax({
         type: 'POST',
         url: '/api/1/comment/create',
         data: form.serialize(),
-        dataType: 'json'
+        dataType: 'json',
+        salvage: true
     })
     .done(function(data){
         if (data.success === 1) {
@@ -748,9 +756,29 @@ app.submit.registerComment = function(form){
             c.fireEvent('registerTask', data.task, list);
             c.fireEvent('openTask', data.task);
             document.activeElement.blur();
-            // app.dom.show($('#create-comment-twipsy'));
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        if (!jqXHR.status) {
+            app.queue.push({
+                api: 'comment.create',
+                req: form.serializeArray()
+            });
+            app.dom.reset(form);
+            var task = app.data.task_map[task_id];
+            if (task) {
+                task.comments.push({
+                    code: registrant,
+                    message: message,
+                    time: (new Date()).getTime(),
+                    salvage: true
+                });
+                c.fireEvent('registerTask', task, list);
+                c.fireEvent('openTask', task);
+            }
+            document.activeElement.blur();
         }
     });
 }

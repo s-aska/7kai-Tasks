@@ -129,7 +129,11 @@ app.ajax = function(option){
         });
 
         if (!jqXHR.status) {
-            c.fireEvent('alert', 0);
+            if (option.salvage) {
+                c.fireEvent('alert', 'offline-queue');
+            } else {
+                c.fireEvent('alert', 'offline');
+            }
         }
 
         // Unauthorized
@@ -163,7 +167,8 @@ app.ajax = function(option){
 
 app.queue.push = function(queue){
     var queues = app.queue.load() || [];
-    localStorage.setItem('queues', JSON.stringify(queues.push(queue)));
+    queues.push(queue);
+    localStorage.setItem('queues', JSON.stringify(queues));
 }
 app.queue.load = function(){
     var queues = localStorage.getItem('queues');
@@ -185,7 +190,7 @@ app.util.salvage = function(){
     return app.ajax({
         url: '/api/1/account/salvage',
         type: 'post',
-        data: JSON.stringify(queues),
+        data: {queues: JSON.stringify(queues)},
         dataType: 'json'
     })
     .done(function(data){
