@@ -165,7 +165,7 @@ c.addListener('setup', function(option){
                 if_modified_lists: app.data.if_modified_lists
             }
         });
-    }, 60000);
+    }, 300000);
 });
 
 app.util.getIconUrl = function(code, size){
