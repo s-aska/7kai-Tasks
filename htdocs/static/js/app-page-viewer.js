@@ -916,7 +916,7 @@ app.setup.centerColumn = function(ele){
             var task = app.data.current_task;
             var date = task.due_date || new Date();
             date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
-            var due = c.date.ymd(date);
+            var due = c.date.mdy(date);
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
@@ -927,7 +927,7 @@ app.setup.centerColumn = function(ele){
             var task = app.data.current_task;
             var date = task.due_date || new Date();
             date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
-            var due = c.date.ymd(date);
+            var due = c.date.mdy(date);
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
@@ -1118,7 +1118,6 @@ app.submit.registerTask = function(form){
                 updated_on: time,
                 salvage: true
             };
-            console.log(task);
             c.fireEvent('registerTask', task, list);
             c.fireEvent('openTask', task);
             app.dom.reset(form);

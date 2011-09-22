@@ -25,7 +25,7 @@
     <div class="container">
       <ul class="nav">
         <li class="menu" data-setup="menu">
-          <a class="menu list-name">su_aska</a>
+          <a class="menu list-name" data-setup="listname">su_aska</a>
           <ul
             class="menu-dropdown"
             style="display: none"
@@ -47,15 +47,15 @@
             class="menu-dropdown"
             style="display: none"
           >
-            <li><a>Edit List</a></li>
+            <!-- <li><a>Edit List</a></li>
             <li><a>Delete List</a></li>
             <li><a>Show Closed Task</a></li>
             <li><a>Enable Mute</a></li>
             <li class="divider"></li>
             <li><a>Settings</a></li>
-            <li><a>Help</a></li>
+            <li><a>Help</a></li> -->
             <li class="divider"></li>
-            <li><a>Sign Out</a></li>
+            <li><a href="/signout">Sign Out</a></li>
           </ul>
         </li>
       </ul>
@@ -131,7 +131,6 @@
                     type="text"
                     name="due"
                     value=""
-                    placeholder="←↑→↓"
                     data-setup="dateplus"
                   >
                 </div>

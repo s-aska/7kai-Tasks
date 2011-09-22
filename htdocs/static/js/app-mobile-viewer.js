@@ -13,6 +13,11 @@ c.addListener('setup', function(){
 });
 
 // ----------------------------------------------------------------------
+app.setup.listname = function(ele){
+    c.addListener('openList', function(list){
+        ele.text(list.name);
+    });
+}
 app.setup.listmenu = function(ul){
     var li_cache = {};
     ul.empty();

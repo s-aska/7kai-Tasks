@@ -19,7 +19,9 @@ var app = ns.app = {
         task_map: {},
         taskli_map: {},
         sub_accounts: [],
-        messages: null
+        messages: null,
+        offline: false,
+        offline_queue: false
     },
 
 
@@ -130,9 +132,15 @@ app.ajax = function(option){
 
         if (!jqXHR.status) {
             if (option.salvage) {
-                c.fireEvent('alert', 'offline-queue');
+                if (!app.data.offline_queue) {
+                    c.fireEvent('alert', 'offline-queue');
+                    app.data.offline_queue = true;
+                }
             } else {
-                c.fireEvent('alert', 'offline');
+                if (!app.data.offline) {
+                    c.fireEvent('alert', 'offline');
+                    app.data.offline = true;
+                }
             }
         }
 
@@ -155,6 +163,11 @@ app.ajax = function(option){
         // Internal Server Error
         else if (jqXHR.status >= 500) {
             c.fireEvent('alert', jqXHR.status);
+        }
+    })
+    .done(function(){
+        if (app.data.offline_queue) {
+            app.util.salvage();
         }
     })
     .always(function(){
@@ -198,6 +211,8 @@ app.util.salvage = function(){
             app.queue.clear();
             app.dom.show($('#notice-succeeded-salvage'));
             c.fireEvent('resetup');
+            app.data.offline = false;
+            app.data.offline_queue = false;
         }
     });
 }

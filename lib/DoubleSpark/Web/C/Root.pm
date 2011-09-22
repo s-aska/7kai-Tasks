@@ -6,7 +6,7 @@ use Log::Minimal;
 sub index {
     my ($class, $c) = @_;
 
-    my $base = $c->req->param('mobile') ? 'mobile/' : '';
+    my $base = $c->req->param('mobile') || $c->req->user_agent=~/iPhone|Android/ ? 'mobile/' : '';
 
     if (my $sign = $c->sign) {
         $c->account->update({ authenticated_on => \'now()' });

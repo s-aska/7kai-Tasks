@@ -4,8 +4,19 @@ body {
 textarea {
     font-size: 18px;
 }
+input {
+    font-size: 18px;
+}
+h2 {
+    font-size: 16px;
+    line-height: 1.2;
+}
 .container {
     width: 100%;
+}
+.modal {
+    width: 300px;
+    margin-left: -150px;
 }
 a.icon {
     display: inline-block;
@@ -75,6 +86,10 @@ div.alert {
 }
 
 /********** topbar **********/
+.topbar h3 {
+    margin-left: 20px;
+}
+
 body > .topbar ul li a.profile-name .profile-icon {
     position: absolute;
     top: 10px;
@@ -226,7 +241,12 @@ ul.comments li .date {
 }
 
 /********** register-task-window **********/
-
+.list_name {
+    font-size: 14px;
+}
+.task_name {
+    font-size: 14px;
+}
 
 
 

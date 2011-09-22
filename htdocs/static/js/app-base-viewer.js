@@ -429,18 +429,20 @@ app.api.account.me = function(option){
         app.util.salvage();
     });
 }
-app.api.account.update = function(params, refresh){
+app.api.account.update = function(params){
     return app.ajax({
         type: 'post',
         url: '/api/1/account/update',
         data: params,
-        dataType: 'json'
+        dataType: 'json',
+        salvage: true
     })
-    .done(function(data){
-        if (data.success) {
-            if (refresh) {
-                app.refresh();
-            }
+    .fail(function(jqXHR, textStatus, errorThrown){
+        if (!jqXHR.status) {
+            app.queue.push({
+                api: 'account.update',
+                req: params
+            });
         }
     });
 }
@@ -454,13 +456,32 @@ app.api.task.update = function(params){
         type: 'POST',
         url: '/api/1/task/update',
         data: params,
-        dataType: 'json'
+        dataType: 'json',
+        salvage: true
     })
     .done(function(data){
         if (data.success === 1) {
             c.fireEvent('registerTask', data.task, list);
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        if (!jqXHR.status) {
+            app.queue.push({
+                api: 'task.update',
+                req: params
+            });
+            var task_id = params.task_id;
+            delete params.task_id;
+            var task = app.data.task_map[task_id];
+            if (task) {
+                for (var key in params) {
+                    task[key] = params[key];
+                }
+            }
+            task.salvage = true;
+            c.fireEvent('registerTask', task, list);
         }
     });
 }
