@@ -1,0 +1,60 @@
+CACHE MANIFEST
+# version 1.13
+CACHE:
+/static/css/bootstrap-1.3.0.min.css
+/static/css/app-base.css
+/static/css/app-mobile.css
+/static/js/jquery-1.6.4.min.js
+/static/js/jquery-ui-1.8.13.js
+/static/js/iscroll.js
+/static/js/spin.min.js
+/static/js/core.js
+/static/js/app-base.js
+/static/js/app-constants.js
+/static/js/app-base-viewer.js
+/static/js/app-mobile-viewer.js
+/static/img/address.png
+/static/img/create-task.png
+/static/img/cross24.png
+/static/img/down.png
+/static/img/email24.png
+/static/img/left24.png
+/static/img/minus24.png
+/static/img/plus24.png
+/static/img/right24.png
+/static/img/star24.png
+/static/img/star_off24.png
+/static/img/tasks24.png
+/static/img/tasks_half24.png
+/static/img/tasks_off24.png
+/static/img/up.png
+NETWORK:
+/token
+/api/1/account/me
+/api/1/account/update
+/api/1/account/delete
+/api/1/account/salvage
+/api/1/list/create
+/api/1/list/update
+/api/1/list/delete
+/api/1/list/clear
+/api/1/task/create
+/api/1/task/update
+/api/1/task/move
+/api/1/comment/create
+/api/1/comment/delete
+/api/1/twitter/update_friends
+/api/1/profile_image/
+https://tasks.7kai.org/api/1/profile_image/
+https://graph.facebook.com/
+https://si0.twimg.com/
+https://si1.twimg.com/
+https://si2.twimg.com/
+https://si3.twimg.com/
+FALLBACK:
+https://tasks.7kai.org/api/1/profile_image/ /static/img/address.png
+https://graph.facebook.com/ /static/img/address.png
+https://si0.twimg.com/ /static/img/address.png
+https://si1.twimg.com/ /static/img/address.png
+https://si2.twimg.com/ /static/img/address.png
+https://si3.twimg.com/ /static/img/address.png

@@ -9,8 +9,8 @@ var app = ns.app = {
         notify_icon: 'icon-19n.png',
         api_url: 'https://tasks.7kai.org/api/1/account/me',
         site_url: 'https://tasks.7kai.org',
-        interval: 10000,
-        lang: (navigator.language === 'ja' ? 'ja' : 'en')
+        interval: 300000,
+        lang: (/^ja/.test(navigator.language) ? 'ja' : 'en')
     },
     
     default_option: {

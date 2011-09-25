@@ -77,13 +77,37 @@ var app = ns.app = {
 c.addEvents('setup');
 c.addEvents('resetup');
 c.addEvents('reset');
+c.addEvents('online');
 
 c.addEvents('alert');
 
 c.addEvents('resize');    // window resize
 c.addEvents('selectTab'); // tag component
 
+c.addEvents('registerAccount');
+c.addEvents('sign');
+c.addEvents('signin');
+c.addEvents('signup');
+
+c.addListener('setup', function(option){
+    if (navigator.onLine){
+        app.api.token()
+        .done(function(data){
+            app.data.token = data.token;
+            c.fireEvent('online');
+        });
+    }
+});
+
 $(d).ready(function(){
+    
+    document.body.addEventListener("online", function() {
+        applicationCache.update();
+        applicationCache.addEventListener("updateready", function() {
+            applicationCache.swapCache();
+        }, false);
+    }, false);
+
     app.run();
     $(w).resize(c.func.debounce(function(e){
         c.fireEvent('resize', e);
@@ -104,8 +128,11 @@ app.calls = function(ele, type){
 }
 app.ajax = function(option){
     if ("data" in option && "type" in option && option.type.toLowerCase() === 'post') {
-        option.data[c.CSRF_TOKEN_NAME] = c.csrf_token;
-        option.data["requested_on"] = (new Date()).getTime();
+        if (typeof option.data === 'object') {
+            option.data[c.CSRF_TOKEN_NAME] = c.csrf_token;
+        } else {
+            option.data = option.data + '&' + c.CSRF_TOKEN_NAME + '=' + c.csrf_token;
+        }
     }
     if (app.option.show_loading && option.loading !== false) {
         if (!app.data.loading) {
@@ -122,14 +149,8 @@ app.ajax = function(option){
     }
     return $.ajax(option)
     .fail(function(jqXHR, textStatus, errorThrown){
+        console.log(option.url);
         console.log(jqXHR.status);
-        console.log(errorThrown);
-        console.log(textStatus);
-        console.log({
-            status: jqXHR.status,
-            thrown: errorThrown,
-            textStatus: textStatus
-        });
 
         if (!jqXHR.status) {
             if (option.salvage) {
@@ -147,10 +168,12 @@ app.ajax = function(option){
 
         // Unauthorized
         else if (jqXHR.status === 401) {
-            c.fireEvent('alert', jqXHR.status);
-            setTimeout(function(){
-                location.reload();
-            }, 3000);
+            if (option.setup) {
+                app.dom.show($('#signin'));
+            } else {
+                c.fireEvent('alert', jqXHR.status);
+                app.dom.show($('#signin'));
+            }
         }
 
         // Collision
@@ -167,7 +190,7 @@ app.ajax = function(option){
         }
     })
     .done(function(){
-        if (option.url !== '/api/1/account/salvage' && app.data.offline_queue) {
+        if (option.url !== '/api/1/account/salvage') {
             app.util.salvage();
         }
     })
@@ -232,6 +255,9 @@ app.dom.setup = function(context){
     });
 }
 app.dom.show = function(target){
+    if (target.is(':visible')) {
+        return;
+    }
     var effect    = target.data('show-effect')   || 'drop';
     var option    = target.data('show-option')   || {};
     var speed     = target.data('show-speed')    || null;
@@ -350,7 +376,9 @@ app.setup.ui = function(ele){
     for (var i = 0, max_i = uis.length; i < max_i; i++) {
         var ui = uis[i];
         var option = ele.data('ui-' + ui);
-        ele[ui].call(ele, option);
+        if (ui in ele) {
+            ele[ui].call(ele, option);
+        }
     }
 }
 app.setup.escclose = function(ele){
@@ -363,21 +391,21 @@ app.setup.escclose = function(ele){
 app.setup.dateplus = function(ele){
     ele.keydown(function(e){
         if (e.keyCode === 37) {
-            var date = ele.datepicker("getDate") || new Date();
+            var date = ele.val() ? c.string.toDate(ele.val()) : new Date();
             date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
-            ele.datepicker("setDate", date);
+            ele.val(c.date.ymd(date));
         } else if (e.keyCode === 38) {
-            var date = ele.datepicker("getDate") || new Date();
+            var date = ele.val() ? c.string.toDate(ele.val()) : new Date();
             date.setTime(date.getTime() - (7 * 24 * 60 * 60 * 1000));
-            ele.datepicker("setDate", date);
+            ele.val(c.date.ymd(date));
         } else if (e.keyCode === 39) {
-            var date = ele.datepicker("getDate") || new Date();
+            var date = ele.val() ? c.string.toDate(ele.val()) : new Date();
             date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
-            ele.datepicker("setDate", date);
+            ele.val(c.date.ymd(date));
         } else if (e.keyCode === 40) {
-            var date = ele.datepicker("getDate") || new Date();
+            var date = ele.val() ? c.string.toDate(ele.val()) : new Date();
             date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000));
-            ele.datepicker("setDate", date);
+            ele.val(c.date.ymd(date));
         }
     });
 }
@@ -462,6 +490,14 @@ app.setup.guide = function(ele){
         app.dom.hide(guide);
     }, 500);
 }
+app.setup.form = function(form){
+    c.addListener('online', function(){
+        $('<input type="hidden"/>')
+            .attr('name', c.CSRF_TOKEN_NAME)
+            .val(app.data.token)
+            .appendTo(form);
+    });
+}
 
 app.click.show = function(ele){
     var id = ele.data('show-id');
@@ -475,6 +511,87 @@ app.click.hide = function(ele){
 }
 app.click.toggle = function(ele){
     app.dom.toggle(ele);
+}
+
+app.setup.signup = function(form){
+
+    c.addListener('signup', function(){
+        app.ajax({
+            url: '/signin/email/signup',
+            type: 'post',
+            data: form.serialize(),
+            dataType: 'json'
+        })
+        .done(function(data){
+            if (data.success) {
+                c.fireEvent('registerAccount', data.account);
+            } else {
+                // FIXME: 
+                alert('Sign Up failure, please check E-mail and password.');
+            }
+        })
+        .fail(function(){
+            alert('Sign Up failure, please check E-mail and password.');
+        });
+    });
+
+    c.addListener('signin', function(){
+        app.ajax({
+            url: '/signin/email/signin',
+            type: 'post',
+            data: form.serialize(),
+            dataType: 'json'
+        })
+        .done(function(data){
+            if (data.success) {
+                location.href = '/';
+            } else {
+                // FIXME: 
+                alert('Sign In failure, please check E-mail and password.');
+            }
+        })
+        .fail(function(){
+            alert('Sign In failure, please check E-mail and password.');
+        });
+    });
+}
+app.click.signin = function(ele){
+    c.fireEvent('signin');
+}
+app.click.signup = function(ele){
+    c.fireEvent('signup');
+}
+app.setup.verify = function(form){
+    c.addListener('registerAccount', function(){
+        app.dom.show(form);
+    });
+}
+app.submit.verify = function(form){
+    app.ajax({
+        url: '/signin/email/verify',
+        type: 'post',
+        data: form.serialize(),
+        dataType: 'json'
+    })
+    .done(function(data){
+        if (data.success) {
+            location.href = '/';
+        } else {
+            // FIXME: 
+            alert('Verify failure, please check code.');
+        }
+    })
+    .fail(function(){
+        alert('Verify failure, please check code.');
+    });
+}
+
+app.api.token = function(){
+    return app.ajax({
+        url: '/token',
+        dataType: 'json',
+        loading: false
+    });
 }
 
 })(this, this, document);

@@ -3,12 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>7kai Tasks</title>
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css" media="all">
 <link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
 <link rel="stylesheet" href="/static/css/app-base.css" media="all">
 <link rel="stylesheet" href="/static/css/app-pc.css" media="all">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
+<script src="/static/js/jquery-1.6.4.min.js"></script>
+<script src="/static/js/jquery-ui-1.8.13.js"></script>
 <script src="/static/js/h5utils.js"></script>
 <script src="/static/js/core.js"></script>
 <script src="/static/js/app-base.js"></script>
@@ -127,7 +126,7 @@
           class="menu"
           data-setup="menu"
         >
-          <a class="menu profile-name"><img class="profile-icon" src="[% sign.icon == 'email' ? '/static/img/email24_off.png' : sign.icon %]">[% sign.name %]</a>
+          <a class="menu profile-name" data-setup="profile"><img class="profile-icon"><span></span></a>
           <ul class="menu-dropdown" style="display: none; ">
             <li>
               <a
@@ -463,34 +462,22 @@
           data-setup="localize"
           data-text-ja="ダイアログを閉じる"
         >Close Some Dialog.</dd>
-        <dt
-          data-setup="localize"
-          data-text-ja="[↓]"
-        >[Down]</dt>
+        <dt>[Down]</dt>
         <dd
           data-setup="localize"
           data-text-ja="次のタスクを選択"
         >Select Next Task.</dd>
-        <dt
-          data-setup="localize"
-          data-text-ja="[↑]"
-        >[Up]</dt>
+        <dt>[Up]</dt>
         <dd
           data-setup="localize"
           data-text-ja="前のタスクを選択"
         >Select Previous Task.</dd>
-        <dt
-          data-setup="localize"
-          data-text-ja="[→]"
-        >[Right]</dt>
+        <dt>[Right]</dt>
         <dd
           data-setup="localize"
           data-text-ja="期日を１日延長"
         >Due + 1 day.</dd>
-        <dt
-          data-setup="localize"
-          data-text-ja="[←]"
-        >[Left]</dt>
+        <dt>[Left]</dt>
         <dd
           data-setup="localize"
           data-text-ja="期日を１日短縮"
@@ -827,11 +814,10 @@
           >Due</label>
           <div class="input">
             <input
-              type="text"
+              type="date"
               name="due"
               value=""
-              placeholder="←↑→↓"
-              data-setup="dateplus"
+              placeholder="&uarr;&darr;"
             >
           </div>
         </div>
@@ -1306,54 +1292,264 @@
   </div>
 </form>
 
-[% IF notice %]
 <div id="sub-account-notice" class="modal">
   <div class="modal-header">
     <h3>Notice</h3>
     <a class="close" data-setup="click" data-click="hide" data-hide-id="sub-account-notice">×</a>
   </div>
   <div class="modal-body">
-    [% IF notice == 'tw_account_add' %]
     <p
-      data-setup="localize"
-      data-text-ja="Twitter Account を追加しました。"
-    >Success Add Twitter Account.</p>
-    [% ELSIF notice == 'tw_account_create' %]
-    <p
-      data-setup="localize"
-      data-text-ja="ようこそ。 早速「＋新しいタスク」からタスクを登録してみましょう。"
-    >Welcome! Let's +New Task</p>
-    [% ELSIF notice == 'tw_account_move' %]
-    <p
-      data-setup="localize"
-      data-text-ja="Twitter Account を割り当て直しました。"
-    >Success Move Twitter Account.</p>
-    [% ELSIF notice == 'fb_account_add' %]
-    <p
-      data-setup="localize"
-      data-text-ja="Facebook Account を追加しました。"
-    >Success Add Facebook Account.</p>
-    [% ELSIF notice == 'fb_account_create' %]
-    <p
-      data-setup="localize"
-      data-text-ja="ようこそ。 早速「＋新しいタスク」からタスクを登録してみましょう。"
-    >Welcome! Let's +New Task</p>
-    [% ELSIF notice == 'fb_account_move' %]
-    <p
-      data-setup="localize"
-      data-text-ja="Facebook Account を割り当て直しました。"
-    >Success Move Facebook Account.</p>
-    [% ELSE %]
-    <p>Unknown Notice Error.</p>
-    [% END %]
+    data-text-tw_account_add-ja="Twitter Account を追加しました。"
+    data-text-tw_account_add-en="Success Add Twitter Account."
+    data-text-tw_account_create-ja="ようこそ。 早速「＋新しいタスク」からタスクを登録してみましょう。"
+    data-text-tw_account_create-en="Welcome! Let's +New Task"
+    data-text-tw_account_move-ja="Twitter Account を割り当て直しました。"
+    data-text-tw_account_move-en="Success Move Twitter Account."
+    data-text-fb_account_add-ja="Facebook Account を追加しました。"
+    data-text-fb_account_add-en="Success Add Facebook Account."
+    data-text-fb_account_create-ja="ようこそ。 早速「＋新しいタスク」からタスクを登録してみましょう。"
+    data-text-fb_account_create-en="Welcome! Let's +New Task"
+    data-text-fb_account_move-ja="Facebook Account を割り当て直しました。"
+    data-text-fb_account_move-en="Success Move Facebook Account."
+    ></p>
   </div>
   <div class="modal-footer">
-    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="sub-account-notice">Close</a>
+    <a
+      class="btn primary"
+      data-setup="click"
+      data-click="hide"
+      data-hide-id="sub-account-notice">Close</a>
   </div>
 </div>
-[% END %]
 
-[% INCLUDE "include/messages.tt" %]
+<div
+  id="alert"
+  class="modal"
+  style="display: none;"
+  data-setup="alert"
+  data-show-effect="fade"
+  data-hide-effect="fade"
+>
+  <div class="modal-header">
+    <h3>Error</h3>
+    <a
+      class="close"
+      data-setup="click"
+      data-click="hide"
+      data-hide-id="alert">×</a>
+  </div>
+  <div class="modal-body">
+    <p
+      data-text-error-offline-queue-en="Will be reflected when the Internet connection."
+      data-text-error-offline-queue-ja="インターネット接続時に反映されます。"
+      data-text-error-offline-en="Is not connected to the Internet."
+      data-text-error-offline-ja="インターネットに接続されていません。"
+      data-text-error-401-en="Unauthorized, reload soon..."
+      data-text-error-401-ja="認証状態が切れました、再認証して下さい。"
+      data-text-error-403-en="Your Action Forbidden, auto refresh done."
+      data-text-error-403-ja="許可されていない操作を実行しようとしました。"
+      data-text-error-404-en="Not Found, auto refresh done."
+      data-text-error-404-ja="対象が見つかりませんでした。"
+      data-text-error-500-en="Internal Server Error, Please wait a little..."
+      data-text-error-500-ja="障害が発生しています、しばらくして再度操作して下さい。"
+    ></p>
+  </div>
+  <div class="modal-footer">
+    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="alert">Close</a>
+  </div>
+</div>
+
+<form
+  id="clear-list-window"
+  class="modal form-stacked"
+  data-setup="ui,submit,escclose"
+  data-ui="draggable"
+  data-submit="clearList"
+  data-show-effect="fade"
+  data-show-speed="fast"
+  data-show-callback="dom.autofocus"
+  data-hide-effect="fade"
+  data-hide-speed="fast"
+  data-hide-callback="dom.blur"
+>
+  <div class="modal-header">
+    <h3
+      data-setup="localize"
+      data-text-ja="完了済のタスクを削除"
+    >Clear Closed Task</h3>
+    <a
+      class="close"
+      data-setup="click"
+      data-click="hide"
+      data-hide-id="clear-list-window"
+    >×</a>
+  </div>
+  <div class="modal-body">
+    <p
+      data-setup="localize"
+      data-text-ja="本当に完了済のタスクを削除しますか？"
+    >Do you really want to clear the closed task?</p>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn danger"
+      data-setup="localize"
+      data-text-ja="削除"
+      data-autofocus="true"
+    >Delete</button>
+    <button
+      class="btn secondary"
+      data-setup="localize,click"
+      data-text-ja="キャンセル"
+      data-click="hide"
+      data-hide-id="clear-list-window"
+    >Cancel</button>
+  </div>
+</form>
+
+<div
+  id="success-delete-account"
+  class="modal"
+  style="display: none;"
+  data-show-effect="fade"
+  data-show-auto-close="5000"
+  data-hide-effect="fade"
+>
+  <div class="modal-header">
+    <h3>Success</h3>
+    <a
+      class="close"
+      data-setup="click"
+      data-click="hide"
+      data-hide-id="success-delete-account">×</a>
+  </div>
+  <div class="modal-body">
+    <p
+      data-setup="localize"
+      data-text-ja="アカウントを削除しました。"
+    >Succeeded Delete Account.</p>
+  </div>
+  <div class="modal-footer">
+    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="success-delete-account">Close</a>
+  </div>
+</div>
+
+<div
+  id="notice-succeeded-salvage"
+  class="alert alert-message success"
+  data-show-option='{"direction":"down"}'
+  data-show-auto-close="5000"
+  data-hide-option='{"direction":"down"}'
+>
+  <a
+    class="close"
+    data-setup="click"
+    data-click="hide"
+    data-hide-id="notice-succeeded-salvage"
+  >×</a>
+  <p>
+    <strong>Info</strong>
+    <span>Succeeded to salvage.</span>
+  </p>
+</div>
+
+<div
+  id="notice-succeeded-create-task"
+  class="alert alert-message success"
+  data-show-option='{"direction":"down"}'
+  data-show-auto-close="5000"
+  data-hide-option='{"direction":"down"}'
+>
+  <a
+    class="close"
+    data-setup="click"
+    data-click="hide"
+    data-hide-id="notice-succeeded-create-task"
+  >×</a>
+  <p>
+    <strong>Info</strong>
+    <span>Succeeded to create a task.</span>
+  </p>
+</div>
+
+<div
+  id="notice-succeeded-sync-twitter"
+  class="alert alert-message success"
+  data-show-option='{"direction":"down"}'
+  data-show-auto-close="5000"
+  data-hide-option='{"direction":"down"}'
+>
+  <a
+    class="close"
+    data-setup="click"
+    data-click="hide"
+    data-hide-id="notice-succeeded-sync-twitter"
+  >×</a>
+  <p>
+    <strong>Info</strong>
+    <span>Succeeded to sync friends' data from Twitter.</span>
+  </p>
+</div>
+
+<div
+  id="notice-failed-sync-twitter"
+  class="alert alert-message error"
+  data-show-option='{"direction":"down"}'
+  data-show-auto-close="5000"
+  data-hide-option='{"direction":"down"}'
+>
+  <a
+    class="close"
+    data-setup="click"
+    data-click="hide"
+    data-hide-id="notice-failed-sync-twitter"
+  >×</a>
+  <p>
+    <strong>Error</strong>
+    <span>Failed to sync friends' data from Twitter.</span>
+  </p>
+</div>
+
+<!-- please upgrade your browser to chrome. -->
+
+<div style="display: none;">
+
+<form id="add-twitter" method="post" action="/signin/twitter/signin">
+  <input type="hidden" name="mode" value="add">
+</form>
+
+<form id="add-facebook" method="post" action="/signin/facebook/signin">
+  <input type="hidden" name="mode" value="add">
+</form>
+
+<div
+  data-setup="messages"
+
+  data-text-create-task-en="create the task"
+  data-text-create-task-ja="タスクを作成"
+  data-text-update-task-en="update the task"
+  data-text-update-task-ja="タスクを更新"
+  data-text-clear-task-en="clear the task"
+  data-text-clear-task-ja="完了済タスクを削除"
+
+  data-text-reopen-task-en="update (fix => open) the task"
+  data-text-reopen-task-ja="タスクを更新 (処理済 => 未着手)"
+  data-text-start-task-en="start the task"
+  data-text-start-task-ja="タスクに着手"
+  data-text-fix-task-en="fix the task"
+  data-text-fix-task-ja="タスクを処理"
+  data-text-close-task-en="close the task"
+  data-text-close-task-ja="タスクを完了"
+
+  data-text-rereopen-task-en="update (close => open) the task"
+  data-text-rereopen-task-ja="タスクを更新 (完了 => 未着手)"
+  data-text-restart-task-en="update (close => start) the task"
+  data-text-restart-task-ja="タスクを更新 (処理済 => 着手)"
+  data-text-refix-task-en="update (close => fix) the task"
+  data-text-refix-task-ja="タスクを更新 (完了 => 処理済)"
+></div>
+
+</div>
 
 <div
   id="receiver"

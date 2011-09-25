@@ -1,6 +1,6 @@
 {
   "name":"7kai Tasks Checker",
-  "version":"2.9.9",
+  "version":"2.9.10",
   "description": "7kai Tasks Checker",
   "browser_action":{
   	"default_icon":"icon-19.png",

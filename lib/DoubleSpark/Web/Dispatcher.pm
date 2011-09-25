@@ -8,6 +8,7 @@ sub post($;$$) { connect_with_method('POST', @_) }
 
 get '/' => 'Root#index';
 get '/mock' => 'Root#mock';
+get '/token' => 'Root#token';
 
 get '/signout' => 'Root#signout';
 

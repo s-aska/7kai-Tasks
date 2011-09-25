@@ -18,6 +18,11 @@ c.addListener('setup', function(){
     }
 });
 
+
+app.setup.signin = function(ele){
+    
+}
+
 // ----------------------------------------------------------------------
 app.setup.listname = function(ele){
     c.addListener('openList', function(list){

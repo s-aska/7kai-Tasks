@@ -932,12 +932,12 @@ app.setup.registerTaskWindow = function(form){
     var task_id_input = form.find('input[name=task_id]');
     var list_id_input = form.find('input[name=list_id]');
 
-    // setup datepicker
-    if (c.lang === 'ja') {
-        due_input.datepicker({dateFormat: 'yy/mm/dd'});
-    } else {
-        due_input.datepicker();
-    }
+    // // setup datepicker
+    // if (c.lang === 'ja') {
+    //     due_input.datepicker({dateFormat: 'yy/mm/dd'});
+    // } else {
+    //     due_input.datepicker();
+    // }
 
     var setup = function(list){
         assign_list.empty();

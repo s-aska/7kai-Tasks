@@ -71,6 +71,7 @@ __PACKAGE__->add_trigger(
         return if $c->req->path eq '/';
         return if $c->req->path =~m|^/signin|;
         return if $c->req->path eq '/signout';
+        return if $c->req->path eq '/token';
         return if $c->req->path =~m|^/api/1/proxy/|;
 
         unless ($c->sign) {

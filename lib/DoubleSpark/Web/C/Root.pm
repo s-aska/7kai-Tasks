@@ -6,15 +6,18 @@ use Log::Minimal;
 sub index {
     my ($class, $c) = @_;
 
-    my $base = $c->req->param('mobile') || $c->req->user_agent=~/iPhone|Android/ ? 'mobile/' : '';
-
     if (my $sign = $c->sign) {
         $c->account->update({ authenticated_on => \'now()' });
-        my $notice = $c->session->remove('notice');
-        $c->render($base . 'app.tt', { sign => $sign, notice => $notice });
+        $c->render('app.tt', { sign => $sign });
     } else {
-        $c->render($base . 'index.tt');
+        $c->render('index.tt');
     }
+}
+
+sub token {
+    my ($class, $c) = @_;
+
+    $c->render_json({ token => $c->get_csrf_defender_token });
 }
 
 sub index2 {

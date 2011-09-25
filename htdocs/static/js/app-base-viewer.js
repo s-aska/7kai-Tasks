@@ -101,7 +101,8 @@ c.addListener('filterTask', function(filter){
 c.addListener('registerFriends', function(friends, owner){
     for (var i = 0, max_i = friends.length; i < max_i; i++) {
         var friend = friends[i];
-        var icon = /^tw-[0-9]+$/.test(friend.code) ?
+        var icon = friend.icon ? friend.icon.replace(/^http:\/\/a/, 'https://si')
+                 : /^tw-[0-9]+$/.test(friend.code) ?
                      '/api/1/profile_image/'
                      + friend.screen_name
                  : /^fb-[0-9]+$/.test(friend.code) ?
@@ -129,7 +130,8 @@ c.addListener('registerFriends', function(friends, owner){
     }
 });
 c.addListener('registerSubAccount', function(sub_account){
-    var icon = /^tw-[0-9]+$/.test(sub_account.code) ?
+    var icon = sub_account.data.icon ? sub_account.data.icon.replace(/^http:\/\/a/, 'https://si')
+             : /^tw-[0-9]+$/.test(sub_account.code) ?
                  '/api/1/profile_image/'
                  + sub_account.name
              : /^fb-[0-9]+$/.test(sub_account.code) ?
@@ -161,7 +163,15 @@ c.addListener('resetup', function(){
     app.api.account.me({ reset: true });
 });
 c.addListener('setup', function(option){
-    app.api.account.me({ setup: true });
+    if (navigator.onLine){
+        app.api.account.me({ setup: true });
+    } else {
+        var data = localStorage.getItem("me");
+        if (data) {
+            app.util.buildMe({ setup: true }, JSON.parse(data));
+        }
+    }
+    
     // auto reload
     setInterval(function(){
         app.api.account.me({
@@ -175,6 +185,9 @@ c.addListener('setup', function(option){
 
 app.util.getIconUrl = function(code, size){
     var src;
+    if (!navigator.onLine) {
+        return '/static/img/address.png';
+    }
     var user = app.data.users[code];
     if (user) {
         return user.icon;
@@ -322,118 +335,127 @@ app.util.taskFilter = function(task, condition){
     }
     return true;
 }
+app.util.buildMe = function(option, data){
+    var friends
+        , friends_data
+        , sub_account
+        , reload
+        , user_id
+        , diff
+        , status;
+    
+    c.csrf_token = data.token;
+    
+    if (data.list_ids !== app.data.if_modified_lists) {
+        option.reset = true;
+    }
+
+    if (option.reset) {
+        c.fireEvent('reset');
+    }
+
+    app.data.sign = data.sign;
+    app.data.state = data.account.state;
+    app.data.sub_accounts = data.sub_accounts;
+    app.data.if_modified_lists = data.list_ids;
+
+    c.fireEvent('sign', app.data.sign);
+
+    if (!('mute' in app.data.state)) {
+        app.data.state.mute = {};
+    }
+    if (!('star' in app.data.state)) {
+        app.data.state.star = {};
+    }
+
+    $.each(data.lists, function(i, list){
+        c.fireEvent('registerFriends', list.users);
+    });
+
+    // localStorageのfriendsリストを更新
+    for (var i = 0, max_i = data.sub_accounts.length; i < max_i; i++) {
+        sub_account = data.sub_accounts[i];
+
+        c.fireEvent('registerSubAccount', sub_account);
+
+        // Twitter
+        if (/^tw-[0-9]+$/.test(sub_account.code)) {
+            if ("friends" in sub_account.data) {
+                c.fireEvent('registerFriends', sub_account.data.friends,
+                    sub_account.code);
+            }
+            if (option.setup
+                && data.sign.code === sub_account.code
+                && app.option.auto_sync_friends) {
+                app.api.twitter.friends(sub_account.code.substring(3), '-1', []);
+            }
+        }
+
+        // Facebook
+        else if (/^fb-[0-9]+$/.test(sub_account.code)) {
+            c.fireEvent('registerFriends', sub_account.data.friends, sub_account.code);
+        }
+
+        // E-mail
+        else {
+
+        }
+    }
+
+    data.lists.sort(function(a, b){
+        return app.data.state.sort.list[a.id] - app.data.state.sort.list[b.id];
+    });
+
+    var tasks = 0;
+    $.each(data.lists, function(i, list){
+        if (list.actioned_on > app.data.if_modified_since) {
+            app.data.if_modified_since = list.actioned_on;
+        }
+        c.fireEvent('registerList', list);
+        $.each(list.tasks, function(i, task){
+            tasks++;
+            c.fireEvent('registerTask', task, list);
+        });
+    });
+
+    //
+    var last_list_id = localStorage.getItem('last_list_id');
+    if (option.list_id && (option.list_id in app.data.list_map)) {
+        c.fireEvent('openList', app.data.list_map[option.list_id]);
+        if (option.task_id in app.data.task_map) {
+            c.fireEvent('openTask', app.data.task_map[option.task_id]);
+        }
+    } else if (option.setup || option.reset) {
+        if (last_list_id && (last_list_id in app.data.list_map)) {
+            c.fireEvent('openList', app.data.list_map[last_list_id]);
+        } else if (data.lists.length) {
+            c.fireEvent('openList', data.lists[0]);
+        }
+        if (option.setup && !tasks) {
+            app.dom.show($('#welcome'));
+        } else {
+            c.fireEvent('sortTask', 'updated', true);
+        }
+    }
+}
 
 app.api.account.me = function(option){
-    app.ajax({
+    if (!navigator.onLine) {
+        console.log('offline');
+        return;
+    }
+    return app.ajax({
         url: '/api/1/account/me',
         data: option.data,
         dataType: 'json',
-        loading: false
+        loading: false,
+        setup: option.setup
     })
     .done(function(data){
-        var friends
-            , friends_data
-            , sub_account
-            , reload
-            , user_id
-            , diff
-            , status;
-
-        if (!data) {
-            return;
+        if (data) {
+            localStorage.setItem("me", JSON.stringify(data));
+            app.util.buildMe(option, data);
         }
-
-        if (data.list_ids !== app.data.if_modified_lists) {
-            option.reset = true;
-        }
-
-        if (option.reset) {
-            c.fireEvent('reset');
-        }
-
-        app.data.sign = data.sign;
-        app.data.state = data.account.state;
-        app.data.sub_accounts = data.sub_accounts;
-        app.data.if_modified_lists = data.list_ids;
-
-        if (!('mute' in app.data.state)) {
-            app.data.state.mute = {};
-        }
-        if (!('star' in app.data.state)) {
-            app.data.state.star = {};
-        }
-
-        $.each(data.lists, function(i, list){
-            c.fireEvent('registerFriends', list.users);
-        });
-
-        // localStorageのfriendsリストを更新
-        for (var i = 0, max_i = data.sub_accounts.length; i < max_i; i++) {
-            sub_account = data.sub_accounts[i];
-
-            c.fireEvent('registerSubAccount', sub_account);
-
-            // Twitter
-            if (/^tw-[0-9]+$/.test(sub_account.code)) {
-                if ("friends" in sub_account.data) {
-                    c.fireEvent('registerFriends', sub_account.data.friends,
-                        sub_account.code);
-                }
-                if (option.setup
-                    && data.sign.code === sub_account.code
-                    && app.option.auto_sync_friends) {
-                    app.api.twitter.friends(sub_account.code.substring(3), '-1', []);
-                }
-            }
-
-            // Facebook
-            else if (/^fb-[0-9]+$/.test(sub_account.code)) {
-                c.fireEvent('registerFriends', sub_account.data.friends, sub_account.code);
-            }
-
-            // E-mail
-            else {
-
-            }
-        }
-
-        data.lists.sort(function(a, b){
-            return app.data.state.sort.list[a.id] - app.data.state.sort.list[b.id];
-        });
-
-        var tasks = 0;
-        $.each(data.lists, function(i, list){
-            if (list.actioned_on > app.data.if_modified_since) {
-                app.data.if_modified_since = list.actioned_on;
-            }
-            c.fireEvent('registerList', list);
-            $.each(list.tasks, function(i, task){
-                tasks++;
-                c.fireEvent('registerTask', task, list);
-            });
-        });
-
-        //
-        var last_list_id = localStorage.getItem('last_list_id');
-        if (option.list_id && (option.list_id in app.data.list_map)) {
-            c.fireEvent('openList', app.data.list_map[option.list_id]);
-            if (option.task_id in app.data.task_map) {
-                c.fireEvent('openTask', app.data.task_map[option.task_id]);
-            }
-        } else if (option.setup || option.reset) {
-            if (last_list_id && (last_list_id in app.data.list_map)) {
-                c.fireEvent('openList', app.data.list_map[last_list_id]);
-            } else if (data.lists.length) {
-                c.fireEvent('openList', data.lists[0]);
-            }
-            if (option.setup && !tasks) {
-                app.dom.show($('#welcome'));
-            } else {
-                c.fireEvent('sortTask', 'updated', true);
-            }
-        }
-        
-        app.util.salvage();
     });
 }
 app.api.account.update = function(params){
@@ -587,6 +609,14 @@ app.setup.hide = function(ele){
 }
 
 /* */
+app.setup.profile = function(ele){
+    var img = ele.find('img');
+    var span = ele.find('span');
+    c.addListener('sign', function(sign){
+        img.attr('src', sign.icon.replace(/^http:\/\/a/, 'https://si'));
+        span.text(sign.name);
+    });
+}
 app.setup.switchClosed = function(ele){
     c.addListener('filterTask', function(){
         ele.removeClass('active');

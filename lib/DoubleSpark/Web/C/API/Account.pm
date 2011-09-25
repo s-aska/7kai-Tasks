@@ -29,8 +29,7 @@ sub me {
         $_ = $_->get_columns;
         $_->{data} = decode_json($_->{data}) if $_->{data};
         $_;
-    }
-        ($tw_accounts->all, $fb_accounts->all, $email_accounts->all);
+    } ($tw_accounts->all, $fb_accounts->all, $email_accounts->all);
     my @codes = map { $_->{code} } @sub_accounts;
 
     unless (@codes) {
@@ -69,9 +68,14 @@ sub me {
             $c->db->search('list', { list_id => [keys %ids] })->all;
     }
 
+    my $token = $c->session->get('csrf_token');
+    my $notice = $c->session->remove('notice');
+
     $c->render_json({
         success      => 1,
         sign         => $c->sign,
+        token        => $token,
+        notice       => $notice,
         account      => $account->data,
         modified_on  => $account->modified_on,
         sub_accounts => \@sub_accounts,
