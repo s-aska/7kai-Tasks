@@ -21,7 +21,8 @@ var app = ns.app = {
         sub_accounts: [],
         messages: null,
         offline: false,
-        offline_queue: false
+        offline_queue: false,
+        animation: true
     },
 
 
@@ -104,9 +105,9 @@ app.calls = function(ele, type){
 app.ajax = function(option){
     if ("data" in option && "type" in option && option.type.toLowerCase() === 'post') {
         option.data[c.CSRF_TOKEN_NAME] = c.csrf_token;
-        option.data["request_time"] = (new Date()).getTime();
+        option.data["requested_on"] = (new Date()).getTime();
     }
-    if (app.option.show_loading) {
+    if (app.option.show_loading && option.loading !== false) {
         if (!app.data.loading) {
             app.data.loading = $('<div id="loading"></div>');
             app.data.loading.appendTo($('body'));
@@ -166,12 +167,12 @@ app.ajax = function(option){
         }
     })
     .done(function(){
-        if (app.data.offline_queue) {
+        if (option.url !== '/api/1/account/salvage' && app.data.offline_queue) {
             app.util.salvage();
         }
     })
     .always(function(){
-        if (app.option.show_loading) {
+        if (app.option.show_loading && option.loading !== false) {
             app.data.loading.data().spinner.stop();
             app.data.loading.hide();
         }
@@ -265,6 +266,9 @@ app.dom.hide = function(target){
                 func.call(app, target);
             }
         })(c.obj.get(app, callback));
+    }
+    if (effect === 'none') {
+        target.hide();
     }
     return target.hide(effect, option, speed, callback);
 }

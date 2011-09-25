@@ -5,7 +5,7 @@
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css" media="all">
 <link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
-<link rel="stylesheet" href="/static/css/app.css" media="all">
+<link rel="stylesheet" href="/static/css/signin.css" media="all">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
 <script src="/static/js/core.js"></script>
@@ -13,7 +13,7 @@
 <script src="/static/js/app-constants.js"></script>
 <script src="/static/js/app-page-signin.js"></script>
 </head>
-<body>
+<body id="index-page">
 <div class="topbar">
   <div class="fill">
     <div class="container">
@@ -22,7 +22,51 @@
   </div>
 </div>
 
+<div class="row" style="width: 840px;">
+  <div class="container" style="width: 840px; text-align: center;">
+    <h1>Fastest For You</h1>
+    <h2>High Speed Social Task Management Service</h2>
+    <div style="margin-bottom: 20px;">
+      <a
+        class="btn large primary"
+        data-setup="click"
+        data-click="hide,show"
+        data-show-id="signin"
+        data-hide-id="movie"
+      >Start Task Management</a>
+    </div>
+  </div>
+  <div class="columns" style="width: 420px;">
+    <div id="movie" data-hide-effect="none"><iframe width="420" height="315" src="https://www.youtube.com/embed/tJOxEoFsbXM" frameborder="0" allowfullscreen></iframe></div>&nbsp;
+  </div>
+  <div class="span6 columns">
+    <dl>
+      <dt>1. Shortcut Keys</dt>
+      <dd>Support the many Shortcut Keys.</dd>
+      <dt>2. Anywhere</dt>
+      <dd>Support the iPhone, iPad, and other smartphone.</dd>
+      <dt>3. Offline</dt>
+      <dd>If disconnected during the operation are recovery when connected.</dd>
+      <dt>4. Share</dt>
+      <dd>Share with your facebook and twitter friends.</dd>
+    </dl>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>
+      <a href="/static/tos.html">Terms</a>
+      <a href="/static/privacy.html">Privacy</a>
+      <a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank">Support</a>
+      <a href="https://github.com/s-aska/7kai-Tasks" target="_blank">Github</a>
+      <a href="https://twitter.com/#!/su_aska" target="_blank">Author</a>
+    </p>
+  </div>
+</footer>
+
 <div
+  id="signin"
   class="modal"
   data-setup="signin"
   data-show-effect="fade"

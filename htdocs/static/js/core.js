@@ -108,8 +108,11 @@ c.string.capitalize = function(text){
 }
 c.string.toDate = function(str){
     var degits = str.match(/[0-9]+/g);
-    var date = new Date(degits[0], degits[1] - 1, degits[2], degits[3], degits[4], degits[5]);
-    return date;
+    if (degits[0].length === 4) {
+        return new Date(degits[0], degits[1] - 1, degits[2]);
+    } else {
+        return new Date(degits[2], degits[0] - 1, degits[1]);
+    }
 }
 c.date.relative = function(epoch){
     var now = new Date();
@@ -136,7 +139,7 @@ c.date.relative = function(epoch){
     }
 }
 c.date.ymd = function(date){
-    return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
+    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
 }
 c.date.mdy = function(date){
     return (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();

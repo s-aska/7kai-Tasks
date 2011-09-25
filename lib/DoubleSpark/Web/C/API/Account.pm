@@ -93,7 +93,9 @@ sub salvage {
         'comment.delete' => 'DoubleSpark::API::Comment#delete'
     };
     
-    warn $c->req->param('queues');
+    my $cache = {};
+    my $lists = {};
+    my $tasks = {};
     my $queues = decode_json(encode_utf8($c->req->param('queues')));
     for my $queue (@{ $queues }) {
         next if ref $queue ne 'HASH';
@@ -104,6 +106,36 @@ sub salvage {
         }
         my ($api, $method) = split '#', $match;
         my $req = DoubleSpark::Validator::Query->new($queue->{req});
+        if ($queue->{api} eq 'task.create') {
+            # duplication cut.
+            my $key = $req->{list_id} . '-' . $req->{name};
+            next if $cache->{ $key };
+            $cache->{ $key }++;
+            $cache->{ $req->{list_id} . '#' . $req->{task_id} }++;
+        } elsif ($queue->{api} eq 'task.update') {
+            # old cut.
+            unless ($lists->{ $req->{list_id} }) {
+                $lists->{ $req->{list_id} } =
+                    $c->db->single('list', { list_id => $req->{list_id} });
+            }
+            my $list = $lists->{ $req->{list_id} } or next;
+            unless ($tasks->{ $req->{task_id} }) {
+                ($tasks->{ $req->{task_id} }) =
+                    grep { $_->{id} eq $req->{task_id} } @{ $list->data->{tasks} };
+            }
+            unless ($cache->{ $req->{list_id} . '#' . $req->{task_id} }) {
+                my $task = $tasks->{ $req->{task_id} };
+                if ($queue->{updated_on} < $task->{updated_on}) {
+                    warnf('[%s] update task fail old request', $c->sign_name);
+                    next;
+                }
+            }
+        } elsif ($queue->{api} eq 'comment.create') {
+            # duplication cut.
+            my $key = $req->{task_id} . '-' . $req->{message};
+            next if $cache->{ $key };
+            $cache->{ $key }++;
+        }
         if ($api->$method($c, $req)) {
             infof('[%s] salvage success %s', $c->sign_name, $match);
         } else {

@@ -117,7 +117,7 @@ rule LIST_ROLE_MEMBER => sub {
 
 rule 'DATE_LOOSE' => sub {
     my $c = Amon2->context();
-    my ($d1, $d2, $d3) = split '/', $_;
+    my ($d1, $d2, $d3) = $_=~/(\d+)/g;
     if (length $d1 == 4) {
         $c->stash->{date_loose} = join('/', $d2, $d3, $d1);
         FormValidator::Lite::Constraint::Date::_v($d1, $d2, $d3);

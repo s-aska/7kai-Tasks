@@ -99,6 +99,27 @@ span.icon {
     height: 24px;
     background-image: url(/static/img/email24.png);
 }
+.icon-plus24 {
+    background-image: url(/static/img/plus24.png);
+}
+.icon-cross24 {
+    background-image: url(/static/img/cross24.png);
+}
+.icon-star24 {
+    background-image: url(/static/img/star24.png);
+}
+.icon-star-off24 {
+    background-image: url(/static/img/star_off24.png);
+}
+.icon-tasks24 {
+    background-image: url(/static/img/tasks24.png);
+}
+.icon-tasks-half24 {
+    background-image: url(/static/img/tasks_half24.png);
+}
+.icon-tasks-off24 {
+    background-image: url(/static/img/tasks_off24.png);
+}
 
 /********** parts **********/
 .clearfix {
@@ -143,15 +164,15 @@ form {
 }
 
 /********** register-task-window **********/
-#register-task-window ul.assign li {
+#register-task-window ul li {
     margin-bottom: 4px;
 }
-#register-task-window ul.assign li > label > div {
+#register-task-window ul li > label > div {
     float: left;
 }
-#register-task-window ul.assign li > label > div.icon {
+#register-task-window ul li > label > div.icon {
     padding-left: 4px;
 }
-#register-task-window ul.assign li > label > div.name {
+#register-task-window ul li > label > div.name {
     padding-left: 4px;
 }

@@ -1,169 +1,34 @@
-@charset "utf-8";
-
-/*****************************************************
-1. reset
-2. base
-3. header
-4. footer
-5. aside
-6. article
-*****************************************************/
-
-/********** reset **********/
-
-html, body, div, span, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-abbr, address, cite, code,
-del, dfn, em, img, ins, kbd, q, samp,
-small, strong, sub, sup, var,
-b, i,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, dialog, figure, footer, header, 
-hgroup, menu, nav, section, menu,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    vertical-align: baseline;
-    background: transparent;
-    font-size: 100%;
-    outline: 0;
+.row {
+    margin-top: 60px;
+    margin-left: auto;
+    margin-right: auto;
 }
-body {
-    line-height: 1;
+.columns {
+    float: left;
 }
-article, aside, dialog, figure, footer, header, 
-hgroup, nav, section {
-    display: block;
-}
-blockquote, q {
-    quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
-    content: none;
-}
-a {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    vertical-align: baseline;
-    background: transparent;
-    font-size: 100%;
-}
-ins {
-    color: #000;
-    background-color: #ff9;
-    text-decoration: none;
-}
-mark {
-    color: #000;    
-    background-color: #ff9;
-    font-style: italic;
-    font-weight: bold;
-}
-del {
-    text-decoration: line-through;
-}
-abbr[title], dfn[title] {
-    border-bottom: 1px dotted #000;
-    cursor: help;
-}
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-hr {
-    margin: 1em 0;
-    padding: 0;
-    border: 0;    
-    border-top: 1px solid #cccccc;
-    display: block;
-    height: 1px;
-}
-input, select {
-    vertical-align: middle;
-}
-
-/********** base **********/
-
-body, th, td, h1, h2, h3, h4, h5, h6, pre, input, textarea, option, div, p, dt, dd, li, address {
-    line-height: 1.6;
-    color: #5D5D5D;
-    font-style: normal;
-    font-weight: normal;
+.modal {
+    display: none;
 }
 html, body {
-    height: 100%;
+    overflow: auto;
 }
-html {
+h1 {
+    font-size: 48px;
+    line-height: 56px;
+    margin-bottom: 10px;
 }
-body {
-    /*font-size: 13px;*/
+h2 {
+    margin-bottom: 10px;
 }
-a {
-    color: #68a9cf;
-    text-decoration: none;
+dl dt {
+    font-size: 20px;
+    line-height: 36px;
 }
-a:hover {
-    color: #68a9cf;
-    background-color: #f7faff;
-}
-
-/********** header **********/
-
-header {
-    margin-bottom: 0px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #ccc;
-    font-family: Raleway;
-    font-weight: normal;
-    text-align: center;
-}
-header h1 {
-    font-size: 24px;
-}
-header h2 {
+dl dd {
     font-size: 18px;
+    line-height: 24px;
 }
-article {
-    margin-top: 30px;
-    text-align: center;
+footer a {
+    display: inline-block;
+    margin-right: 6px;
 }
-article nav {
-    margin: auto;
-    width: 500px;
-    margin-bottom: 30px;
-    padding: 20px;
-    border: 1px solid #68a9cf;
-    border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-    text-align: center;
-}
-article ul {
-    list-style: none;
-}
-article ul li {
-    font-size: 24px;
-}
-article img {
-    margin: auto;
-    width: 560px;
-}
-/*
-article form {
-    margin: 30px auto;
-    width: 500px;
-    padding: 30px;
-    border: 1px solid #68a9cf;
-    border-radius: 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-}*/
-
-

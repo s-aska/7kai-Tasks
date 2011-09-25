@@ -5,13 +5,7 @@ var app = ns.app;
 
 c.addEvents('moveTask');
 c.addEvents('moveTaskCancel');
-c.addEvents('clickNotification');
 c.addEvents('removeAccountConfirm');
-
-c.addListener('clickNotification', function(option){
-    app.data.current_filter = { list_id: option.list_id };
-    app.api.account.me(option);
-});
 
 // ----------------------------------------------------------------------
 // トップバー機能(ってなんだよ...)
@@ -102,6 +96,10 @@ app.click.addTwitter = function(){
 }
 app.click.addFacebook = function(){
     $('#add-facebook').submit();
+}
+app.click.openMini = function(ele){
+    window.open(window.location.href + '?mobile=1', '',
+        'width=320,height=480,left=100,top=100');
 }
 
 // ----------------------------------------------------------------------
@@ -435,28 +433,6 @@ app.setup.registerListWindow = function(form){
         owner_select.empty();
     });
 }
-app.setup.switchClosed = function(ele){
-    c.addListener('filterTask', function(){
-        ele.removeClass('active');
-    });
-    ele.click(function(){
-        var val = ele.hasClass('active') ? 0 : 1;
-        c.fireEvent('filterTask', {
-            list_id: app.data.current_list.id,
-            closed: val
-        });
-        if (val) {
-            ele.addClass('active');
-        } else {
-            ele.removeClass('active');
-        }
-    });
-    c.addListener('clickNotification', function(option){
-        if (ele.hasClass('active')) {
-            ele.click();
-        }
-    });
-}
 app.setup.deleteListWindow = function(form){
 
 }
@@ -508,29 +484,6 @@ app.submit.registerList = function(form){
             } else {
                 app.dom.show($('#create-list-twipsy'));
             }
-        } else {
-            // 現在 ステータスコード 200 の例外ケースは無い
-        }
-    });
-}
-app.submit.clearList = function(form){
-    if (!app.data.current_list) {
-        alert('app.data.current_list is null.');
-        return;
-    }
-    app.ajax({
-        type: 'POST',
-        url: '/api/1/list/clear',
-        data: {
-            list_id: app.data.current_list.id
-        },
-        dataType: 'json'
-    })
-    .done(function(data){
-        if (data.success === 1) {
-            c.fireEvent('clearList', data.list);
-            c.fireEvent('openList', data.list);
-            app.dom.hide($('#clear-list-window'));
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
         }
@@ -624,9 +577,6 @@ app.setup.centerColumn = function(ele){
                     closed: (task.closed ? 0 : 1)
                 });
             });
-            if (task.salvage) {
-                ele.hide();
-            }
         })();
 
         // status
@@ -740,8 +690,11 @@ app.setup.centerColumn = function(ele){
 
         // FIXME: 表示条件との照合
         if (task.id in taskli_map) {
-            if (!taskli_map[task.id].is(':visible')) {
+            if (!taskli_map[task.id].data('visible')) {
+                li.data('visible', false);
                 li.hide();
+            } else {
+                li.data('visible', true);
             }
             if (taskli_map[task.id].hasClass('selected')) {
                 li.addClass('selected');
@@ -749,8 +702,10 @@ app.setup.centerColumn = function(ele){
             taskli_map[task.id].after(li);
             taskli_map[task.id].remove();
             taskli_map[task.id] = li;
-            if (app.util.taskFilter(task, app.data.current_filter)) {
-                if (!li.is(':visible')) {
+            if (app.data.current_filter &&
+                app.util.taskFilter(task, app.data.current_filter)) {
+                if (!li.data('visible')) {
+                    li.data('visible', true);
                     li.slideDown('fast');
                 }
                 if (app.data.current_task &&
@@ -758,7 +713,8 @@ app.setup.centerColumn = function(ele){
                     c.fireEvent('openTask', task);
                 }
             } else {
-                if (li.is(':visible')) {
+                if (li.data('visible')) {
+                    li.data('visible', false);
                     li.slideUp('fast');
                 }
                 if (app.data.current_task &&
@@ -779,7 +735,10 @@ app.setup.centerColumn = function(ele){
             li.prependTo(ul);
             if (app.data.current_filter &&
                 app.util.taskFilter(task, app.data.current_filter)) {
+                li.data('visible', true);
                 li.slideDown('fast');
+            } else {
+                li.data('visible', false);
             }
         }
         taskli_map[task.id] = li;
@@ -831,13 +790,15 @@ app.setup.centerColumn = function(ele){
             var task = app.data.task_map[task_id];
             var li = taskli_map[task_id];
             if (app.util.taskFilter(task, condition)) {
-                if (!li.is(':visible')) {
+                if (!li.data('visible')) {
+                    li.data('visible', true);
                     li.slideDown('fast');
                 } else {
                     li.show();
                 }
             } else {
-                if (li.is(':visible')) {
+                if (li.data('visible')) {
+                    li.data('visible', false);
                     li.slideUp('fast');
                 }
                 if (app.data.current_task && app.data.current_task.id === task.id) {

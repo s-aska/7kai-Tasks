@@ -17,6 +17,12 @@ sub index {
     }
 }
 
+sub index2 {
+    my ($class, $c) = @_;
+
+    $c->render('index2.tt');
+}
+
 sub mock {
     my ($class, $c) = @_;
     $c->render('app.tt');

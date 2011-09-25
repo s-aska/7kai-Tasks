@@ -124,6 +124,10 @@ app.util.openSite = function(callback){
         }
     });
 }
+app.click.openSiteMini = function(){
+    window.open(app.option.site_url + '?mobile=1', '',
+        'width=320,height=480,left=100,top=100');
+}
 app.chrome.findTab = function(url, callback) {
     chrome.tabs.getAllInWindow(undefined, function(tabs) {
         for (var i = 0, tab; tab = tabs[i]; i++) {

@@ -7,9 +7,15 @@ app.option.auto_sync_friends = false;
 app.option.show_loading = true;
 
 c.addEvents('domresize');
+c.addEvents('orientationchange');
 
 c.addListener('setup', function(){
     document.addEventListener('touchmove', function(e){ e.preventDefault(); });
+    window.onorientationchange = function(){
+        $('head meta[name=viewport]').remove();
+        $('head').prepend('<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1"/>');
+        c.fireEvent('orientationchange');
+    }
 });
 
 // ----------------------------------------------------------------------
@@ -37,12 +43,21 @@ app.setup.listmenu = function(ul){
         }
         li_cache[list.id] = li;
     });
+    c.addListener('reset', function(){
+        ul.empty();
+        li_cache = {};
+    });
 }
 app.setup.bottommenu = function(ul){
     var center = ul.find('li.center');
     var width = $(w).width();
     var li_width = Number((width - center.width()) / 4);
     ul.find('li').not('.center').width(li_width);
+    c.addListener('orientationchange', function(){
+        var width = $(w).width();
+        var li_width = Number((width - center.width()) / 4);
+        ul.find('li').not('.center').width(li_width);
+    });
 }
 app.setup.scroller = function(ele){ 
     var headerH = document.getElementById('header').offsetHeight,
@@ -54,11 +69,14 @@ app.setup.scroller = function(ele){
         setTimeout(function(){ myScroll.refresh() }, 0);
     });
     c.addListener('selectTab', function(){
-        setTimeout(function(){ myScroll.refresh() }, 100);
+        setTimeout(function(){ myScroll.refresh() }, 500);
     });
     c.addListener('filterTask', function(){
-        setTimeout(function(){ myScroll.refresh() }, 100);
+        setTimeout(function(){ myScroll.refresh() }, 500);
     });
+    window.onorientationchange = function(){
+        setTimeout(function(){ myScroll.refresh() }, 0);
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -83,6 +101,7 @@ app.setup.tasks = function(ul){
                 ele.removeClass('icon-plus').addClass('icon-cross');
             }
             ele.click(function(e){
+                e.preventDefault();
                 e.stopPropagation();
                 app.api.task.update({
                     list_id: task.list.id,
@@ -91,9 +110,6 @@ app.setup.tasks = function(ul){
                     closed: (task.closed ? 0 : 1)
                 });
             });
-            if (task.salvage) {
-                ele.hide();
-            }
         })();
 
         // status
@@ -109,6 +125,7 @@ app.setup.tasks = function(ul){
             }
             var status = task.status === 2 ? 0 : task.status + 1;
             ele.click(function(e){
+                e.preventDefault();
                 e.stopPropagation();
                 app.api.task.update({
                     list_id: task.list.id,
@@ -126,6 +143,7 @@ app.setup.tasks = function(ul){
                 ele.removeClass('icon-star-off').addClass('icon-star');
             }
             ele.click(function(e){
+                e.preventDefault();
                 e.stopPropagation();
                 var method = '+';
                 if (task.id in app.data.state.star) {
@@ -149,16 +167,16 @@ app.setup.tasks = function(ul){
         // human
         (function(){
             var div = li.find('.human');
-            div.prepend(app.util.getIcon(task.requester, 16));
+            div.prepend(app.util.getIcon(task.requester, 24));
             if (task.assign.length) {
                 div.prepend($('<span class="icon icon-left"/>'));
                 $.each(task.assign, function(i, assign){
-                    div.prepend(app.util.getIcon(assign, 16));
+                    div.prepend(app.util.getIcon(assign, 24));
                 });
             }
             if (task.status == 2 && task.assign.length) {
                 div.prepend($('<span class="icon icon-left"/>'));
-                div.prepend(app.util.getIcon(task.requester, 16));
+                div.prepend(app.util.getIcon(task.requester, 24));
             }
         })();
 
@@ -187,7 +205,7 @@ app.setup.tasks = function(ul){
 
         if (task.recent) {
             var div = li.find('.recent-comment');
-            div.find('.icon').append(app.util.getIcon(task.recent.code, 16));
+            div.find('.icon').append(app.util.getIcon(task.recent.code, 24));
             var date = c.date.relative(task.recent.time);
             if (task.recent.message) {
                 div.find('.message span').text(task.recent.message + ' ' + date);
@@ -206,8 +224,11 @@ app.setup.tasks = function(ul){
         
         // FIXME: 表示条件との照合
         if (task.id in taskli_map) {
-            if (!taskli_map[task.id].is(':visible')) {
+            if (!taskli_map[task.id].data('visible')) {
+                li.data('visible', false);
                 li.hide();
+            } else {
+                li.data('visible', true);
             }
             if (taskli_map[task.id].hasClass('selected')) {
                 li.addClass('selected');
@@ -215,62 +236,88 @@ app.setup.tasks = function(ul){
             taskli_map[task.id].after(li);
             taskli_map[task.id].remove();
             taskli_map[task.id] = li;
-            if (app.util.taskFilter(task, app.data.current_filter)) {
-                if (!li.is(':visible')) {
-                    li.slideDown('fast');
-                }
-                if (app.data.current_task &&
-                    app.data.current_task.id === task.id) {
-                    c.fireEvent('openTask', task);
-                }
-            } else {
-                if (li.is(':visible')) {
-                    li.slideUp('fast');
-                }
-                if (app.data.current_task &&
-                    app.data.current_task.id === task.id) {
-                    var next = li.nextAll(':visible:first');
-                    if (!next.length) {
-                        next = li.prevAll(':visible:first');
-                    }
-                    if (next.length) {
-                        c.fireEvent('openTask', app.data.task_map[next.data('id')]);
-                    } else {
-                        c.fireEvent('missingTask');
-                    }
-                }
-            }
-        } else {
-            li.hide();
-            li.prependTo(ul);
             if (app.data.current_filter &&
                 app.util.taskFilter(task, app.data.current_filter)) {
-                li.slideDown('fast');
+                if (!li.data('visible')) {
+                    li.data('visible', true);
+                    li.show();
+                }
+                // if (app.data.current_task &&
+                //     app.data.current_task.id === task.id) {
+                //     c.fireEvent('openTask', task);
+                // }
+            } else {
+                if (li.data('visible')) {
+                    li.data('visible', false);
+                    li.hide();
+                }
+                // if (app.data.current_task &&
+                //     app.data.current_task.id === task.id) {
+                //     var next = li.nextAll(':visible:first');
+                //     if (!next.length) {
+                //         next = li.prevAll(':visible:first');
+                //     }
+                //     if (next.length) {
+                //         c.fireEvent('openTask', app.data.task_map[next.data('id')]);
+                //     } else {
+                //         c.fireEvent('missingTask');
+                //     }
+                // }
             }
+        } else {
+            if (!(app.data.current_filter &&
+                app.util.taskFilter(task, app.data.current_filter))) {
+                li.data('visible', false);
+                li.hide();
+            } else {
+                li.data('visible', true);
+            }
+            li.prependTo(ul);
         }
         taskli_map[task.id] = li;
     });
     
-    
     c.addListener('filterTask', function(condition){
+        c.fireEvent('selectTab', 'main', 'tasks');
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
             var li = taskli_map[task_id];
             if (app.util.taskFilter(task, condition)) {
-                if (!li.is(':visible')) {
-                    li.slideDown('fast');
-                } else {
+                if (!li.data('visible')) {
+                    li.data('visible', true);
                     li.show();
                 }
             } else {
-                if (li.is(':visible')) {
-                    li.slideUp('fast');
+                if (li.data('visible')) {
+                    li.data('visible', false);
+                    li.hide('');
                 }
                 if (app.data.current_task && app.data.current_task.id === task.id) {
                     c.fireEvent('missingTask');
                 }
             }
         }
+    });
+    
+    c.addListener('clearList', function(list){
+        for (var task_id in app.data.task_map) {
+            var task = app.data.task_map[task_id];
+            if (list.id === task.list.id && task.closed) {
+                if (task_id in taskli_map) {
+                    if (app.data.current_task && app.data.current_task.id === task_id) {
+                        c.fireEvent('missingTask');
+                    }
+                    taskli_map[task_id].remove();
+                    delete taskli_map[task_id];
+                }
+                delete app.data.task_map[task_id];
+            }
+        }
+    });
+    
+    c.addListener('reset', function(){
+        ul.empty();
+        taskli_map = {};
     });
 }
 app.setup.menu = function(ele){
@@ -469,21 +516,40 @@ app.setup.registerTaskWindow = function(form){
     var assign_template = assign_list.html();
     var name_input = form.find('input[name=name]');
     var due_input = form.find('input[name=due]');
-    var requester_select = form.find('select[name=requester]');
+    var requester_list = form.find('ul.requester');
+    var requester_input = form.find('input[name=requester]');
+    var requester_template = requester_list.html();
     var registrant_input = form.find('input[name=registrant]');
     var task_id_input = form.find('input[name=task_id]');
     var list_id_input = form.find('input[name=list_id]');
 
     // setup datepicker
     if (c.lang === 'ja') {
-        due_input.datepicker({dateFormat: 'yy/mm/dd'});
+        // due_input.datepicker({dateFormat: 'yy/mm/dd'});
     } else {
-        due_input.datepicker();
+        // due_input.datepicker();
     }
+
+    form.find('a.due-plus').click(function(e){
+        e.preventDefault();
+        var due = due_input.val();
+        var date = due ? c.string.toDate(due) : (new Date());
+        date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
+        due_input.val(c.date.ymd(date));
+    });
+
+    form.find('a.due-minus').click(function(e){
+        e.preventDefault();
+        var due = due_input.val();
+        var date = due ? c.string.toDate(due) : (new Date());
+        var date = c.string.toDate(due);
+        date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
+        due_input.val(c.date.ymd(date));
+    });
 
     var setup = function(list){
         assign_list.empty();
-        requester_select.empty();
+        requester_list.empty();
         var assigns = [list.owner].concat(list.members);
         for (var i = 0, max_i = assigns.length; i < max_i; i++) {
             var assign = assigns[i];
@@ -504,15 +570,16 @@ app.setup.registerTaskWindow = function(form){
                 .blur(function(){$(this).parent().removeClass('focused')});
             li.appendTo(assign_list);
 
-            $('<option/>')
-                .attr('value', assign)
-                .text(name)
-                .appendTo(requester_select);
+            var requester = $(requester_template);
+            requester.find('div.name').text(name);
+            requester.find('input').val(assign);
+            requester.find('img').attr('src', app.util.getIconUrl(assign));
+            requester.appendTo(requester_list);
         }
 
         // 依頼者のデフォルトは自分
         var registrant = app.util.getRegistrant(list);
-        requester_select.val(registrant);
+        form.find('input[name=requester]').val([registrant]);
         registrant_input.val(registrant);
         task_id_input.val('');
         list_id_input.val(list.id);
@@ -528,6 +595,7 @@ app.setup.registerTaskWindow = function(form){
 
         //
         c.fireEvent('selectTab', 'main', 'registerTask');
+        form.find('input[name="name"]').focus();
     });
 
     c.addListener('editTask', function(task){
@@ -539,14 +607,14 @@ app.setup.registerTaskWindow = function(form){
         setup(task.list);
 
         name_input.val(task.name);
-        due_input.val(task.due);
-        requester_select.val(task.requester);
+        if (task.due) {
+            due_input.val(c.date.ymd(task.due_date));
+        } else {
+            due_input.val('');
+        }
+        form.find('input[name=requester]').val([task.requester]);
         task_id_input.val(task.id);
         form.find('input[name=assign]').val(task.assign);
-
-        if (task.due) {
-            due_input.datepicker('setDate', task.due_date);
-        }
 
         c.fireEvent('selectTab', 'main', 'registerTask');
 
@@ -555,46 +623,90 @@ app.setup.registerTaskWindow = function(form){
 app.submit.registerTask = function(form){
     var task_id = form.find('input[name="task_id"]').val();
     var list_id = form.find('input[name="list_id"]').val();
-    var assign = form.find('input[name="assign"]').map(function(){return $(this).val()}).get();
-    var requester = form.find('select[name="requester"]').val();
+    var assign = form.find('input[name="assign"]:checked')
+                    .map(function(){return $(this).val()}).get();
+    var requester = form.find('input[name="requester"]').val();
     var registrant = form.find('input[name="registrant"]').val();
     var name = form.find('input[name="name"]').val();
-    var due = form.find('input[name="due"]').datepicker("getDate");
+    var due = form.find('input[name="due"]').val();
+    var create = task_id ? false : true;
+    
     if (!name.length) {
         alert('please input task title.');
         return false;
     }
+
     if (due) {
-        due = c.date.mdy(due);
+        due = c.date.mdy(c.string.toDate(due));
     }
+
     if (typeof assign !== 'object') {
         assign = assign ? [assign] : [];
     }
+
     var list = app.data.list_map[list_id];
     if (!list) {
         alert('unknown list ' + list_id);
         return false;
     }
-    var api = task_id ? 'task.update' : 'task.create';
-    var url = task_id ? '/api/1/task/update' : '/api/1/task/create';
+    
+    var time = (new Date()).getTime();
+    var task;
+    if (task_id) {
+        task = app.data.task_map[task_id];
+        task.name = name;
+        task.requester = requester;
+        task.assign = assign;
+        task.due = due;
+        task.updated_on = time;
+    } else {
+        var id = list.id + ':' + time;
+        form.find('input[name="task_id"]').val(id);
+        task = {
+            id: id,
+            requester: requester,
+            registrant: registrant,
+            assign: assign,
+            name: name,
+            due: due,
+            status: 0,
+            closed: 0,
+            comments: [],
+            history: [],
+            created_on: time,
+            updated_on: time
+        };
+    }
+
+    c.fireEvent('registerTask', task, list);
+    
+    var data = form.serialize();
+    var dataArray = form.serializeArray();
+
+    app.dom.reset(form);
+    form.find('input[name="task_id"]').val('');
+    form.find('input[name=requester]').val([registrant]);
+
+    if (task_id) {
+        c.fireEvent('selectTab', 'main', 'tasks');
+    } else {
+        form.find('input[name="name"]').focus();
+        app.dom.show($('#notice-succeeded-create-task'));
+    }
+    
+    var api = create ? 'task.create' : 'task.update';
+    var url = create ? '/api/1/task/create' : '/api/1/task/update';
     app.ajax({
         type: 'POST',
         url: url,
-        data: form.serialize(),
+        data: data,
         dataType: 'json',
-        salvage: true
+        salvage: true,
+        loading: false
     })
     .done(function(data){
         if (data.success === 1) {
             c.fireEvent('registerTask', data.task, list);
-            c.fireEvent('selectTab', 'main', 'tasks');
-            app.data.current_task = null;
-            app.dom.reset(form);
-            if (task_id) {
-                app.dom.hide(form);
-            } else {
-                // app.dom.show($('#create-task-twipsy'));
-            }
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
         }
@@ -603,30 +715,11 @@ app.submit.registerTask = function(form){
         if (!jqXHR.status) {
             app.queue.push({
                 api: api,
-                req: form.serializeArray()
+                req: dataArray,
+                updated_on: task.updated_on
             });
-            app.dom.reset(form);
-            var time = (new Date()).getTime();
-            var task = {
-                id: list.id + ':' + (task_id || time),
-                requester: requester,
-                registrant: registrant,
-                assign: assign,
-                name: name,
-                due: due,
-                status: 0,
-                closed: 0,
-                comments: [],
-                history: [],
-                created_on: time,
-                updated_on: time,
-                salvage: true
-            };
-            list.tasks.push(task);
+            task.salvage = true;
             c.fireEvent('registerTask', task, list);
-            c.fireEvent('selectTab', 'main', 'tasks');
-            app.data.current_task = null;
-            document.activeElement.blur();
         }
     });
 }

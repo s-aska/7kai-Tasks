@@ -25,6 +25,8 @@ c.addEvents('filterTask');
 c.addEvents('checkStar');
 c.addEvents('checkMute');
 
+c.addEvents('clickNotification');
+
 // イベントのキャッシュコントロール
 c.addListener('openList', function(list){
     app.data.current_list = list;
@@ -40,7 +42,6 @@ c.addListener('deleteList', function(list){
     delete app.data.list_map[list.id];
 });
 c.addListener('clearList', function(list){
-    delete app.data.list_map[list.id];
 });
 c.addListener('openTask', function(task){
     app.data.current_task = task;
@@ -51,7 +52,7 @@ c.addListener('registerTask', function(task, list){
 
     // 期日
     if (task.due) {
-        task.due_date = $.datepicker.parseDate('mm/dd/yy', task.due);
+        task.due_date = c.string.toDate(task.due);
         task.due_epoch = task.due_date.getTime();
     } else {
         task.due_epoch = 0;
@@ -141,6 +142,10 @@ c.addListener('registerSubAccount', function(sub_account){
         name: sub_account.name,
         icon: icon
     };
+});
+c.addListener('clickNotification', function(option){
+    app.data.current_filter = { list_id: option.list_id };
+    app.api.account.me(option);
 });
 
 // セットアップ
@@ -322,7 +327,8 @@ app.api.account.me = function(option){
     app.ajax({
         url: '/api/1/account/me',
         data: option.data,
-        dataType: 'json'
+        dataType: 'json',
+        loading: false
     })
     .done(function(data){
         var friends
@@ -370,7 +376,8 @@ app.api.account.me = function(option){
             // Twitter
             if (/^tw-[0-9]+$/.test(sub_account.code)) {
                 if ("friends" in sub_account.data) {
-                    c.fireEvent('registerFriends', sub_account.data.friends, sub_account.code);
+                    c.fireEvent('registerFriends', sub_account.data.friends,
+                        sub_account.code);
                 }
                 if (option.setup
                     && data.sign.code === sub_account.code
@@ -435,7 +442,8 @@ app.api.account.update = function(params){
         url: '/api/1/account/update',
         data: params,
         dataType: 'json',
-        salvage: true
+        salvage: true,
+        loading: false
     })
     .fail(function(jqXHR, textStatus, errorThrown){
         if (!jqXHR.status) {
@@ -452,16 +460,24 @@ app.api.task.update = function(params){
         alert('unknown list ' + params.list_id);
         return;
     }
+    if (!(params.task_id in app.data.task_map)) {
+        // FIXME
+        return;
+    }
+    var task = $.extend({}, app.data.task_map[params.task_id], params);
+    c.fireEvent('registerTask', task, list);
     app.ajax({
         type: 'POST',
         url: '/api/1/task/update',
         data: params,
         dataType: 'json',
-        salvage: true
+        salvage: true,
+        loading: false
     })
     .done(function(data){
         if (data.success === 1) {
-            c.fireEvent('registerTask', data.task, list);
+            app.data.task_map[params.task_id].updated_on = data.task.updated_on;
+            // c.fireEvent('registerTask', data.task, list); // update updated_on
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
         }
@@ -470,16 +486,9 @@ app.api.task.update = function(params){
         if (!jqXHR.status) {
             app.queue.push({
                 api: 'task.update',
-                req: params
+                req: params,
+                updated_on: task.updated_on
             });
-            var task_id = params.task_id;
-            delete params.task_id;
-            var task = app.data.task_map[task_id];
-            if (task) {
-                for (var key in params) {
-                    task[key] = params[key];
-                }
-            }
             task.salvage = true;
             c.fireEvent('registerTask', task, list);
         }
@@ -573,8 +582,90 @@ app.click.editTask = function(){
 app.setup.messages = function(ele){
     app.data.messages = ele;
 }
+app.setup.hide = function(ele){
+    ele.hide();
+}
 
 /* */
+app.setup.switchClosed = function(ele){
+    c.addListener('filterTask', function(){
+        ele.removeClass('active');
+    });
+    ele.click(function(){
+        var val = ele.hasClass('active') ? 0 : 1;
+        c.fireEvent('filterTask', {
+            list_id: app.data.current_list.id,
+            closed: val
+        });
+        if (val) {
+            ele.addClass('active');
+        } else {
+            ele.removeClass('active');
+        }
+    });
+    c.addListener('clickNotification', function(option){
+        if (ele.hasClass('active')) {
+            ele.click();
+        }
+    });
+}
+app.setup.switchMute = function(ele){
+    // c.addListener('filterTask', function(){
+    //     ele.removeClass('active');
+    // });
+    ele.click(function(){
+        var method = app.data.state.mute[app.data.current_list.id] ? '-' : '+';
+        app.api.account.update({
+            ns: 'state',
+            method: method,
+            key: 'mute',
+            val: app.data.current_list.id
+        })
+        .done(function(data){
+            if (data.success === 1) {
+                app.data.state.mute = data.account.state.mute;
+                c.fireEvent('checkMute', app.data.current_list,
+                    (app.data.current_list.id in app.data.state.mute));
+            } else {
+                // 現在 ステータスコード 200 の例外ケースは無い
+            }
+        });
+        // var val = ele.hasClass('active') ? 0 : 1;
+        // c.fireEvent('filterTask', {
+        //     list_id: app.data.current_list.id,
+        //     closed: val
+        // });
+        // if (val) {
+        //     ele.addClass('active');
+        // } else {
+        //     ele.removeClass('active');
+        // }
+    });
+}
+app.submit.clearList = function(form){
+    if (!app.data.current_list) {
+        alert('app.data.current_list is null.');
+        return;
+    }
+    app.ajax({
+        type: 'POST',
+        url: '/api/1/list/clear',
+        data: {
+            list_id: app.data.current_list.id
+        },
+        dataType: 'json'
+    })
+    .done(function(data){
+        if (data.success === 1) {
+            c.fireEvent('clearList', data.list);
+            c.fireEvent('openList', data.list);
+            app.dom.hide($('#clear-list-window'));
+        } else {
+            // 現在 ステータスコード 200 の例外ケースは無い
+        }
+    });
+}
+
 app.setup.taskCounter = function(ele){
     var count = 0;
     var condition = ele.data('counter-condition');

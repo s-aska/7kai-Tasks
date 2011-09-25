@@ -7,9 +7,6 @@ c.addEvents('registerAccount');
 c.addEvents('signin');
 c.addEvents('signup');
 
-app.setup.signin = function(form){
-    app.dom.show(form);
-}
 app.setup.signup = function(form){
 
     c.addListener('signup', function(){

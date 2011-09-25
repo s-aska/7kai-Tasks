@@ -132,6 +132,12 @@
             <li>
               <a
                 data-setup="click"
+                data-click="openMini"
+              >Mini Version</a>
+            </li>
+            <li>
+              <a
+                data-setup="click"
                 data-click="show"
                 data-show-id="settings-window"
               >Settings</a>
@@ -876,54 +882,6 @@
   </div>
 </form>
 
-<form
-  id="clear-list-window"
-  class="modal form-stacked"
-  data-setup="ui,submit,escclose"
-  data-ui="draggable"
-  data-submit="clearList"
-  data-show-effect="fade"
-  data-show-speed="fast"
-  data-show-callback="dom.autofocus"
-  data-hide-effect="fade"
-  data-hide-speed="fast"
-  data-hide-callback="dom.blur"
->
-  <div class="modal-header">
-    <h3
-      data-setup="localize"
-      data-text-ja="完了済のタスクを削除"
-    >Clear Closed Task</h3>
-    <a
-      class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="clear-list-window"
-    >×</a>
-  </div>
-  <div class="modal-body">
-    <p
-      data-setup="localize"
-      data-text-ja="本当に完了済のタスクを削除しますか？"
-    >Do you really want to clear the closed task?</p>
-  </div>
-  <div class="modal-footer">
-    <button
-      class="btn danger"
-      data-setup="localize"
-      data-text-ja="削除"
-      data-autofocus="true"
-    >Delete</button>
-    <button
-      class="btn secondary"
-      data-setup="localize,click"
-      data-text-ja="キャンセル"
-      data-click="hide"
-      data-hide-id="clear-list-window"
-    >Cancel</button>
-  </div>
-</form>
-
 <div
   id="settings-window"
   class="modal"
@@ -1396,6 +1354,11 @@
 [% END %]
 
 [% INCLUDE "include/messages.tt" %]
+
+<div
+  id="receiver"
+  style="display: none;"
+  data-setup="receiver"></div>
 
 </body>
 </html>

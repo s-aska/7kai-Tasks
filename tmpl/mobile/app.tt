@@ -4,12 +4,12 @@
 <title>7kai Tasks</title> 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1">
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css" media="all">
 <link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
 <link rel="stylesheet" href="/static/css/app-base.css">
 <link rel="stylesheet" href="/static/css/app-mobile.css">
-<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
 <script src="/static/js/iscroll.js"></script>
 <script src="/static/js/spin.min.js"></script>
@@ -20,7 +20,7 @@
 <script src="/static/js/app-mobile-viewer.js"></script>
 </head> 
 <body>
-<div id="header" class="topbar" data-setup="topBar">
+<div id="header" class="topbar">
   <div class="fill">
     <div class="container">
       <ul class="nav">
@@ -42,18 +42,30 @@
       </ul>
       <ul class="nav secondary-nav">
         <li class="menu" data-setup="menu">
-          <a class="menu profile-name"><img class="profile-icon" src="[% sign.icon == 'email' ? '/static/img/email24_off.png' : sign.icon %]">[% sign.name %]</a>
+          <a class="menu">menu</a>
           <ul
             class="menu-dropdown"
             style="display: none"
           >
             <!-- <li><a>Edit List</a></li>
             <li><a>Delete List</a></li>
-            <li><a>Show Closed Task</a></li>
-            <li><a>Enable Mute</a></li>
             <li class="divider"></li>
             <li><a>Settings</a></li>
             <li><a>Help</a></li> -->
+            <li><a class="action"
+                data-setup="localize,switchMute"
+                data-text-ja="ミュート切替"
+            >Toggle Mute</a></li>
+            <li><a class="action"
+                data-setup="localize,switchClosed"
+                data-text-ja="完了済のタスクを表示切替"
+            >Toggle Show closed Task</a></li>
+            <li><a class="action"
+                data-setup="localize,click"
+                data-text-ja="完了済のタスクを削除"
+                data-click="show"
+                data-show-id="clear-list-window"
+            >Clear Closed Task</a></li>
             <li class="divider"></li>
             <li><a href="/signout">Sign Out</a></li>
           </ul>
@@ -71,11 +83,11 @@
       data-tab-group="main"
     >
       <li class="clearfix">
-        <div class="icon icon-tasks-off"></div>
-        <div class="icon icon-star-off"></div>
+        <div class="icon sq24 icon-tasks-off"></div>
+        <div class="icon sq24 icon-star-off"></div>
         <div class="human"></div>
         <div class="name">アイコン作成</div>
-        <div class="icon icon-cross delete"></div>
+        <div class="icon sq24 icon-cross delete"></div>
         <div class="due">8/23</div>
         <div class="recent-comment">
           <div class="icon"></div>
@@ -131,8 +143,9 @@
                     type="text"
                     name="due"
                     value=""
-                    data-setup="dateplus"
-                  >
+                  ><br>
+                  <a class="btn due-minus"><span class="icon sq24 icon-minus"></span></a>
+                  <a class="btn due-plus"><span class="icon sq24 icon-plus"></span></a>
                 </div>
               </div>
               <div class="clearfix">
@@ -141,7 +154,15 @@
                   data-text-ja="依頼者"
                 >Requester</label>
                 <div class="input">
-                  <select name="requester"></select>
+                  <ul class="unstyled requester">
+                    <li class="clearfix">
+                      <label>
+                        <div class="checkbox"><input type="radio" name="requester"></div>
+                        <div class="icon"><img class="sq16"></div>
+                        <div class="name">XXXX</div>
+                      </label>
+                    </li>
+                  </ul>
                 </div>
               </div>
               <div class="clearfix">
@@ -218,6 +239,12 @@
             data-tab-id="tasks"
             data-tab-group="main"
           >Back</a>
+          <a
+            class="btn secondary"
+            data-setup="localize,click"
+            data-text-ja="編集"
+            data-click="editTask"
+          >Edit</a>
         </div>
       </form>
       <ul
@@ -321,6 +348,14 @@
 </div>
 
 [% INCLUDE "include/messages.tt" %]
+
+<div class="icon-tasks" data-setup="hide"></div>
+<div class="icon-tasks-half" data-setup="hide"></div>
+<div class="icon-tasks-off" data-setup="hide"></div>
+<div class="icon-star" data-setup="hide"></div>
+<div class="icon-star-off" data-setup="hide"></div>
+<div class="icon-plus" data-setup="hide"></div>
+<div class="icon-minus" data-setup="hide"></div>
 
 </body>
 </html>

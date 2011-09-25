@@ -35,6 +35,54 @@
   </div>
 </div>
 
+<form
+  id="clear-list-window"
+  class="modal form-stacked"
+  data-setup="ui,submit,escclose"
+  data-ui="draggable"
+  data-submit="clearList"
+  data-show-effect="fade"
+  data-show-speed="fast"
+  data-show-callback="dom.autofocus"
+  data-hide-effect="fade"
+  data-hide-speed="fast"
+  data-hide-callback="dom.blur"
+>
+  <div class="modal-header">
+    <h3
+      data-setup="localize"
+      data-text-ja="完了済のタスクを削除"
+    >Clear Closed Task</h3>
+    <a
+      class="close"
+      data-setup="click"
+      data-click="hide"
+      data-hide-id="clear-list-window"
+    >×</a>
+  </div>
+  <div class="modal-body">
+    <p
+      data-setup="localize"
+      data-text-ja="本当に完了済のタスクを削除しますか？"
+    >Do you really want to clear the closed task?</p>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn danger"
+      data-setup="localize"
+      data-text-ja="削除"
+      data-autofocus="true"
+    >Delete</button>
+    <button
+      class="btn secondary"
+      data-setup="localize,click"
+      data-text-ja="キャンセル"
+      data-click="hide"
+      data-hide-id="clear-list-window"
+    >Cancel</button>
+  </div>
+</form>
+
 <div
   id="success-delete-account"
   class="modal"
@@ -78,6 +126,25 @@
   <p>
     <strong>Info</strong>
     <span>Succeeded to salvage.</span>
+  </p>
+</div>
+
+<div
+  id="notice-succeeded-create-task"
+  class="alert alert-message success"
+  data-show-option='{"direction":"down"}'
+  data-show-auto-close="5000"
+  data-hide-option='{"direction":"down"}'
+>
+  <a
+    class="close"
+    data-setup="click"
+    data-click="hide"
+    data-hide-id="notice-succeeded-create-task"
+  >×</a>
+  <p>
+    <strong>Info</strong>
+    <span>Succeeded to create a task.</span>
   </p>
 </div>
 
@@ -157,10 +224,5 @@
   data-text-refix-task-en="update (close => fix) the task"
   data-text-refix-task-ja="タスクを更新 (完了 => 処理済)"
 ></div>
-
-<div
-  id="receiver"
-  style="display: none;"
-  data-setup="receiver"></div>
 
 </div>

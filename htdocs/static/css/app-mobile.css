@@ -12,11 +12,24 @@ h2 {
     line-height: 1.2;
 }
 .container {
+    position: relative;
     width: 100%;
+    
 }
+/*.topbar div > .secondary-nav {
+    position: absolute;
+    top: 0;
+    right: 0;
+    float: right;
+}
+.topbar div > .secondary-nav > .menu {
+}*/
 .modal {
     width: 300px;
     margin-left: -150px;
+}
+a {
+    cursor: pointer;
 }
 a.icon {
     display: inline-block;
@@ -33,9 +46,35 @@ form.modal {
 div.alert {
     display: none;
     position: absolute;
-    width: 300px;
+    width: 260px;
     bottom: 40px;
     left: 10px;
+    z-index: 10009;
+}
+
+.icon-plus {
+    background-image: url(/static/img/plus24.png);
+}
+.icon-minus {
+    background-image: url(/static/img/minus24.png);
+}
+.icon-cross {
+    background-image: url(/static/img/cross24.png);
+}
+.icon-star {
+    background-image: url(/static/img/star24.png);
+}
+.icon-star-off {
+    background-image: url(/static/img/star_off24.png);
+}
+.icon-tasks {
+    background-image: url(/static/img/tasks24.png);
+}
+.icon-tasks-half {
+    background-image: url(/static/img/tasks_half24.png);
+}
+.icon-tasks-off {
+    background-image: url(/static/img/tasks_off24.png);
 }
 
 /* ▾ */
@@ -75,6 +114,11 @@ div.alert {
 #alert {
     width: 300px;
     margin-left: -150px;
+    z-index: 10009;
+}
+#notice-succeeded-create-task {
+    top: 60px;
+    bottom: auto;
 }
 
 /********** wrapper **********/
@@ -108,7 +152,7 @@ body > .topbar ul li a.profile-name {
     top: auto;
     bottom: 0;
     z-index: 10002;
-    font-size: 12px;
+    font-size: 11px;
 }
 #footer ul.nav {
     width: 100%;
@@ -180,9 +224,12 @@ ul.tasks li.closed.selected {
 }
 ul.tasks li div {
     float: left;
+    font-size: 16px;
+    line-height: 1.4;
 }
 ul.tasks li div.human {
-    height: 16px;
+    height: 24px;
+    margin-left: 2px;
 }
 ul.tasks li div.human span {
     display: inline-block;
@@ -202,7 +249,7 @@ ul.tasks li div.delete {
 ul.tasks li div.recent-comment {
     position: relative;
     clear: both;
-    margin-left: 32px;
+    margin-left: 50px;
     font-size: 11px;
     color: gray;
 }
@@ -210,7 +257,7 @@ ul.tasks li div.recent-comment .icon {
     position: absolute;
 }
 ul.tasks li div.recent-comment .message {
-    margin-left: 20px;
+    margin-left: 30px;
 }
 ul.comments {
     overflow-y: auto;

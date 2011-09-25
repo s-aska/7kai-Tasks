@@ -24,10 +24,11 @@ sub create {
     my @assign     = $req->param('assign');
     my $due        = $c->stash->{date_loose};
     my $list       = $c->stash->{list};
-    my $task_id    = ++$list->data->{last_task_id};
     my $time       = int(Time::HiRes::time * 1000);
+    my $task_id    = $req->param('task_id') ||
+                         $list->list_id . ':' . ++$list->data->{last_task_id};
     my $task = {
-        id => $list->list_id . ':' . $task_id,
+        id => $task_id,
         requester => $requester,
         registrant => $registrant,
         assign => \@assign,
@@ -64,9 +65,10 @@ sub update {
     return unless $res;
 
     my $target_task;
-    my $task_id = $req->param('task_id');
-    my $list    = $c->stash->{list};
-    my $time    = int(Time::HiRes::time * 1000);
+    my $task_id      = $req->param('task_id');
+    my $requested_on = $req->param('requested_on');
+    my $list         = $c->stash->{list};
+    my $time         = int(Time::HiRes::time * 1000);
     for my $task (@{ $list->data->{tasks} }) {
         next if $task->{id} ne $task_id;
 
