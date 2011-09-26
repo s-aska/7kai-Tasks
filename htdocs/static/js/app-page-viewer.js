@@ -1,11 +1,10 @@
 (function(ns, w, d) {
 
-var c = ns.c;
 var app = ns.app;
 
-c.addEvents('moveTask');
-c.addEvents('moveTaskCancel');
-c.addEvents('removeAccountConfirm');
+app.addEvents('moveTask');
+app.addEvents('moveTaskCancel');
+app.addEvents('removeAccountConfirm');
 
 // ----------------------------------------------------------------------
 // トップバー機能(ってなんだよ...)
@@ -15,7 +14,7 @@ app.setup.topBar = function(ele){
     var filter_list = ele.find('.container > ul:first');
 
     // リスト選択されたらハイライトを全力で切る
-    c.addListener('openList', function(list){
+    app.addListener('openList', function(list){
         filter_list.find('> li').removeClass('active');
     });
 }
@@ -37,12 +36,12 @@ app.setup.settingsWindow = function(ele){
     var ul = ele.find('ul.accounts');
     var template = ul.html();
     ul.empty();
-    c.addListener('registerSubAccount', function(sub_account){
+    app.addListener('registerSubAccount', function(sub_account){
         var li = $(template);
         li.find('img').attr('src', app.util.getIconUrl(sub_account.code));
         li.find('.name').text(sub_account.name);
         li.find('button').click(function(){
-            c.fireEvent('removeAccountConfirm', sub_account);
+            app.fireEvent('removeAccountConfirm', sub_account);
         });
         if (sub_account.code in li_cache) {
             li_cache[sub_account.code].after(li);
@@ -52,19 +51,19 @@ app.setup.settingsWindow = function(ele){
         }
         li_cache[sub_account.code] = li;
     });
-    c.addListener('reset', function(){
+    app.addListener('reset', function(){
         ul.empty();
         ele.hide();
     });
 }
 app.setup.removeAccountWindow = function(form){
-    c.addListener('removeAccountConfirm', function(sub_account){
+    app.addListener('removeAccountConfirm', function(sub_account){
         app.dom.show(form);
         form.find('input[name="code"]').val(sub_account.code);
         form.find('img').attr('src', app.util.getIconUrl(sub_account.code));
         form.find('.name').text(sub_account.name);
     });
-    c.addListener('reset', function(){
+    app.addListener('reset', function(){
         form.hide();
     });
 }
@@ -86,7 +85,7 @@ app.submit.deleteAccount = function(form){
                     location.reload();
                 }, 3000);
             } else {
-                c.fireEvent('resetup');
+                app.fireEvent('resetup');
             }
         }
     })
@@ -117,7 +116,7 @@ app.setup.leftColumn = function(ele){
 
     a.click(function(){
         if (app.data.current_list) {
-            c.fireEvent('openList', app.data.current_list);
+            app.fireEvent('openList', app.data.current_list);
         }
     });
 
@@ -137,14 +136,14 @@ app.setup.leftColumn = function(ele){
         .done(function(data){
             if (data.success === 1) {
                 app.data.state.mute = data.account.state.mute;
-                c.fireEvent('checkMute', list, checkbox.attr('checked'));
+                app.fireEvent('checkMute', list, checkbox.attr('checked'));
             } else {
                 // 現在 ステータスコード 200 の例外ケースは無い
             }
         });
     });
 
-    c.addListener('openList', function(list){
+    app.addListener('openList', function(list){
         a.text(list.name);
         member_ul.empty();
         var members = [list.owner].concat(list.members);
@@ -170,20 +169,20 @@ app.setup.leftColumn = function(ele){
     });
 
     // リスト選択
-    c.addListener('moveTask', function(task){
+    app.addListener('moveTask', function(task){
         app.data.dragtask = task;
         list_ul.slideDown('fast');
     });
-    c.addListener('moveTaskCancel', function(task){
+    app.addListener('moveTaskCancel', function(task){
         app.data.dragtask = null;
         list_ul.slideUp('fast');
     });
-    c.addListener('registerList', function(list){
+    app.addListener('registerList', function(list){
         var li = $('<li/>')
             .data('id', list.id)
             .append(
                 $('<a/>').text(list.name).click(function(){
-                    c.fireEvent('openList', list);
+                    app.fireEvent('openList', list);
                 })
             );
 
@@ -215,7 +214,7 @@ app.setup.leftColumn = function(ele){
         }
         li_map[list.id] = li;
     });
-    c.addListener('deleteList', function(list){
+    app.addListener('deleteList', function(list){
         var remove_li = li_map[list.id];
         var next_li = remove_li.next() || remove_li.prev();
         remove_li.remove();
@@ -223,7 +222,7 @@ app.setup.leftColumn = function(ele){
         if (next_li) {
             var next_id = next_li.data('id');
             if (next_id in app.data.list_map) {
-                c.fireEvent('openList', app.data.list_map[next_id]);
+                app.fireEvent('openList', app.data.list_map[next_id]);
             } else {
                 // bug
             }
@@ -231,7 +230,7 @@ app.setup.leftColumn = function(ele){
             checkbox.attr('disabled', true);
         }
     });
-    c.addListener('reset', function(list){
+    app.addListener('reset', function(list){
         a.text('');
         list_ul.empty();
         member_ul.empty();
@@ -252,7 +251,7 @@ app.setup.leftColumn = function(ele){
             var i = e.keyCode - 49;
             var lis = ele.find('ul.lists > li');
             if (i in lis) {
-                c.fireEvent('openList', app.data.list_map[$(lis[i]).data('id')]);
+                app.fireEvent('openList', app.data.list_map[$(lis[i]).data('id')]);
             }
         } else if (e.keyCode === 76) {
             var menu = ele.find('ul.lists:first');
@@ -315,12 +314,12 @@ app.setup.registerListWindow = function(form){
         if (/^tw-[0-9]+$/.test(code)) {
             social_member_input.attr('placeholder', 'screen_name');
             social_member_addon.text('@');
-            social_member_label.text(social_member_label.data('text-tw-' + c.lang));
+            social_member_label.text(social_member_label.data('text-tw-' + app.env.lang));
             social_member_field.show();
         } else if (/^fb-[0-9]+$/.test(code)) {
             social_member_input.attr('placeholder', 'username');
             social_member_addon.text('f');
-            social_member_label.text(social_member_label.data('text-fb-' + c.lang));
+            social_member_label.text(social_member_label.data('text-fb-' + app.env.lang));
             social_member_field.show();
         } else {
             social_member_field.hide();
@@ -390,7 +389,7 @@ app.setup.registerListWindow = function(form){
         }
     });
 
-    c.addListener('registerSubAccount', function(sub_account){
+    app.addListener('registerSubAccount', function(sub_account){
         if (option_map[sub_account.code]) {
             option_map[sub_account.code].remove();
         }
@@ -404,7 +403,7 @@ app.setup.registerListWindow = function(form){
         }
     });
 
-    c.addListener('editList', function(list){
+    app.addListener('editList', function(list){
         owner_field.hide();
         app.dom.reset(form);
         app.dom.show(form);
@@ -418,7 +417,7 @@ app.setup.registerListWindow = function(form){
         }
     });
 
-    c.addListener('createList', function(){
+    app.addListener('createList', function(){
         id_input.val('');
         owner_field.show();
         modeReset(owner_select.val());
@@ -428,7 +427,7 @@ app.setup.registerListWindow = function(form){
         app.dom.show(form);
     });
 
-    c.addListener('reset', function(){
+    app.addListener('reset', function(){
         option_map = {};
         owner_select.empty();
     });
@@ -437,11 +436,11 @@ app.setup.deleteListWindow = function(form){
 
 }
 app.click.createList = function(){
-    c.fireEvent('createList');
+    app.fireEvent('createList');
 }
 app.click.editList = function(){
     if (app.data.current_list) {
-        c.fireEvent('editList', app.data.current_list);
+        app.fireEvent('editList', app.data.current_list);
     } else {
         alert('app.data.current_list is null.');
     }
@@ -474,8 +473,8 @@ app.submit.registerList = function(form){
     })
     .done(function(data){
         if (data.success === 1) {
-            c.fireEvent('registerList', data.list);
-            c.fireEvent('openList', data.list);
+            app.fireEvent('registerList', data.list);
+            app.fireEvent('openList', data.list);
             app.dom.reset(form);
             form.find('ul.members').empty();
             if (id) {
@@ -500,7 +499,7 @@ app.submit.deleteList = function(form){
     })
     .done(function(data){
         if (data.success === 1) {
-            c.fireEvent('deleteList', app.data.current_list);
+            app.fireEvent('deleteList', app.data.current_list);
             app.dom.show($('#delete-list-twipsy'));
             app.dom.hide($('#delete-list-window'));
         } else {
@@ -540,7 +539,7 @@ app.setup.centerColumn = function(ele){
     // 初期化処理
     ul.empty();
 
-    c.addListener('registerTask', function(task){
+    app.addListener('registerTask', function(task){
         var li = $(template);
 
         li.data('id', task.id);
@@ -551,11 +550,11 @@ app.setup.centerColumn = function(ele){
 
         // Task Move
         li.get(0).addEventListener('dragstart', function(e){
-            c.fireEvent('moveTask', task);
+            app.fireEvent('moveTask', task);
             e.dataTransfer.setData("text", task.id);
         }, false);
         li.get(0).addEventListener('dragend', function(e){
-            c.fireEvent('moveTaskCancel');
+            app.fireEvent('moveTaskCancel');
             e.dataTransfer.clearData();
         }, false);
 
@@ -625,7 +624,7 @@ app.setup.centerColumn = function(ele){
                     key: 'star',
                     val: task.id
                 });
-                c.fireEvent('checkStar', method === '+');
+                app.fireEvent('checkStar', method === '+');
             });
         })();
 
@@ -650,18 +649,17 @@ app.setup.centerColumn = function(ele){
 
         // FIXME: リファクタリング
         if (task.due) {
-            var mdy = task.due.split('/');
-            var label = Number(mdy[0]) + '/' + Number(mdy[1]);
+            var label = (task.due_date.getMonth() + 1) + '/' + task.due_date.getDate();
             var now = new Date();
-            if (now.getFullYear() != mdy[2]) {
-                if (c.LANG === 'ja') {
-                    label = mdy[2] + '/' + label;
+            if (now.getFullYear() !== task.due_date.getFullYear()) {
+                if (app.env.lang === 'ja') {
+                    label = task.due_date.getFullYear() + '/' + label;
                 } else {
-                    label = label + '/' + mdy[2];
+                    label = label + '/' + task.due_date.getFullYear();
                 }
             }
             li.find('.due').text(label);
-            if (now.getTime() > (new Date(mdy[2], mdy[0] - 1, mdy[1])).getTime()) {
+            if (now.getTime() > task.due_date.getTime()) {
                 li.find('.due').addClass('over');
             }
         } else {
@@ -671,12 +669,12 @@ app.setup.centerColumn = function(ele){
         if (task.recent) {
             var div = li.find('.recent-comment');
             div.find('.icon').append(app.util.getIcon(task.recent.code, 16));
-            var date = c.date.relative(task.recent.time);
+            var date = app.date.relative(task.recent.time);
             if (task.recent.message) {
                 div.find('.message span').text(task.recent.message + ' ' + date);
             } else {
                 div.find('.message span').text(
-                    app.data.messages.data('text-' + task.recent.action + '-' + c.lang)
+                    app.data.messages.data('text-' + task.recent.action + '-' + app.env.lang)
                     + ' ' + date);
             }
         } else {
@@ -685,7 +683,7 @@ app.setup.centerColumn = function(ele){
 
         li.click(function(e){
             e.stopPropagation();
-            c.fireEvent('openTask', task);
+            app.fireEvent('openTask', task);
         });
 
         // FIXME: 表示条件との照合
@@ -710,7 +708,7 @@ app.setup.centerColumn = function(ele){
                 }
                 if (app.data.current_task &&
                     app.data.current_task.id === task.id) {
-                    c.fireEvent('openTask', task);
+                    app.fireEvent('openTask', task);
                 }
             } else {
                 if (li.data('visible')) {
@@ -724,9 +722,9 @@ app.setup.centerColumn = function(ele){
                         next = li.prevAll(':visible:first');
                     }
                     if (next.length) {
-                        c.fireEvent('openTask', app.data.task_map[next.data('id')]);
+                        app.fireEvent('openTask', app.data.task_map[next.data('id')]);
                     } else {
-                        c.fireEvent('missingTask');
+                        app.fireEvent('missingTask');
                     }
                 }
             }
@@ -744,14 +742,14 @@ app.setup.centerColumn = function(ele){
         taskli_map[task.id] = li;
     });
 
-    c.addListener('openTask', function(task){
+    app.addListener('openTask', function(task){
         ul.find('> li').removeClass('selected');
         if (task.id in taskli_map) {
             taskli_map[task.id].addClass('selected');
         }
     });
 
-    c.addListener('sortTask', function(column, reverse){
+    app.addListener('sortTask', function(column, reverse){
         var tasks = [];
         for (var task_id in app.data.task_map) {
             tasks.push(app.data.task_map[task_id]);
@@ -785,7 +783,7 @@ app.setup.centerColumn = function(ele){
         app.data.current_sort.reverse = reverse;
     });
 
-    c.addListener('filterTask', function(condition){
+    app.addListener('filterTask', function(condition){
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
             var li = taskli_map[task_id];
@@ -802,19 +800,19 @@ app.setup.centerColumn = function(ele){
                     li.slideUp('fast');
                 }
                 if (app.data.current_task && app.data.current_task.id === task.id) {
-                    c.fireEvent('missingTask');
+                    app.fireEvent('missingTask');
                 }
             }
         }
     });
 
-    c.addListener('clearList', function(list){
+    app.addListener('clearList', function(list){
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
             if (list.id === task.list.id && task.closed) {
                 if (task_id in taskli_map) {
                     if (app.data.current_task && app.data.current_task.id === task_id) {
-                        c.fireEvent('missingTask');
+                        app.fireEvent('missingTask');
                     }
                     taskli_map[task_id].remove();
                     delete taskli_map[task_id];
@@ -824,14 +822,14 @@ app.setup.centerColumn = function(ele){
         }
     });
 
-    c.addListener('missingTask', function(){
+    app.addListener('missingTask', function(){
         if (app.data.current_task &&
             app.data.current_task.id in taskli_map) {
             taskli_map[app.data.current_task.id].removeClass('selected');
         }
     });
 
-    c.addListener('reset', function(){
+    app.addListener('reset', function(){
         ul.empty();
         taskli_map = {};
     });
@@ -855,7 +853,7 @@ app.setup.centerColumn = function(ele){
                 if (!(next_id in app.data.task_map)) {
                     return;
                 }
-                c.fireEvent('openTask', app.data.task_map[next_id]);
+                app.fireEvent('openTask', app.data.task_map[next_id]);
             }
         } else if (e.keyCode === 40) { // Down
             var next;
@@ -869,7 +867,7 @@ app.setup.centerColumn = function(ele){
                 if (!(next_id in app.data.task_map)) {
                     return;
                 }
-                c.fireEvent('openTask', app.data.task_map[next_id]);
+                app.fireEvent('openTask', app.data.task_map[next_id]);
             }
         } else if (!app.data.current_task) {
             return;
@@ -877,7 +875,7 @@ app.setup.centerColumn = function(ele){
             var task = app.data.current_task;
             var date = task.due_date || new Date();
             date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
-            var due = c.date.mdy(date);
+            var due = app.date.mdy(date);
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
@@ -888,7 +886,7 @@ app.setup.centerColumn = function(ele){
             var task = app.data.current_task;
             var date = task.due_date || new Date();
             date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
-            var due = c.date.mdy(date);
+            var due = app.date.mdy(date);
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
@@ -915,7 +913,7 @@ app.setup.centerColumn = function(ele){
             });
         } else if (e.keyCode === 69) { // E
             var task = app.data.current_task;
-            c.fireEvent('editTask', task);
+            app.fireEvent('editTask', task);
         }
     });
 }
@@ -931,13 +929,6 @@ app.setup.registerTaskWindow = function(form){
     var registrant_input = form.find('input[name=registrant]');
     var task_id_input = form.find('input[name=task_id]');
     var list_id_input = form.find('input[name=list_id]');
-
-    // // setup datepicker
-    // if (c.lang === 'ja') {
-    //     due_input.datepicker({dateFormat: 'yy/mm/dd'});
-    // } else {
-    //     due_input.datepicker();
-    // }
 
     var setup = function(list){
         assign_list.empty();
@@ -976,7 +967,7 @@ app.setup.registerTaskWindow = function(form){
         list_id_input.val(list.id);
     };
 
-    c.addListener('createTask', function(){
+    app.addListener('createTask', function(){
         app.dom.reset(form);
         if (!app.data.current_list) {
             alert('missing current_list');
@@ -988,7 +979,7 @@ app.setup.registerTaskWindow = function(form){
         app.dom.show(form);
     });
 
-    c.addListener('editTask', function(task){
+    app.addListener('editTask', function(task){
         app.dom.reset(form);
         if (!app.data.current_list) {
             alert('missing current_list');
@@ -997,13 +988,15 @@ app.setup.registerTaskWindow = function(form){
         setup(task.list);
 
         name_input.val(task.name);
-        due_input.val(task.due);
+        if (task.due) {
+            due_input.val(app.date.ymd(task.due_date));
+        }
         requester_select.val(task.requester);
         task_id_input.val(task.id);
         form.find('input[name=assign]').val(task.assign);
 
         if (task.due) {
-            due_input.datepicker('setDate', task.due_date);
+            due_input.val(app.date.ymd(task.due_date));
         }
 
         app.dom.show(form);
@@ -1011,7 +1004,7 @@ app.setup.registerTaskWindow = function(form){
     });
 }
 app.click.sortTask = function(ele){
-    c.fireEvent('sortTask', ele.data('sort-column'), ele.data('sort-reverse'));
+    app.fireEvent('sortTask', ele.data('sort-column'), ele.data('sort-reverse'));
 }
 app.submit.registerTask = function(form){
     var task_id = form.find('input[name=task_id]').val();
@@ -1023,7 +1016,7 @@ app.submit.registerTask = function(form){
     var name = form.find('input[name="name"]').val();
     var due = form.find('input[name="due"]').datepicker("getDate");
     if (due) {
-        due = c.date.mdy(due);
+        due = app.date.mdy(due);
     }
     if (typeof assign !== 'object') {
         assign = assign ? [assign] : [];
@@ -1044,8 +1037,8 @@ app.submit.registerTask = function(form){
     })
     .done(function(data){
         if (data.success === 1) {
-            c.fireEvent('registerTask', data.task, list);
-            c.fireEvent('openTask', data.task);
+            app.fireEvent('registerTask', data.task, list);
+            app.fireEvent('openTask', data.task);
             app.dom.reset(form);
             if (task_id) {
                 app.dom.hide(form);
@@ -1079,8 +1072,8 @@ app.submit.registerTask = function(form){
                 updated_on: time,
                 salvage: true
             };
-            c.fireEvent('registerTask', task, list);
-            c.fireEvent('openTask', task);
+            app.fireEvent('registerTask', task, list);
+            app.fireEvent('openTask', task);
             app.dom.reset(form);
             if (task_id) {
                 app.dom.hide(form);
@@ -1097,7 +1090,7 @@ app.submit.registerTask = function(form){
 app.setup.receiver = function(ele){
     ele.get(0).addEventListener('extentionsEvent', function() {
         var data = JSON.parse(ele.text());
-        c.fireEvent(data.event, data.option);
+        app.fireEvent(data.event, data.option);
     }, false);
 }
 

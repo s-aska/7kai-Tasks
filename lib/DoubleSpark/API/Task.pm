@@ -27,6 +27,12 @@ sub create {
     my $time       = int(Time::HiRes::time * 1000);
     my $task_id    = $req->param('task_id') ||
                          $list->list_id . ':' . ++$list->data->{last_task_id};
+    for (@{ $list->data->{tasks} }) {
+        if ($_->{id} eq $task_id) {
+            infof('[%s] duplicate task', $c->sign_name);
+            return;
+        }
+    }
     my $task = {
         id => $task_id,
         requester => $requester,

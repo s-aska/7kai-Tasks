@@ -1,23 +1,21 @@
 (function(ns, w, d) {
 
-var c = ns.c;
 var app = ns.app;
 
 app.option.auto_sync_friends = false;
 app.option.show_loading = true;
 
-c.addEvents('domresize');
-c.addEvents('orientationchange');
+app.addEvents('domresize');
+app.addEvents('orientationchange');
 
-c.addListener('setup', function(){
+app.addListener('setup', function(){
     document.addEventListener('touchmove', function(e){ e.preventDefault(); });
     window.onorientationchange = function(){
         $('head meta[name=viewport]').remove();
         $('head').prepend('<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1"/>');
-        c.fireEvent('orientationchange');
+        app.fireEvent('orientationchange');
     }
 });
-
 
 app.setup.signin = function(ele){
     
@@ -25,19 +23,19 @@ app.setup.signin = function(ele){
 
 // ----------------------------------------------------------------------
 app.setup.listname = function(ele){
-    c.addListener('openList', function(list){
+    app.addListener('openList', function(list){
         ele.text(list.name);
     });
 }
 app.setup.listmenu = function(ul){
     var li_cache = {};
     ul.empty();
-    c.addListener('registerList', function(list){
+    app.addListener('registerList', function(list){
         var li = $('<li/>')
             .data('id', list.id)
             .append(
                 $('<a/>').text(list.name).click(function(){
-                    c.fireEvent('openList', list);
+                    app.fireEvent('openList', list);
                 })
             );
         if (list.id in li_cache) {
@@ -48,7 +46,7 @@ app.setup.listmenu = function(ul){
         }
         li_cache[list.id] = li;
     });
-    c.addListener('reset', function(){
+    app.addListener('reset', function(){
         ul.empty();
         li_cache = {};
     });
@@ -58,7 +56,7 @@ app.setup.bottommenu = function(ul){
     var width = $(w).width();
     var li_width = Number((width - center.width()) / 4);
     ul.find('li').not('.center').width(li_width);
-    c.addListener('orientationchange', function(){
+    app.addListener('orientationchange', function(){
         var width = $(w).width();
         var li_width = Number((width - center.width()) / 4);
         ul.find('li').not('.center').width(li_width);
@@ -70,13 +68,13 @@ app.setup.scroller = function(ele){
 		wrapperH = window.innerHeight - headerH - footerH;
 	document.getElementById('wrapper').style.height = wrapperH + 'px';
     var myScroll = new iScroll(ele.get(0), { hScrollbar: true });
-    c.addListener('domresize', function(){
+    app.addListener('domresize', function(){
         setTimeout(function(){ myScroll.refresh() }, 0);
     });
-    c.addListener('selectTab', function(){
+    app.addListener('selectTab', function(){
         setTimeout(function(){ myScroll.refresh() }, 500);
     });
-    c.addListener('filterTask', function(){
+    app.addListener('filterTask', function(){
         setTimeout(function(){ myScroll.refresh() }, 500);
     });
     window.onorientationchange = function(){
@@ -89,7 +87,7 @@ app.setup.tasks = function(ul){
     var template = ul.html();
     ul.empty();
     var taskli_map = {};
-    c.addListener('registerTask', function(task){
+    app.addListener('registerTask', function(task){
         var li = $(template);
         
         if (task.salvage) {
@@ -165,7 +163,7 @@ app.setup.tasks = function(ul){
                     key: 'star',
                     val: task.id
                 });
-                c.fireEvent('checkStar', method === '+');
+                app.fireEvent('checkStar', method === '+');
             });
         })();
 
@@ -190,18 +188,17 @@ app.setup.tasks = function(ul){
 
         // FIXME: リファクタリング
         if (task.due) {
-            var mdy = task.due.split('/');
-            var label = Number(mdy[0]) + '/' + Number(mdy[1]);
+            var label = (task.due_date.getMonth() + 1) + '/' + task.due_date.getDate();
             var now = new Date();
-            if (now.getFullYear() != mdy[2]) {
-                if (c.LANG === 'ja') {
-                    label = mdy[2] + '/' + label;
+            if (now.getFullYear() !== task.due_date.getFullYear()) {
+                if (app.env.lang === 'ja') {
+                    label = task.due_date.getFullYear() + '/' + label;
                 } else {
-                    label = label + '/' + mdy[2];
+                    label = label + '/' + task.due_date.getFullYear();
                 }
             }
             li.find('.due').text(label);
-            if (now.getTime() > (new Date(mdy[2], mdy[0] - 1, mdy[1])).getTime()) {
+            if (now.getTime() > task.due_date.getTime()) {
                 li.find('.due').addClass('over');
             }
         } else {
@@ -211,12 +208,12 @@ app.setup.tasks = function(ul){
         if (task.recent) {
             var div = li.find('.recent-comment');
             div.find('.icon').append(app.util.getIcon(task.recent.code, 24));
-            var date = c.date.relative(task.recent.time);
+            var date = app.date.relative(task.recent.time);
             if (task.recent.message) {
                 div.find('.message span').text(task.recent.message + ' ' + date);
             } else {
                 div.find('.message span').text(
-                    app.data.messages.data('text-' + task.recent.action + '-' + c.lang)
+                    app.data.messages.data('text-' + task.recent.action + '-' + app.env.lang)
                     + ' ' + date);
             }
         } else {
@@ -224,7 +221,7 @@ app.setup.tasks = function(ul){
         }
         
         li.click(function(){
-            c.fireEvent('openTask', task);
+            app.fireEvent('openTask', task);
         });
         
         // FIXME: 表示条件との照合
@@ -249,7 +246,7 @@ app.setup.tasks = function(ul){
                 }
                 // if (app.data.current_task &&
                 //     app.data.current_task.id === task.id) {
-                //     c.fireEvent('openTask', task);
+                //     app.fireEvent('openTask', task);
                 // }
             } else {
                 if (li.data('visible')) {
@@ -263,9 +260,9 @@ app.setup.tasks = function(ul){
                 //         next = li.prevAll(':visible:first');
                 //     }
                 //     if (next.length) {
-                //         c.fireEvent('openTask', app.data.task_map[next.data('id')]);
+                //         app.fireEvent('openTask', app.data.task_map[next.data('id')]);
                 //     } else {
-                //         c.fireEvent('missingTask');
+                //         app.fireEvent('missingTask');
                 //     }
                 // }
             }
@@ -282,8 +279,8 @@ app.setup.tasks = function(ul){
         taskli_map[task.id] = li;
     });
     
-    c.addListener('filterTask', function(condition){
-        c.fireEvent('selectTab', 'main', 'tasks');
+    app.addListener('filterTask', function(condition){
+        app.fireEvent('selectTab', 'main', 'tasks');
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
             var li = taskli_map[task_id];
@@ -298,19 +295,19 @@ app.setup.tasks = function(ul){
                     li.hide('');
                 }
                 if (app.data.current_task && app.data.current_task.id === task.id) {
-                    c.fireEvent('missingTask');
+                    app.fireEvent('missingTask');
                 }
             }
         }
     });
     
-    c.addListener('clearList', function(list){
+    app.addListener('clearList', function(list){
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
             if (list.id === task.list.id && task.closed) {
                 if (task_id in taskli_map) {
                     if (app.data.current_task && app.data.current_task.id === task_id) {
-                        c.fireEvent('missingTask');
+                        app.fireEvent('missingTask');
                     }
                     taskli_map[task_id].remove();
                     delete taskli_map[task_id];
@@ -320,7 +317,7 @@ app.setup.tasks = function(ul){
         }
     });
     
-    c.addListener('reset', function(){
+    app.addListener('reset', function(){
         ul.empty();
         taskli_map = {};
     });
@@ -336,7 +333,7 @@ app.setup.more = function(ele){
     target.hide();
     ele.click(function(){
         target.slideToggle('fast', function(){
-            c.fireEvent('domresize');
+            app.fireEvent('domresize');
         });
     });
 }
@@ -393,12 +390,12 @@ app.setup.registerListWindow = function(form){
         if (/^tw-[0-9]+$/.test(code)) {
             social_member_input.attr('placeholder', 'screen_name');
             social_member_addon.text('@');
-            social_member_label.text(social_member_label.data('text-tw-' + c.lang));
+            social_member_label.text(social_member_label.data('text-tw-' + app.env.lang));
             social_member_field.show();
         } else if (/^fb-[0-9]+$/.test(code)) {
             social_member_input.attr('placeholder', 'username');
             social_member_addon.text('f');
-            social_member_label.text(social_member_label.data('text-fb-' + c.lang));
+            social_member_label.text(social_member_label.data('text-fb-' + app.env.lang));
             social_member_field.show();
         } else {
             social_member_field.hide();
@@ -468,7 +465,7 @@ app.setup.registerListWindow = function(form){
         }
     });
 
-    c.addListener('registerSubAccount', function(sub_account){
+    app.addListener('registerSubAccount', function(sub_account){
         if (option_map[sub_account.code]) {
             option_map[sub_account.code].remove();
         }
@@ -482,7 +479,7 @@ app.setup.registerListWindow = function(form){
         }
     });
 
-    c.addListener('editList', function(list){
+    app.addListener('editList', function(list){
         owner_field.hide();
         app.dom.reset(form);
         app.dom.show(form);
@@ -496,7 +493,7 @@ app.setup.registerListWindow = function(form){
         }
     });
 
-    c.addListener('createList', function(){
+    app.addListener('createList', function(){
         id_input.val('');
         owner_field.show();
         modeReset(owner_select.val());
@@ -506,7 +503,7 @@ app.setup.registerListWindow = function(form){
         app.dom.show(form);
     });
 
-    c.addListener('reset', function(){
+    app.addListener('reset', function(){
         option_map = {};
         owner_select.empty();
     });
@@ -528,28 +525,21 @@ app.setup.registerTaskWindow = function(form){
     var task_id_input = form.find('input[name=task_id]');
     var list_id_input = form.find('input[name=list_id]');
 
-    // setup datepicker
-    if (c.lang === 'ja') {
-        // due_input.datepicker({dateFormat: 'yy/mm/dd'});
-    } else {
-        // due_input.datepicker();
-    }
-
     form.find('a.due-plus').click(function(e){
         e.preventDefault();
         var due = due_input.val();
-        var date = due ? c.string.toDate(due) : (new Date());
+        var date = due ? app.date.parse(due) : (new Date());
         date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
-        due_input.val(c.date.ymd(date));
+        due_input.val(app.date.ymd(date));
     });
 
     form.find('a.due-minus').click(function(e){
         e.preventDefault();
         var due = due_input.val();
-        var date = due ? c.string.toDate(due) : (new Date());
-        var date = c.string.toDate(due);
+        var date = due ? app.date.parse(due) : (new Date());
+        var date = app.date.parse(due);
         date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
-        due_input.val(c.date.ymd(date));
+        due_input.val(app.date.ymd(date));
     });
 
     var setup = function(list){
@@ -590,7 +580,7 @@ app.setup.registerTaskWindow = function(form){
         list_id_input.val(list.id);
     };
 
-    c.addListener('createTask', function(){
+    app.addListener('createTask', function(){
         app.dom.reset(form);
         if (!app.data.current_list) {
             alert('missing current_list');
@@ -599,11 +589,11 @@ app.setup.registerTaskWindow = function(form){
         setup(app.data.current_list);
 
         //
-        c.fireEvent('selectTab', 'main', 'registerTask');
+        app.fireEvent('selectTab', 'main', 'registerTask');
         form.find('input[name="name"]').focus();
     });
 
-    c.addListener('editTask', function(task){
+    app.addListener('editTask', function(task){
         app.dom.reset(form);
         if (!app.data.current_list) {
             alert('missing current_list');
@@ -613,7 +603,7 @@ app.setup.registerTaskWindow = function(form){
 
         name_input.val(task.name);
         if (task.due) {
-            due_input.val(c.date.ymd(task.due_date));
+            due_input.val(app.date.ymd(task.due_date));
         } else {
             due_input.val('');
         }
@@ -621,7 +611,7 @@ app.setup.registerTaskWindow = function(form){
         task_id_input.val(task.id);
         form.find('input[name=assign]').val(task.assign);
 
-        c.fireEvent('selectTab', 'main', 'registerTask');
+        app.fireEvent('selectTab', 'main', 'registerTask');
 
     });
 }
@@ -642,7 +632,7 @@ app.submit.registerTask = function(form){
     }
 
     if (due) {
-        due = c.date.mdy(c.string.toDate(due));
+        due = app.date.mdy(app.date.parse(due));
     }
 
     if (typeof assign !== 'object') {
@@ -683,7 +673,7 @@ app.submit.registerTask = function(form){
         };
     }
 
-    c.fireEvent('registerTask', task, list);
+    app.fireEvent('registerTask', task, list);
     
     var data = form.serialize();
     var dataArray = form.serializeArray();
@@ -693,7 +683,7 @@ app.submit.registerTask = function(form){
     form.find('input[name=requester]').val([registrant]);
 
     if (task_id) {
-        c.fireEvent('selectTab', 'main', 'tasks');
+        app.fireEvent('selectTab', 'main', 'tasks');
     } else {
         form.find('input[name="name"]').focus();
         app.dom.show($('#notice-succeeded-create-task'));
@@ -711,7 +701,7 @@ app.submit.registerTask = function(form){
     })
     .done(function(data){
         if (data.success === 1) {
-            c.fireEvent('registerTask', data.task, list);
+            app.fireEvent('registerTask', data.task, list);
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
         }
@@ -724,13 +714,13 @@ app.submit.registerTask = function(form){
                 updated_on: task.updated_on
             });
             task.salvage = true;
-            c.fireEvent('registerTask', task, list);
+            app.fireEvent('registerTask', task, list);
         }
     });
 }
 app.setup.comments = function(ele){
-    c.addListener('openTask', function(){
-        c.fireEvent('selectTab', 'main', 'comments');
+    app.addListener('openTask', function(){
+        app.fireEvent('selectTab', 'main', 'comments');
     });
 }
 

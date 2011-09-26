@@ -1,58 +1,57 @@
 (function(ns, w, d) {
 
-var c = ns.c;
 var app = ns.app;
 
-c.addEvents('registerSubAccount');
-c.addEvents('registerFriends');
+app.addEvents('registerSubAccount');
+app.addEvents('registerFriends');
 
-c.addEvents('registerList');
-c.addEvents('openList');
-c.addEvents('createList');
-c.addEvents('editList');
-c.addEvents('deleteList');
-c.addEvents('clearList');
+app.addEvents('registerList');
+app.addEvents('openList');
+app.addEvents('createList');
+app.addEvents('editList');
+app.addEvents('deleteList');
+app.addEvents('clearList');
 
-c.addEvents('registerTask'); // サーバーから取得又は登録フォームから登録した場合発火
-c.addEvents('openTask');
-c.addEvents('missingTask');
-c.addEvents('createTask');   // 登録フォーム表示(新規モード)
-c.addEvents('editTask');     // 登録フォーム表示(編集モード)
-c.addEvents('clearTask');
-c.addEvents('sortTask');
-c.addEvents('filterTask');
+app.addEvents('registerTask'); // サーバーから取得又は登録フォームから登録した場合発火
+app.addEvents('openTask');
+app.addEvents('missingTask');
+app.addEvents('createTask');   // 登録フォーム表示(新規モード)
+app.addEvents('editTask');     // 登録フォーム表示(編集モード)
+app.addEvents('clearTask');
+app.addEvents('sortTask');
+app.addEvents('filterTask');
 
-c.addEvents('checkStar');
-c.addEvents('checkMute');
+app.addEvents('checkStar');
+app.addEvents('checkMute');
 
-c.addEvents('clickNotification');
+app.addEvents('clickNotification');
 
 // イベントのキャッシュコントロール
-c.addListener('openList', function(list){
+app.addListener('openList', function(list){
     app.data.current_list = list;
     localStorage.setItem('last_list_id', list.id);
-    c.fireEvent('filterTask', {
+    app.fireEvent('filterTask', {
         list_id: list.id
     });
 });
-c.addListener('registerList', function(list){
+app.addListener('registerList', function(list){
     app.data.list_map[list.id] = list;
 });
-c.addListener('deleteList', function(list){
+app.addListener('deleteList', function(list){
     delete app.data.list_map[list.id];
 });
-c.addListener('clearList', function(list){
+app.addListener('clearList', function(list){
 });
-c.addListener('openTask', function(task){
+app.addListener('openTask', function(task){
     app.data.current_task = task;
 });
-c.addListener('registerTask', function(task, list){
+app.addListener('registerTask', function(task, list){
     // リスト
     task.list = list;
 
     // 期日
     if (task.due) {
-        task.due_date = c.string.toDate(task.due);
+        task.due_date = app.date.parse(task.due);
         task.due_epoch = task.due_date.getTime();
     } else {
         task.due_epoch = 0;
@@ -95,10 +94,10 @@ c.addListener('registerTask', function(task, list){
         app.data.current_task = task;
     }
 });
-c.addListener('filterTask', function(filter){
+app.addListener('filterTask', function(filter){
     app.data.current_filter = filter;
 });
-c.addListener('registerFriends', function(friends, owner){
+app.addListener('registerFriends', function(friends, owner){
     for (var i = 0, max_i = friends.length; i < max_i; i++) {
         var friend = friends[i];
         var icon = friend.icon ? friend.icon.replace(/^http:\/\/a/, 'https://si')
@@ -129,8 +128,9 @@ c.addListener('registerFriends', function(friends, owner){
         }
     }
 });
-c.addListener('registerSubAccount', function(sub_account){
-    var icon = sub_account.data.icon ? sub_account.data.icon.replace(/^http:\/\/a/, 'https://si')
+app.addListener('registerSubAccount', function(sub_account){
+    var icon = ( sub_account.data && sub_account.data.icon ) ?
+                 sub_account.data.icon.replace(/^http:\/\/a/, 'https://si')
              : /^tw-[0-9]+$/.test(sub_account.code) ?
                  '/api/1/profile_image/'
                  + sub_account.name
@@ -145,13 +145,13 @@ c.addListener('registerSubAccount', function(sub_account){
         icon: icon
     };
 });
-c.addListener('clickNotification', function(option){
+app.addListener('clickNotification', function(option){
     app.data.current_filter = { list_id: option.list_id };
     app.api.account.me(option);
 });
 
 // セットアップ
-c.addListener('reset', function(){
+app.addListener('reset', function(){
     app.data.list_map = {};
     app.data.task_map = {};
     app.data.users = {};
@@ -159,10 +159,10 @@ c.addListener('reset', function(){
     app.data.current_list = null;
     app.data.current_task = null;
 });
-c.addListener('resetup', function(){
+app.addListener('reload', function(){
     app.api.account.me({ reset: true });
 });
-c.addListener('setup', function(option){
+app.addListener('setup', function(option){
     if (navigator.onLine){
         app.api.account.me({ setup: true });
     } else {
@@ -171,7 +171,7 @@ c.addListener('setup', function(option){
             app.util.buildMe({ setup: true }, JSON.parse(data));
         }
     }
-    
+
     // auto reload
     setInterval(function(){
         app.api.account.me({
@@ -285,7 +285,7 @@ app.util.taskFilter = function(task, condition){
             return false;
         }
     }
-    
+
     if (condition.todo) {
         if (task.list.id in app.data.state.mute) {
             return false;
@@ -343,15 +343,16 @@ app.util.buildMe = function(option, data){
         , user_id
         , diff
         , status;
-    
-    c.csrf_token = data.token;
-    
+
+    app.env.token = data.token;
+    app.fireEvent('receiveToken');
+
     if (data.list_ids !== app.data.if_modified_lists) {
         option.reset = true;
     }
 
     if (option.reset) {
-        c.fireEvent('reset');
+        app.fireEvent('reset');
     }
 
     app.data.sign = data.sign;
@@ -359,7 +360,7 @@ app.util.buildMe = function(option, data){
     app.data.sub_accounts = data.sub_accounts;
     app.data.if_modified_lists = data.list_ids;
 
-    c.fireEvent('sign', app.data.sign);
+    app.fireEvent('receiveSign', app.data.sign);
 
     if (!('mute' in app.data.state)) {
         app.data.state.mute = {};
@@ -369,19 +370,19 @@ app.util.buildMe = function(option, data){
     }
 
     $.each(data.lists, function(i, list){
-        c.fireEvent('registerFriends', list.users);
+        app.fireEvent('registerFriends', list.users);
     });
 
     // localStorageのfriendsリストを更新
     for (var i = 0, max_i = data.sub_accounts.length; i < max_i; i++) {
         sub_account = data.sub_accounts[i];
 
-        c.fireEvent('registerSubAccount', sub_account);
+        app.fireEvent('registerSubAccount', sub_account);
 
         // Twitter
         if (/^tw-[0-9]+$/.test(sub_account.code)) {
             if ("friends" in sub_account.data) {
-                c.fireEvent('registerFriends', sub_account.data.friends,
+                app.fireEvent('registerFriends', sub_account.data.friends,
                     sub_account.code);
             }
             if (option.setup
@@ -393,7 +394,7 @@ app.util.buildMe = function(option, data){
 
         // Facebook
         else if (/^fb-[0-9]+$/.test(sub_account.code)) {
-            c.fireEvent('registerFriends', sub_account.data.friends, sub_account.code);
+            app.fireEvent('registerFriends', sub_account.data.friends, sub_account.code);
         }
 
         // E-mail
@@ -411,30 +412,30 @@ app.util.buildMe = function(option, data){
         if (list.actioned_on > app.data.if_modified_since) {
             app.data.if_modified_since = list.actioned_on;
         }
-        c.fireEvent('registerList', list);
+        app.fireEvent('registerList', list);
         $.each(list.tasks, function(i, task){
             tasks++;
-            c.fireEvent('registerTask', task, list);
+            app.fireEvent('registerTask', task, list);
         });
     });
 
     //
     var last_list_id = localStorage.getItem('last_list_id');
     if (option.list_id && (option.list_id in app.data.list_map)) {
-        c.fireEvent('openList', app.data.list_map[option.list_id]);
+        app.fireEvent('openList', app.data.list_map[option.list_id]);
         if (option.task_id in app.data.task_map) {
-            c.fireEvent('openTask', app.data.task_map[option.task_id]);
+            app.fireEvent('openTask', app.data.task_map[option.task_id]);
         }
     } else if (option.setup || option.reset) {
         if (last_list_id && (last_list_id in app.data.list_map)) {
-            c.fireEvent('openList', app.data.list_map[last_list_id]);
+            app.fireEvent('openList', app.data.list_map[last_list_id]);
         } else if (data.lists.length) {
-            c.fireEvent('openList', data.lists[0]);
+            app.fireEvent('openList', data.lists[0]);
         }
         if (option.setup && !tasks) {
             app.dom.show($('#welcome'));
         } else {
-            c.fireEvent('sortTask', 'updated', true);
+            app.fireEvent('sortTask', 'updated', true);
         }
     }
 }
@@ -487,7 +488,7 @@ app.api.task.update = function(params){
         return;
     }
     var task = $.extend({}, app.data.task_map[params.task_id], params);
-    c.fireEvent('registerTask', task, list);
+    app.fireEvent('registerTask', task, list);
     app.ajax({
         type: 'POST',
         url: '/api/1/task/update',
@@ -499,7 +500,7 @@ app.api.task.update = function(params){
     .done(function(data){
         if (data.success === 1) {
             app.data.task_map[params.task_id].updated_on = data.task.updated_on;
-            // c.fireEvent('registerTask', data.task, list); // update updated_on
+            // app.fireEvent('registerTask', data.task, list); // update updated_on
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
         }
@@ -512,7 +513,7 @@ app.api.task.update = function(params){
                 updated_on: task.updated_on
             });
             task.salvage = true;
-            c.fireEvent('registerTask', task, list);
+            app.fireEvent('registerTask', task, list);
         }
     });
 }
@@ -533,9 +534,9 @@ app.api.task.move = function(src_list_id, task_id, dst_list_id){
     })
     .done(function(data){
         if (data.success === 1) {
-            c.fireEvent('registerTask', data.task, app.data.list_map[dst_list_id]);
+            app.fireEvent('registerTask', data.task, app.data.list_map[dst_list_id]);
             if (app.data.current_task.id === data.task.id) {
-                c.fireEvent('openTask', data.task);
+                app.fireEvent('openTask', data.task);
             }
         }
     });
@@ -570,7 +571,7 @@ app.api.twitter.friends = function(user_id, cursor, cache){
 
         // last
         else {
-            c.fireEvent('registerFriends', cache, 'tw-' + user_id);
+            app.fireEvent('registerFriends', cache, 'tw-' + user_id);
             app.ajax({
                 url: '/api/1/twitter/update_friends',
                 type: 'post',
@@ -590,12 +591,15 @@ app.api.twitter.friends = function(user_id, cursor, cache){
     });
 }
 
+app.click.reload = function(){
+    app.fireEvent('reload');
+}
 app.click.createTask = function(){
-    c.fireEvent('createTask');
+    app.fireEvent('createTask');
 }
 app.click.editTask = function(){
     if (app.data.current_task) {
-        c.fireEvent('editTask', app.data.current_task);
+        app.fireEvent('editTask', app.data.current_task);
     } else {
         alert('please select a task.');
     }
@@ -612,18 +616,18 @@ app.setup.hide = function(ele){
 app.setup.profile = function(ele){
     var img = ele.find('img');
     var span = ele.find('span');
-    c.addListener('sign', function(sign){
+    app.addListener('receiveSign', function(sign){
         img.attr('src', sign.icon.replace(/^http:\/\/a/, 'https://si'));
         span.text(sign.name);
     });
 }
 app.setup.switchClosed = function(ele){
-    c.addListener('filterTask', function(){
+    app.addListener('filterTask', function(){
         ele.removeClass('active');
     });
     ele.click(function(){
         var val = ele.hasClass('active') ? 0 : 1;
-        c.fireEvent('filterTask', {
+        app.fireEvent('filterTask', {
             list_id: app.data.current_list.id,
             closed: val
         });
@@ -633,16 +637,13 @@ app.setup.switchClosed = function(ele){
             ele.removeClass('active');
         }
     });
-    c.addListener('clickNotification', function(option){
+    app.addListener('clickNotification', function(option){
         if (ele.hasClass('active')) {
             ele.click();
         }
     });
 }
 app.setup.switchMute = function(ele){
-    // c.addListener('filterTask', function(){
-    //     ele.removeClass('active');
-    // });
     ele.click(function(){
         var method = app.data.state.mute[app.data.current_list.id] ? '-' : '+';
         app.api.account.update({
@@ -654,22 +655,12 @@ app.setup.switchMute = function(ele){
         .done(function(data){
             if (data.success === 1) {
                 app.data.state.mute = data.account.state.mute;
-                c.fireEvent('checkMute', app.data.current_list,
+                app.fireEvent('checkMute', app.data.current_list,
                     (app.data.current_list.id in app.data.state.mute));
             } else {
                 // 現在 ステータスコード 200 の例外ケースは無い
             }
         });
-        // var val = ele.hasClass('active') ? 0 : 1;
-        // c.fireEvent('filterTask', {
-        //     list_id: app.data.current_list.id,
-        //     closed: val
-        // });
-        // if (val) {
-        //     ele.addClass('active');
-        // } else {
-        //     ele.removeClass('active');
-        // }
     });
 }
 app.submit.clearList = function(form){
@@ -687,8 +678,8 @@ app.submit.clearList = function(form){
     })
     .done(function(data){
         if (data.success === 1) {
-            c.fireEvent('clearList', data.list);
-            c.fireEvent('openList', data.list);
+            app.fireEvent('clearList', data.list);
+            app.fireEvent('openList', data.list);
             app.dom.hide($('#clear-list-window'));
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
@@ -699,7 +690,7 @@ app.submit.clearList = function(form){
 app.setup.taskCounter = function(ele){
     var count = 0;
     var condition = ele.data('counter-condition');
-    c.addListener('registerTask', function(task){
+    app.addListener('registerTask', function(task){
         var before = (task.before && app.util.taskFilter(task.before, condition)) ? 1 : 0;
         var after = app.util.taskFilter(task, condition) ? 1 : 0;
         var add = after - before;
@@ -708,7 +699,7 @@ app.setup.taskCounter = function(ele){
             ele.text(count);
         }
     });
-    c.addListener('checkMute', function(){
+    app.addListener('checkMute', function(){
         count = 0;
         for (var task_id in app.data.task_map) {
             if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
@@ -717,45 +708,45 @@ app.setup.taskCounter = function(ele){
         }
         ele.text(count);
     });
-    c.addListener('reset', function(){
+    app.addListener('reset', function(){
         count = 0;
         ele.text(count);
     });
 }
 app.setup.starCounter = function(ele){
     var count = 0;
-    c.addListener('registerTask', function(task){
+    app.addListener('registerTask', function(task){
         // 初回かつOn
         if (!task.before && app.util.taskFilter(task, {star: 1})) {
             count++;
             ele.text(count);
         }
     });
-    c.addListener('checkStar', function(checked){
+    app.addListener('checkStar', function(checked){
         count+= checked ? 1 : -1;
         ele.text(count);
     });
-    c.addListener('reset', function(){
+    app.addListener('reset', function(){
         count = 0;
         ele.text(count);
     });
 }
 app.setup.filterTask = function(ele){
-    c.addListener('filterTask', function(){
+    app.addListener('filterTask', function(){
         ele.parent().removeClass('active');
     });
-    c.addListener('openList', function(){
+    app.addListener('openList', function(){
         ele.parent().removeClass('active');
     });
-    c.addListener('reset', function(){
+    app.addListener('reset', function(){
         ele.parent().removeClass('active');
     });
 }
 app.click.filterTask = function(ele){
     if (ele.parent().hasClass('active') && app.data.current_list) {
-        c.fireEvent('openList', app.data.current_list);
+        app.fireEvent('openList', app.data.current_list);
     } else {
-        c.fireEvent('filterTask', ele.data('filter-condition'));
+        app.fireEvent('filterTask', ele.data('filter-condition'));
         ele.parent().addClass('active');
     }
 }
@@ -800,7 +791,7 @@ app.setup.rightColumn = function(ele){
         }
     });
 
-    c.addListener('openTask', function(task){
+    app.addListener('openTask', function(task){
         list_id_input.val(task.list.id);
         task_id_input.val(task.id);
         registrant_input.val(app.util.getRegistrant(task.list));
@@ -814,8 +805,8 @@ app.setup.rightColumn = function(ele){
         li.find('.icon:first').append(app.util.getIcon(task.registrant, 32));
         li.find('.icon:last').remove();
         li.find('.name').text(app.util.getName(task.registrant));
-        li.find('.message').text(app.data.messages.data('text-create-task-' + c.lang));
-        li.find('.date').text(c.date.relative(task.created_on));
+        li.find('.message').text(app.data.messages.data('text-create-task-' + app.env.lang));
+        li.find('.date').text(app.date.relative(task.created_on));
         li.prependTo(ul);
         $.each(task.actions, function(i, comment){
             var li = $(template);
@@ -826,10 +817,10 @@ app.setup.rightColumn = function(ele){
                 li.find('.icon:last').remove();
             }
             if (comment.action) {
-                li.find('.message').text(app.data.messages.data('text-' + comment.action + '-' + c.lang));
+                li.find('.message').text(app.data.messages.data('text-' + comment.action + '-' + app.env.lang));
                 li.find('.icon:last').remove();
             } else {
-                li.find('.message').html(c.string.autolink(comment.message));
+                li.find('.message').html(app.util.autolink(comment.message));
                 li.find('.icon:last').click(function(){
                     app.ajax({
                         type: 'POST',
@@ -844,7 +835,7 @@ app.setup.rightColumn = function(ele){
                     .done(function(data){
                         if (data.success === 1) {
                             li.hide('fade');
-                            c.fireEvent('registerTask', data.task, task.list);
+                            app.fireEvent('registerTask', data.task, task.list);
                         } else {
                             // 現在 ステータスコード 200 の例外ケースは無い
                         }
@@ -852,12 +843,12 @@ app.setup.rightColumn = function(ele){
                     return false;
                 });
             }
-            li.find('.date').text(c.date.relative(comment.time));
+            li.find('.date').text(app.date.relative(comment.time));
             li.prependTo(ul);
         });
     });
 
-    c.addListener('missingTask', function(){
+    app.addListener('missingTask', function(){
         ul.empty();
         textarea.val('');
         textarea.attr('disabled', true);
@@ -865,7 +856,7 @@ app.setup.rightColumn = function(ele){
         task_name.text('-');
     });
 
-    c.addListener('reset', function(){
+    app.addListener('reset', function(){
         ul.empty();
         textarea.val('');
         textarea.attr('disabled', true);
@@ -896,8 +887,8 @@ app.submit.registerComment = function(form){
     .done(function(data){
         if (data.success === 1) {
             app.dom.reset(form);
-            c.fireEvent('registerTask', data.task, list);
-            c.fireEvent('openTask', data.task);
+            app.fireEvent('registerTask', data.task, list);
+            app.fireEvent('openTask', data.task);
             document.activeElement.blur();
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
@@ -918,8 +909,8 @@ app.submit.registerComment = function(form){
                     time: (new Date()).getTime(),
                     salvage: true
                 });
-                c.fireEvent('registerTask', task, list);
-                c.fireEvent('openTask', task);
+                app.fireEvent('registerTask', task, list);
+                app.fireEvent('openTask', task);
             }
             document.activeElement.blur();
         }

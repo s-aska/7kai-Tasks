@@ -22,17 +22,11 @@ span.icon {
 .icon-plus {
     background-image: url(/static/img/plus.png);
 }
-.icon-plus-1-m {
-    background-image: url(/static/img/plus-1-m.png);
-}
 .icon-minus {
     background-image: url(/static/img/minus.png);
 }
 .icon-cross {
     background-image: url(/static/img/cross.png);
-}
-.icon-equal {
-    background-image: url(/static/img/equal.png);
 }
 .icon-up {
     background-image: url(/static/img/up.png);
@@ -61,35 +55,11 @@ span.icon {
 .icon-tasks-off {
     background-image: url(/static/img/tasks_off.png);
 }
-.icon-trash {
-    background-image: url(/static/img/trash.png);
-}
-.icon-pulldown {
-    background-image: url(/static/img/pulldown.png);
-}
-.icon-settings {
-    background-image: url(/static/img/settings.png);
-}
 .icon-grip {
     background-image: url(/static/img/grip.png);
 }
 .icon-address {
     background-image: url(/static/img/address.png);
-}
-.icon-address-off {
-    background-image: url(/static/img/address_off.png);
-}
-.icon-edit {
-    background-image: url(/static/img/edit.png);
-}
-.icon-calendar {
-    background-image: url(/static/img/calendar.png);
-}
-.icon-openhand {
-    background-image: url(/static/img/openhand.png);
-}
-.icon-refresh {
-    background-image: url(/static/img/refresh.png);
 }
 .icon-email {
     background-image: url(/static/img/email.png);

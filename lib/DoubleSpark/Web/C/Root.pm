@@ -6,11 +6,20 @@ use Log::Minimal;
 sub index {
     my ($class, $c) = @_;
 
-    if (my $sign = $c->sign) {
-        $c->account->update({ authenticated_on => \'now()' });
-        $c->render('app.tt', { sign => $sign });
+    if ($c->req->param('dev')) {
+        if (my $sign = $c->sign) {
+            $c->account->update({ authenticated_on => \'now()' });
+            $c->render('app-dev.tt', { sign => $sign });
+        } else {
+            $c->render('index-dev.tt');
+        }
     } else {
-        $c->render('index.tt');
+        if (my $sign = $c->sign) {
+            $c->account->update({ authenticated_on => \'now()' });
+            $c->render('app.tt', { sign => $sign });
+        } else {
+            $c->render('index.tt');
+        }
     }
 }
 

@@ -7,10 +7,9 @@
 <link rel="stylesheet" href="/static/css/signin.css" media="all">
 <script src="/static/js/jquery-1.6.4.min.js"></script>
 <script src="/static/js/jquery-ui-1.8.13.js"></script>
-<script src="/static/js/core.js"></script>
+<script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>
-<script src="/static/js/app-constants.js"></script>
-<script src="/static/js/app-page-signin.js"></script>
+<script src="/static/js/app-base-signin.js"></script>
 </head>
 <body id="index-page">
 <div class="topbar">
@@ -112,7 +111,7 @@
       data-tab-group="signin"
     >
       <form
-        data-setup="signup"
+        data-setup="emailSignup"
       >
         <div class="clearfix">
           <label for="xlInput">E-mail</label>
@@ -130,12 +129,12 @@
           <button
             class="btn primary"
             data-setup="click"
-            data-click="signin"
+            data-click="emailSignin"
           >Sign In</button> or 
           <button
             class="btn primary"
             data-setup="click"
-            data-click="signup"
+            data-click="emailSignup"
           >Sign Up</button>
         </div>
       </form>
@@ -145,8 +144,8 @@
 
 <form
   class="modal"
-  data-setup="submit,verify"
-  data-submit="verify"
+  data-setup="submit,emailVerify"
+  data-submit="emailVerify"
 >
   <div class="modal-header">
     <h3>E-mail Verify</h3>

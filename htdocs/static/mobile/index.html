@@ -12,9 +12,9 @@
 <script src="/static/js/jquery-ui-1.8.13.js"></script>
 <script src="/static/js/iscroll.js"></script>
 <script src="/static/js/spin.min.js"></script>
-<script src="/static/js/core.js"></script>
+<script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>
-<script src="/static/js/app-constants.js"></script>
+<script src="/static/js/app-base-signin.js"></script>
 <script src="/static/js/app-base-viewer.js"></script>
 <script src="/static/js/app-mobile-viewer.js"></script>
 </head>
@@ -46,6 +46,10 @@
             class="menu-dropdown"
             style="display: none"
           >
+            <li><a
+              class="action"
+              data-setup="click"
+              data-click="resetup">Reload</a></li>
             <li><a class="action"
                 data-setup="localize,switchMute"
                 data-text-ja="ミュート切替"

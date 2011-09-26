@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <title>7kai Tasks</title>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css" media="all">
 <link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
 <link rel="stylesheet" href="/static/css/app-base.css" media="all">
 <link rel="stylesheet" href="/static/css/app-pc.css" media="all">
 <script src="/static/js/jquery-1.6.4.min.js"></script>
 <script src="/static/js/jquery-ui-1.8.13.js"></script>
 <script src="/static/js/h5utils.js"></script>
-<script src="/static/js/core.js"></script>
+<script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>
-<script src="/static/js/app-constants.js"></script>
+<script src="/static/js/app-base-signin.js"></script>
 <script src="/static/js/app-base-viewer.js"></script>
 <script src="/static/js/app-page-viewer.js"></script>
 </head>
@@ -133,6 +134,12 @@
                 data-setup="click"
                 data-click="openMini"
               >Mini Version</a>
+            </li>
+            <li>
+              <a
+                data-setup="click"
+                data-click="resetup"
+              >Reload</a>
             </li>
             <li>
               <a

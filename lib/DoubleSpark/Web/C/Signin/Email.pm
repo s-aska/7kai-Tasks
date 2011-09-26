@@ -89,7 +89,7 @@ sub verify {
             account_id => $email_account->account_id,
             code       => $email,
             name       => $local_part,
-            icon       => 'email'
+            icon       => '/static/img/email_off24.png'
         });
     } else {
         my $account = DoubleSpark::API::Account->create($c, $email, $local_part);
@@ -107,7 +107,7 @@ sub verify {
             account_id => $account->account_id,
             code       => $email,
             name       => $local_part,
-            icon       => 'email'
+            icon       => '/static/img/email_off24.png'
         });
     }
 
@@ -144,7 +144,7 @@ sub signin {
         account_id => $email_account->account_id,
         code       => $email,
         name       => $local_part,
-        icon       => 'email'
+        icon       => '/static/img/email_off24.png'
     });
     $c->session->regenerate_session_id(1);
     $c->render_json({ success => 1 });

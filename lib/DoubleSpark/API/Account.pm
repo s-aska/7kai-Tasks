@@ -2,6 +2,7 @@ package DoubleSpark::API::Account;
 use strict;
 use warnings;
 use DoubleSpark::Validator;
+use JSON::XS;
 use Log::Minimal;
 use Time::HiRes;
 
