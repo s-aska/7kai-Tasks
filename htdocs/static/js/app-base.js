@@ -54,12 +54,6 @@ app.addEvents('selectTab');    // tag component
 app.addEvents('receiveSign');  // receive sign from api
 app.addEvents('receiveToken'); // receive token from api
 
-app.addListener('setup', function(option){
-    if (navigator.onLine){
-        app.api.token();
-    }
-});
-
 $(d).ready(function(){
     app.run();
 });

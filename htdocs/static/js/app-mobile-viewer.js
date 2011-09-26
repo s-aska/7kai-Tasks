@@ -9,6 +9,9 @@ app.addEvents('domresize');
 app.addEvents('orientationchange');
 
 app.addListener('setup', function(){
+    if (navigator.onLine){
+        app.api.token();
+    }
     document.addEventListener('touchmove', function(e){ e.preventDefault(); });
     window.onorientationchange = function(){
         $('head meta[name=viewport]').remove();
@@ -16,10 +19,6 @@ app.addListener('setup', function(){
         app.fireEvent('orientationchange');
     }
 });
-
-app.setup.signin = function(ele){
-    
-}
 
 // ----------------------------------------------------------------------
 app.setup.listname = function(ele){
@@ -615,6 +614,11 @@ app.setup.registerTaskWindow = function(form){
 
     });
 }
+app.setup.comments = function(ele){
+    app.addListener('openTask', function(){
+        app.fireEvent('selectTab', 'main', 'comments');
+    });
+}
 app.submit.registerTask = function(form){
     var task_id = form.find('input[name="task_id"]').val();
     var list_id = form.find('input[name="list_id"]').val();
@@ -716,11 +720,6 @@ app.submit.registerTask = function(form){
             task.salvage = true;
             app.fireEvent('registerTask', task, list);
         }
-    });
-}
-app.setup.comments = function(ele){
-    app.addListener('openTask', function(){
-        app.fireEvent('selectTab', 'main', 'comments');
     });
 }
 

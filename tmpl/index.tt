@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="keywords" content="Task,Management,Twitter,Facebook,タスク共有">
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
 <link rel="stylesheet" href="/static/css/signin.css" media="all">
