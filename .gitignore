@@ -5,6 +5,7 @@ MANIFEST
 *.old
 *.key
 *.secret
+*.crt
 nytprof.out
 nytprof/
 development.db

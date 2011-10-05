@@ -15,7 +15,7 @@ var app = ns.app = {
     // 
     env: {
         token: '',
-        lang: '' // en, ja ...
+        lang: (/^ja/.test(navigator.language) ? 'ja' : 'en')
     },
     events: {},
     // Utility for native objects
@@ -37,19 +37,21 @@ var app = ns.app = {
 
 // Method
 app.init = function(){
-    app.env.lang = /^ja/.test(navigator.language) ? 'ja' : 'en';
     if (location.search.indexOf('lang=en') !== -1) {
         app.env.lang = 'en';
     }
 }
 
 // Event Manager
-app.addEvents = function(name){
-    app.events[name] = [];
+app.addEvents = function(){
+    var args = $.makeArray(arguments);
+    for (var i = 0, max_i = args.length; i < max_i; i++) {
+        app.events[args[i]] = [];
+    }
 }
 app.addListener = function(name, fh, context){
     if (!(name in app.events)) {
-        console.log(name);
+        console.log('unknown event ' + name);
     }
     app.events[name].push([fh, context]);
 }

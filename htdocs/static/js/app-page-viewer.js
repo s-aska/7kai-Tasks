@@ -6,6 +6,12 @@ app.addEvents('moveTask');
 app.addEvents('moveTaskCancel');
 app.addEvents('removeAccountConfirm');
 
+app.addEvents('openNextList');
+app.addEvents('openPrevList');
+app.addEvents('openTopTask');
+app.addEvents('openBottomTask');
+app.addEvents('showListMenu');
+
 // ----------------------------------------------------------------------
 // トップバー機能(ってなんだよ...)
 // ----------------------------------------------------------------------
@@ -143,6 +149,26 @@ app.setup.leftColumn = function(ele){
         });
     });
 
+    var timer;
+    app.addListener('showListMenu', function(){
+        if (!list_ul.is(':visible')) {
+            list_ul.slideDown('fast');
+        }
+        list_ul.children().removeClass('active');
+        if (app.data.current_list &&
+            (app.data.current_list.id in li_map)) {
+            li_map[app.data.current_list.id].addClass('active');
+        }
+        if (timer) {
+            clearTimeout(timer);
+            timer = null;
+        }
+        timer = setTimeout(function(){
+            list_ul.slideUp('fast');
+            timer = null;
+        }, 5000);
+    });
+
     app.addListener('openList', function(list){
         a.text(list.name);
         member_ul.empty();
@@ -165,6 +191,42 @@ app.setup.leftColumn = function(ele){
             ele.find('.delete-list').hide();
         } else {
             ele.find('.delete-list').show();
+        }
+    });
+
+    app.addListener('openNextList', function(){
+        var next;
+        if (app.data.current_list) {
+            next = li_map[app.data.current_list.id].nextAll(':first');
+        }
+        if (!next) {
+            next = list_ul.find('> li:first');
+        }
+        if (next && next.length) {
+            var list_id = next.data('id');
+            if (list_id in app.data.list_map) {
+                app.fireEvent('openList', app.data.list_map[list_id]);
+                app.fireEvent('showListMenu');
+                app.fireEvent('openTopTask');
+            }
+        }
+    });
+
+    app.addListener('openPrevList', function(){
+        var prev;
+        if (app.data.current_list) {
+            prev = li_map[app.data.current_list.id].prevAll(':first');
+        }
+        if (!prev) {
+            prev = list_ul.find('> li:first');
+        }
+        if (prev && prev.length) {
+            var list_id = prev.data('id');
+            if (list_id in app.data.list_map) {
+                app.fireEvent('openList', app.data.list_map[list_id]);
+                app.fireEvent('showListMenu');
+                app.fireEvent('openBottomTask');
+            }
         }
     });
 
@@ -201,7 +263,7 @@ app.setup.leftColumn = function(ele){
             li.removeClass('active');
         });
         li.get(0).addEventListener('drop', function(e){
-            list_ul.find('> li').removeClass('active');
+            list_ul.children().removeClass('active');
             list_ul.slideUp('fast');
             app.api.task.move(app.data.dragtask.list.id, app.data.dragtask.id, list.id);
         }, false);
@@ -238,30 +300,28 @@ app.setup.leftColumn = function(ele){
         checkbox.attr('disabled', true);
     });
 
-    //
-    $(d).keydown(function(e){
-        if (document.activeElement.tagName !== 'BODY') {
-            return;
-        }
-        if (e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) {
-            return;
-        }
-        if (e.keyCode >= 49 && e.keyCode <= 57) { // 1-9
-            e.preventDefault();
-            var i = e.keyCode - 49;
-            var lis = ele.find('ul.lists > li');
-            if (i in lis) {
-                app.fireEvent('openList', app.data.list_map[$(lis[i]).data('id')]);
-            }
-        } else if (e.keyCode === 76) {
-            var menu = ele.find('ul.lists:first');
-            if (menu.is(':visible')) {
-                menu.slideUp('fast');
-            } else {
-                menu.slideDown('fast');
-            }
-        }
-    });
+    // //
+    // $(d).keydown(function(e){
+    //     if (document.activeElement.tagName !== 'BODY') {
+    //         return;
+    //     }
+    //     if (e.ctrlKey || e.altKey || e.metaKey) {
+    //         return;
+    //     }
+    //     if (e.shiftKey) {
+    //         return;
+    //     }
+    //     if (e.keyCode >= 49 && e.keyCode <= 57) { // 1-9
+    //         e.preventDefault();
+    //         var i = e.keyCode - 49;
+    //         var lis = ele.find('ul.lists > li');
+    //         if (i in lis) {
+    //             app.fireEvent('openList', app.data.list_map[$(lis[i]).data('id')]);
+    //         }
+    //     } else if (e.keyCode === 76) {
+    //         app.fireEvent('showListMenu');
+    //     }
+    // });
 }
 app.setup.registerListWindow = function(form){
 
@@ -743,9 +803,37 @@ app.setup.centerColumn = function(ele){
     });
 
     app.addListener('openTask', function(task){
-        ul.find('> li').removeClass('selected');
+        ul.children().removeClass('selected');
         if (task.id in taskli_map) {
             taskli_map[task.id].addClass('selected');
+        }
+    });
+
+    app.addListener('openTopTask', function(){
+        var lis = ul.children();
+        for (var i = 0, max_i = lis.length; i < max_i; i++) {
+            var li = $(lis[i]);
+            if (li.data('visible')) {
+                var id = li.data('id');
+                if (id in app.data.task_map) {
+                    app.fireEvent('openTask', app.data.task_map[id]);
+                }
+                break;
+            }
+        }
+    });
+
+    app.addListener('openBottomTask', function(){
+        var lis = ul.children();
+        for (var i = 0, max_i = lis.length; i < max_i; i++) {
+            var li = $(lis[max_i - i - 1]);
+            if (li.data('visible')) {
+                var id = li.data('id');
+                if (id in app.data.task_map) {
+                    app.fireEvent('openTask', app.data.task_map[id]);
+                }
+                break;
+            }
         }
     });
 
@@ -838,36 +926,50 @@ app.setup.centerColumn = function(ele){
         if (document.activeElement.tagName !== 'BODY') {
             return;
         }
-        if (e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) {
+        if (e.ctrlKey || e.altKey || e.metaKey) {
+            return;
+        }
+        if (e.shiftKey) {
+            if (e.keyCode === 38) { // Up
+                app.fireEvent('openPrevList');
+            } else if (e.keyCode === 40) { // Down
+                app.fireEvent('openNextList');
+            }
             return;
         }
         if (e.keyCode === 38) { // Up
             var next;
             if (app.data.current_task) {
                 next = taskli_map[app.data.current_task.id].prevAll(':visible:first');
-            } else {
+            }
+            if (!next) {
                 next = ul.find('> li:visible:first');
             }
-            if (next.length) {
+            if (next && next.length) {
                 var next_id = next.data('id');
                 if (!(next_id in app.data.task_map)) {
                     return;
                 }
                 app.fireEvent('openTask', app.data.task_map[next_id]);
+            } else {
+                app.fireEvent('openPrevList');
             }
         } else if (e.keyCode === 40) { // Down
             var next;
             if (app.data.current_task) {
                 next = taskli_map[app.data.current_task.id].nextAll(':visible:first');
-            } else {
+            }
+            if (!next) {
                 next = ul.find('> li:visible:first');
             }
-            if (next.length) {
+            if (next && next.length) {
                 var next_id = next.data('id');
                 if (!(next_id in app.data.task_map)) {
                     return;
                 }
                 app.fireEvent('openTask', app.data.task_map[next_id]);
+            } else {
+                app.fireEvent('openNextList');
             }
         } else if (!app.data.current_task) {
             return;

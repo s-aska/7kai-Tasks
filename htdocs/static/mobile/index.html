@@ -49,7 +49,7 @@
             <li><a
               class="action"
               data-setup="click"
-              data-click="resetup">Reload</a></li>
+              data-click="reload">Reload</a></li>
             <li><a class="action"
                 data-setup="localize,switchMute"
                 data-text-ja="ミュート切替"
@@ -348,7 +348,6 @@
 <div
   id="signin"
   class="modal"
-  data-setup="signin"
   data-show-effect="fade"
 >
   <div class="modal-header">
@@ -391,7 +390,7 @@
       data-tab-group="signin"
     >
       <form
-        data-setup="signup"
+        data-setup="emailSignup"
         class="form-stacked"
       >
         <div class="clearfix">
@@ -410,12 +409,12 @@
           <button
             class="btn primary"
             data-setup="click"
-            data-click="signin"
+            data-click="emailSignin"
           >Sign In</button> or 
           <button
             class="btn primary"
             data-setup="click"
-            data-click="signup"
+            data-click="emailSignup"
           >Sign Up</button>
         </div>
       </form>
@@ -425,8 +424,8 @@
 
 <form
   class="modal form-stacked"
-  data-setup="submit,verify"
-  data-submit="verify"
+  data-setup="submit,emailVerify"
+  data-submit="emailVerify"
 >
   <div class="modal-header">
     <h3>E-mail Verify</h3>

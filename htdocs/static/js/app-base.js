@@ -54,27 +54,23 @@ app.addEvents('selectTab');    // tag component
 app.addEvents('receiveSign');  // receive sign from api
 app.addEvents('receiveToken'); // receive token from api
 
-app.addListener('setup', function(option){
-    if (navigator.onLine){
-        app.api.token();
-    }
-});
-
 $(d).ready(function(){
     app.run();
 });
 
 app.run = function(){
+    app.init();
     if ("applicationCache" in w) {
         d.body.addEventListener("online", function() {
+            console.log('online');
             app.api.token();
-            applicationCache.update();
-            applicationCache.addEventListener("updateready", function() {
-                applicationCache.swapCache();
-            }, false);
+            // applicationCache.update();
+            // applicationCache.addEventListener("updateready", function() {
+            //     console.log('swapCache');
+            //     applicationCache.swapCache();
+            // }, false);
         }, false);
     }
-    app.init();
     app.dom.setup();
     app.fireEvent('setup');
     $(w).resize(app.func.debounce(function(e){
@@ -452,7 +448,7 @@ app.setup.guide = function(ele){
     }, 500);
 }
 app.setup.form = function(form){
-    app.addListener('online', function(){
+    app.addListener('receiveToken', function(){
         $('<input type="hidden"/>')
             .attr('name', app.CSRF_TOKEN_NAME)
             .val(app.env.token)

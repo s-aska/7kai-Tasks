@@ -479,6 +479,16 @@
           data-setup="localize"
           data-text-ja="前のタスクを選択"
         >Select Previous Task.</dd>
+        <dt>[Shift-Down]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="次のリストを選択"
+        >Select Next List.</dd>
+        <dt>[Shift-Up]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="前のリストを選択"
+        >Select Previous List.</dd>
         <dt>[Right]</dt>
         <dd
           data-setup="localize"
@@ -504,7 +514,7 @@
           data-setup="localize"
           data-text-ja="タスクを編集"
         >Edit a Selected Task.</dd>
-        <dt>[M]</dt>
+        <dt>[Shift-Right]</dt>
         <dd
           data-setup="localize"
           data-text-ja="コメント欄を選択"
@@ -529,11 +539,6 @@
           data-setup="localize"
           data-text-ja="[スター]を開く"
         >Open Star.</dd>
-        <dt>[1-9]</dt>
-        <dd
-          data-setup="localize"
-          data-text-ja="リストを開く(数字は上からの順番)"
-        >Select List.</dd>
       </dl>
     </div>
     <div
@@ -1235,11 +1240,16 @@
           >Open Star.</dd>
         </dl>
         <dl style="float: left; margin-left: 10px; padding-left: 10px; border-left: 1px dotted gray;">
-          <dt>[1-9]</dt>
+          <dt>[Shift-Down]</dt>
           <dd
             data-setup="localize"
-            data-text-ja="リストを開く(数字は上からの順番)"
-          >Select List.</dd>
+            data-text-ja="次のリストを選択"
+          >Select Next List.</dd>
+          <dt>[Shift-Up]</dt>
+          <dd
+            data-setup="localize"
+            data-text-ja="前のリストを選択"
+          >Select Previous List.</dd>
           <dt>[Down]</dt>
           <dd
             data-setup="localize"
@@ -1277,7 +1287,7 @@
             data-setup="localize"
             data-text-ja="タスクを編集"
           >Edit a Selected Task.</dd>
-          <dt>[M]</dt>
+          <dt>[Shift-Right]</dt>
           <dd
             data-setup="localize"
             data-text-ja="コメント欄を選択"

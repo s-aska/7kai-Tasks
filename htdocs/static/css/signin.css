@@ -11,6 +11,7 @@
 }
 html, body {
     overflow: auto;
+    background-color: #F7F7F6;
 }
 h1 {
     font-size: 48px;

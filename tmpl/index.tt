@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="keywords" content="Task,Management,Twitter,Facebook,タスク共有">
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
 <link rel="stylesheet" href="/static/css/signin.css" media="all">
@@ -19,7 +20,6 @@
     </div>
   </div>
 </div>
-
 <div class="row" style="width: 840px;">
   <div class="container" style="width: 840px; text-align: center;">
     <h1>Fastest For You</h1>
@@ -43,29 +43,42 @@
   <div class="span6 columns">
     <dl>
       <dt>1. Shortcut Keys</dt>
-      <dd>Support the many Shortcut Keys.</dd>
+      <dd
+        data-setup="localize"
+        data-text-ja="多くのショートカットキーに対応しています。"
+      >Support the many Shortcut Keys.</dd>
       <dt>2. Anywhere</dt>
-      <dd>Support the iPhone, iPad, and other smartphone.</dd>
+      <dd
+        data-setup="localize"
+        data-text-ja="iPhoneやiPad、その他のスマートフォンに対応しています。"
+      >Support the iPhone, iPad, and other smartphone.</dd>
       <dt>3. Offline</dt>
-      <dd>If disconnected during the operation are recovery when connected.</dd>
+      <dd
+        data-setup="localize"
+        data-text-ja="電車の中等突然回線が切れてもそのまま操作でき、疎通時にリカバリーされます。"
+      >If disconnected during the operation are recovery when connected.</dd>
       <dt>4. Share</dt>
-      <dd>Share with your facebook and twitter friends.</dd>
+      <dd
+        data-setup="localize"
+        data-text-ja="FacebookやTwitterのフレンドとタスクを共有出来ます。"
+      >Share with your facebook and twitter friends.</dd>
     </dl>
   </div>
 </div>
-
 <footer class="footer">
   <div class="container">
-    <p>
+    <p class="social">
       <a href="/static/tos.html">Terms</a>
       <a href="/static/privacy.html">Privacy</a>
       <a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank">Support</a>
       <a href="https://github.com/s-aska/7kai-Tasks" target="_blank">Github</a>
       <a href="https://twitter.com/#!/su_aska" target="_blank">Author</a>
+      <a href="https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Ftasks.7kai.org%2F&source=tweetbutton&text=7kai+Tasks&url=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Share(twitter)</a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Share(facebook)</a>
     </p>
   </div>
 </footer>
-
+<div id="fb-root"></div>
 <div
   id="signin"
   class="modal"
@@ -141,7 +154,6 @@
     </div>
   </div>
 </div>
-
 <form
   class="modal"
   data-setup="submit,emailVerify"
@@ -163,6 +175,5 @@
     <button class="btn primary">Verify</button>
   </div>
 </form>
-
 </body>
 </html>

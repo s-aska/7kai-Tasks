@@ -300,9 +300,9 @@ app.api.fetch = function(option){
             chrome.browserAction.setBadgeText({text: ''});
         }
     })
-    .fail(function(){
+    .fail(function(jqXHR, textStatus, errorThrown){
         chrome.browserAction.setBadgeBackgroundColor(app.option.error_badge_color);
-        chrome.browserAction.setBadgeText({text: ''});
+        chrome.browserAction.setBadgeText({text: '-'});
     });
 }
 app.util.isCount = function(task){

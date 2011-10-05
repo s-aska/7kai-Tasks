@@ -18,7 +18,7 @@ sub signup {
         email    => [qw/NOT_NULL EMAIL_LOOSE/],
         password => [qw/NOT_NULL/, [qw/LENGTH 8 128/]]
     );
-    return $c->res_403() unless $res;
+    return $c->render_json({ success => 0 }) unless $res;
 
     my $email = $c->req->param('email');
     my $code = substr( Digest::SHA1::sha1_hex( Time::HiRes::gettimeofday() . [] . rand() ), 0, 64 );
@@ -59,13 +59,13 @@ sub verify {
     my $email_request = $c->session->get('email_request');
     unless ($email_request) {
         warnf('missing request.');
-        return $c->res_404();
+        return $c->render_json({ success => 0 });
     }
 
     my $code = $c->req->param('code');
     unless ($code eq $email_request->{code}) {
         warnf('miss match code.');
-        return $c->res_404();
+        return $c->render_json({ success => 0 });
     }
 
     my $email = $email_request->{email};
@@ -125,13 +125,13 @@ sub signin {
 
     unless ($email_account) {
         warnf('missing email:%s', $email);
-        return $c->res_403();
+        return $c->render_json({ success => 0 });
     }
 
     unless (Crypt::SaltedHash->validate(
         $email_account->get_column('password_saltedhash'), $c->req->param('password'))) {
         warnf('invalid password email:%s', $email);
-        return $c->res_403();
+        return $c->render_json({ success => 0 });
     }
 
     $email_account->update({ authenticated_on => \'now()' });

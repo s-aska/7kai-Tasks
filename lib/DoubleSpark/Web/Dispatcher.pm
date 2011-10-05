@@ -64,22 +64,3 @@ sub connect_with_method {
 }
 
 1;
-
-# sub connect_with_method {
-#     my ($method, $path, $dest_str, $opt) = @_;
-#     $opt->{method} = $method;
-#     my %dest;
-#     if ($dest_str) {
-#         my ($controller, $action) = split('#', $dest_str);
-#         $dest{controller} = $controller;
-#         $dest{action} = $action if defined $action;
-#         connect $path => \%dest, $opt;
-#     } else {
-#         my ($controller, $action) = $path=~m|^/(.*?)([^/]*)$|;
-#         $dest{controller} = $controller
-#                             ? join('::', map { ucfirst $_ } grep /./, split '/', $controller)
-#                             : 'Root';
-#         $dest{action} = $action || 'index';
-#         connect $path => \%dest, $opt;
-#     }
-# }

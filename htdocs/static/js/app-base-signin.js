@@ -7,7 +7,6 @@ app.addEvents('emailSignupSuccess'); //
 app.addEvents('emailSignin');        // click signin button
 
 app.setup.emailSignup = function(form){
-
     app.addListener('emailSignup', function(){
         app.ajax({
             url: '/signin/email/signup',
@@ -27,7 +26,6 @@ app.setup.emailSignup = function(form){
             alert('Sign Up failure, please check E-mail and password.');
         });
     });
-
     app.addListener('emailSignin', function(){
         app.ajax({
             url: '/signin/email/signin',

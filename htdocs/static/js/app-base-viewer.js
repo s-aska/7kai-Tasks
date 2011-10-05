@@ -45,6 +45,9 @@ app.addListener('clearList', function(list){
 app.addListener('openTask', function(task){
     app.data.current_task = task;
 });
+app.addListener('missingTask', function(){
+    app.data.current_task = null;
+});
 app.addListener('registerTask', function(task, list){
     // リスト
     task.list = list;
@@ -171,8 +174,8 @@ app.addListener('setup', function(option){
             app.util.buildMe({ setup: true }, JSON.parse(data));
         }
     }
-
-    // auto reload
+});
+app.addListener('receiveSign', function(){
     setInterval(function(){
         app.api.account.me({
             data: {
@@ -591,28 +594,12 @@ app.api.twitter.friends = function(user_id, cursor, cache){
     });
 }
 
-app.click.reload = function(){
-    app.fireEvent('reload');
-}
-app.click.createTask = function(){
-    app.fireEvent('createTask');
-}
-app.click.editTask = function(){
-    if (app.data.current_task) {
-        app.fireEvent('editTask', app.data.current_task);
-    } else {
-        alert('please select a task.');
-    }
-}
-
 app.setup.messages = function(ele){
     app.data.messages = ele;
 }
 app.setup.hide = function(ele){
     ele.hide();
 }
-
-/* */
 app.setup.profile = function(ele){
     var img = ele.find('img');
     var span = ele.find('span');
@@ -663,30 +650,6 @@ app.setup.switchMute = function(ele){
         });
     });
 }
-app.submit.clearList = function(form){
-    if (!app.data.current_list) {
-        alert('app.data.current_list is null.');
-        return;
-    }
-    app.ajax({
-        type: 'POST',
-        url: '/api/1/list/clear',
-        data: {
-            list_id: app.data.current_list.id
-        },
-        dataType: 'json'
-    })
-    .done(function(data){
-        if (data.success === 1) {
-            app.fireEvent('clearList', data.list);
-            app.fireEvent('openList', data.list);
-            app.dom.hide($('#clear-list-window'));
-        } else {
-            // 現在 ステータスコード 200 の例外ケースは無い
-        }
-    });
-}
-
 app.setup.taskCounter = function(ele){
     var count = 0;
     var condition = ele.data('counter-condition');
@@ -742,18 +705,6 @@ app.setup.filterTask = function(ele){
         ele.parent().removeClass('active');
     });
 }
-app.click.filterTask = function(ele){
-    if (ele.parent().hasClass('active') && app.data.current_list) {
-        app.fireEvent('openList', app.data.current_list);
-    } else {
-        app.fireEvent('filterTask', ele.data('filter-condition'));
-        ele.parent().addClass('active');
-    }
-}
-
-// ----------------------------------------------------------------------
-// コメント管理
-// ----------------------------------------------------------------------
 app.setup.rightColumn = function(ele){
     var list_id_input    = ele.find('input[name=list_id]');
     var task_id_input    = ele.find('input[name=task_id]');
@@ -779,15 +730,18 @@ app.setup.rightColumn = function(ele){
         if (document.activeElement.tagName !== 'BODY') {
             return;
         }
-        if (e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) {
+        if (e.ctrlKey || e.altKey || e.metaKey) {
             return;
         }
-        if (!app.data.current_task) {
+        if (e.shiftKey) {
+            if (!app.data.current_task) {
+                return;
+            }
+            if (e.keyCode === 39) { // right
+                e.preventDefault();
+                ele.find('textarea:first').focus();
+            }
             return;
-        }
-        if (e.keyCode === 77) { // M
-            e.preventDefault();
-            ele.find('textarea:first').focus();
         }
     });
 
@@ -864,6 +818,52 @@ app.setup.rightColumn = function(ele){
         task_name.text('-');
     });
 }
+
+app.click.reload = function(){
+    app.fireEvent('reload');
+}
+app.click.createTask = function(){
+    app.fireEvent('createTask');
+}
+app.click.editTask = function(){
+    if (app.data.current_task) {
+        app.fireEvent('editTask', app.data.current_task);
+    } else {
+        alert('please select a task.');
+    }
+}
+app.click.filterTask = function(ele){
+    if (ele.parent().hasClass('active') && app.data.current_list) {
+        app.fireEvent('openList', app.data.current_list);
+    } else {
+        app.fireEvent('filterTask', ele.data('filter-condition'));
+        ele.parent().addClass('active');
+    }
+}
+
+app.submit.clearList = function(form){
+    if (!app.data.current_list) {
+        alert('app.data.current_list is null.');
+        return;
+    }
+    app.ajax({
+        type: 'POST',
+        url: '/api/1/list/clear',
+        data: {
+            list_id: app.data.current_list.id
+        },
+        dataType: 'json'
+    })
+    .done(function(data){
+        if (data.success === 1) {
+            app.fireEvent('clearList', data.list);
+            app.fireEvent('openList', data.list);
+            app.dom.hide($('#clear-list-window'));
+        } else {
+            // 現在 ステータスコード 200 の例外ケースは無い
+        }
+    });
+}
 app.submit.registerComment = function(form){
     var task_id = form.find('input[name=task_id]').val();
     var list_id = form.find('input[name=list_id]').val();
@@ -873,7 +873,8 @@ app.submit.registerComment = function(form){
         alert('unknown list ' + list_id);
         return false;
     }
-    var message = form.find('textarea').val();
+    var textarea = form.find('textarea:first');
+    var message = textarea.val();
     if (!message.length) {
         return false;
     }
