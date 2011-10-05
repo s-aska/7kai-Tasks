@@ -3,7 +3,6 @@
 exec /home/aska/perl5/perlbrew/perls/perl-5.14.2/bin/start_server \
 --port=5007 \
 --interval=3 \
---pid-file=/home/aska/github/7kai-Tasks/app.pid \
 -- /home/aska/perl5/perlbrew/perls/perl-5.14.2/bin/plackup \
 -E deployment \
 -s Starlet \
