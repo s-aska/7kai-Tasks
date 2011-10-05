@@ -57,7 +57,7 @@ app.setup.settingsWindow = function(ele){
         }
         li_cache[sub_account.code] = li;
     });
-    app.addListener('reset', function(){
+    app.addListener('clear', function(){
         ul.empty();
         ele.hide();
     });
@@ -69,7 +69,7 @@ app.setup.removeAccountWindow = function(form){
         form.find('img').attr('src', app.util.getIconUrl(sub_account.code));
         form.find('.name').text(sub_account.name);
     });
-    app.addListener('reset', function(){
+    app.addListener('clear', function(){
         form.hide();
     });
 }
@@ -292,7 +292,7 @@ app.setup.leftColumn = function(ele){
             checkbox.attr('disabled', true);
         }
     });
-    app.addListener('reset', function(list){
+    app.addListener('clear', function(list){
         a.text('');
         list_ul.empty();
         member_ul.empty();
@@ -487,7 +487,7 @@ app.setup.registerListWindow = function(form){
         app.dom.show(form);
     });
 
-    app.addListener('reset', function(){
+    app.addListener('clear', function(){
         option_map = {};
         owner_select.empty();
     });
@@ -538,10 +538,10 @@ app.submit.registerList = function(form){
             app.dom.reset(form);
             form.find('ul.members').empty();
             if (id) {
-                app.dom.show($('#update-list-twipsy'));
+                app.dom.show(app.dom.get('showable', 'update-list-twipsy'));
                 app.dom.hide(form);
             } else {
-                app.dom.show($('#create-list-twipsy'));
+                app.dom.show(app.dom.get('showable', 'create-list-twipsy'));
             }
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
@@ -560,8 +560,8 @@ app.submit.deleteList = function(form){
     .done(function(data){
         if (data.success === 1) {
             app.fireEvent('deleteList', app.data.current_list);
-            app.dom.show($('#delete-list-twipsy'));
-            app.dom.hide($('#delete-list-window'));
+            app.dom.show(app.dom.get('showable', 'delete-list-twipsy'));
+            app.dom.hide(app.dom.get('showable', 'delete-list-window'));
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
         }
@@ -917,7 +917,7 @@ app.setup.centerColumn = function(ele){
         }
     });
 
-    app.addListener('reset', function(){
+    app.addListener('clear', function(){
         ul.empty();
         taskli_map = {};
     });
@@ -1145,7 +1145,7 @@ app.submit.registerTask = function(form){
             if (task_id) {
                 app.dom.hide(form);
             } else {
-                app.dom.show($('#create-task-twipsy'));
+                app.dom.show(app.dom.get('showable', 'create-task-twipsy'));
             }
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
@@ -1180,7 +1180,7 @@ app.submit.registerTask = function(form){
             if (task_id) {
                 app.dom.hide(form);
             } else {
-                app.dom.show($('#create-task-twipsy'));
+                app.dom.show(app.dom.get('showable', 'create-task-twipsy'));
             }
         }
     });

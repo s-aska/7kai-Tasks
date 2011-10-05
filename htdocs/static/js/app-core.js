@@ -7,12 +7,11 @@ if (typeof w.console !== 'object') {
 }
 
 var app = ns.app = {
-    // constant
     CSRF_TOKEN_NAME: 'csrf_token',
     REGEXP: {
         URL: new RegExp('(?:https?://[\\x21-\\x7e]+)', 'g')
     },
-    // 
+    // Environment
     env: {
         token: '',
         lang: (/^ja/.test(navigator.language) ? 'ja' : 'en')
@@ -22,7 +21,9 @@ var app = ns.app = {
     obj: {},
     date: {},
     func: {},
-    dom: {},
+    dom: {
+        cache: {}
+    },
     // Utility
     util: {},
     // API Call
@@ -34,13 +35,6 @@ var app = ns.app = {
     // <form data-setup="submit" data-submit="hoge"> => app.submit.submit(element)
     submit: {}
 };
-
-// Method
-app.init = function(){
-    if (location.search.indexOf('lang=en') !== -1) {
-        app.env.lang = 'en';
-    }
-}
 
 // Event Manager
 app.addEvents = function(){
@@ -55,7 +49,7 @@ app.addListener = function(name, fh, context){
     }
     app.events[name].push([fh, context]);
 }
-app.fireEvent = function() {
+app.fireEvent = function(){
     var args = $.makeArray(arguments);
     var name = args.shift();
     if (!(name in app.events)) {
@@ -72,6 +66,15 @@ app.obj.get = function(obj, keys){
     var f = obj;
     var ns = keys.split('.');
     for (var i = 0, max_i = ns.length; i < max_i; i++) {
+        if (!(ns[i] in f)) {
+            var error = {
+                message: "missing key in obj.",
+                obj :obj,
+                keys: keys
+            };
+            console.log(error);
+            throw error;
+        }
         f = f[ns[i]];
     }
     return f;
@@ -83,7 +86,7 @@ app.func.debounce = function(f, threshold){
     	var self = this;
     	var args = arguments;
 
-    	if(timeout)
+    	if (timeout)
     		clearTimeout(timeout);
 
     	timeout = setTimeout(function(){

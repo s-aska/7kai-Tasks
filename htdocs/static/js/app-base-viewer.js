@@ -154,7 +154,7 @@ app.addListener('clickNotification', function(option){
 });
 
 // セットアップ
-app.addListener('reset', function(){
+app.addListener('clear', function(){
     app.data.list_map = {};
     app.data.task_map = {};
     app.data.users = {};
@@ -347,16 +347,15 @@ app.util.buildMe = function(option, data){
         , diff
         , status;
 
-    app.env.token = data.token;
-    app.fireEvent('receiveToken');
-
     if (data.list_ids !== app.data.if_modified_lists) {
         option.reset = true;
     }
 
     if (option.reset) {
-        app.fireEvent('reset');
+        app.fireEvent('clear');
     }
+
+    app.fireEvent('receiveToken', data.token);
 
     app.data.sign = data.sign;
     app.data.state = data.account.state;
@@ -436,7 +435,7 @@ app.util.buildMe = function(option, data){
             app.fireEvent('openList', data.lists[0]);
         }
         if (option.setup && !tasks) {
-            app.dom.show($('#welcome'));
+            app.dom.show(app.dom.get('showable', 'welcome'));
         } else {
             app.fireEvent('sortTask', 'updated', true);
         }
@@ -538,7 +537,7 @@ app.api.task.move = function(src_list_id, task_id, dst_list_id){
     .done(function(data){
         if (data.success === 1) {
             app.fireEvent('registerTask', data.task, app.data.list_map[dst_list_id]);
-            if (app.data.current_task.id === data.task.id) {
+            if (app.data.current_task && app.data.current_task.id === data.task.id) {
                 app.fireEvent('openTask', data.task);
             }
         }
@@ -546,7 +545,7 @@ app.api.task.move = function(src_list_id, task_id, dst_list_id){
 }
 app.api.twitter.friends = function(user_id, cursor, cache){
     var timer = setTimeout(function(){
-        app.dom.show($('#notice-failed-sync-twitter'));
+        app.dom.show(app.dom.get('showable', 'notice-failed-sync-twitter'));
     }, 5000);
     app.ajax({
         url: 'https://api.twitter.com/1/statuses/friends.json',
@@ -585,10 +584,10 @@ app.api.twitter.friends = function(user_id, cursor, cache){
             })
             .done(function(data){
                 // FIXME:
-                app.dom.show($('#notice-succeeded-sync-twitter'));
+                app.dom.show(app.dom.get('showable', 'notice-succeeded-sync-twitter'));
             })
             .fail(function(){
-                app.dom.show($('#notice-failed-sync-twitter'));
+                app.dom.show(app.dom.get('showable', 'notice-failed-sync-twitter'));
             });
         }
     });
@@ -597,9 +596,9 @@ app.api.twitter.friends = function(user_id, cursor, cache){
 app.setup.messages = function(ele){
     app.data.messages = ele;
 }
-app.setup.hide = function(ele){
-    ele.hide();
-}
+// app.setup.hide = function(ele){
+//     ele.hide();
+// }
 app.setup.profile = function(ele){
     var img = ele.find('img');
     var span = ele.find('span');
@@ -671,7 +670,7 @@ app.setup.taskCounter = function(ele){
         }
         ele.text(count);
     });
-    app.addListener('reset', function(){
+    app.addListener('clear', function(){
         count = 0;
         ele.text(count);
     });
@@ -689,7 +688,7 @@ app.setup.starCounter = function(ele){
         count+= checked ? 1 : -1;
         ele.text(count);
     });
-    app.addListener('reset', function(){
+    app.addListener('clear', function(){
         count = 0;
         ele.text(count);
     });
@@ -701,7 +700,7 @@ app.setup.filterTask = function(ele){
     app.addListener('openList', function(){
         ele.parent().removeClass('active');
     });
-    app.addListener('reset', function(){
+    app.addListener('clear', function(){
         ele.parent().removeClass('active');
     });
 }
@@ -810,7 +809,7 @@ app.setup.rightColumn = function(ele){
         task_name.text('-');
     });
 
-    app.addListener('reset', function(){
+    app.addListener('clear', function(){
         ul.empty();
         textarea.val('');
         textarea.attr('disabled', true);
@@ -858,7 +857,7 @@ app.submit.clearList = function(form){
         if (data.success === 1) {
             app.fireEvent('clearList', data.list);
             app.fireEvent('openList', data.list);
-            app.dom.hide($('#clear-list-window'));
+            app.dom.hide(app.dom.get('showable', 'clear-list-window'));
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
         }

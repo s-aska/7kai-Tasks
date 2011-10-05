@@ -27,7 +27,7 @@
             href="/"
             data-setup="click,shortcut,filterTask"
             data-click="filterTask"
-            data-shortcut-code="84"
+            data-shortcut='{"code":84}'
             data-filter-condition='{"todo":1}'
           >
             <span
@@ -45,7 +45,7 @@
             href="/"
             data-setup="click,shortcut,filterTask"
             data-click="filterTask"
-            data-shortcut-code="86"
+            data-shortcut='{"code":86}'
             data-filter-condition='{"verify":1}'
           >
             <span
@@ -63,7 +63,7 @@
             href="/"
             data-setup="click,shortcut,filterTask"
             data-click="filterTask"
-            data-shortcut-code="82"
+            data-shortcut='{"code":82}'
             data-filter-condition='{"request":1}'
           >
             <span
@@ -81,7 +81,7 @@
             href="/"
             data-setup="click,shortcut,filterTask"
             data-click="filterTask"
-            data-shortcut-code="83"
+            data-shortcut='{"code":83}'
             data-filter-condition='{"star":1}'
           >
             <span
@@ -143,16 +143,14 @@
             </li>
             <li>
               <a
-                data-setup="click"
-                data-click="show"
-                data-show-id="settings-window"
+                data-setup="show"
+                data-show='{"id":"settings-window"}'
               >Settings</a>
             </li>
             <li>
               <a
-                data-setup="click"
-                data-click="show"
-                data-show-id="help-window"
+                data-setup="show"
+                data-show='{"id":"help-window"}'
               >Help</a>
             </li>
             <li class="divider"></li>
@@ -177,8 +175,8 @@
               <ul
                 class="menu-dropdown lists"
                 style="display: none"
-                data-setup="sortable"
-                data-sortable-update="sortable.list"
+                data-setup="uiSortable"
+                data-uiSortable='{"update":"sortable.list"}'
               >
                 <li class="nosortable divider"></li>
                 <li class="nosortable"><a
@@ -193,40 +191,37 @@
       </div>
     </div>
     <div
-      id="create-list-twipsy"
       class="twipsy below"
       style="display: none; top: 44px; left: 10x;"
-      data-show-effect="bounce"
-      data-show-speed="fast"
-      data-show-callback="dom.hide"
-      data-hide-speed="fast"
-      data-hide-option='{"direction":"up"}'
+      data-setup="showable"
+      data-showable='{
+        "id":"create-list-twipsy",
+        "show":{"effect":"bounce","speed":"fast","timeout":100},
+        "hide":{"speed":"fast","option":{"direction":"up"}}}'
     >
       <div class="twipsy-arrow"></div>
       <div class="twipsy-inner">New List!</div>
     </div>
     <div
-      id="update-list-twipsy"
       class="twipsy below"
       style="display: none; top: 44px; left: 10x;"
-      data-show-effect="bounce"
-      data-show-speed="fast"
-      data-show-callback="dom.hide"
-      data-hide-speed="fast"
-      data-hide-option='{"direction":"up"}'
+      data-setup="showable"
+      data-showable='{
+        "id":"update-list-twipsy",
+        "show":{"effect":"bounce","speed":"fast","timeout":100},
+        "hide":{"speed":"fast","option":{"direction":"up"}}}'
     >
       <div class="twipsy-arrow"></div>
       <div class="twipsy-inner">Update List!</div>
     </div>
     <div
-      id="delete-list-twipsy"
       class="twipsy below"
       style="display: none; top: 44px; left: 10x;"
-      data-show-effect="bounce"
-      data-show-speed="fast"
-      data-show-callback="dom.hide"
-      data-hide-speed="fast"
-      data-hide-option='{"direction":"up"}'
+      data-setup="showable"
+      data-showable='{
+        "id":"delete-list-twipsy",
+        "show":{"effect":"bounce","speed":"fast","timeout":100},
+        "hide":{"speed":"fast","option":{"direction":"up"}}}'
     >
       <div class="twipsy-arrow"></div>
       <div class="twipsy-inner">Delete List!</div>
@@ -241,10 +236,7 @@
             <label
               style="float: none;"
               data-setup="guide"
-              data-guide-id="what-mute"
-              data-guide-option='{"top":-60,"left":100}'
-              data-show-speed="fast"
-              data-hide-speed="fast"
+              data-guide='{"id":"what-mute","top":-60,"left":100}'
             >
               <input type="checkbox" name="mute" value="1">
               <span
@@ -271,17 +263,15 @@
             data-text-ja="完了済のタスクを表示切替"
         >Toggle Show closed Task</a></li>
         <li><a class="action"
-            data-setup="localize,click"
-            data-click="show"
-            data-show-id="clear-list-window"
+            data-setup="localize,show"
+            data-show='{"id":"clear-list-window"}'
             data-text-ja="完了済のタスクを削除"
         >Clear Closed Task</a></li>
         <li><hr></li>
         <li><a
             class="action delete-list"
-            data-setup="localize,click"
-            data-click="show"
-            data-show-id="delete-list-window"
+            data-setup="localize,show"
+            data-show='{"id":"delete-list-window"}'
             data-text-ja="リストを削除"
         >Delete List</a></li>
       </ul>
@@ -301,11 +291,13 @@
             >Tasks</a></li>
           </ul>
           <div
-            id="welcome"
             class="popover below"
             style="display: none; top: 50px; left: 70px;"
-            data-show-effect="fade"
-            data-hide-effect="fade"
+            data-setup="showable"
+            data-showable='{
+              "id":"welcome",
+              "show":{"effect":"fade"},
+              "hide":{"effect":"fade"}}'
           >
             <div class="arrow"></div>
             <div class="inner">
@@ -321,10 +313,10 @@
             <li><a
               class="icon-with icon-create-task"
               style="padding-left: 36px; background-position: 12px 50%;"
-              data-setup="localize,click,shortcut"
-              data-shortcut-code="67"
-              data-click="createTask,hide"
-              data-hide-id="welcome"
+              data-setup="localize,hide,click,shortcut"
+              data-shortcut='{"code":67}'
+              data-click="createTask"
+              data-hide='{"id":"welcome"}'
               data-text-ja="新しいタスク"
             >New Task</a>
             </li>
@@ -401,14 +393,13 @@
       </li>
     </ul>
     <div
-      id="create-task-twipsy"
       class="twipsy left"
       style="display: none; top: 36px; left: -84px;"
-      data-show-effect="bounce"
-      data-show-speed="fast"
-      data-show-callback="dom.hide"
-      data-hide-speed="fast"
-      data-hide-option='{"direction":"right"}'
+      data-setup="showable"
+      data-showable='{
+        "id":"create-task-twipsy",
+        "show":{"effect":"bounce","speed":"fast","timeout":100},
+        "hide":{"speed":"fast","option":{"direction":"right"}}}'
     >
       <div class="twipsy-arrow"></div>
       <div class="twipsy-inner">New Task!</div>
@@ -424,18 +415,16 @@
           <ul class="nav">
             <li>
               <a
-                data-setup="localize,tabMenu"
+                data-setup="localize,tab.menu"
                 data-text-ja="コメント＆履歴"
-                data-tab-id="comments"
-                data-tab-group="rightColumn"
+                data-tab='{"id":"comments","group":"rightColumn"}'
               >Comments &amp; Actions</a>
             </li>
             <li>
               <a
-                data-setup="localize,tabMenu"
+                data-setup="localize,tab.menu"
                 data-text-ja="ショートカットキー"
-                data-tab-id="shortcut-key"
-                data-tab-group="rightColumn"
+                data-tab='{"id":"shortcut-key","group":"rightColumn"}'
               >Shortcut Key</a>
             </li>
           </ul>
@@ -445,9 +434,8 @@
     <div
       class="container"
       style="display: none"
-      data-setup="tabContent"
-      data-tab-id="shortcut-key"
-      data-tab-group="rightColumn"
+      data-setup="tab.content"
+      data-tab='{"id":"shortcut-key","group":"rightColumn"}'
     >
       <h4
       data-setup="localize"
@@ -456,8 +444,7 @@
       <dl
         style="overflow: auto"
         data-setup="stretch"
-        data-stretch-offset="140"
-        data-stretch-padding="10"
+        data-stretch='{"offset":140,"padding":10}'
       >
         <dt>[C]</dt>
         <dd
@@ -543,9 +530,8 @@
     </div>
     <div
       class="container"
-      data-setup="tabContent"
-      data-tab-id="comments"
-      data-tab-group="rightColumn"
+      data-setup="tab.content"
+      data-tab='{"id":"comments","group":"rightColumn"}'
     >
       <h2>[<span class="list_name">-</span>] <span class="task_name">-</span></h2>
       <form
@@ -576,7 +562,7 @@
       <ul
         class="unstyled comments"
         data-setup="stretch"
-        data-stretch-padding="10"
+        data-stretch='{"padding":10}'
       >
         <li class="clearfix" style="position: relative;">
           <div class="icon sq32" style="position: absolute;"></div>
@@ -594,15 +580,13 @@
 <form
   id="register-list-window"
   class="modal form-stacked"
-  data-setup="ui,submit,registerListWindow,escclose"
+  data-setup="showable,ui,submit,registerListWindow,escclose"
   data-ui="draggable"
   data-submit="registerList"
-  data-show-effect="fade"
-  data-show-speed="fast"
-  data-show-callback="dom.autofocus"
-  data-hide-effect="fade"
-  data-hide-speed="fast"
-  data-hide-callback="dom.blur"
+  data-showable='{
+    "id":"register-list-window",
+    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
     <h3
@@ -611,9 +595,8 @@
     >Register List</h3>
     <a
       class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="register-list-window"
+      data-setup="hide"
+      data-hide='{"id":"register-list-window"}'
     >×</a>
   </div>
   <div class="modal-body">
@@ -721,26 +704,22 @@
     >Register</button>
     <button
       class="btn secondary"
-      data-setup="localize,click"
+      data-setup="localize,hide"
       data-text-ja="閉じる"
-      data-click="hide"
-      data-hide-id="register-list-window"
+      data-hide='{"id":"register-list-window"}'
     >Close</button>
   </div>
 </form>
 
 <form
-  id="delete-list-window"
   class="modal form-stacked"
-  data-setup="ui,submit,escclose"
+  data-setup="showable,ui,submit,escclose"
   data-ui="draggable"
   data-submit="deleteList"
-  data-show-effect="fade"
-  data-show-speed="fast"
-  data-show-callback="dom.autofocus"
-  data-hide-effect="fade"
-  data-hide-speed="fast"
-  data-hide-callback="dom.blur"
+  data-showable='{
+    "id":"delete-list-window",
+    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
     <h3
@@ -749,9 +728,8 @@
     >Delete List</h3>
     <a
       class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="delete-list-window"
+      data-setup="hide"
+      data-hide='{"id":"delete-list-window"}'
     >×</a>
   </div>
   <div class="modal-body">
@@ -770,10 +748,9 @@
     <button
       class="btn secondary"
       tabindex="1"
-      data-setup="localize,click"
+      data-setup="localize,hide"
       data-text-ja="キャンセル"
-      data-click="hide"
-      data-hide-id="delete-list-window"
+      data-hide='{"id":"delete-list-window"}'
       data-autofocus="true"
     >Cancel</button>
   </div>
@@ -782,15 +759,13 @@
 <form
   id="register-task-window"
   class="modal form-stacked"
-  data-setup="submit,ui,registerTaskWindow,escclose"
+  data-setup="showable,submit,ui,registerTaskWindow,escclose"
   data-submit="registerTask"
   data-ui="draggable"
-  data-show-effect="fade"
-  data-show-speed="fast"
-  data-show-callback="dom.autofocus"
-  data-hide-effect="fade"
-  data-hide-speed="fast"
-  data-hide-callback="dom.blur"
+  data-showable='{
+    "id":"register-task-window",
+    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
     <h3
@@ -799,9 +774,8 @@
     >Register Task</h3>
     <a
       class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="register-task-window"
+      data-setup="hide"
+      data-hide='{"id":"register-task-window"}'
     >×</a>
   </div>
   <div class="modal-body">
@@ -872,25 +846,21 @@
     >Register</button>
     <button
       class="btn secondary"
-      data-setup="localize,click"
+      data-setup="localize,hide"
       data-text-ja="閉じる"
-      data-click="hide"
-      data-hide-id="register-task-window"
+      data-hide='{"id":"register-task-window"}'
     >Close</button>
   </div>
 </form>
 
 <div
-  id="settings-window"
   class="modal"
-  data-setup="ui,escclose,settingsWindow"
+  data-setup="showable,ui,escclose,settingsWindow"
   data-ui="draggable"
-  data-show-effect="fade"
-  data-show-speed="fast"
-  data-show-callback="dom.autofocus"
-  data-hide-effect="fade"
-  data-hide-speed="fast"
-  data-hide-callback="dom.blur"
+  data-showable='{
+    "id":"settings-window",
+    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
     <h3
@@ -899,9 +869,8 @@
     >Settings</h3>
     <a
       class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="settings-window"
+      data-setup="hide"
+      data-hide='{"id":"settings-window"}'
     >×</a>
   </div>
   <div class="modal-body">
@@ -935,27 +904,23 @@
   <div class="modal-footer">
     <button
       class="btn secondary"
-      data-setup="localize,click"
+      data-setup="localize,hide"
       data-text-ja="閉じる"
-      data-click="hide"
-      data-hide-id="settings-window"
+      data-hide='{"id":"settings-window"}'
       data-autofocus="true"
     >Close</button>
   </div>
 </div>
 
 <form
-  id="delete-account-window"
   class="modal form-stacked"
-  data-setup="ui,submit,escclose,removeAccountWindow"
+  data-setup="showable,ui,submit,escclose,removeAccountWindow"
   data-ui="draggable"
   data-submit="deleteAccount"
-  data-show-effect="fade"
-  data-show-speed="fast"
-  data-show-callback="dom.autofocus"
-  data-hide-effect="fade"
-  data-hide-speed="fast"
-  data-hide-callback="dom.blur"
+  data-showable='{
+    "id":"delete-account-window",
+    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
     <h3
@@ -964,9 +929,8 @@
     >Delete Account</h3>
     <a
       class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="delete-account-window"
+      data-setup="hide"
+      data-hide='{"id":"delete-account-window"}'
     >×</a>
   </div>
   <div class="modal-body">
@@ -1002,21 +966,22 @@
     <button
       class="btn secondary"
       tabindex="1"
-      data-setup="localize,click"
+      data-setup="localize,hide"
       data-text-ja="キャンセル"
-      data-click="hide"
-      data-hide-id="delete-account-window"
+      data-hide='{"id":"delete-account-window"}'
       data-autofocus="true"
     >Cancel</button>
   </div>
 </form>
 
 <div
-  id="what-mute"
   class="popover right"
   style="display: none;"
-  data-show-effect="fade"
-  data-hide-effect="fade"
+  data-setup="showable"
+  data-showable='{
+    "id":"what-mute",
+    "show":{"effect":"fade"},
+    "hide":{"effect":"fade"}}'
 >
   <div class="arrow"></div>
   <div class="inner">
@@ -1041,16 +1006,14 @@
 </div>
 
 <form
-  id="help-window"
   class="modal form-stacked"
-  data-setup="ui,escclose"
+  data-setup="showable,ui,escclose"
   data-ui="draggable"
-  data-show-effect="fade"
-  data-show-speed="fast"
-  data-show-callback="dom.autofocus"
-  data-hide-effect="fade"
-  data-hide-speed="fast"
-  data-hide-callback="dom.blur"
+  data-setup="showable"
+  data-showable='{
+    "id":"help-window",
+    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
     <h3
@@ -1059,43 +1022,38 @@
     >Help</h3>
     <a
       class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="help-window"
+      data-setup="hide"
+      data-hide='{"id":"help-window"}'
     >×</a>
   </div>
   <div class="modal-body">
     <ul class="tabs">
       <li class="active">
         <a
-          data-setup="localize,tabMenu"
+          data-setup="localize,tab.menu"
           data-text-ja="メニュー"
-          data-tab-id="menu"
-          data-tab-group="help"
+          data-tab='{"id":"menu","group":"help"}'
         >Menu</a>
       </li>
       <li>
         <a
-          data-setup="localize,tabMenu"
+          data-setup="localize,tab.menu"
           data-text-ja="アイコン"
-          data-tab-id="icon"
-          data-tab-group="help"
+          data-tab='{"id":"icon","group":"help"}'
         >Icon</a>
       </li>
       <li>
         <a
-          data-setup="localize,tabMenu"
+          data-setup="localize,tab.menu"
           data-text-ja="ショートカットキー"
-          data-tab-id="shortcut-key"
-          data-tab-group="help"
+          data-tab='{"id":"shortcut-key","group":"help"}'
         >Shortcut Key</a>
       </li>
     </ul>
     <div>
       <div
-        data-setup="tabContent"
-        data-tab-id="menu"
-        data-tab-group="help"
+        data-setup="tab.content"
+        data-tab='{"id":"menu","group":"help"}'
       >
         <h4
           data-setup="localize"
@@ -1117,9 +1075,8 @@
       </div>
       <div
         style="display: none;"
-        data-setup="tabContent"
-        data-tab-id="icon"
-        data-tab-group="help"
+        data-setup="tab.content"
+        data-tab='{"id":"icon","group":"help"}'
       >
         <h4
           data-setup="localize"
@@ -1198,9 +1155,8 @@
       </div>
       <div
         style="display: none;"
-        data-setup="tabContent"
-        data-tab-id="shortcut-key"
-        data-tab-group="help"
+        data-setup="tab.content"
+        data-tab='{"id":"shortcut-key","group":"help"}'
       >
         <h4
         data-setup="localize"
@@ -1300,19 +1256,26 @@
   <div class="modal-footer">
     <button
       class="btn secondary"
-      data-setup="localize,click"
+      data-setup="localize,hide"
       data-text-ja="閉じる"
-      data-click="hide"
-      data-hide-id="help-window"
+      data-hide='{"id":"help-window"}'
       data-autofocus="true"
     >Close</button>
   </div>
 </form>
 
-<div id="sub-account-notice" class="modal">
+<div
+  class="modal"
+  data-setup="showable"
+  data-showable='{"id":"sub-account-notice"}'
+>
   <div class="modal-header">
     <h3>Notice</h3>
-    <a class="close" data-setup="click" data-click="hide" data-hide-id="sub-account-notice">×</a>
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"sub-account-notice"}'
+    >×</a>
   </div>
   <div class="modal-body">
     <p
@@ -1340,20 +1303,21 @@
 </div>
 
 <div
-  id="alert"
   class="modal"
   style="display: none;"
-  data-setup="alert"
-  data-show-effect="fade"
-  data-hide-effect="fade"
+  data-setup="alert,showable"
+  data-showable='{
+    "id":"alert",
+    "show":{"effect":"fade"},
+    "hide":{"effect":"fade"}}'
 >
   <div class="modal-header">
     <h3>Error</h3>
     <a
       class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="alert">×</a>
+      data-setup="hide"
+      data-hide='{"id":"alert"}'
+    >×</a>
   </div>
   <div class="modal-body">
     <p
@@ -1372,22 +1336,23 @@
     ></p>
   </div>
   <div class="modal-footer">
-    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="alert">Close</a>
+    <a
+      class="btn primary"
+      data-setup="hide"
+      data-hide='{"id":"alert"}'
+    >Close</a>
   </div>
 </div>
 
 <form
-  id="clear-list-window"
   class="modal form-stacked"
-  data-setup="ui,submit,escclose"
+  data-setup="showable,ui,submit,escclose"
   data-ui="draggable"
   data-submit="clearList"
-  data-show-effect="fade"
-  data-show-speed="fast"
-  data-show-callback="dom.autofocus"
-  data-hide-effect="fade"
-  data-hide-speed="fast"
-  data-hide-callback="dom.blur"
+  data-showable='{
+    "id":"clear-list-window",
+    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
     <h3
@@ -1396,9 +1361,8 @@
     >Clear Closed Task</h3>
     <a
       class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="clear-list-window"
+      data-setup="hide"
+      data-hide='{"id":"clear-list-window"}'
     >×</a>
   </div>
   <div class="modal-body">
@@ -1416,29 +1380,28 @@
     >Delete</button>
     <button
       class="btn secondary"
-      data-setup="localize,click"
+      data-setup="localize,hide"
       data-text-ja="キャンセル"
-      data-click="hide"
-      data-hide-id="clear-list-window"
+      data-hide='{"id":"clear-list-window"}'
     >Cancel</button>
   </div>
 </form>
 
 <div
-  id="success-delete-account"
   class="modal"
   style="display: none;"
-  data-show-effect="fade"
-  data-show-auto-close="5000"
-  data-hide-effect="fade"
+  data-setup="showable"
+  data-showable='{
+    "id":"success-delete-account",
+    "show":{"effect":"fade","timeout":5000},
+    "hide":{"effect":"fade"}}'
 >
   <div class="modal-header">
     <h3>Success</h3>
     <a
       class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="success-delete-account">×</a>
+      data-setup="hide"
+      data-hide='{"id":"success-delete-account"}'>×</a>
   </div>
   <div class="modal-body">
     <p
@@ -1447,22 +1410,26 @@
     >Succeeded Delete Account.</p>
   </div>
   <div class="modal-footer">
-    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="success-delete-account">Close</a>
+    <a
+      class="btn primary"
+      data-setup="hide"
+      data-hide='{"id":"success-delete-account"}'
+    >Close</a>
   </div>
 </div>
 
 <div
-  id="notice-succeeded-salvage"
   class="alert alert-message success"
-  data-show-option='{"direction":"down"}'
-  data-show-auto-close="5000"
-  data-hide-option='{"direction":"down"}'
+  data-setup="showable"
+  data-showable='{
+    "id":"notice-succeeded-salvage",
+    "show":{"option":{"direction":"down"},"timeout":5000},
+    "hide":{"option":{"direction":"down"}}}'
 >
   <a
     class="close"
-    data-setup="click"
-    data-click="hide"
-    data-hide-id="notice-succeeded-salvage"
+    data-setup="hide"
+    data-hide='{"id":"succeeded-salvage"}'
   >×</a>
   <p>
     <strong>Info</strong>
@@ -1471,17 +1438,17 @@
 </div>
 
 <div
-  id="notice-succeeded-create-task"
   class="alert alert-message success"
-  data-show-option='{"direction":"down"}'
-  data-show-auto-close="5000"
-  data-hide-option='{"direction":"down"}'
+  data-setup="showable"
+  data-showable='{
+    "id":"notice-succeeded-create-task",
+    "show":{"option":{"direction":"down"},"timeout":5000},
+    "hide":{"option":{"direction":"down"}}}'
 >
   <a
     class="close"
-    data-setup="click"
-    data-click="hide"
-    data-hide-id="notice-succeeded-create-task"
+    data-setup="hide"
+    data-hide='{"id":"notice-succeeded-create-task"}'
   >×</a>
   <p>
     <strong>Info</strong>
@@ -1490,17 +1457,17 @@
 </div>
 
 <div
-  id="notice-succeeded-sync-twitter"
   class="alert alert-message success"
-  data-show-option='{"direction":"down"}'
-  data-show-auto-close="5000"
-  data-hide-option='{"direction":"down"}'
+  data-setup="showable"
+  data-showable='{
+    "id":"notice-succeeded-sync-twitter",
+    "show":{"option":{"direction":"down"},"timeout":5000},
+    "hide":{"option":{"direction":"down"}}}'
 >
   <a
     class="close"
-    data-setup="click"
-    data-click="hide"
-    data-hide-id="notice-succeeded-sync-twitter"
+    data-setup="hide"
+    data-hide='{"id":"notice-succeeded-sync-twitter"}'
   >×</a>
   <p>
     <strong>Info</strong>
@@ -1509,17 +1476,17 @@
 </div>
 
 <div
-  id="notice-failed-sync-twitter"
   class="alert alert-message error"
-  data-show-option='{"direction":"down"}'
-  data-show-auto-close="5000"
-  data-hide-option='{"direction":"down"}'
+  data-setup="showable"
+  data-showable='{
+    "id":"notice-failed-sync-twitter",
+    "show":{"option":{"direction":"down"},"timeout":5000},
+    "hide":{"option":{"direction":"down"}}}'
 >
   <a
     class="close"
-    data-setup="click"
-    data-click="hide"
-    data-hide-id="notice-failed-sync-twitter"
+    data-setup="hide"
+    data-hide='{"id":"notice-failed-sync-twitter"}'
   >×</a>
   <p>
     <strong>Error</strong>

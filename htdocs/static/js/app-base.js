@@ -45,8 +45,9 @@ $.extend(app, {
     sortable: {}
 });
 
+app.addEvents('ready');        // document ready
 app.addEvents('setup');        // application setup
-app.addEvents('reset');        // memory and dom clear
+app.addEvents('clear');        // memory and dom clear
 app.addEvents('reload');       // reset => setup
 app.addEvents('resize');       // window resize
 app.addEvents('alert');        // trouble
@@ -54,33 +55,37 @@ app.addEvents('selectTab');    // tag component
 app.addEvents('receiveSign');  // receive sign from api
 app.addEvents('receiveToken'); // receive token from api
 
+app.addListener('ready', function(){
+    if (location.search.indexOf('lang=en') !== -1) {
+        app.env.lang = 'en';
+    }
+    app.dom.setup();
+    $(w).resize(app.func.debounce(function(e){
+        app.fireEvent('resize', e);
+    }));
+});
+app.addListener('receiveToken', function(token){
+    app.env.token = token;
+});
+
 $(d).ready(function(){
     app.run();
 });
 
 app.run = function(){
-    app.init();
-    if ("applicationCache" in w) {
-        d.body.addEventListener("online", function() {
-            console.log('online');
-            app.api.token();
-            // applicationCache.update();
-            // applicationCache.addEventListener("updateready", function() {
-            //     console.log('swapCache');
-            //     applicationCache.swapCache();
-            // }, false);
-        }, false);
-    }
-    app.dom.setup();
+    app.fireEvent('ready');
     app.fireEvent('setup');
-    $(w).resize(app.func.debounce(function(e){
-        app.fireEvent('resize', e);
-    }));
 }
-
 app.execute = function(ele, type){
     var methods = ele.data(type).split(',');
     for (var i = 0, max_i = methods.length; i < max_i; i++) {
+        if (!(methods[i] in app[type])) {
+            console.log({
+                message: "missing method.",
+                ele: ele,
+                type: type
+            });
+        }
         app[type][methods[i]].call(app, ele);
     }
 }
@@ -159,8 +164,7 @@ app.api.token = function(){
         loading: false
     })
     .done(function(data){
-        app.env.token = data.token;
-        app.fireEvent('receiveToken');
+        app.fireEvent('receiveToken', data.token);
     });
 }
 
@@ -212,7 +216,7 @@ app.util.salvage = function(){
     .done(function(data){
         if (data.success === 1) {
             app.queue.clear();
-            app.dom.show($('#notice-succeeded-salvage'));
+            app.dom.show(app.dom.get('showable', 'notice-succeeded-salvage'));
             app.fireEvent('reload');
             app.state.offline = false;
             app.state.offline_queue = false;
@@ -225,11 +229,18 @@ app.dom.setup = function(context){
         var ele = $(this);
         var methods = ele.data('setup').split(',');
         for (var i = 0, max_i = methods.length; i < max_i; i++) {
-            if (!(methods[i] in app.setup)) {
-                console.log(methods[i]);
-                continue;
+            // if (!(methods[i] in app.setup)) {
+            //     console.log(methods[i]);
+            //     continue;
+            // }
+            var ele = $(this);
+            var key = methods[i].split('.').shift();
+            var val = ele.attr('data-' + key);
+            if (val && /^\{/.test(val) && /\}$/.test(val)) {
+                ele.attr('data-' + key, val.replace(/\s|\n/g, ''));
             }
-            app.setup[methods[i]].call(app, $(this));
+            var option = ele.data(key);
+            app.obj.get(app.setup, methods[i]).call(app, ele, option);
         }
     });
 }
@@ -237,11 +248,13 @@ app.dom.show = function(target){
     if (target.is(':visible')) {
         return;
     }
-    var effect    = target.data('show-effect')   || 'drop';
-    var option    = target.data('show-option')   || {};
-    var speed     = target.data('show-speed')    || null;
-    var callback  = target.data('show-callback') || null;
-    var autoClose = target.data('show-auto-close') || null;
+    var data     = target.data('showable');
+    var show     = data.show     || {};
+    var effect   = show.effect   || 'drop';
+    var option   = show.option   || {};
+    var speed    = show.speed    || null;
+    var callback = show.callback || null;
+    var timeout  = show.timeout  || null;
     if (target.hasClass('modal')) {
         var height = target.height();
         target.css('marginTop', Number(height / 2) * -1 + 'px');
@@ -253,18 +266,20 @@ app.dom.show = function(target){
             }
         })(app.obj.get(app, callback));
     }
-    if (autoClose) {
+    if (timeout) {
         setTimeout(function(){
             app.dom.hide(target);
-        }, autoClose);
+        }, timeout);
     }
     return target.show(effect, option, speed, callback);
 }
 app.dom.hide = function(target){
-    var effect = target.data('hide-effect') || 'drop';
-    var option = target.data('hide-option') || {};
-    var speed  = target.data('hide-speed')  || null;
-    var callback = target.data('hide-callback') || null;
+    var data     = target.data('showable');
+    var hide     = data.hide     || {};
+    var effect   = hide.effect   || 'drop';
+    var option   = hide.option   || {};
+    var speed    = hide.speed    || null;
+    var callback = hide.callback || null;
     if (callback) {
         callback = (function(func){
             return function(){
@@ -311,6 +326,25 @@ app.dom.hover = function(ele, over, out, delay){
         }, delay);
     });
 }
+app.dom.get = function(type, id){
+    if (!(type in app.dom.cache)) {
+        console.log('missing app.dom.cache.' + type);
+        return;
+    }
+    if (!(id in app.dom.cache[type])) {
+        console.log('missing app.dom.cache.' + type + '.' + id);
+        return;
+    }
+    return app.dom.cache[type][id];
+}
+app.dom.set = function(type, id, ele){
+    if (!(type in app.dom.cache)) {
+        app.dom.cache[type] = {};
+    }
+    app.dom.cache[type][id] = ele;
+}
+
+// throw new Error({ name: "test", message: 100 });
 
 app.setup.localize = function(ele){
     ele.text(ele.data('text-' + app.env.lang));
@@ -335,9 +369,10 @@ app.setup.menu = function(ele){
         ul.slideUp('fast');
     }, 500);
 }
-app.setup.stretch = function(ele){
-    var padding = ele.data('stretch-padding') || 0;
-    var offset = ele.data('stretch-offset') || ele.offset().top;
+app.setup.stretch = function(ele, option){
+    if (!option) option = {};
+    var padding  = option.padding || 0;
+    var offset   = option.offset  || ele.offset().top;
     var callback = function(){
         ele.height(
             $(w).height()
@@ -350,13 +385,13 @@ app.setup.stretch = function(ele){
     app.addListener('resize', callback);
     callback.call();
 }
-app.setup.ui = function(ele){
+app.setup.ui = function(ele, option){
+    if (!option) option = {};
     var uis = ele.data('ui').split(',');
     for (var i = 0, max_i = uis.length; i < max_i; i++) {
         var ui = uis[i];
-        var option = ele.data('ui-' + ui);
         if (ui in ele) {
-            ele[ui].call(ele, option);
+            ele[ui].call(ele, option[ui]);
         }
     }
 }
@@ -367,54 +402,47 @@ app.setup.escclose = function(ele){
         }
     });
 }
-app.setup.shortcut = function(ele){
+app.setup.shortcut = function(ele, option){
     $(d).keydown(function(e){
         if (document.activeElement.tagName === 'BODY'
             && !e.shiftKey
             && !e.ctrlKey
             && !e.altKey
             && !e.metaKey
-            && e.keyCode === ele.data('shortcut-code')) {
+            && e.keyCode === option.code) {
             ele.click();
         }
     });
 }
-app.setup.tabMenu = function(ele){
-    var my_id = ele.data('tab-id'),
-        my_group = ele.data('tab-group');
-
+app.setup.tab = {};
+app.setup.tab.menu = function(ele, option){
     ele.click(function(){
-        app.fireEvent('selectTab', my_group, my_id);
+        app.fireEvent('selectTab', option.group, option.id);
     });
-
     app.addListener('selectTab', function(group, id){
-        if (group !== my_group) {
+        if (group !== option.group) {
             return;
         }
-        if (id === my_id) {
+        if (id === option.id) {
             ele.parent().addClass('active');
         } else {
             ele.parent().removeClass('active');
         }
     });
 }
-app.setup.tabContent = function(ele){
-    var my_id = ele.data('tab-id'),
-        my_group = ele.data('tab-group');
-
+app.setup.tab.content = function(ele, option){
     app.addListener('selectTab', function(group, id){
-        if (group !== my_group) {
+        if (group !== option.group) {
             return;
         }
-        if (id === my_id) {
+        if (id === option.id) {
             ele.show();
         } else {
             ele.hide();
         }
     });
 }
-app.setup.sortable = function(ele){
-    var update = ele.data('sortable-update');
+app.setup.uiSortable = function(ele, option){
     ele.sortable({
         cancel: '.nosortable',
         cursor: 'move',
@@ -423,7 +451,7 @@ app.setup.sortable = function(ele){
         stop: function (e, ui) {
         },
         update: function(e, ui) {
-            (app.obj.get(app, update))(ele);
+            (app.obj.get(app, option.update))(ele);
         }
     });
 }
@@ -434,40 +462,51 @@ app.setup.alert = function(ele){
         app.dom.show(ele);
     });
 }
-app.setup.guide = function(ele){
-    var id = ele.data('guide-id');
-    var option = ele.data('guide-option');
-    var guide = $('#' + id);
+app.setup.form = function(form){
+    app.addListener('receiveToken', function(token){
+        $('<input type="hidden"/>')
+            .attr('name', app.CSRF_TOKEN_NAME)
+            .val(token)
+            .appendTo(form);
+    });
+}
+app.setup.showable = function(ele, option){
+    if (!option || !option.id) {
+        console.log({
+            message: "missing showable.id",
+            ele: ele
+        });
+    }
+    app.dom.set('showable', option.id, ele);
+}
+app.setup.show = function(ele, option){
+    ele.click(function(e){
+        e.preventDefault();
+        app.dom.show(app.dom.get('showable', option.id));
+    });
+}
+app.setup.hide = function(ele, option){
+    ele.click(function(e){
+        e.preventDefault();
+        app.dom.hide(app.dom.get('showable', option.id));
+    });
+}
+app.setup.toggle = function(ele, option){
+    ele.click(function(e){
+        e.preventDefault();
+        app.dom.toggle(app.dom.get('showable', option.id));
+    });
+}
+app.setup.guide = function(ele, option){
     app.dom.hover(ele, function(){
+        var guide = app.dom.get('showable', option.id);
         var offset = ele.offset();
         guide.css('top', offset.top + option.top + 'px');
         guide.css('left', offset.left + option.left + 'px');
         app.dom.show(guide);
     }, function(){
-        app.dom.hide(guide);
+        app.dom.hide(app.dom.get('showable', option.id));
     }, 500);
-}
-app.setup.form = function(form){
-    app.addListener('receiveToken', function(){
-        $('<input type="hidden"/>')
-            .attr('name', app.CSRF_TOKEN_NAME)
-            .val(app.env.token)
-            .appendTo(form);
-    });
-}
-
-app.click.show = function(ele){
-    var id = ele.data('show-id');
-    var target = $('#' + id);
-    app.dom.show(target);
-}
-app.click.hide = function(ele){
-    var id = ele.data('hide-id');
-    var target = $('#' + id);
-    app.dom.hide(target);
-}
-app.click.toggle = function(ele){
-    app.dom.toggle(ele);
 }
 
 })(this, this, document);

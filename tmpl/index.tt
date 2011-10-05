@@ -27,17 +27,16 @@
     <div style="margin-bottom: 20px;">
       <a
         class="btn large primary"
-        data-setup="click"
-        data-click="hide,show"
-        data-show-id="signin"
-        data-hide-id="movie"
+        data-setup="hide,show"
+        data-hide='{"id":"movie"}'
+        data-show='{"id":"signin"}'
       >Start Task Management</a>
     </div>
   </div>
   <div class="columns" style="width: 420px;">
     <div
-      id="movie"
-      data-hide-effect="none"
+      data-setup="showable"
+      data-showable='{"id":"movie","hide":{"effect":"none"}}'
     ><iframe width="420" height="315" src="https://www.youtube.com/embed/tJOxEoFsbXM" frameborder="0" allowfullscreen></iframe></div>&nbsp;
   </div>
   <div class="span6 columns">
@@ -80,9 +79,9 @@
 </footer>
 <div id="fb-root"></div>
 <div
-  id="signin"
   class="modal"
-  data-show-effect="fade"
+  data-setup="showable"
+  data-showable='{"id":"signin","show":{"effect":"fade"}}'
 >
   <div class="modal-header">
     <h3>Sign In</h3>
@@ -91,24 +90,21 @@
     <ul class="tabs">
       <li class="active">
         <a
-          data-setup="tabMenu"
-          data-tab-id="social"
-          data-tab-group="signin"
+          data-setup="tab.menu"
+          data-tab='{"id":"social","group":"signin"}'
         >Twitter / Facebook</a>
       </li>
       <li>
         <a
-          data-setup="tabMenu"
-          data-tab-id="email"
-          data-tab-group="signin"
+          data-setup="tab.menu"
+          data-tab='{"id":"email","group":"signin"}'
         >E-mail</a>
       </li>
     </ul>
     <div
       style="text-align: center;"
-      data-setup="tabContent"
-      data-tab-id="social"
-      data-tab-group="signin"
+      data-setup="tab.content"
+      data-tab='{"id":"social","group":"signin"}'
     >
       <form method="post" action="/signin/twitter/signin">
         <div><button class="btn large primary">Connect with Twitter</button></div>
@@ -119,9 +115,8 @@
     </div>
     <div
       style="display: none;"
-      data-setup="tabContent"
-      data-tab-id="email"
-      data-tab-group="signin"
+      data-setup="tab.content"
+      data-tab='{"id":"email","group":"signin"}'
     >
       <form
         data-setup="emailSignup"

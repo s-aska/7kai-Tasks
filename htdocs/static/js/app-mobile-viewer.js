@@ -8,16 +8,38 @@ app.option.show_loading = true;
 app.addEvents('domresize');
 app.addEvents('orientationchange');
 
+app.addListener('ready', function(){
+    // if ("applicationCache" in w) {
+    //     d.body.addEventListener("online", function() {
+    //         // console.log('online');
+    //         app.api.token();
+    //         // applicationCache.update();
+    //         // applicationCache.addEventListener("updateready", function() {
+    //         //     console.log('swapCache');
+    //         //     applicationCache.swapCache();
+    //         // }, false);
+    //     }, false);
+    // }
+    d.addEventListener('touchmove', function(e){
+        e.preventDefault();
+    });
+    w.addEventListener('online', function(){
+        app.api.token();
+    });
+    w.addEventListener('orientationchange', function(){
+        app.fireEvent('orientationchange');
+    });
+});
 app.addListener('setup', function(){
     if (navigator.onLine){
         app.api.token();
     }
-    document.addEventListener('touchmove', function(e){ e.preventDefault(); });
-    window.onorientationchange = function(){
-        $('head meta[name=viewport]').remove();
-        $('head').prepend('<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1"/>');
-        app.fireEvent('orientationchange');
-    }
+});
+app.addListener('orientationchange', function(){
+    $('head meta[name=viewport]').remove();
+    $('head').prepend('<meta name="viewport" content="width=device-width,'
+        + ' user-scalable=no, initial-scale=1,'
+        + ' minimum-scale=1, maximum-scale=1"/>');
 });
 
 // ----------------------------------------------------------------------
@@ -45,7 +67,7 @@ app.setup.listmenu = function(ul){
         }
         li_cache[list.id] = li;
     });
-    app.addListener('reset', function(){
+    app.addListener('clear', function(){
         ul.empty();
         li_cache = {};
     });
@@ -243,27 +265,11 @@ app.setup.tasks = function(ul){
                     li.data('visible', true);
                     li.show();
                 }
-                // if (app.data.current_task &&
-                //     app.data.current_task.id === task.id) {
-                //     app.fireEvent('openTask', task);
-                // }
             } else {
                 if (li.data('visible')) {
                     li.data('visible', false);
                     li.hide();
                 }
-                // if (app.data.current_task &&
-                //     app.data.current_task.id === task.id) {
-                //     var next = li.nextAll(':visible:first');
-                //     if (!next.length) {
-                //         next = li.prevAll(':visible:first');
-                //     }
-                //     if (next.length) {
-                //         app.fireEvent('openTask', app.data.task_map[next.data('id')]);
-                //     } else {
-                //         app.fireEvent('missingTask');
-                //     }
-                // }
             }
         } else {
             if (!(app.data.current_filter &&
@@ -316,7 +322,7 @@ app.setup.tasks = function(ul){
         }
     });
     
-    app.addListener('reset', function(){
+    app.addListener('clear', function(){
         ul.empty();
         taskli_map = {};
     });
@@ -327,8 +333,8 @@ app.setup.menu = function(ele){
         ul.slideToggle('fast');
     });
 }
-app.setup.more = function(ele){
-    var target = $('#' + ele.data('more-id') );
+app.setup.more = function(ele, option){
+    var target = app.dom.cache.get('showable', option.id);
     target.hide();
     ele.click(function(){
         target.slideToggle('fast', function(){
@@ -502,7 +508,7 @@ app.setup.registerListWindow = function(form){
         app.dom.show(form);
     });
 
-    app.addListener('reset', function(){
+    app.addListener('clear', function(){
         option_map = {};
         owner_select.empty();
     });
@@ -690,7 +696,7 @@ app.submit.registerTask = function(form){
         app.fireEvent('selectTab', 'main', 'tasks');
     } else {
         form.find('input[name="name"]').focus();
-        app.dom.show($('#notice-succeeded-create-task'));
+        app.dom.show(app.dom.get('showable', 'notice-succeeded-create-task'));
     }
     
     var api = create ? 'task.create' : 'task.update';
