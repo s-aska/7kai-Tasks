@@ -890,7 +890,7 @@ app.submit.registerComment = function(form){
             app.dom.reset(form);
             app.fireEvent('registerTask', data.task, list);
             app.fireEvent('openTask', data.task);
-            document.activeElement.blur();
+            textarea.focus();
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
         }
