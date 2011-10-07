@@ -279,7 +279,7 @@
   </div>
   <div
     class="span8 columns"
-    data-setup="stretch,centerColumn"
+    data-setup="stretch"
   >
     <div class="topbar">
       <div class="fill">
@@ -376,17 +376,17 @@
     <ul
       class="unstyled tasks"
       style="overflow: auto;"
-      data-setup="stretch"
+      data-setup="stretch,tasks"
     >
       <li class="clearfix" draggable="true">
         <div class="icon icon-grip"></div>
-        <div class="icon icon-tasks-off"></div>
-        <div class="icon icon-star-off"></div>
-        <div class="human"></div>
-        <div class="name">アイコン作成</div>
-        <div class="icon icon-cross delete"></div>
-        <div class="due">8/23</div>
-        <div class="recent-comment">
+        <div class="icon icon-tasks-off" data-setup="status"></div>
+        <div class="icon icon-star-off" data-setup="star"></div>
+        <div class="human" data-setup="human"></div>
+        <div class="name" data-setup="name">アイコン作成</div>
+        <div class="icon icon-cross delete" data-setup="close"></div>
+        <div class="due" data-setup="due">8/23</div>
+        <div class="recent-comment" data-setup="recent">
           <div class="icon"></div>
           <div class="message">{<span>&nbsp;&lt;&nbsp;◯◯◯◯◯◯◯◯◯◯◯</span></div>
         </div>

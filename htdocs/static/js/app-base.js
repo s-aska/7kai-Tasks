@@ -29,6 +29,7 @@ $.extend(app, {
         animation: true
     },
     state: {
+        signin: false,
         offline: false,
         offline_queue: false,
     },
@@ -224,7 +225,9 @@ app.util.salvage = function(){
     });
 }
 
-app.dom.setup = function(context){
+app.dom.setup = function(){
+    var args = $.makeArray(arguments);
+    var context = args.shift();
     $('[data-setup]', context).each(function(){
         var ele = $(this);
         var methods = ele.data('setup').split(',');
@@ -234,13 +237,7 @@ app.dom.setup = function(context){
             //     continue;
             // }
             var ele = $(this);
-            var key = methods[i].split('.').shift();
-            var val = ele.attr('data-' + key);
-            if (val && /^\{/.test(val) && /\}$/.test(val)) {
-                ele.attr('data-' + key, val.replace(/\s|\n/g, ''));
-            }
-            var option = ele.data(key);
-            app.obj.get(app.setup, methods[i]).call(app, ele, option);
+            app.obj.get(app.setup, methods[i]).apply(app, [ele].concat(args));
         }
     });
 }
@@ -344,8 +341,6 @@ app.dom.set = function(type, id, ele){
     app.dom.cache[type][id] = ele;
 }
 
-// throw new Error({ name: "test", message: 100 });
-
 app.setup.localize = function(ele){
     ele.text(ele.data('text-' + app.env.lang));
 }
@@ -369,8 +364,8 @@ app.setup.menu = function(ele){
         ul.slideUp('fast');
     }, 500);
 }
-app.setup.stretch = function(ele, option){
-    if (!option) option = {};
+app.setup.stretch = function(ele){
+    var option   = ele.data('stretch') || {};
     var padding  = option.padding || 0;
     var offset   = option.offset  || ele.offset().top;
     var callback = function(){
@@ -385,13 +380,12 @@ app.setup.stretch = function(ele, option){
     app.addListener('resize', callback);
     callback.call();
 }
-app.setup.ui = function(ele, option){
-    if (!option) option = {};
+app.setup.ui = function(ele){
     var uis = ele.data('ui').split(',');
     for (var i = 0, max_i = uis.length; i < max_i; i++) {
         var ui = uis[i];
         if (ui in ele) {
-            ele[ui].call(ele, option[ui]);
+            ele[ui].call(ele);
         }
     }
 }
@@ -402,7 +396,8 @@ app.setup.escclose = function(ele){
         }
     });
 }
-app.setup.shortcut = function(ele, option){
+app.setup.shortcut = function(ele){
+    var option = ele.data('shortcut');
     $(d).keydown(function(e){
         if (document.activeElement.tagName === 'BODY'
             && !e.shiftKey
@@ -415,7 +410,8 @@ app.setup.shortcut = function(ele, option){
     });
 }
 app.setup.tab = {};
-app.setup.tab.menu = function(ele, option){
+app.setup.tab.menu = function(ele){
+    var option = ele.data('tab');
     ele.click(function(){
         app.fireEvent('selectTab', option.group, option.id);
     });
@@ -430,7 +426,8 @@ app.setup.tab.menu = function(ele, option){
         }
     });
 }
-app.setup.tab.content = function(ele, option){
+app.setup.tab.content = function(ele){
+    var option = ele.data('tab');
     app.addListener('selectTab', function(group, id){
         if (group !== option.group) {
             return;
@@ -442,7 +439,8 @@ app.setup.tab.content = function(ele, option){
         }
     });
 }
-app.setup.uiSortable = function(ele, option){
+app.setup.uiSortable = function(ele){
+    var option = ele.data('uiSortable');
     ele.sortable({
         cancel: '.nosortable',
         cursor: 'move',
@@ -470,34 +468,38 @@ app.setup.form = function(form){
             .appendTo(form);
     });
 }
-app.setup.showable = function(ele, option){
-    if (!option || !option.id) {
-        console.log({
-            message: "missing showable.id",
-            ele: ele
-        });
+app.setup.showable = function(ele){
+    var val = ele.attr('data-showable'), option;
+    if (val) {
+        var json = val.replace(/\s|\n/g, '');
+        option = JSON.parse(json);
+        ele.attr('data-showable', json);
     }
     app.dom.set('showable', option.id, ele);
 }
-app.setup.show = function(ele, option){
+app.setup.show = function(ele){
+    var option = ele.data('show');
     ele.click(function(e){
         e.preventDefault();
         app.dom.show(app.dom.get('showable', option.id));
     });
 }
-app.setup.hide = function(ele, option){
+app.setup.hide = function(ele){
+    var option = ele.data('hide');
     ele.click(function(e){
         e.preventDefault();
         app.dom.hide(app.dom.get('showable', option.id));
     });
 }
-app.setup.toggle = function(ele, option){
+app.setup.toggle = function(ele){
+    var option = ele.data('toggle');
     ele.click(function(e){
         e.preventDefault();
         app.dom.toggle(app.dom.get('showable', option.id));
     });
 }
-app.setup.guide = function(ele, option){
+app.setup.guide = function(ele){
+    var option = ele.data('guide');
     app.dom.hover(ele, function(){
         var guide = app.dom.get('showable', option.id);
         var offset = ele.offset();

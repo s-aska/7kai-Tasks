@@ -59,10 +59,9 @@
                 data-text-ja="完了済のタスクを表示切替"
             >Toggle Show closed Task</a></li>
             <li><a class="action"
-                data-setup="localize,click"
+                data-setup="localize,show"
                 data-text-ja="完了済のタスクを削除"
-                data-click="show"
-                data-show-id="clear-list-window"
+                data-show='{"id":"clear-list-window"}'
             >Clear Closed Task</a></li>
             <li class="divider"></li>
             <li><a href="/signout">Sign Out</a></li>
@@ -76,18 +75,17 @@
   <div id="scroller" data-setup="scroller">
     <ul
       class="unstyled tasks"
-      data-setup="tasks,tabContent"
-      data-tab-id="tasks"
-      data-tab-group="main"
+      data-setup="tasks,tab.content"
+      data-tab='{"id":"tasks","group":"main"}'
     >
       <li class="clearfix">
-        <div class="icon sq24 icon-tasks-off"></div>
-        <div class="icon sq24 icon-star-off"></div>
-        <div class="human"></div>
-        <div class="name">アイコン作成</div>
-        <div class="icon sq24 icon-cross delete"></div>
-        <div class="due">8/23</div>
-        <div class="recent-comment">
+        <div class="icon sq24 icon-tasks-off" data-setup="status"></div>
+        <div class="icon sq24 icon-star-off" data-setup="star"></div>
+        <div class="human" data-setup="human"></div>
+        <div class="name" data-setup="name">アイコン作成</div>
+        <div class="icon sq24 icon-cross delete" data-setup="close"></div>
+        <div class="due" data-setup="due">8/23</div>
+        <div class="recent-comment" data-setup="recent">
           <div class="icon"></div>
           <div class="message">{<span>&nbsp;&lt;&nbsp;◯◯◯◯◯◯◯◯◯◯◯</span></div>
         </div>
@@ -97,16 +95,13 @@
       id="register-task-window"
       class="form-stacked"
       style="display: none;"
-      data-setup="submit,registerTaskWindow,escclose,tabContent"
-      data-tab-id="registerTask"
-      data-tab-group="main"
+      data-setup="showable,submit,registerTaskWindow,escclose,tab.content"
+      data-tab='{"id":"registerTask","group":"main"}'
       data-submit="registerTask"
-      data-show-effect="fade"
-      data-show-speed="fast"
-      data-show-callback="dom.autofocus"
-      data-hide-effect="fade"
-      data-hide-speed="fast"
-      data-hide-callback="dom.blur"
+      data-showable='{
+        "id":"register-task-window",
+        "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+        "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
     >
       <div class="modal-header">
         <h3
@@ -129,8 +124,16 @@
                 <input class="span4" type="text" name="name" value="" required maxlength="50" data-autofocus="true">
               </div>
             </div>
-            <div><a data-setup="more" data-more-id="more">More <span class="gbma"></span></a></div>
-            <div id="more">
+            <div>
+              <a
+                data-setup="more"
+                data-more='{"id":"more"}'
+              >More <span class="gbma"></span></a></div>
+            <div
+              id="more"
+              data-setup="showable"
+              data-showable='{"id":"more"}'
+            >
               <div class="clearfix">
                 <label for=""
                   data-setup="localize"
@@ -152,7 +155,7 @@
                   data-text-ja="依頼者"
                 >Requester</label>
                 <div class="input">
-                  <ul class="unstyled requester">
+                  <ul class="unstyled requester" data-setup="requester">
                     <li class="clearfix">
                       <label>
                         <div class="checkbox"><input type="radio" name="requester"></div>
@@ -192,19 +195,17 @@
         >Register</button>
         <a
           class="btn secondary"
-          data-setup="localize,tabMenu"
+          data-setup="localize,tab.menu"
           data-text-ja="戻る"
-          data-tab-id="tasks"
-          data-tab-group="main"
+          data-tab='{"id":"tasks","group":"main"}'
         >Back</a>
       </div>
     </form>
     <div
       class="page"
       style="display: none;"
-      data-setup="tabContent,comments,rightColumn"
-      data-tab-id="comments"
-      data-tab-group="main"
+      data-setup="tab.content,comments,rightColumn"
+      data-tab='{"id":"comments","group":"main"}'
     >
       <h2>[<span class="list_name">-</span>] <span class="task_name">-</span></h2>
       <form
@@ -232,10 +233,9 @@
           >Comment</button>
           <a
             class="btn secondary"
-            data-setup="localize,tabMenu"
+            data-setup="localize,tab.menu"
             data-text-ja="戻る"
-            data-tab-id="tasks"
-            data-tab-group="main"
+            data-tab='{"id":"tasks","group":"main"}'
           >Back</a>
           <a
             class="btn secondary"
@@ -248,7 +248,7 @@
       <ul
         class="unstyled comments"
         data-setup="stretch"
-        data-stretch-padding="10"
+        data-stretch='{"padding":10}'
       >
         <li class="clearfix" style="position: relative;">
           <div class="icon sq32" style="position: absolute;"></div>
@@ -303,8 +303,9 @@
         <li class="center">
           <a
             class="icon icon-create-task"
-            data-setup="click"
+            data-setup="click,tab.menu"
             data-click="createTask"
+            data-tab='{"id":"registerTask","group":"main"}'
           ></a>
         </li>
         <li>
@@ -357,24 +358,21 @@
     <ul class="tabs">
       <li class="active">
         <a
-          data-setup="tabMenu"
-          data-tab-id="social"
-          data-tab-group="signin"
+          data-setup="tab.menu"
+          data-tab='{"id":"social","group":"signin"}'
         >Twitter / Facebook</a>
       </li>
       <li>
         <a
-          data-setup="tabMenu"
-          data-tab-id="email"
-          data-tab-group="signin"
+          data-setup="tab.menu"
+          data-tab='{"id":"email","group":"signin"}'
         >E-mail</a>
       </li>
     </ul>
     <div
       style="text-align: center;"
-      data-setup="tabContent"
-      data-tab-id="social"
-      data-tab-group="signin"
+      data-setup="tab.content"
+      data-tab='{"id":"social","group":"signin"}'
     >
       <form method="post" action="/signin/twitter/signin" data-setup="form">
         <div><button class="btn large primary">Connect with Twitter</button></div>
@@ -385,9 +383,8 @@
     </div>
     <div
       style="display: none;"
-      data-setup="tabContent"
-      data-tab-id="email"
-      data-tab-group="signin"
+      data-setup="tab.content"
+      data-tab='{"id":"email","group":"signin"}'
     >
       <form
         data-setup="emailSignup"
@@ -448,17 +445,19 @@
   id="alert"
   class="modal"
   style="display: none;"
-  data-setup="alert"
-  data-show-effect="fade"
-  data-hide-effect="fade"
+  data-setup="showable,alert"
+  data-showable='{
+    "id":"alert",
+    "show":{"effect":"fade"},
+    "hide":{"effect":"fade"}}'
 >
   <div class="modal-header">
     <h3>Error</h3>
     <a
       class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="alert">×</a>
+      data-setup="hide"
+      data-hide='{"id":"alert"}'
+    >×</a>
   </div>
   <div class="modal-body">
     <p
@@ -477,22 +476,24 @@
     ></p>
   </div>
   <div class="modal-footer">
-    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="alert">Close</a>
+    <a
+      class="btn primary"
+      data-setup="hide"
+      data-hide='{"id":"alert"}'
+    >Close</a>
   </div>
 </div>
 
 <form
   id="clear-list-window"
   class="modal form-stacked"
-  data-setup="ui,submit,escclose"
+  data-setup="showable,ui,submit,escclose"
   data-ui="draggable"
   data-submit="clearList"
-  data-show-effect="fade"
-  data-show-speed="fast"
-  data-show-callback="dom.autofocus"
-  data-hide-effect="fade"
-  data-hide-speed="fast"
-  data-hide-callback="dom.blur"
+  data-showable='{
+    "id":"clear-list-window",
+    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
     <h3
@@ -501,9 +502,8 @@
     >Clear Closed Task</h3>
     <a
       class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="clear-list-window"
+      data-setup="hide"
+      data-hide='{"id":"clear-list-window"}'
     >×</a>
   </div>
   <div class="modal-body">
@@ -521,29 +521,28 @@
     >Delete</button>
     <button
       class="btn secondary"
-      data-setup="localize,click"
+      data-setup="localize,hide"
       data-text-ja="キャンセル"
-      data-click="hide"
-      data-hide-id="clear-list-window"
+      data-hide='{"id":"clear-list-window"}'
     >Cancel</button>
   </div>
 </form>
 
 <div
-  id="success-delete-account"
   class="modal"
   style="display: none;"
-  data-show-effect="fade"
-  data-show-auto-close="5000"
-  data-hide-effect="fade"
+  data-showable='{
+    "id":"success-delete-account",
+    "show":{"effect":"fade","timeout":5000},
+    "hide":{"effect":"fade"}}'
 >
   <div class="modal-header">
     <h3>Success</h3>
     <a
       class="close"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="success-delete-account">×</a>
+      data-setup="hide"
+      data-hide='{"id":"success-delete-account"}'
+    >×</a>
   </div>
   <div class="modal-body">
     <p
@@ -552,22 +551,26 @@
     >Succeeded Delete Account.</p>
   </div>
   <div class="modal-footer">
-    <a class="btn primary" data-setup="click" data-click="hide" data-hide-id="success-delete-account">Close</a>
+    <a
+      class="btn primary"
+      data-setup="hide"
+      data-hide='{"id":"success-delete-account"}'
+    >Close</a>
   </div>
 </div>
 
 <div
-  id="notice-succeeded-salvage"
   class="alert alert-message success"
-  data-show-option='{"direction":"down"}'
-  data-show-auto-close="5000"
-  data-hide-option='{"direction":"down"}'
+  data-setup="showable"
+  data-showable='{
+    "id":"notice-succeeded-salvage",
+    "show":{"option":{"direction":"down"},"timeout":5000},
+    "hide":{"option":{"direction":"down"}}}'
 >
   <a
     class="close"
-    data-setup="click"
-    data-click="hide"
-    data-hide-id="notice-succeeded-salvage"
+    data-setup="hide"
+    data-hide='{"id":"notice-succeeded-salvage"}'
   >×</a>
   <p>
     <strong>Info</strong>
@@ -576,17 +579,17 @@
 </div>
 
 <div
-  id="notice-succeeded-create-task"
   class="alert alert-message success"
-  data-show-option='{"direction":"down"}'
-  data-show-auto-close="5000"
-  data-hide-option='{"direction":"down"}'
+  data-setup="showable"
+  data-showable='{
+    "id":"notice-succeeded-create-task",
+    "show":{"option":{"direction":"down"},"timeout":5000},
+    "hide":{"option":{"direction":"down"}}}'
 >
   <a
     class="close"
-    data-setup="click"
-    data-click="hide"
-    data-hide-id="notice-succeeded-create-task"
+    data-setup="hide"
+    data-hide='{"id":"notice-succeeded-create-task"}'
   >×</a>
   <p>
     <strong>Info</strong>
@@ -595,17 +598,17 @@
 </div>
 
 <div
-  id="notice-succeeded-sync-twitter"
   class="alert alert-message success"
-  data-show-option='{"direction":"down"}'
-  data-show-auto-close="5000"
-  data-hide-option='{"direction":"down"}'
+  data-setup="showable"
+  data-showable='{
+    "id":"notice-succeeded-sync-twitter",
+    "show":{"option":{"direction":"down"},"timeout":5000},
+    "hide":{"option":{"direction":"down"}}}'
 >
   <a
     class="close"
-    data-setup="click"
-    data-click="hide"
-    data-hide-id="notice-succeeded-sync-twitter"
+    data-setup="hide"
+    data-hide='{"id":"notice-succeeded-sync-twitter"}'
   >×</a>
   <p>
     <strong>Info</strong>
@@ -614,17 +617,17 @@
 </div>
 
 <div
-  id="notice-failed-sync-twitter"
   class="alert alert-message error"
-  data-show-option='{"direction":"down"}'
-  data-show-auto-close="5000"
-  data-hide-option='{"direction":"down"}'
+  data-setup="showable"
+  data-showable='{
+    "id":"notice-failed-create-task",
+    "show":{"option":{"direction":"down"},"timeout":5000},
+    "hide":{"option":{"direction":"down"}}}'
 >
   <a
     class="close"
-    data-setup="click"
-    data-click="hide"
-    data-hide-id="notice-failed-sync-twitter"
+    data-setup="hide"
+    data-hide='{"id":"notice-failed-sync-twitter"}'
   >×</a>
   <p>
     <strong>Error</strong>

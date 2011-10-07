@@ -7,6 +7,8 @@ app.addEvents('registerFriends');
 
 app.addEvents('registerList');
 app.addEvents('openList');
+app.addEvents('openNextList');
+app.addEvents('openPrevList');
 app.addEvents('createList');
 app.addEvents('editList');
 app.addEvents('deleteList');
@@ -14,6 +16,8 @@ app.addEvents('clearList');
 
 app.addEvents('registerTask'); // サーバーから取得又は登録フォームから登録した場合発火
 app.addEvents('openTask');
+app.addEvents('openTopTask');
+app.addEvents('openBottomTask');
 app.addEvents('missingTask');
 app.addEvents('createTask');   // 登録フォーム表示(新規モード)
 app.addEvents('editTask');     // 登録フォーム表示(編集モード)
@@ -176,6 +180,8 @@ app.addListener('setup', function(option){
     }
 });
 app.addListener('receiveSign', function(){
+    if (app.state.signin) return;
+    app.state.signin = true;
     setInterval(function(){
         app.api.account.me({
             data: {
@@ -596,9 +602,6 @@ app.api.twitter.friends = function(user_id, cursor, cache){
 app.setup.messages = function(ele){
     app.data.messages = ele;
 }
-// app.setup.hide = function(ele){
-//     ele.hide();
-// }
 app.setup.profile = function(ele){
     var img = ele.find('img');
     var span = ele.find('span');
@@ -818,6 +821,532 @@ app.setup.rightColumn = function(ele){
     });
 }
 
+app.setup.tasks = function(ul){
+    
+    var template = ul.html();
+    var taskli_map = {};
+
+    // 初期化処理
+    ul.empty();
+
+    app.addListener('registerTask', function(task){
+        var li = $(template);
+
+        li.data('id', task.id);
+
+        app.dom.setup(li, task);
+
+        app.setup.task(li, task);
+
+        // FIXME: 表示条件との照合
+        if (task.id in taskli_map) {
+            if (!taskli_map[task.id].data('visible')) {
+                li.data('visible', false);
+                li.hide();
+            } else {
+                li.data('visible', true);
+            }
+            if (taskli_map[task.id].hasClass('selected')) {
+                li.addClass('selected');
+            }
+            taskli_map[task.id].after(li);
+            taskli_map[task.id].remove();
+            taskli_map[task.id] = li;
+            if (app.data.current_filter &&
+                app.util.taskFilter(task, app.data.current_filter)) {
+                if (!li.data('visible')) {
+                    li.data('visible', true);
+                    li.slideDown('fast');
+                }
+                if (app.data.current_task &&
+                    app.data.current_task.id === task.id) {
+                    app.fireEvent('openTask', task);
+                }
+            } else {
+                if (li.data('visible')) {
+                    li.data('visible', false);
+                    li.slideUp('fast');
+                }
+                if (app.data.current_task &&
+                    app.data.current_task.id === task.id) {
+                    var next = li.nextAll(':visible:first');
+                    if (!next.length) {
+                        next = li.prevAll(':visible:first');
+                    }
+                    if (next.length) {
+                        app.fireEvent('openTask', app.data.task_map[next.data('id')]);
+                    } else {
+                        app.fireEvent('missingTask');
+                    }
+                }
+            }
+        } else {
+            li.hide();
+            li.prependTo(ul);
+            if (app.data.current_filter &&
+                app.util.taskFilter(task, app.data.current_filter)) {
+                li.data('visible', true);
+                li.slideDown('fast');
+            } else {
+                li.data('visible', false);
+            }
+        }
+        taskli_map[task.id] = li;
+    });
+
+    app.addListener('openTask', function(task){
+        ul.children().removeClass('selected');
+        if (task.id in taskli_map) {
+            taskli_map[task.id].addClass('selected');
+        }
+    });
+
+    app.addListener('openTopTask', function(){
+        var lis = ul.children();
+        for (var i = 0, max_i = lis.length; i < max_i; i++) {
+            var li = $(lis[i]);
+            if (li.data('visible')) {
+                var id = li.data('id');
+                if (id in app.data.task_map) {
+                    app.fireEvent('openTask', app.data.task_map[id]);
+                }
+                break;
+            }
+        }
+    });
+
+    app.addListener('openBottomTask', function(){
+        var lis = ul.children();
+        for (var i = 0, max_i = lis.length; i < max_i; i++) {
+            var li = $(lis[max_i - i - 1]);
+            if (li.data('visible')) {
+                var id = li.data('id');
+                if (id in app.data.task_map) {
+                    app.fireEvent('openTask', app.data.task_map[id]);
+                }
+                break;
+            }
+        }
+    });
+
+    app.addListener('sortTask', function(column, reverse){
+        var tasks = [];
+        for (var task_id in app.data.task_map) {
+            tasks.push(app.data.task_map[task_id]);
+        }
+        if (column === 'name') {
+            tasks.sort(function(a, b){
+                return a.name > b.name ?  1 :
+                       b.name < a.name ? -1 : 0;
+            });
+        } else if (column === 'person') {
+            tasks.sort(function(a, b){
+                return a.person > b.person ?  1 :
+                       b.person < a.person ? -1 : 0;
+            });
+        } else {
+            tasks.sort(function(a, b){
+                return (Number(a[column]) || 0) - (Number(b[column]) || 0);
+            });
+        }
+        if (app.data.current_sort.column === column
+            && app.data.current_sort.reverse === reverse) {
+            reverse = reverse ? false : true;
+        }
+        if (reverse) {
+            tasks.reverse();
+        }
+        for (var i = 0, max_i = tasks.length; i < max_i; i++) {
+            ul.append(taskli_map[tasks[i].id]);
+        }
+        app.data.current_sort.column = column;
+        app.data.current_sort.reverse = reverse;
+    });
+
+    app.addListener('filterTask', function(condition){
+        for (var task_id in app.data.task_map) {
+            var task = app.data.task_map[task_id];
+            var li = taskli_map[task_id];
+            if (app.util.taskFilter(task, condition)) {
+                if (!li.data('visible')) {
+                    li.data('visible', true);
+                    li.slideDown('fast');
+                } else {
+                    li.show();
+                }
+            } else {
+                if (li.data('visible')) {
+                    li.data('visible', false);
+                    li.slideUp('fast');
+                }
+                if (app.data.current_task && app.data.current_task.id === task.id) {
+                    app.fireEvent('missingTask');
+                }
+            }
+        }
+    });
+
+    app.addListener('clearList', function(list){
+        for (var task_id in app.data.task_map) {
+            var task = app.data.task_map[task_id];
+            if (list.id === task.list.id && task.closed) {
+                if (task_id in taskli_map) {
+                    if (app.data.current_task && app.data.current_task.id === task_id) {
+                        app.fireEvent('missingTask');
+                    }
+                    taskli_map[task_id].remove();
+                    delete taskli_map[task_id];
+                }
+                delete app.data.task_map[task_id];
+            }
+        }
+    });
+
+    app.addListener('missingTask', function(){
+        if (app.data.current_task &&
+            app.data.current_task.id in taskli_map) {
+            taskli_map[app.data.current_task.id].removeClass('selected');
+        }
+    });
+
+    app.addListener('clear', function(){
+        ul.empty();
+        taskli_map = {};
+    });
+
+    $(d).keydown(function(e){
+        if (document.activeElement.tagName !== 'BODY') {
+            return;
+        }
+        if (e.ctrlKey || e.altKey || e.metaKey) {
+            return;
+        }
+        if (e.shiftKey) {
+            if (e.keyCode === 38) { // Up
+                app.fireEvent('openPrevList');
+            } else if (e.keyCode === 40) { // Down
+                app.fireEvent('openNextList');
+            }
+            return;
+        }
+        if (e.keyCode === 38) { // Up
+            var next;
+            if (app.data.current_task) {
+                next = taskli_map[app.data.current_task.id].prevAll(':visible:first');
+            }
+            if (!next) {
+                next = ul.find('> li:visible:first');
+            }
+            if (next && next.length) {
+                var next_id = next.data('id');
+                if (!(next_id in app.data.task_map)) {
+                    return;
+                }
+                app.fireEvent('openTask', app.data.task_map[next_id]);
+            } else {
+                app.fireEvent('openPrevList');
+            }
+        } else if (e.keyCode === 40) { // Down
+            var next;
+            if (app.data.current_task) {
+                next = taskli_map[app.data.current_task.id].nextAll(':visible:first');
+            }
+            if (!next) {
+                next = ul.find('> li:visible:first');
+            }
+            if (next && next.length) {
+                var next_id = next.data('id');
+                if (!(next_id in app.data.task_map)) {
+                    return;
+                }
+                app.fireEvent('openTask', app.data.task_map[next_id]);
+            } else {
+                app.fireEvent('openNextList');
+            }
+        } else if (!app.data.current_task) {
+            return;
+        } else if (e.keyCode === 37) { // Left
+            var task = app.data.current_task;
+            var date = task.due_date || new Date();
+            date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
+            var due = app.date.mdy(date);
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                due: due
+            });
+        } else if (e.keyCode === 39) { // Right
+            var task = app.data.current_task;
+            var date = task.due_date || new Date();
+            date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
+            var due = app.date.mdy(date);
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                due: due
+            });
+        } else if (e.keyCode === 32) { // Space
+            var task = app.data.current_task;
+            var status = task.status === 2 ? 0 : task.status + 1;
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                status: status
+            });
+        } else if (e.keyCode === 13) { // Enter
+            var task = app.data.current_task;
+            var closed = task.closed ? 0 : 1;
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                closed: closed
+            });
+        } else if (e.keyCode === 69) { // E
+            var task = app.data.current_task;
+            app.fireEvent('editTask', task);
+        }
+    });
+}
+app.setup.task = function(ele, task){
+    if (!task) return;
+    if (task.salvage) {
+        ele.addClass('salvage');
+    }
+    ele.get(0).addEventListener('dragstart', function(e){
+        app.fireEvent('moveTask', task);
+        e.dataTransfer.setData("text", task.id);
+    }, false);
+    ele.get(0).addEventListener('dragend', function(e){
+        app.fireEvent('moveTaskCancel');
+        e.dataTransfer.clearData();
+    }, false);
+    ele.click(function(e){
+        e.stopPropagation();
+        app.fireEvent('openTask', task);
+    });
+}
+app.setup.status = function(ele, task){
+    if (!task) return;
+    if (task.status > 0) {
+        ele.removeClass('icon-tasks-off')
+    }
+    if (task.status === 1) {
+        ele.addClass('icon-tasks-half');
+    } else if (task.status === 2) {
+        ele.addClass('icon-tasks');
+    }
+    var status = task.status === 2 ? 0 : task.status + 1;
+    ele.click(function(e){
+        e.stopPropagation();
+        app.api.task.update({
+            list_id: task.list.id,
+            task_id: task.id,
+            registrant: app.util.getRegistrant(task.list),
+            status: status
+        });
+    });
+}
+app.setup.star = function(ele, task){
+    if (!task) return;
+    if (task.id in app.data.state.star) {
+        ele.removeClass('icon-star-off').addClass('icon-star');
+    }
+    ele.click(function(e){
+        e.stopPropagation();
+        var method = '+';
+        if (task.id in app.data.state.star) {
+            method = '-';
+            delete app.data.state.star[task.id];
+            ele.removeClass('icon-star').addClass('icon-star-off');
+        } else {
+            app.data.state.star[task.id] = 1;
+            ele.removeClass('icon-star-off').addClass('icon-star');
+        }
+        app.api.account.update({
+            ns: 'state',
+            method: method,
+            key: 'star',
+            val: task.id
+        });
+        app.fireEvent('checkStar', method === '+');
+    });
+}
+app.setup.human = function(ele, task){
+    if (!task) return;
+    var size = ele.data('human-size') || 16;
+    ele.prepend(app.util.getIcon(task.requester, size));
+    if (task.assign.length) {
+        ele.prepend($('<span class="icon icon-left"/>'));
+        $.each(task.assign, function(i, assign){
+            ele.prepend(app.util.getIcon(assign, size));
+        });
+    }
+    if (task.status == 2 && task.assign.length) {
+        ele.prepend($('<span class="icon icon-left"/>'));
+        ele.prepend(app.util.getIcon(task.requester, size));
+    }
+}
+app.setup.name = function(ele, task){
+    if (!task) return;
+    ele.text(task.name);
+}
+app.setup.close = function(ele, task){
+    if (!task) return;
+    if (task.closed) {
+        ele.parent().addClass('closed');
+        ele.removeClass('icon-cross').addClass('icon-plus');
+    } else {
+        ele.removeClass('icon-plus').addClass('icon-cross');
+    }
+    ele.click(function(e){
+        e.stopPropagation();
+        app.api.task.update({
+            list_id: task.list.id,
+            task_id: task.id,
+            registrant: app.util.getRegistrant(task.list),
+            closed: (task.closed ? 0 : 1)
+        });
+    });
+}
+app.setup.due = function(ele, task){
+    if (!task) return;
+    if (task.due) {
+        var label = (task.due_date.getMonth() + 1) + '/' + task.due_date.getDate();
+        var now = new Date();
+        if (now.getFullYear() !== task.due_date.getFullYear()) {
+            if (app.env.lang === 'ja') {
+                label = task.due_date.getFullYear() + '/' + label;
+            } else {
+                label = label + '/' + task.due_date.getFullYear();
+            }
+        }
+        ele.text(label);
+        if (now.getTime() > task.due_date.getTime()) {
+            ele.addClass('over');
+        }
+    } else {
+        ele.text('-');
+    }
+}
+app.setup.recent = function(ele, task){
+    if (!task) return;
+    if (task.recent) {
+        var size = ele.find('.icon').data('human-size') || 16;
+        ele.find('.icon').append(app.util.getIcon(task.recent.code, size));
+        var date = app.date.relative(task.recent.time);
+        if (task.recent.message) {
+            ele.find('.message span').text(task.recent.message + ' ' + date);
+        } else {
+            ele.find('.message span').text(
+                app.data.messages.data('text-'
+                    + task.recent.action + '-' + app.env.lang)
+                + ' ' + date);
+        }
+    } else {
+        ele.hide();
+    }
+}
+app.setup.registerTaskWindow = function(form){
+
+    //
+    var assign_input = form.find('input[name=assign]');
+    var assign_list = form.find('ul.assign');
+    var assign_template = assign_list.html();
+    var name_input = form.find('input[name=name]');
+    var due_input = form.find('input[name=due]');
+    var requester_select = form.find('select[name=requester]');
+    var registrant_input = form.find('input[name=registrant]');
+    var task_id_input = form.find('input[name=task_id]');
+    var list_id_input = form.find('input[name=list_id]');
+
+    form.find('a.due-plus').click(function(e){
+        e.preventDefault();
+        var due = due_input.val();
+        var date = due ? app.date.parse(due) : (new Date());
+        date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
+        due_input.val(app.date.ymd(date));
+    });
+
+    form.find('a.due-minus').click(function(e){
+        e.preventDefault();
+        var due = due_input.val();
+        var date = due ? app.date.parse(due) : (new Date());
+        var date = app.date.parse(due);
+        date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
+        due_input.val(app.date.ymd(date));
+    });
+
+    var setup = function(list){
+        assign_list.empty();
+        requester_select.empty();
+        var assigns = [list.owner].concat(list.members);
+        for (var i = 0, max_i = assigns.length; i < max_i; i++) {
+            var assign = assigns[i];
+            var friend = app.data.users[assign];
+            var li = $(assign_template);
+            if (friend && friend.icon) {
+                li.find('img').attr('src', friend.icon);
+            } else if (/@/.test(assign)) {
+                li.find('img').attr('src', '/static/img/email.png');
+            } else {
+                li.find('img').attr('src', '/static/img/address.png');
+            }
+            var name = friend ? friend.name : assign;
+            li.find('div.name').text(name);
+            li.find('input').val(assign);
+            li.find('input[type="checkbox"]')
+                .focus(function(){$(this).parent().addClass('focused')})
+                .blur(function(){$(this).parent().removeClass('focused')});
+            li.appendTo(assign_list);
+
+            $('<option/>')
+                .attr('value', assign)
+                .text(name)
+                .appendTo(requester_select);
+        }
+
+        // 依頼者のデフォルトは自分
+        var registrant = app.util.getRegistrant(list);
+        requester_select.val(registrant);
+        registrant_input.val(registrant);
+        task_id_input.val('');
+        list_id_input.val(list.id);
+    };
+
+    app.addListener('createTask', function(){
+        app.dom.reset(form);
+        if (!app.data.current_list) {
+            alert('missing current_list');
+            return;
+        }
+        setup(app.data.current_list);
+        app.dom.show(form);
+    });
+
+    app.addListener('editTask', function(task){
+        app.dom.reset(form);
+        if (!app.data.current_list) {
+            alert('missing current_list');
+            return;
+        }
+        setup(task.list);
+        name_input.val(task.name);
+        if (task.due) {
+            due_input.val(app.date.ymd(task.due_date));
+        }
+        requester_select.val(task.requester);
+        task_id_input.val(task.id);
+        form.find('input[name=assign]').val(task.assign);
+        if (task.due) {
+            due_input.val(app.date.ymd(task.due_date));
+        }
+        app.dom.show(form);
+    });
+}
 app.click.reload = function(){
     app.fireEvent('reload');
 }
@@ -860,6 +1389,83 @@ app.submit.clearList = function(form){
             app.dom.hide(app.dom.get('showable', 'clear-list-window'));
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
+        }
+    });
+}
+app.submit.registerTask = function(form){
+    var task_id = form.find('input[name=task_id]').val();
+    var list_id = form.find('input[name=list_id]').val();
+    var assign = form.find('input[name="assign"]:checked')
+                     .map(function(){return $(this).val()}).get();
+    var requester = form.find('select[name="requester"]').val();
+    var registrant = form.find('input[name="registrant"]').val();
+    var name = form.find('input[name="name"]').val();
+    var due = form.find('input[name="due"]').datepicker("getDate");
+    if (due) {
+        due = app.date.mdy(due);
+    }
+    if (typeof assign !== 'object') {
+        assign = assign ? [assign] : [];
+    }
+    var list = app.data.list_map[list_id];
+    if (!list) {
+        alert('unknown list ' + list_id);
+        return;
+    }
+    var api = task_id ? 'task.update' : 'task.create';
+    var url = task_id ? '/api/1/task/update' : '/api/1/task/create';
+    app.ajax({
+        type: 'POST',
+        url: url,
+        data: form.serialize(),
+        dataType: 'json',
+        salvage: true
+    })
+    .done(function(data){
+        if (data.success === 1) {
+            app.fireEvent('registerTask', data.task, list);
+            app.fireEvent('openTask', data.task);
+            app.dom.reset(form);
+            if (task_id) {
+                app.dom.hide(form);
+            } else {
+                app.dom.show(app.dom.get('showable', 'create-task-twipsy'));
+            }
+        } else {
+            // 現在 ステータスコード 200 の例外ケースは無い
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        if (!jqXHR.status) {
+            app.queue.push({
+                api: api,
+                req: form.serializeArray()
+            });
+            app.dom.reset(form);
+            var time = (new Date()).getTime();
+            var task = {
+                id: (task_id || (list.id + ':' + time)),
+                requester: requester,
+                registrant: registrant,
+                assign: assign,
+                name: name,
+                due: due,
+                status: 0,
+                closed: 0,
+                comments: [],
+                history: [],
+                created_on: time,
+                updated_on: time,
+                salvage: true
+            };
+            app.fireEvent('registerTask', task, list);
+            app.fireEvent('openTask', task);
+            app.dom.reset(form);
+            if (task_id) {
+                app.dom.hide(form);
+            } else {
+                app.dom.show(app.dom.get('showable', 'create-task-twipsy'));
+            }
         }
     });
 }
