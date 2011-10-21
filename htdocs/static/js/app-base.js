@@ -232,12 +232,7 @@ app.dom.setup = function(){
         var ele = $(this);
         var methods = ele.data('setup').split(',');
         for (var i = 0, max_i = methods.length; i < max_i; i++) {
-            // if (!(methods[i] in app.setup)) {
-            //     console.log(methods[i]);
-            //     continue;
-            // }
-            var ele = $(this);
-            app.obj.get(app.setup, methods[i]).apply(app, [ele].concat(args));
+            app.obj.get(app.setup, methods[i]).apply(app, [$(this)].concat(args));
         }
     });
 }

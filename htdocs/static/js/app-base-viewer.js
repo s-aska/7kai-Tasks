@@ -773,10 +773,12 @@ app.setup.rightColumn = function(ele){
                 li.find('.icon:last').remove();
             }
             if (comment.action) {
-                li.find('.message').text(app.data.messages.data('text-' + comment.action + '-' + app.env.lang));
+                li.find('.message').text(
+                    app.data.messages.data('text-' + comment.action + '-' + app.env.lang));
                 li.find('.icon:last').remove();
             } else {
-                li.find('.message').html(app.util.autolink(comment.message));
+                li.find('.message').html(
+                    app.util.autolink(comment.message).replace(/\r?\n/g, '<br />'));
                 li.find('.icon:last').click(function(){
                     app.ajax({
                         type: 'POST',
