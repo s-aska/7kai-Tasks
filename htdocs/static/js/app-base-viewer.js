@@ -754,6 +754,14 @@ app.setup.rightColumn = function(ele){
             }
             return;
         }
+        if (e.keyCode === 72) { // right
+            e.preventDefault();
+            if ($('#shotcut-key').is(':visible')) {
+                app.fireEvent('selectTab', 'rightColumn', 'comments');
+            } else {
+                app.fireEvent('selectTab', 'rightColumn', 'shortcut-key');
+            }
+        }
     });
 
     app.addListener('openTask', function(task){

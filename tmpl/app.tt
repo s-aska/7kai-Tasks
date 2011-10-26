@@ -438,6 +438,7 @@
       </div>
     </div>
     <div
+      id="shotcut-key"
       class="container"
       style="display: none"
       data-setup="tab.content"
@@ -452,6 +453,11 @@
         data-setup="stretch"
         data-stretch='{"offset":140,"padding":10}'
       >
+        <dt>[H]</dt>
+        <dd
+          data-setup="localize"
+          data-text-ja="ショートカットヘルプ表示"
+        >Show Shortct Help.</dd>
         <dt>[C]</dt>
         <dd
           data-setup="localize"
@@ -1225,11 +1231,16 @@
         data-tab='{"id":"shortcut-key","group":"help"}'
       >
         <h4
-        data-setup="localize"
-        data-text-ja="ショートカットキー"
+          data-setup="localize"
+          data-text-ja="ショートカットキー"
         >Shortcut Key</h4>
         <div class="clearfix">
         <dl style="float: left;">
+          <dt>[H]</dt>
+          <dd
+            data-setup="localize"
+            data-text-ja="ショートカットヘルプ表示"
+          >Show Shortct Help.</dd>
           <dt>[C]</dt>
           <dd
             data-setup="localize"
