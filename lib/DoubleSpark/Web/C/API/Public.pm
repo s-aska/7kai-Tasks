@@ -32,7 +32,7 @@ sub jsonp {
 
     return $c->res_404() unless $list;
 
-    my $callback = $c->req->param('callback');
+    my $callback = $c->req->param('callback') || '';
     $callback=~s|[^0-9a-zA-Z_]||g;
     $callback = 'callback' unless length $callback;
     my $content = encode_utf8($callback) . '(' . encode_json($list->as_hashref) . ');';
@@ -227,7 +227,7 @@ sub ical {
         $ical->add_entry($event);
     }
 
-    my $content = $ical->as_string;
+    my $content = encode_utf8($ical->as_string);
     $c->create_response(
         200,
         [
