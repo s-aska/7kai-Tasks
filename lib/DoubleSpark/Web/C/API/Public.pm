@@ -51,7 +51,7 @@ sub jsonp {
 sub rss {
     my ($class, $c) = @_;
 
-    my $lang = $c->req->param('lang') eq 'ja' ? 'ja' : 'en';
+    my $lang = ($c->req->param('lang') || '') eq 'ja' ? 'ja' : 'en';
 
     my $list = $c->db->single('list', { public_code => $c->{args}->{public_code} });
 
