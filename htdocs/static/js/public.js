@@ -247,13 +247,16 @@ app.setup.tasks = function(tbody){
                 var ul = tr.find('.assign ul');
                 var li_template = ul.html();
                 ul.empty();
+                var sort = '';
                 for (var ii = 0, max_ii = task.assign.length; ii < max_ii; ii++) {
                     var user = usermap[task.assign[ii]];
                     var li = $(li_template);
                     li.find('img').attr('src', user.icon);
                     li.find('span').text(user.name);
                     li.appendTo(ul);
+                    sort = sort + user.code;
                 }
+                tr.find('.assign').data('sort', sort);
             } else {
                 tr.find('.assign').text('-');
             }
