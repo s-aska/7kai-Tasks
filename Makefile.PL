@@ -13,6 +13,7 @@ WriteMakefile(
         'Time::Piece'                     => '1.20',
 
         'Crypt::SaltedHash'                   => '0.06',
+        'Data::ICal'                          => '0.16',
         'Email::Sender'                       => '0.110001',
         'Email::Valid::Loose'                 => '0.05',
         'Facebook::Graph'                     => '1.0300',
@@ -23,8 +24,10 @@ WriteMakefile(
         'Path::Class'                         => '0.24',
         'Plack::Middleware::Scope::Container' => '0.01',
         'Scope::Container'                    => '0.04',
+        'String::Random'                      => '0.22',
         'Sub::Retry'                          => '0.03',
         'Teng'                                => '0.11',
+        'XML::RSS'                            => '1.49',
     },
     MIN_PERL_VERSION => '5.008001',
     (-d 'xt' and $ENV{AUTOMATED_TESTING} || $ENV{RELEASE_TESTING}) ? (

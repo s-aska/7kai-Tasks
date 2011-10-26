@@ -13,6 +13,8 @@ app.addEvents('createList');
 app.addEvents('editList');
 app.addEvents('deleteList');
 app.addEvents('clearList');
+app.addEvents('publicList');
+app.addEvents('privateList');
 
 app.addEvents('registerTask'); // サーバーから取得又は登録フォームから登録した場合発火
 app.addEvents('openTask');
@@ -156,6 +158,13 @@ app.addListener('clickNotification', function(option){
     app.data.current_filter = { list_id: option.list_id };
     app.api.account.me(option);
 });
+app.addListener('openList', function(list){
+    if (list.public_code) {
+        app.fireEvent('publicList', list);
+    } else {
+        app.fireEvent('privateList', list);
+    }
+});
 
 // セットアップ
 app.addListener('clear', function(){
@@ -226,7 +235,7 @@ app.util.getIcon = function(code, size){
 app.util.getName = function(code){
     var user = app.data.users[code];
     if (user) {
-        return user.name;
+        return user.screen_name || user.name;
     } else {
         return code;
     }
@@ -823,6 +832,82 @@ app.setup.rightColumn = function(ele){
     });
 }
 
+app.setup.listname = function(ele){
+    app.addListener('openList', function(list){
+        ele.text(list.name);
+    });
+}
+
+app.setup.publicListWindow = function(ele){
+    ele.find('input').each(function(){
+        var input = $(this);
+        input.click(function(e){
+            e.preventDefault();
+            input.select();
+        });
+    });
+    app.addListener('publicList', function(list){
+        ele.find('input').each(function(){
+            var input = $(this);
+            if (input.attr('name') === 'rss' && app.env.lang === 'ja') {
+                input.val('https://tasks.7kai.org/public/'
+                    + list.public_code + '/rss?lang=ja');
+            } else {
+                input.val('https://tasks.7kai.org/public/'
+                    + list.public_code + '/' + input.attr('name'));
+            }
+        });
+        
+    });
+    app.addListener('privateList', function(list){
+        ele.find('input').val('');
+    });
+}
+app.setup.publicListButton = function(ele){
+    ele.click(function(e){
+        e.preventDefault();
+        app.ajax({
+            type: 'POST',
+            url: '/api/1/list/public',
+            data: {
+                list_id: app.data.current_list.id
+            },
+            dataType: 'json'
+        }).done(function(data){
+            app.data.current_list.public_code = data.public_code;
+            app.fireEvent('publicList', app.data.current_list);
+        });
+    });
+    app.addListener('publicList', function(list){
+        ele.addClass('primary');
+    });
+    app.addListener('privateList', function(list){
+        ele.removeClass('primary');
+    });
+}
+app.setup.privateListButton = function(ele){
+    ele.click(function(e){
+        e.preventDefault();
+        app.ajax({
+            type: 'POST',
+            url: '/api/1/list/private',
+            data: {
+                list_id: app.data.current_list.id
+            },
+            dataType: 'json'
+        }).done(function(data){
+            app.data.current_list.public_code = null;
+            app.fireEvent('privateList', app.data.current_list);
+        });
+    });
+    app.addListener('publicList', function(list){
+        ele.removeClass('primary');
+    });
+    app.addListener('privateList', function(list){
+        ele.addClass('primary');
+    });
+}
+
 app.setup.tasks = function(ul){
     
     var template = ul.html();
@@ -1349,6 +1434,7 @@ app.setup.registerTaskWindow = function(form){
         app.dom.show(form);
     });
 }
+
 app.click.reload = function(){
     app.fireEvent('reload');
 }

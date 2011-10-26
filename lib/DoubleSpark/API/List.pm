@@ -5,6 +5,7 @@ use DoubleSpark::Validator;
 use Encode;
 use JSON::XS;
 use Log::Minimal;
+use String::Random qw(random_regex);
 use Time::HiRes;
 
 sub create {
@@ -107,6 +108,35 @@ sub update {
         success => 1,
         list => $list->as_hashref
     };
+}
+
+sub public {
+    my ($class, $c, $req) = @_;
+
+    my $res = DoubleSpark::Validator->validate($c, $req,
+        list_id => [qw/NOT_NULL LIST_ROLE_OWNER/],
+    );
+    return unless $res;
+
+    my $list = $c->stash->{list};
+    my $public_code = random_regex('[a-zA-Z0-9]{16}');
+    $list->update({ public_code => $public_code });
+    infof('[%s] public list', $c->sign_name);
+    return { success => 1, public_code => $public_code };
+}
+
+sub private {
+    my ($class, $c, $req) = @_;
+
+    my $res = DoubleSpark::Validator->validate($c, $req,
+        list_id => [qw/NOT_NULL LIST_ROLE_OWNER/],
+    );
+    return unless $res;
+
+    my $list = $c->stash->{list};
+    $list->update({ public_code => undef });
+    infof('[%s] private list', $c->sign_name);
+    return { success => 1 };
 }
 
 sub delete {

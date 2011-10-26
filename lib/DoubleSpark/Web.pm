@@ -73,6 +73,7 @@ __PACKAGE__->add_trigger(
         return if $c->req->path eq '/signout';
         return if $c->req->path eq '/token';
         return if $c->req->path =~m|^/api/1/proxy/|;
+        return if $c->req->path =~m|^/public/|;
 
         unless ($c->sign) {
 #            warnf('unsigned api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);

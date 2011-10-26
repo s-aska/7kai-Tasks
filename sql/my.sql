@@ -55,6 +55,7 @@ CREATE TABLE list (
     list_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
     , code VARCHAR(256) character set ascii NOT NULL COMMENT '*_account.code'
     , data MEDIUMBLOB NOT NULL
+    , public_code VARCHAR(16) character set ascii
     , actioned_on BIGINT UNSIGNED NOT NULL
     , created_on DATETIME NOT NULL
     , updated_on DATETIME NOT NULL

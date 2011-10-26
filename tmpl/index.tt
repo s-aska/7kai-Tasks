@@ -69,7 +69,7 @@
     <p class="social">
       <a href="/static/tos.html">Terms</a>
       <a href="/static/privacy.html">Privacy</a>
-      <a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank">Support</a>
+      <a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank">Support(facebook page)</a>
       <a href="https://github.com/s-aska/7kai-Tasks" target="_blank">Github</a>
       <a href="https://twitter.com/#!/su_aska" target="_blank">Author</a>
       <a href="https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Ftasks.7kai.org%2F&source=tweetbutton&text=7kai+Tasks&url=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Share(twitter)</a>
@@ -87,20 +87,6 @@
     <h3>Sign In</h3>
   </div>
   <div class="modal-body">
-    <ul class="tabs">
-      <li class="active">
-        <a
-          data-setup="tab.menu"
-          data-tab='{"id":"social","group":"signin"}'
-        >Twitter / Facebook</a>
-      </li>
-      <li>
-        <a
-          data-setup="tab.menu"
-          data-tab='{"id":"email","group":"signin"}'
-        >E-mail</a>
-      </li>
-    </ul>
     <div
       style="text-align: center;"
       data-setup="tab.content"
@@ -113,62 +99,7 @@
         <div><button class="btn large primary">Connect with Facebook</button></div>
       </form>
     </div>
-    <div
-      style="display: none;"
-      data-setup="tab.content"
-      data-tab='{"id":"email","group":"signin"}'
-    >
-      <form
-        data-setup="emailSignup"
-      >
-        <div class="clearfix">
-          <label for="xlInput">E-mail</label>
-          <div class="input">
-            <input class="xlarge" id="xlInput" name="email" size="30" type="text">
-          </div>
-        </div>
-        <div class="clearfix">
-          <label for="xlInput">Password</label>
-          <div class="input">
-            <input class="xlarge" id="xlInput" name="password" size="30" type="password">
-          </div>
-        </div>
-        <div class="actions">
-          <button
-            class="btn primary"
-            data-setup="click"
-            data-click="emailSignin"
-          >Sign In</button> or 
-          <button
-            class="btn primary"
-            data-setup="click"
-            data-click="emailSignup"
-          >Sign Up</button>
-        </div>
-      </form>
-    </div>
   </div>
 </div>
-<form
-  class="modal"
-  data-setup="submit,emailVerify"
-  data-submit="emailVerify"
->
-  <div class="modal-header">
-    <h3>E-mail Verify</h3>
-  </div>
-  <div class="modal-body">
-    <p>Please enter the code sent to your email.</p>
-    <div class="clearfix">
-      <label for="xlInput">CODE</label>
-      <div class="input">
-        <input type="text" name="code" value="">
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn primary">Verify</button>
-  </div>
-</form>
 </body>
 </html>

@@ -66,6 +66,7 @@ sub as_hashref {
     my $row = shift;
     my $data = $row->data;
     $data->{id} = $row->list_id;
+    $data->{public_code} = $row->public_code;
     $data->{actioned_on} = int($row->actioned_on);
     $data;
 }

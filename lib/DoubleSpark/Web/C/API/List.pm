@@ -23,6 +23,26 @@ sub update {
     $c->render_json($res);
 }
 
+sub public {
+    my ($class, $c) = @_;
+
+    my $res = DoubleSpark::API::List->public($c, $c->req);
+    
+    return $c->res_403() unless $res;
+    
+    $c->render_json($res);
+}
+
+sub private {
+    my ($class, $c) = @_;
+
+    my $res = DoubleSpark::API::List->private($c, $c->req);
+    
+    return $c->res_403() unless $res;
+    
+    $c->render_json($res);
+}
+
 sub delete {
     my ($class, $c) = @_;
 

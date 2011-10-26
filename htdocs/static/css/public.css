@@ -1,0 +1,32 @@
+body {
+    padding-top: 60px;
+}
+#loading {
+    display: none;
+    position: absolute;
+    color: white;
+    background-color: #333;
+    width: 80px;
+    height: 80px;
+    margin-top: -80px;
+    margin-left: -80px;
+    padding-top: 80px;
+    padding-left: 80px;
+    top: 50%;
+    left: 50%;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    z-index: 10009;
+}
+.assign ul {
+    margin: 0;
+}
+.assign ul li {
+    margin-bottom: 4px;
+}
+.assign img {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 4px;
+}

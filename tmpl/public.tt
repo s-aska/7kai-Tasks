@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>7kai Tasks</title>
+<link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
+<link rel="stylesheet" href="/static/css/public.css" media="all">
+<script src="/static/js/jquery-1.6.4.min.js"></script>
+<script src="/static/js/jquery.tablesorter.min.js"></script>
+<script src="/static/js/h5utils.js"></script>
+<script src="/static/js/spin.min.js"></script>
+<script src="/static/js/public.js"></script>
+</head>
+<body>
+<div class="topbar">
+  <div class="fill">
+    <div class="container">
+      <a class="brand" href="/">7kai Tasks</a>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <h2 data-setup="listname">aska's list</h2>
+  <table class="zebra-striped">
+    <thead>
+      <tr>
+        <th
+          class="header"
+          data-setup="localize"
+          data-text-ja="進捗"
+        >progress</th>
+        <th
+          class="header"
+          data-setup="localize"
+          data-text-ja="担当者"
+        >assign</th>
+        <th
+          class="header"
+          data-setup="localize"
+          data-text-ja="タスク名"
+        >name</th>
+        <th
+          class="header"
+          data-setup="localize"
+          data-text-ja="期日"
+        >due</th>
+      </tr>
+    </thead>
+    <tbody data-setup="tasks">
+      <tr>
+        <td
+          class="progress"
+          data-text-open-ja="未着手"
+          data-text-open-en="Open"
+          data-text-progress-ja="処理中"
+          data-text-progress-ja="In Progress"
+          data-text-fixed-ja="処理済"
+          data-text-fixed-en="Fixed"
+        >stop</td>
+        <td class="assign"><ul class="unstyled"><li><img><span>su_aska</span></li></ul></td>
+        <td class="name">task</td>
+        <td class="due">10/25</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

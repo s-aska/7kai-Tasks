@@ -32,11 +32,6 @@ app.addListener('orientationchange', function(){
 });
 
 // ----------------------------------------------------------------------
-app.setup.listname = function(ele){
-    app.addListener('openList', function(list){
-        ele.text(list.name);
-    });
-}
 app.setup.listmenu = function(ul){
     var li_cache = {};
     ul.empty();

@@ -172,7 +172,7 @@ app.setup.leftColumn = function(ele){
         for (var i = 0, max_i = members.length; i < max_i; i++) {
             var code = members[i];
             var friend = app.data.users[code];
-            var name = friend ? friend.name : code;
+            var name = friend ? (friend.screen_name || friend.name) : code;
             if (i === 0) {
                 name = name + ' (owner)';
             }
@@ -344,7 +344,7 @@ app.setup.registerListWindow = function(form){
 	    var user = app.data.users[code];
 	    var li = $(social_member_template);
 	    li.find('img').attr('src', user.icon);
-	    li.find('.name').text(user.name);
+	    li.find('.name').text(user.screen_name || user.name);
 	    li.find('input').attr('value', code);
 	    li.find('.icon').click(function(){ li.remove() });
 	    li.prependTo(social_member_list);

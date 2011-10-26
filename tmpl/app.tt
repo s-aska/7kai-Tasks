@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>7kai Tasks</title>
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css" media="all">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
 <link rel="stylesheet" href="/static/css/app-base.css" media="all">
 <link rel="stylesheet" href="/static/css/app-pc.css" media="all">
@@ -258,6 +258,12 @@
             data-click="editList"
             data-text-ja="リストを編集..."
         >Edit List...</a></li>
+        <li><a
+            class="action"
+            data-setup="localize,show"
+            data-show='{"id":"public-list-window"}'
+            data-text-ja="リストを公開..."
+        >Public List...</a></li>
         <li><a class="action"
             data-setup="localize,switchClosed"
             data-text-ja="完了済のタスクを表示切替"
@@ -707,6 +713,66 @@
       data-setup="localize,hide"
       data-text-ja="閉じる"
       data-hide='{"id":"register-list-window"}'
+    >Close</button>
+  </div>
+</form>
+
+<form
+  id="public-list-window"
+  class="modal form-stacked"
+  data-setup="showable,ui,publicListWindow,escclose"
+  data-ui="draggable"
+  data-showable='{
+    "id":"public-list-window",
+    "show":{"effect":"fade","speed":"fast"},
+    "hide":{"effect":"fade","speed":"fast"}}'
+>
+  <div class="modal-header">
+    <h3
+      data-setup="localize"
+      data-text-ja="リスト公開"
+    >Public List</h3>
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"public-list-window"}'
+    >×</a>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="left">
+        <p><span data-setup="listname"></span> <span data-setup="localize" data-text-ja="の公開設定">'s setting</span></p>
+        <div style="margin-bottom: 10px">
+          <button
+            class="btn"
+            data-setup="localize,publicListButton"
+            data-text-ja="公開"
+          >Public</button>
+          <button
+            class="btn"
+            data-setup="localize,privateListButton"
+            data-text-ja="非公開"
+          >Private</button>
+        </div>
+        <div class="clearfix">
+          <label for="">URL</label>
+          <div class="input">
+            <input class="span6" type="text" name="html" value=""> ( HTML )<br />
+            <input class="span6" type="text" name="json" value=""> ( json )<br />
+            <input class="span8" type="text" name="jsonp?callback=" value=""> ( jsonp )<br />
+            <input class="span7" type="text" name="rss" value=""> ( rss )<br />
+            <input class="span6" type="text" name="ical" value=""> ( iCal )
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn secondary"
+      data-setup="localize,hide"
+      data-text-ja="閉じる"
+      data-hide='{"id":"public-list-window"}'
     >Close</button>
   </div>
 </form>

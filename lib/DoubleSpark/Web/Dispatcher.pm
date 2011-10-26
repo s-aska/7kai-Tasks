@@ -29,6 +29,8 @@ post '/api/1/account/salvage' => 'API::Account#salvage';
 
 post '/api/1/list/create' => 'API::List#create';
 post '/api/1/list/update' => 'API::List#update';
+post '/api/1/list/public' => 'API::List#public';
+post '/api/1/list/private' => 'API::List#private';
 post '/api/1/list/delete' => 'API::List#delete';
 post '/api/1/list/clear'  => 'API::List#clear';
 
@@ -42,6 +44,13 @@ post '/api/1/comment/delete' => 'API::Comment#delete';
 post '/api/1/twitter/update_friends' => 'API::Twitter#update_friends';
 
 get '/api/1/profile_image/:screen_name' => 'API::ProfileImage#twitter';
+
+get '/public/:public_code/html' => 'API::Public#html';
+get '/public/:public_code/ical' => 'API::Public#ical';
+get '/public/:public_code/json' => 'API::Public#json';
+get '/public/:public_code/jsonp' => 'API::Public#jsonp';
+get '/public/:public_code/rss' => 'API::Public#rss';
+get '/public/:public_code/atom' => 'API::Public#atom';
 
 if ($ENV{PLACK_ENV} eq 'development') {
     warn router->as_string;
