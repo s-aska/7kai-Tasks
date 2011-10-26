@@ -254,11 +254,12 @@ app.setup.tasks = function(tbody){
                     li.find('img').attr('src', user.icon);
                     li.find('span').text(user.name);
                     li.appendTo(ul);
-                    sort = sort + user.code;
+                    sort = sort + user.code.replace(/^(tw|fb)-/, '');
                 }
                 tr.find('.assign').data('sort', sort);
             } else {
                 tr.find('.assign').text('-');
+                tr.find('.assign').data('sort', '0');
             }
             tr.appendTo(tbody);
         }
