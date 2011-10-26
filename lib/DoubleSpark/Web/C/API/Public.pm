@@ -4,7 +4,7 @@ use warnings;
 use Data::ICal;
 use Data::ICal::Entry::Event;
 use DoubleSpark::API::List;
-use Encode qw/encode_utf8/;
+use Encode qw/encode_utf8 decode_utf8/;
 use HTML::Entities;
 use JSON qw/encode_json/;
 use XML::RSS;
@@ -150,7 +150,7 @@ sub rss {
         my $user = $usermap->{ $action->{code} };
         my $title = sprintf '%s %s "%s"'
             , $user->{name}
-            , $messages->{ $action->{type} . '-' . $lang }
+            , decode_utf8($messages->{ $action->{type} . '-' . $lang })
             , $action->{task}->{name};
 
         decode_entities($title);
