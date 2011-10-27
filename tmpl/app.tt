@@ -171,7 +171,7 @@
         <div class="container">
           <ul class="nav">
             <li class="menu" data-setup="menu">
-              <a class="menu list-name">su_aska</a>
+              <a class="menu list-name">now loading...</a>
               <ul
                 class="menu-dropdown lists"
                 style="display: none"
@@ -389,12 +389,12 @@
         <div class="icon icon-tasks-off" data-setup="status"></div>
         <div class="icon icon-star-off" data-setup="star"></div>
         <div class="human" data-setup="human"></div>
-        <div class="name" data-setup="name">アイコン作成</div>
+        <div class="name" data-setup="name">now loading...</div>
         <div class="icon icon-cross delete" data-setup="close"></div>
-        <div class="due" data-setup="due">8/23</div>
+        <div class="due" data-setup="due"></div>
         <div class="recent-comment" data-setup="recent">
           <div class="icon"></div>
-          <div class="message">{<span>&nbsp;&lt;&nbsp;◯◯◯◯◯◯◯◯◯◯◯</span></div>
+          <div class="message">{<span></span></div>
         </div>
       </li>
     </ul>
