@@ -355,25 +355,7 @@
     <h3>Sign In</h3>
   </div>
   <div class="modal-body">
-    <ul class="tabs">
-      <li class="active">
-        <a
-          data-setup="tab.menu"
-          data-tab='{"id":"social","group":"signin"}'
-        >Twitter / Facebook</a>
-      </li>
-      <li>
-        <a
-          data-setup="tab.menu"
-          data-tab='{"id":"email","group":"signin"}'
-        >E-mail</a>
-      </li>
-    </ul>
-    <div
-      style="text-align: center;"
-      data-setup="tab.content"
-      data-tab='{"id":"social","group":"signin"}'
-    >
+    <div style="text-align: center;">
       <form method="post" action="/signin/twitter/signin" data-setup="form">
         <div><button class="btn large primary">Connect with Twitter</button></div>
       </form>
@@ -381,65 +363,8 @@
         <div><button class="btn large primary">Connect with Facebook</button></div>
       </form>
     </div>
-    <div
-      style="display: none;"
-      data-setup="tab.content"
-      data-tab='{"id":"email","group":"signin"}'
-    >
-      <form
-        data-setup="emailSignup"
-        class="form-stacked"
-      >
-        <div class="clearfix">
-          <label>E-mail</label>
-          <div class="input">
-            <input class="span4" name="email" size="30" type="text">
-          </div>
-        </div>
-        <div class="clearfix">
-          <label>Password</label>
-          <div class="input">
-            <input class="span4" name="password" size="30" type="password">
-          </div>
-        </div>
-        <div class="actions" style="margin-left: 0;">
-          <button
-            class="btn primary"
-            data-setup="click"
-            data-click="emailSignin"
-          >Sign In</button> or 
-          <button
-            class="btn primary"
-            data-setup="click"
-            data-click="emailSignup"
-          >Sign Up</button>
-        </div>
-      </form>
-    </div>
   </div>
 </div>
-
-<form
-  class="modal form-stacked"
-  data-setup="submit,emailVerify"
-  data-submit="emailVerify"
->
-  <div class="modal-header">
-    <h3>E-mail Verify</h3>
-  </div>
-  <div class="modal-body">
-    <p>Please enter the code sent to your email.</p>
-    <div class="clearfix">
-      <label>CODE</label>
-      <div class="input">
-        <input class="span4" type="text" name="code" value="">
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn primary">Verify</button>
-  </div>
-</form>
 
 <div
   id="alert"

@@ -662,7 +662,7 @@
             <div class="icon icon-cross"></div>
           </li>
         </ul>
-        <div class="clearfix member email-member">
+        <!-- <div class="clearfix member email-member">
           <label for=""
             data-setup="localize"
             data-text-ja="メンバー (E-mail)"
@@ -685,7 +685,7 @@
             <div><input type="hidden" name="members"></div>
             <div class="icon icon-cross"></div>
           </li>
-        </ul>
+        </ul> -->
       </div>
       <div class="left description">
         <ul>
