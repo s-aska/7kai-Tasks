@@ -74,7 +74,6 @@ app.setup.scroller = function(ele){
 	document.getElementById('wrapper').style.height = wrapperH + 'px';
     var myScroll = new iScroll(ele.get(0), {
         hScrollbar: true,
-        useTransform: false,
         onBeforeScrollStart: function(e){
             var target = e.target;
             while (target.nodeType != 1) {
