@@ -153,6 +153,7 @@ body > .topbar ul li a.profile-name {
     bottom: 0;
     z-index: 10002;
 */  
+    z-index: 1;
     font-size: 11px;
     margin-top: 40px;
 }
