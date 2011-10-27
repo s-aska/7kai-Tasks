@@ -9,9 +9,9 @@ app.addEvents('domresize');
 app.addEvents('orientationchange');
 
 app.addListener('ready', function(){
-    d.addEventListener('touchmove', function(e){
-        e.preventDefault();
-    });
+    // d.addEventListener('touchmove', function(e){
+    //     e.preventDefault();
+    // });
     w.addEventListener('online', function(){
         app.api.token();
     });
@@ -67,38 +67,41 @@ app.setup.bottommenu = function(ul){
         ul.find('li').not('.center').width(li_width);
     });
 }
-app.setup.scroller = function(ele){ 
-    var headerH = document.getElementById('header').offsetHeight,
-		footerH = document.getElementById('footer').offsetHeight,
-		wrapperH = window.innerHeight - headerH - footerH;
-	document.getElementById('wrapper').style.height = wrapperH + 'px';
-    var myScroll = new iScroll(ele.get(0), {
-        hScrollbar: true,
-        onBeforeScrollStart: function(e){
-            var target = e.target;
-            while (target.nodeType != 1) {
-                target = target.parentNode;
-            }
-            if (target.tagName != 'SELECT'
-                && target.tagName != 'INPUT'
-                && target.tagName != 'TEXTAREA') {
-                e.preventDefault();
-            }
-        }
-    });
-    app.addListener('domresize', function(){
-        setTimeout(function(){ myScroll.refresh() }, 0);
-    });
-    app.addListener('selectTab', function(){
-        setTimeout(function(){ myScroll.refresh() }, 500);
-    });
-    app.addListener('filterTask', function(){
-        setTimeout(function(){ myScroll.refresh() }, 500);
-    });
-    window.onorientationchange = function(){
-        setTimeout(function(){ myScroll.refresh() }, 0);
-    }
-}
+// app.setup.scroller = function(ele){ 
+//     var headerH = document.getElementById('header').offsetHeight,
+//      footerH = document.getElementById('footer').offsetHeight,
+//      wrapperH = window.innerHeight - headerH - footerH;
+//  document.getElementById('wrapper').style.height = wrapperH + 'px';
+//     var myScroll = new iScroll(ele.get(0), {
+//         hScrollbar: true,
+//         useTransform: false,
+//         onBeforeScrollStart: function(e){
+//             var target = e.target;
+//             while (target.nodeType != 1) {
+//                 target = target.parentNode;
+//             }
+//             console.log(target.tagName);
+//             if (target.tagName !== 'SELECT'
+//                 && target.tagName !== 'INPUT'
+//                 && target.tagName !== 'TEXTAREA') {
+//                 e.preventDefault();
+//             }
+//         }
+//     });
+//     app.addListener('domresize', function(){
+//         setTimeout(function(){ myScroll.refresh() }, 0);
+//     });
+//     app.addListener('selectTab', function(){
+//         console.log('selectTab');
+//         setTimeout(function(){ myScroll.refresh() }, 500);
+//     });
+//     app.addListener('filterTask', function(){
+//         setTimeout(function(){ myScroll.refresh() }, 500);
+//     });
+//     window.onorientationchange = function(){
+//         setTimeout(function(){ myScroll.refresh() }, 0);
+//     }
+// }
 app.setup.menu = function(ele){
     var ul = ele.find('> ul');
     ele.click(function(){

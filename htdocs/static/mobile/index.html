@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="/static/css/app-mobile.css">
 <script src="/static/js/jquery-1.6.4.min.js"></script>
 <script src="/static/js/jquery-ui-1.8.13.js"></script>
-<script src="/static/js/iscroll.js"></script>
 <script src="/static/js/spin.min.js"></script>
 <script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>
@@ -71,8 +70,91 @@
     </div>
   </div>
 </div>
+<div id="footer" class="topbar">
+  <div class="fill">
+    <div class="container">
+      <ul class="nav" data-setup="bottommenu">
+        <li>
+          <a
+            data-setup="click,filterTask"
+            data-click="filterTask"
+            data-filter-condition='{"todo":1}'
+          >
+            <span
+              data-setup="localize"
+              data-text-ja="今日迄"
+            >Todo</span>
+            <span
+              class="badge"
+              data-setup="taskCounter"
+              data-counter-condition='{"todo":1}'
+            >0</span>
+          </a>
+        </li>
+        <li>
+          <a
+            data-setup="click,filterTask"
+            data-click="filterTask"
+            data-filter-condition='{"verify":1}'
+          >
+            <span
+              data-setup="localize"
+              data-text-ja="確認待ち"
+            >Verify</span>
+            <span
+              class="badge"
+              data-setup="taskCounter"
+              data-counter-condition='{"verify":1}'
+            >0</span>
+          </a>
+        </li>
+        <li class="center">
+          <a
+            class="icon icon-create-task"
+            data-setup="click,tab.menu"
+            data-click="createTask"
+            data-tab='{"id":"registerTask","group":"main"}'
+          ></a>
+        </li>
+        <li>
+          <a
+            data-setup="click,filterTask"
+            data-click="filterTask"
+            data-filter-condition='{"request":1}'
+          >
+            <span
+              data-setup="localize"
+              data-text-ja="依頼中"
+            >Request</span>
+            <span
+              class="badge"
+              data-setup="taskCounter"
+              data-counter-condition='{"request":1}'
+            >0</span>
+          </a>
+        </li>
+        <li>
+          <a
+            data-setup="click,filterTask"
+            data-click="filterTask"
+            data-filter-condition='{"star":1}'
+          >
+            <span
+              data-setup="localize"
+              data-text-ja="スター"
+            >Star</span>
+            <span
+              class="badge"
+              data-setup="starCounter"
+            >0</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
 <div id="wrapper" class="container">
-  <div id="scroller" data-setup="scroller">
+  <div id="scroller">
     <ul
       class="unstyled tasks"
       data-setup="tasks,tab.content"
@@ -257,89 +339,6 @@
             <div><span class="message"></span></div>
             <div><span class="date"></span><span class="name"></span></div>
           </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-</div>
-<div id="footer" class="topbar">
-  <div class="fill">
-    <div class="container">
-      <ul class="nav" data-setup="bottommenu">
-        <li>
-          <a
-            data-setup="click,filterTask"
-            data-click="filterTask"
-            data-filter-condition='{"todo":1}'
-          >
-            <span
-              data-setup="localize"
-              data-text-ja="今日迄"
-            >Todo</span>
-            <span
-              class="badge"
-              data-setup="taskCounter"
-              data-counter-condition='{"todo":1}'
-            >0</span>
-          </a>
-        </li>
-        <li>
-          <a
-            data-setup="click,filterTask"
-            data-click="filterTask"
-            data-filter-condition='{"verify":1}'
-          >
-            <span
-              data-setup="localize"
-              data-text-ja="確認待ち"
-            >Verify</span>
-            <span
-              class="badge"
-              data-setup="taskCounter"
-              data-counter-condition='{"verify":1}'
-            >0</span>
-          </a>
-        </li>
-        <li class="center">
-          <a
-            class="icon icon-create-task"
-            data-setup="click,tab.menu"
-            data-click="createTask"
-            data-tab='{"id":"registerTask","group":"main"}'
-          ></a>
-        </li>
-        <li>
-          <a
-            data-setup="click,filterTask"
-            data-click="filterTask"
-            data-filter-condition='{"request":1}'
-          >
-            <span
-              data-setup="localize"
-              data-text-ja="依頼中"
-            >Request</span>
-            <span
-              class="badge"
-              data-setup="taskCounter"
-              data-counter-condition='{"request":1}'
-            >0</span>
-          </a>
-        </li>
-        <li>
-          <a
-            data-setup="click,filterTask"
-            data-click="filterTask"
-            data-filter-condition='{"star":1}'
-          >
-            <span
-              data-setup="localize"
-              data-text-ja="スター"
-            >Star</span>
-            <span
-              class="badge"
-              data-setup="starCounter"
-            >0</span>
-          </a>
         </li>
       </ul>
     </div>

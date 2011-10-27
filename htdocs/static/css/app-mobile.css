@@ -148,11 +148,13 @@ body > .topbar ul li a.profile-name {
 
 /********** bottombar **********/
 #footer {
-    position: absolute;
+/*    position: absolute;
     top: auto;
     bottom: 0;
     z-index: 10002;
+*/  
     font-size: 11px;
+    margin-top: 40px;
 }
 #footer ul.nav {
     width: 100%;
@@ -199,8 +201,7 @@ body > .topbar ul li a.profile-name {
 
 /********** container **********/
 body > div.container {
-    margin-top: 40px;
-    margin-bottom: 40px;
+    margin-top: 80px;
 }
 body > div.container div.page {
     padding: 10px;
