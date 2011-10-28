@@ -1219,6 +1219,10 @@ app.setup.task = function(ele, task){
         e.stopPropagation();
         app.fireEvent('openTask', task);
     });
+    ele.dblclick(function(e){
+        e.stopPropagation();
+        app.fireEvent('editTask', task);
+    });
 }
 app.setup.status = function(ele, task){
     if (!task) return;
