@@ -764,11 +764,11 @@
           <label for="">URL</label>
           <div class="input">
             <input class="span6" type="text" name="html" value=""> ( HTML )<br />
-            <input class="span6" type="text" name="json" value=""> ( json )<br />
-            <input class="span8" type="text" name="jsonp?callback=" value=""> ( jsonp )<br />
-            <input class="span7" type="text" name="rss" value=""> ( rss )<br />
+            <input class="span6" type="text" name="json" value=""> ( JSON )<br />
+            <input class="span8" type="text" name="jsonp?callback=" value=""> ( JSONP )<br />
+            <input class="span7" type="text" name="rss" value=""> ( RSS )<br />
             <input class="span6" type="text" name="ical" value=""> ( iCal )<br />
-            <p>JSON Format (<a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format" target="_blank">English</a>, <a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format-ja" target="_blank">Japanese</a>)</p>
+            <p>JSON Format ( <a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format" target="_blank">English</a>, <a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format-ja" target="_blank">Japanese</a> )</p>
           </div>
         </div>
       </div>
