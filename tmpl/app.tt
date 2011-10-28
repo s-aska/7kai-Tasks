@@ -722,7 +722,7 @@
   <div class="modal-body">
     <div class="row">
       <div class="left">
-        <p><span data-setup="listname"></span> <span data-setup="localize" data-text-ja="の公開設定">'s setting</span></p>
+        <p><span data-setup="listname"></span><span data-setup="localize" data-text-ja="の公開設定">'s setting</span></p>
         <div style="margin-bottom: 10px">
           <button
             class="btn"
@@ -736,14 +736,14 @@
           >Private</button>
         </div>
         <div class="clearfix">
-          <label for="">URL</label>
+          <label for="">Public URL</label>
           <div class="input">
             <input class="span6" type="text" name="html" value=""> ( HTML )<br />
             <input class="span6" type="text" name="json" value=""> ( JSON )<br />
             <input class="span8" type="text" name="jsonp?callback=" value=""> ( JSONP )<br />
             <input class="span7" type="text" name="rss" value=""> ( RSS )<br />
             <input class="span6" type="text" name="ical" value=""> ( iCal )<br />
-            <p>JSON Format ( <a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format" target="_blank">English</a>, <a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format-ja" target="_blank">Japanese</a> )</p>
+            <p>JSON Specification ( <a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format" target="_blank">English</a>, <a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format-ja" target="_blank">Japanese</a> )</p>
           </div>
         </div>
       </div>
