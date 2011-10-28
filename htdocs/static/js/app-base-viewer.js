@@ -117,7 +117,7 @@ app.addListener('registerFriends', function(friends, owner){
                     'https://graph.facebook.com/'
                     + friend.code.substring(3)
                     + '/picture'
-                 : '/static/img/email24.png';
+                 : '/static/img/address24.png';
         var value = friend.screen_name ? friend.screen_name + ' (' + friend.name + ')'
                   : friend.name;
         var label = '<img class="sq16" src="' + icon + '"><span>' + value + '</span>';
@@ -147,7 +147,7 @@ app.addListener('registerSubAccount', function(sub_account){
                 'https://graph.facebook.com/'
                 + sub_account.code.substring(3)
                 + '/picture'
-             : '/static/img/email24.png';
+             : '/static/img/address24.png';
     app.data.users[sub_account.code] = {
         code: sub_account.code,
         name: sub_account.name,
@@ -217,11 +217,8 @@ app.util.getIconUrl = function(code, size){
     else if (/^fb-[0-9]+$/.test(code)) {
         src = 'https://graph.facebook.com/' + code.substring(3) + '/picture';
     }
-    else if (/@/.test(code)) {
-        src = size === 16 ? '/static/img/email.png' : '/static/img/email24.png';
-    }
     else {
-        src = '/static/img/address.png';
+        src = size === 16 ? '/static/img/address.png' : '/static/img/address24.png';
     }
     return src;
 }
@@ -1384,8 +1381,6 @@ app.setup.registerTaskWindow = function(form){
             var li = $(assign_template);
             if (friend && friend.icon) {
                 li.find('img').attr('src', friend.icon);
-            } else if (/@/.test(assign)) {
-                li.find('img').attr('src', '/static/img/email.png');
             } else {
                 li.find('img').attr('src', '/static/img/address.png');
             }

@@ -331,13 +331,9 @@ app.setup.registerListWindow = function(form){
     var social_member_addon     = social_member_field.find('.add-on');
     var social_member_label     = social_member_field.find('label');
     var social_member_template  = social_member_list.html();
-    var email_member_field      = form.find('div.email-member');
-    var email_member_list       = form.find('ul.email-members');
-    var email_member_template   = email_member_list.html();
-    var email_member_input      = email_member_field.find('input');
     var option_map              = {};
 
-    var addSocialMember = function(code){
+    var addMember = function(code){
         if (social_member_list.find('input[value="' + code + '"]').length) {
             return;
         }
@@ -348,22 +344,6 @@ app.setup.registerListWindow = function(form){
 	    li.find('input').attr('value', code);
 	    li.find('.icon').click(function(){ li.remove() });
 	    li.prependTo(social_member_list);
-    };
-
-    var addEmailMember = function(code){
-        var li = $(email_member_template);
-        li.find('.name').text(code);
-        li.find('.icon-cross').click(function(){ li.remove() });
-        li.find('input').val(code);
-        li.prependTo(email_member_list);
-    };
-
-    var addMember = function(code){
-        if (/^(tw|fb)-[0-9]+$/.test(code)) {
-            addSocialMember(code);
-        } else {
-            addEmailMember(code);
-        }
     };
 
     var modeReset = function(code){
@@ -429,21 +409,6 @@ app.setup.registerListWindow = function(form){
     };
     social_member_input.bind('autocompleteclose',
         function(){ social_member_input.val('') });
-    email_member_field.show();
-    email_member_list.empty();
-    email_member_input.keydown(function(e){
-        if (e.keyCode === 13 && email_member_input.val().length) {
-            e.preventDefault();
-            addEmailMember(email_member_input.val());
-            email_member_input.val('');
-        }
-    });
-    email_member_input.blur(function(e){
-        if (email_member_input.val().length) {
-            addEmailMember(email_member_input.val());
-            email_member_input.val('');
-        }
-    });
 
     app.addListener('registerSubAccount', function(sub_account){
         if (option_map[sub_account.code]) {
@@ -467,7 +432,6 @@ app.setup.registerListWindow = function(form){
         name_input.val(list.name);
         modeReset(app.util.getRegistrant(list));
         social_member_list.empty();
-        email_member_list.empty();
         for (var i = 0, max_i = list.members.length; i < max_i; i++) {
             addMember(list.members[i]);
         }
@@ -478,7 +442,6 @@ app.setup.registerListWindow = function(form){
         owner_field.show();
         modeReset(owner_select.val());
         social_member_list.empty();
-        email_member_list.empty();
         app.dom.reset(form);
         app.dom.show(form);
     });

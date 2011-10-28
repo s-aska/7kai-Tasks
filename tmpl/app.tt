@@ -12,7 +12,6 @@
 <script src="/static/js/h5utils.js"></script>
 <script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>
-<script src="/static/js/app-base-signin.js"></script>
 <script src="/static/js/app-base-viewer.js"></script>
 <script src="/static/js/app-page-viewer.js"></script>
 </head>
@@ -662,30 +661,6 @@
             <div class="icon icon-cross"></div>
           </li>
         </ul>
-        <!-- <div class="clearfix member email-member">
-          <label for=""
-            data-setup="localize"
-            data-text-ja="メンバー (E-mail)"
-          >Member (E-mail)</label>
-          <div class="input owner">
-            <div class="input-prepend">
-              <span class="add-on">e</span>
-              <input
-                type="text"
-                name="member"
-                placeholder="Mail Address"
-              >
-            </div>
-          </div>
-        </div>
-        <ul class="unstyled members email-members">
-          <li class="clearfix">
-            <div class="icon icon-email"></div>
-            <div class="name"></div>
-            <div><input type="hidden" name="members"></div>
-            <div class="icon icon-cross"></div>
-          </li>
-        </ul> -->
       </div>
       <div class="left description">
         <ul>
@@ -1411,6 +1386,10 @@
       data-text-error-404-ja="対象が見つかりませんでした。"
       data-text-error-500-en="Internal Server Error, Please wait a little..."
       data-text-error-500-ja="障害が発生しています、しばらくして再度操作して下さい。"
+      data-text-error-502-en="Internal Server Error, Please wait a little..."
+      data-text-error-502-ja="障害が発生しています、しばらくして再度操作して下さい。"
+      data-text-error-503-en="Internal Server Error, Please wait a little..."
+      data-text-error-503-ja="障害が発生しています、しばらくして再度操作して下さい。"
     ></p>
   </div>
   <div class="modal-footer">
