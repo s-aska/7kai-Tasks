@@ -768,8 +768,7 @@
             <input class="span8" type="text" name="jsonp?callback=" value=""> ( jsonp )<br />
             <input class="span7" type="text" name="rss" value=""> ( rss )<br />
             <input class="span6" type="text" name="ical" value=""> ( iCal )<br />
-            <p><a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format" target="_blank">JSON Format (English)</a></p>
-            <p><a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format-ja" target="_blank">JSON Format (Japanese)</a></p>
+            <p>JSON Format (<a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format" target="_blank">English</a>, <a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format-ja" target="_blank">Japanese</a>)</p>
           </div>
         </div>
       </div>
