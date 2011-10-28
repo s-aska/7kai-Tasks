@@ -1031,8 +1031,7 @@ app.setup.tasks = function(ul){
         }
         if (column === 'name') {
             tasks.sort(function(a, b){
-                return a.name > b.name ?  1 :
-                       b.name < a.name ? -1 : 0;
+                return a.name.localeCompare(b.name);
             });
         } else if (column === 'person') {
             tasks.sort(function(a, b){
