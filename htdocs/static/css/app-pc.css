@@ -155,7 +155,7 @@ ul.comments li:last-child {
 ul.comments li .icon-cross {
     cursor: pointer;
 }
-ul.comments li span.message {
+ul.comments li .message {
     color: #333;
     font-size: 11px;
     word-wrap: break-word;

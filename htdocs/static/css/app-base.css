@@ -91,6 +91,10 @@ span.icon {
     background-image: url(/static/img/tasks_off24.png);
 }
 
+.label.closed {
+    background-color: #0064cd;
+}
+
 /********** parts **********/
 .clearfix {
     zoom: 1;

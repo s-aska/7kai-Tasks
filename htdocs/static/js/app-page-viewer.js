@@ -1,3 +1,4 @@
+"use strict";
 (function(ns, w, d) {
 
 var app = ns.app;
@@ -399,7 +400,7 @@ app.setup.registerListWindow = function(form){
 		    response(autocomplete_filter(request.term));
 		},
 		select: function(event, ui) {
-		    addSocialMember(ui.item.code);
+		    addMember(ui.item.code);
         }
 	}).data('autocomplete')._renderItem = function(ul, item) {
         return $(document.createElement('li'))

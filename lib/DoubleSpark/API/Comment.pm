@@ -26,21 +26,31 @@ sub create {
     for my $task (@{ $list->data->{tasks} }) {
         next if $task->{id} ne $task_id;
 
+        my $action = 'comment';
         my @keys = qw(status closed);
         for my $key (@keys) {
             my $val = $req->param($key);
-            if (defined $val) {
+            if (defined $val && length $val) {
                 $task->{$key} = $val=~/^\d+$/ ? int($val) : $val;
+                $action = +{
+                    status => {
+                        0 => 'reopen-task',
+                        1 => 'start-task',
+                        2 => 'fix-task'
+                    },
+                    closed => { 1 => 'close-task' }
+                }->{ $key }->{ $val };
             }
         }
 
         # create comment
         my $comment_id = ++$task->{last_comment_id};
-        push @{ $task->{comments} }, {
+        push @{ $task->{actions} }, {
             id      => $comment_id,
             code    => $registrant,
             message => $message,
-            time    => $time
+            time    => $time,
+            action  => $action
         };
         $task->{updated_on} = $time;
 
@@ -80,9 +90,9 @@ sub delete {
     my $target_task;
     for my $task (@{ $list->data->{tasks} }) {
         next if $task->{id} ne $task_id;
-        @{$task->{comments}} = grep {
+        @{$task->{actions}} = grep {
             $_->{id} ne $comment_id
-        } @{$task->{comments}};
+        } @{$task->{actions}};
         $target_task = $task;
         last;
     }

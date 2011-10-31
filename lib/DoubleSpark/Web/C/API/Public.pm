@@ -106,8 +106,8 @@ sub rss {
         'restart-task-en'   => 'update (close => start) the task of the',
         'refix-task-ja'     => 'さんがタスクを更新 (完了 => 処理済)',
         'refix-task-en'     => 'update (close => fix) the task of the',
-        'create-comment-ja' => 'さんがコメント',
-        'create-comment-en' => 'commented on a task in',
+        'comment-ja'        => 'さんがコメント',
+        'comment-en'        => 'commented on a task in',
     };
 
     my @actions;
@@ -120,29 +120,8 @@ sub rss {
             time => $task->{created_on}
         };
 
-        for my $comment (@{ $task->{comments} }) {
-            push @actions, {
-                task => $task,
-                type => 'create-comment',
-                code => $comment->{code},
-                time => $comment->{time},
-                text => $comment->{message},
-            };
-        }
-
-        for my $history (@{ $task->{history} }) {
-            push @actions, {
-                task => $task,
-                type => $history->{action},
-                code => $history->{code},
-                time => $history->{time}
-            };
-        }
+        push @actions, @{ $task->{actions} };
     }
-
-    @actions = sort {
-        $b->{time} <=> $a->{time}
-    } @actions;
 
     my $count = 0;
     for my $action (@actions) {
@@ -150,7 +129,7 @@ sub rss {
         my $user = $usermap->{ $action->{code} };
         my $title = sprintf '%s %s "%s"'
             , $user->{name}
-            , decode_utf8($messages->{ $action->{type} . '-' . $lang })
+            , decode_utf8($messages->{ $action->{action} . '-' . $lang })
             , $action->{task}->{name};
 
         decode_entities($title);
@@ -159,18 +138,18 @@ sub rss {
         $title =~ s{>}{&gt;}gso;
         $title =~ s{"}{&quot;}gso;
 
-        if ($action->{text}) {
-            decode_entities($action->{text});
-            $action->{text} =~ s{&}{&amp;}gso;
-            $action->{text} =~ s{<}{&lt;}gso;
-            $action->{text} =~ s{>}{&gt;}gso;
-            $action->{text} =~ s{"}{&quot;}gso;
+        if ($action->{message}) {
+            decode_entities($action->{message});
+            $action->{message} =~ s{&}{&amp;}gso;
+            $action->{message} =~ s{<}{&lt;}gso;
+            $action->{message} =~ s{>}{&gt;}gso;
+            $action->{message} =~ s{"}{&quot;}gso;
         }
 
         $rss->add_item(
             link        => 'https://tasks.7kai.org/',
             title       => $title,
-            description => $action->{text} || '',
+            description => $action->{message} || '',
             dc => {
                 creator => $user->{name},
                 date    => $toDate->($list->actioned_on)

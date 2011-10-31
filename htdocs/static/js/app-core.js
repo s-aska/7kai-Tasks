@@ -1,3 +1,4 @@
+"use strict";
 (function(ns, w, d) {
 
 if (typeof w.console !== 'object') {

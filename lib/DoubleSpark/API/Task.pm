@@ -42,8 +42,7 @@ sub create {
         due => $due,
         status => 0,
         closed => 0,
-        comments => [],
-        history => [],
+        actions => [],
         created_on => $time,
         updated_on => $time
     };
@@ -115,7 +114,7 @@ sub update {
             }
         }
         if ($action) {
-            push @{$task->{history}}, {
+            push @{$task->{actions}}, {
                 code   => $registrant,
                 action => $action,
                 time   => $time

@@ -8,20 +8,47 @@ use DoubleSpark;
 use Data::Dumper;
 binmode STDOUT, ":utf8";
 my $c = DoubleSpark->bootstrap();
+say $c->config->{DB}->[0];
+print "OK? [y/n]: ";
+chomp( my $yes = <STDIN> );
+if ($yes ne 'y') {
+    say "cancel.";
+    exit;
+}
 my $lists = $c->db->search('list');
 for my $list ($lists->all) {
-    my $doc = $c->open_doc('list-' . $list->list_id);
-    for my $task (@{$doc->{tasks}}) {
-        $task->{history} = [];
-        $task->{requester_id} = $task->{registrant_id};
+    for my $task (@{ $list->data->{tasks} }) {
+        
+        my @actions;
+        for my $comment (@{ $task->{comments} }) {
+            push @actions, {
+                id      => $comment->{id},
+                action  => 'comment',
+                code    => $comment->{code},
+                time    => $comment->{time},
+                message => $comment->{message}
+            };
+        }
+        
+        for my $history (@{ $task->{history} }) {
+            push @actions, {
+                action => $history->{action},
+                code   => $history->{code},
+                time   => $history->{time}
+            };
+        }
+        
+        delete $task->{comments};
+        delete $task->{history};
+        
+        @actions = sort {
+            $a->{time} <=> $b->{time}
+        } @actions;
+        
+        $task->{actions} = \@actions;
     }
-    delete $doc->{admin_ids};
-    delete $doc->{members};
-    delete $doc->{owner};
-    delete $doc->{privacy};
-    delete $doc->{history};
-    say 'update 1.10 => 1.11';
-    $c->save_doc($doc);
+    
+    $list->update({ data => $list->data });
 }
 
 exit(0);

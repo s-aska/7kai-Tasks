@@ -1,3 +1,4 @@
+"use strict";
 (function(ns, w, d) {
 
 var app = ns.app;
@@ -68,11 +69,6 @@ app.addListener('registerTask', function(task, list){
 
     task.status = Number(task.status);
     task.closed = Number(task.closed);
-
-    // 履歴・コメント
-    task.actions = [].concat(task.comments).concat(task.history).sort(function(a, b) {
-        return (Number(a.time) || 0) - (Number(b.time) || 0);
-    });
 
     // 直近の履歴・コメント
     $.each(task.actions, function(i, action){
@@ -212,7 +208,6 @@ app.util.getIconUrl = function(code, size){
     }
     if (/^tw-[0-9]+$/.test(code)) {
         src = '/static/img/address.png';
-        // http://api.twitter.com/1/users/profile_image?name=&size=mini
     }
     else if (/^fb-[0-9]+$/.test(code)) {
         src = 'https://graph.facebook.com/' + code.substring(3) + '/picture';
@@ -513,7 +508,8 @@ app.api.task.update = function(params){
     })
     .done(function(data){
         if (data.success === 1) {
-            app.data.task_map[params.task_id].updated_on = data.task.updated_on;
+            $.extend(app.data.task_map[params.task_id], data.task);
+            // app.data.task_map[params.task_id].updated_on = data.task.updated_on;
             // app.fireEvent('registerTask', data.task, list); // update updated_on
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
@@ -717,7 +713,10 @@ app.setup.rightColumn = function(ele){
     var list_id_input    = ele.find('input[name=list_id]');
     var task_id_input    = ele.find('input[name=task_id]');
     var registrant_input = ele.find('input[name=registrant]');
+    var status_input     = ele.find('input[name=status]');
+    var closed_input     = ele.find('input[name=closed]');
     var button           = ele.find('button:first');
+    var buttons          = ele.find('button:[data-plus]');
     var textarea         = ele.find('textarea');
     var list_name        = ele.find('.list_name');
     var task_name        = ele.find('.task_name');
@@ -727,6 +726,7 @@ app.setup.rightColumn = function(ele){
     // 初期化処理
     ul.empty();
     button.attr('disabled', true);
+    buttons.attr('disabled', true);
 
     var textarea_watch = function(){
         button.attr('disabled', !textarea.val().length)
@@ -761,21 +761,46 @@ app.setup.rightColumn = function(ele){
         }
     });
 
+    buttons.click(function(e){
+        var plus = $(this).data('plus');
+        if (plus === 'fix') {
+            status_input.val(2);
+        } else if (plus === 'revert') {
+            status_input.val(0);
+        } else if (plus === 'close') {
+            closed_input.val(1);
+        }
+    });
+
     app.addListener('openTask', function(task){
         list_id_input.val(task.list.id);
         task_id_input.val(task.id);
         registrant_input.val(app.util.getRegistrant(task.list));
+        status_input.val('');
+        closed_input.val('');
         list_name.text(task.list.name);
         task_name.text(task.name);
         textarea.val('');
         textarea.attr('disabled', false);
         button.attr('disabled', true);
+        buttons.each(function(i, element){
+            var ele = $(element);
+            var plus = ele.data('plus');
+            if (plus === 'fix') {
+                ele.attr('disabled', !(!task.closed && task.status !== 2));
+            } else if (plus === 'revert') {
+                ele.attr('disabled', !(!task.closed && task.status === 2));
+            } else if (plus === 'close') {
+                ele.attr('disabled', !(!task.closed && task.status === 2));
+            }
+        });
         ul.empty();
         var li = $(template);
         li.find('.icon:first').append(app.util.getIcon(task.registrant, 32));
         li.find('.icon:last').remove();
         li.find('.name').text(app.util.getName(task.registrant));
-        li.find('.message').text(app.data.messages.data('text-create-task-' + app.env.lang));
+        li.find('.status').text(app.data.messages.data('text-create-task-' + app.env.lang));
+        li.find('.message').remove();
         li.find('.date').text(app.date.relative(task.created_on));
         li.prependTo(ul);
         $.each(task.actions, function(i, comment){
@@ -786,9 +811,21 @@ app.setup.rightColumn = function(ele){
                 li.addClass('salvage');
                 li.find('.icon:last').remove();
             }
-            if (comment.action) {
-                li.find('.message').text(
+            if (comment.action === 'comment') {
+                li.find('.status').remove();
+            } else {
+                li.find('.status').text(
                     app.data.messages.data('text-' + comment.action + '-' + app.env.lang));
+                if (comment.action === 'start-task' || comment.action === 'fix-task') {
+                    li.find('.status').addClass('success');
+                } else if (comment.action === 'close-task') {
+                    li.find('.status').addClass('closed');
+                } else if (comment.action === 'reopen-task') {
+                    li.find('.status').addClass('important');
+                }
+            }
+            if (!comment.message) {
+                li.find('.message').remove();
                 li.find('.icon:last').remove();
             } else {
                 li.find('.message').html(
@@ -836,6 +873,15 @@ app.setup.rightColumn = function(ele){
         task_name.text('-');
     });
 }
+app.setup.registerCommentPlus = function(ele){
+    var update = ele.data('update');
+    app.addListener('openTask', function(task){
+        
+    });
+    ele.click(function(){
+        
+    });
+}
 
 app.setup.listname = function(ele){
     app.addListener('openList', function(list){
@@ -855,10 +901,10 @@ app.setup.publicListWindow = function(ele){
         ele.find('input').each(function(){
             var input = $(this);
             if (input.attr('name') === 'rss' && app.env.lang === 'ja') {
-                input.val('https://tasks.7kai.org/public/'
+                input.val(location.protocol + '//' + location.host + '/public/'
                     + list.public_code + '/rss?lang=ja');
             } else {
-                input.val('https://tasks.7kai.org/public/'
+                input.val(location.protocol + '//' + location.host + '/public/'
                     + list.public_code + '/' + input.attr('name'));
             }
         });
@@ -1546,8 +1592,7 @@ app.submit.registerTask = function(form){
                 due: due,
                 status: 0,
                 closed: 0,
-                comments: [],
-                history: [],
+                actions: [],
                 created_on: time,
                 updated_on: time,
                 salvage: true
@@ -1603,7 +1648,8 @@ app.submit.registerComment = function(form){
             app.dom.reset(form);
             var task = app.data.task_map[task_id];
             if (task) {
-                task.comments.push({
+                task.actions.push({
+                    action: 'comment',
                     code: registrant,
                     message: message,
                     time: (new Date()).getTime(),

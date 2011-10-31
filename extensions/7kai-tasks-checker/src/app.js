@@ -243,17 +243,10 @@ app.api.fetch = function(option){
                 if (app.util.isNoticeTask(task)) {
                     actions.push(task);
                 }
-                $.each(task.comments, function(iii, comment){
+                $.each(task.actions, function(iii, comment){
                     comment.task = task;
-                    comment.action = 'create-comment';
                     if (app.util.isNoticeAction(comment)) {
                         actions.push(comment);
-                    }
-                });
-                $.each(task.history, function(iii, history){
-                    history.task = task;
-                    if (app.util.isNoticeAction(history)) {
-                        actions.push(history);
                     }
                 });
             });
@@ -261,9 +254,6 @@ app.api.fetch = function(option){
                 app.data.if_modified_since = list.actioned_on;
                 localStorage.setItem('org.7kai.tasks.if_modified_since', list.actioned_on);
             }
-        });
-        actions.sort(function(a, b){
-            return Number(b.time) - Number(a.time);
         });
         var notifications = $.grep(actions, function(action){
             return (Number(action.time) > option.data.if_modified_since);

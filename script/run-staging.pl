@@ -6,4 +6,4 @@ exec /home/aska/perl5/perlbrew/perls/perl-5.14.2/bin/start_server \
 -- /home/aska/perl5/perlbrew/perls/perl-5.14.2/bin/plackup \
 -E staging \
 -s Starlet \
--a /home/aska/stage/7kai-Tasks/app.psgi
+-a /home/aska/Dropbox/product/7kai-Tasks/app.psgi

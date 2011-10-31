@@ -1,3 +1,4 @@
+"use strict";
 (function(ns, w, d) {
 
 var app = ns.app;
