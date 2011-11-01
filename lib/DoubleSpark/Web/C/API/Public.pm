@@ -114,10 +114,10 @@ sub rss {
     for my $task (@{ $list->data->{tasks} }) {
 
         push @actions, {
-            task => $task,
-            type => 'create-task',
-            code => $task->{registrant},
-            time => $task->{created_on}
+            task   => $task,
+            action => 'create-task',
+            code   => $task->{registrant},
+            time   => $task->{created_on}
         };
 
         push @actions, @{ $task->{actions} };
