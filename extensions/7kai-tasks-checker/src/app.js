@@ -8,7 +8,7 @@ var app = ns.app = {
         normal_icon: 'icon-19.png',
         notify_icon: 'icon-19n.png',
         api_url: 'https://tasks.7kai.org/api/1/account/me',
-        site_url: 'https://tasks.7kai.org',
+        site_url: 'https://tasks.7kai.org/',
         interval: 300000,
         lang: (/^ja/.test(navigator.language) ? 'ja' : 'en')
     },
@@ -131,7 +131,7 @@ app.click.openSiteMini = function(){
 app.chrome.findTab = function(url, callback) {
     chrome.tabs.getAllInWindow(undefined, function(tabs) {
         for (var i = 0, tab; tab = tabs[i]; i++) {
-            if (tab.url && tab.url.substr(0, url.length) === url) {
+            if (tab.url && tab.url === url) {
                 callback(tab);
                 return;
             }
