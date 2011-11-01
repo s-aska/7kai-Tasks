@@ -1370,7 +1370,7 @@ app.setup.due = function(ele, task){
             ele.addClass('over');
         }
     } else {
-        ele.text('-');
+        ele.text('');
     }
 }
 app.setup.recent = function(ele, task){
