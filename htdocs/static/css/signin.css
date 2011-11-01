@@ -33,3 +33,6 @@ footer a {
     display: inline-block;
     margin-right: 6px;
 }
+a, button, label {
+    cursor: pointer;
+}

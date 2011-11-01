@@ -109,6 +109,12 @@ ul.tasks li.salvage {
 ul.tasks li div {
     float: left;
 }
+ul.tasks li > div.icon {
+    margin-right: 2px;
+}
+ul.tasks li > div.delete {
+    margin-right: 0;
+}
 ul.tasks li div.human {
     height: 16px;
 }

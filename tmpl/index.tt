@@ -80,10 +80,15 @@
 <div
   class="modal"
   data-setup="showable"
-  data-showable='{"id":"signin","show":{"effect":"fade"}}'
+  data-showable='{"id":"signin","show":{"effect":"fade"},"hide":{"effect":"fade"}}'
 >
   <div class="modal-header">
     <h3>Sign In</h3>
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"signin"}'
+    >×</a>
   </div>
   <div class="modal-body">
     <div
@@ -92,7 +97,7 @@
       data-tab='{"id":"social","group":"signin"}'
     >
       <form method="post" action="/signin/twitter/signin">
-        <div><button class="btn large primary">Connect with Twitter</button></div>
+        <div><button class="btn large primary"style="width: 190px;">Connect with Twitter</button></div>
       </form>
       <form method="post" action="/signin/facebook/signin">
         <div><button class="btn large primary">Connect with Facebook</button></div>
