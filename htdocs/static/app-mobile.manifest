@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# version 1.57
+# version 1.58
 CACHE:
 /static/css/bootstrap-1.3.0.min.css
 /static/css/app-base.css
@@ -10,7 +10,6 @@ CACHE:
 /static/js/spin.min.js
 /static/js/app-core.js
 /static/js/app-base.js
-/static/js/app-base-signin.js
 /static/js/app-base-viewer.js
 /static/js/app-mobile-viewer.js
 /static/img/address.png
