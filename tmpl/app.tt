@@ -14,6 +14,7 @@
 <script src="/static/js/app-base.js"></script>
 <script src="/static/js/app-base-viewer.js"></script>
 <script src="/static/js/app-page-viewer.js"></script>
+<script src="/static/js/app-gantt-viewer.js"></script>
 </head>
 <body>
 <div class="topbar" data-setup="topBar">
@@ -92,6 +93,36 @@
             >0</span>)
           </a>
         </li>
+        <li
+          class="menu"
+          data-setup="menu"
+        >
+          <a
+            class="menu"
+            data-setup="localize"
+            data-text-ja="モード"
+          >Mode</a>
+          <ul class="menu-dropdown" style="display: none; ">
+            <li>
+              <a
+                data-setup="tab.menu"
+                data-tab='{"group":"viewer","id":"list"}'
+              >List View</a>
+            </li>
+            <!-- <li>
+              <a
+                data-setup="tab.menu"
+                data-tab='{"group":"viewer","id":"forum"}'
+              >Forum View</a>
+            </li> -->
+            <li>
+              <a
+                data-setup="tab.menu"
+                data-tab='{"group":"viewer","id":"gantt"}'
+              >Gantt View</a>
+            </li>
+          </ul>
+        </li>
       </ul>
       <ul class="nav secondary-nav">
         <!-- <li class="">
@@ -166,7 +197,10 @@
     </div>
   </div>
 </div>
-<div class="row">
+<div class="row"
+  data-setup="tab.content"
+  data-tab='{"group":"viewer","id":"list"}'
+>
   <div
     class="span4 columns leftColumn"
     data-setup="stretch,leftColumn"
@@ -614,6 +648,132 @@
           </div>
         </li>
       </ul>
+    </div>
+  </div>
+</div>
+<div
+  class="row"
+  style="display: none;"
+  data-setup="tab.content"
+  data-tab='{"group":"viewer","id":"forum"}'
+>
+  <div
+    class="span18 columns leftColumn"
+    data-setup="stretch"
+  >
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <ul class="nav">
+            <li class="menu" data-setup="menu">
+              <a class="menu list-name">now loading...</a>
+              <ul
+                class="menu-dropdown lists"
+                style="display: none"
+              >
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+<div
+  class="row"
+  style="display: none;"
+  data-setup="tab.content"
+  data-tab='{"group":"viewer","id":"gantt"}'
+>
+  <div
+    class="span18 columns leftColumn"
+    data-setup="stretch"
+  >
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <ul class="nav">
+            <li class="menu" data-setup="menu">
+              <a
+                class="menu list-name"
+                data-setup="listname"
+              >now loading...</a>
+              <ul
+                class="menu-dropdown lists"
+                style="display: none"
+                data-setup="listmenu"
+              >
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav secondary-nav">
+            <li><a
+              data-setup="prevWeek"
+            >≪ previous</a>
+            </li>
+            <li><a
+              data-setup="nextWeek"
+            >next ≫</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div style="position: relative;">
+      <div
+        id="ganttchartSheet"
+        class="ganttchart clearfix"
+        data-setup="ganttchartSheet"
+      >
+        <div class="month">
+          <h1>August 2011</h1>
+          <div class="days clearfix">
+            <div class="day"><h2>1</h2></div>
+            <div class="day"><h2>2</h2></div>
+            <div class="day"><h2>3</h2></div>
+            <div class="day"><h2>4</h2></div>
+            <div class="day holiday"><h2>5</h2></div>
+            <div class="day holiday"><h2>6</h2></div>
+            <div class="day"><h2>7</h2></div>
+            <div class="day"><h2>8</h2></div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="gantttasks"
+        data-setup="stretch"
+        data-stretch='{"offset":140}'
+      >
+        <ul
+          class="gantttasks unstyled"
+          data-setup="ganttchartTasks"
+        >
+          <li class="clearfix">
+            <div
+              class="left icon icon-tasks-off" 
+              data-setup="status"
+            ></div>
+            <div
+              class="left icon icon-star-off" 
+              data-setup="star"
+            ></div>
+            <div
+              class="left name" 
+              data-setup="name"
+            >牛乳を買う</div>
+            <div
+              class="humanContainer"
+            >
+              <div
+                class="due human"
+                data-setup="human"
+              ></div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

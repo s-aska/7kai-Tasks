@@ -1,5 +1,5 @@
 "use strict";
-(function(ns, w, d) {
+(function(ns, w, d, $) {
 
 var app = ns.app;
 
@@ -684,8 +684,15 @@ app.setup.starCounter = function(ele){
     var count = 0;
     app.addListener('registerTask', function(task){
         // 初回かつOn
-        if (!task.before && app.util.taskFilter(task, {star: 1})) {
+        if ((!task.before || !app.util.taskFilter(task.before, {star: 1}))
+            && app.util.taskFilter(task, {star: 1})) {
             count++;
+            ele.text(count);
+        }
+        else if (task.before
+            && app.util.taskFilter(task.before, {star: 1})
+            && !app.util.taskFilter(task, {star: 1})) {
+            count--;
             ele.text(count);
         }
     });
@@ -745,13 +752,16 @@ app.setup.rightColumn = function(ele){
             if (!app.data.current_task) {
                 return;
             }
+            if (!ele.is(':visible')) {
+                return;
+            }
             if (e.keyCode === 39) { // right
                 e.preventDefault();
                 ele.find('textarea:first').focus();
             }
             return;
         }
-        if (e.keyCode === 72) { // right
+        if (e.keyCode === 72) { // h
             e.preventDefault();
             if ($('#shotcut-key').is(':visible')) {
                 app.fireEvent('selectTab', 'rightColumn', 'comments');
@@ -886,6 +896,30 @@ app.setup.registerCommentPlus = function(ele){
 app.setup.listname = function(ele){
     app.addListener('openList', function(list){
         ele.text(list.name);
+    });
+}
+app.setup.listmenu = function(ul){
+    var li_cache = {};
+    ul.empty();
+    app.addListener('registerList', function(list){
+        var li = $('<li/>')
+            .data('id', list.id)
+            .append(
+                $('<a/>').text(list.name).click(function(){
+                    app.fireEvent('openList', list);
+                })
+            );
+        if (list.id in li_cache) {
+            li_cache[list.id].after(li);
+            li_cache[list.id].remove();
+        } else {
+            li.prependTo(ul);
+        }
+        li_cache[list.id] = li;
+    });
+    app.addListener('clear', function(){
+        ul.empty();
+        li_cache = {};
     });
 }
 
@@ -1114,7 +1148,11 @@ app.setup.tasks = function(ul){
             } else {
                 if (li.data('visible')) {
                     li.data('visible', false);
-                    li.slideUp('fast');
+                    if (ul.is(':visible')) {
+                        li.slideUp('fast');
+                    } else {
+                        li.hide();
+                    }
                 }
                 if (app.data.current_task && app.data.current_task.id === task.id) {
                     app.fireEvent('missingTask');
@@ -1167,6 +1205,9 @@ app.setup.tasks = function(ul){
             return;
         }
         if (e.keyCode === 38) { // Up
+            if (!ul.is(':visible')) {
+                return;
+            }
             var next;
             if (app.data.current_task) {
                 next = taskli_map[app.data.current_task.id].prevAll(':visible:first');
@@ -1184,6 +1225,9 @@ app.setup.tasks = function(ul){
                 app.fireEvent('openPrevList');
             }
         } else if (e.keyCode === 40) { // Down
+            if (!ul.is(':visible')) {
+                return;
+            }
             var next;
             if (app.data.current_task) {
                 next = taskli_map[app.data.current_task.id].nextAll(':visible:first');
@@ -1204,9 +1248,13 @@ app.setup.tasks = function(ul){
             return;
         } else if (e.keyCode === 37) { // Left
             var task = app.data.current_task;
-            var date = task.due_date || new Date();
-            date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
-            var due = app.date.mdy(date);
+            var today = new Date();
+            var due;
+            if (task.due_date && task.due_date.getTime() > today.getTime()) {
+                due = app.date.mdy(new Date(task.due_date.getTime() - (24 * 60 * 60 * 1000)));
+            } else {
+                due = '';
+            }
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
@@ -1215,8 +1263,13 @@ app.setup.tasks = function(ul){
             });
         } else if (e.keyCode === 39) { // Right
             var task = app.data.current_task;
-            var date = task.due_date || new Date();
-            date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
+            var today = new Date();
+            var date;
+            if (task.due_date && task.due_date.getTime() > today.getTime()) {
+                date = new Date(task.due_date.getTime() + (24 * 60 * 60 * 1000));
+            } else {
+                date = new Date(today.getTime() + (24 * 60 * 60 * 1000));
+            }
             var due = app.date.mdy(date);
             app.api.task.update({
                 list_id: task.list.id,
@@ -1663,4 +1716,4 @@ app.submit.registerComment = function(form){
     });
 }
 
-})(this, this, document);
+})(this, window, document, jQuery);

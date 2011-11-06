@@ -33,30 +33,6 @@ app.addListener('orientationchange', function(){
 });
 
 // ----------------------------------------------------------------------
-app.setup.listmenu = function(ul){
-    var li_cache = {};
-    ul.empty();
-    app.addListener('registerList', function(list){
-        var li = $('<li/>')
-            .data('id', list.id)
-            .append(
-                $('<a/>').text(list.name).click(function(){
-                    app.fireEvent('openList', list);
-                })
-            );
-        if (list.id in li_cache) {
-            li_cache[list.id].after(li);
-            li_cache[list.id].remove();
-        } else {
-            li.prependTo(ul);
-        }
-        li_cache[list.id] = li;
-    });
-    app.addListener('clear', function(){
-        ul.empty();
-        li_cache = {};
-    });
-}
 app.setup.bottommenu = function(ul){
     var center = ul.find('li.center');
     var width = $(w).width();

@@ -19,3 +19,4 @@ src-ld*
 *-ld.sh
 blib
 app.pid
+htdocs/static/viewer

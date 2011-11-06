@@ -206,6 +206,97 @@ ul.comments li .date {
     border-left: 1px solid gray;
 }
 
+/********** ganttchart **********/
+.ganttchart {
+    position: absolute;
+    left: 236px;
+    top: 0;
+    background-color: white;
+}
+.ganttchart .month {
+    float: left;
+}
+.ganttchart h1 {
+    font-size: 12px;
+    line-height: 12px;
+    margin: 0;
+    padding: 4px 0;
+    text-align: center;
+    border-left: 1px solid #999999;
+}
+.ganttchart .days {
+    
+}
+.ganttchart .day {
+    float: left;
+    border-left: 1px solid #dddddd;
+    height: 1200px;
+    background-color: white;
+}
+.ganttchart .holiday {
+    background-color: #efefef;
+}
+.ganttchart .firstday {
+    border-left: 1px solid #999999;
+}
+.ganttchart .today {
+    background-color: rgba(252,252,215,0.8);
+}
+.ganttchart .day h2 {
+    font-size: 10px;
+    line-height: 10px;
+    font-weight: normal;
+    color: #999999;
+    font-family: arial;
+    margin: 0;
+    padding: 2px 0;
+    width: 22px;
+    text-align: center;
+    background-color: #dddddd;
+}
+.ganttchart .holiday h2 {
+    background-color: #eeeeee;
+}
+.gantttasks {
+    position: absolute;
+    top: 40px;
+    width: 1060px;
+    overflow-y: auto;
+}
+.gantttasks ul {
+    top: 0;
+}
+.gantttasks li {
+    position: relative;
+    margin-left: 10px;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+.gantttasks li:hover {
+    background-color: rgba(252,252,215,0.6);
+}
+.gantttasks li.selected {
+    background-color: rgba(252,252,215,0.8);
+}
+.gantttasks li > div.name {
+    max-width: 180px;
+    word-wrap: break-word;
+}
+.gantttasks li > div.humanContainer {
+    position: absolute;
+    left: 230px;
+    width: 780px;
+}
+.gantttasks li div.due {
+    position: absolute;
+    top: 1px;
+    float: left;
+    cursor: pointer;
+}
+.gantttasks li > .left {
+    margin-left: 2px;
+}
+
 /********** scrollbar **********/
 ul::-webkit-scrollbar {
     width: 6px;

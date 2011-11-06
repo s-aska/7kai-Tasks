@@ -12,6 +12,13 @@ var app = ns.app = {
     REGEXP: {
         URL: new RegExp('(?:https?://[\\x21-\\x7e]+)', 'g')
     },
+    MONTH_NAMES: [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'],
+    MONTH_NAMES_SHORT: [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    
     // Environment
     env: {
         token: '',
@@ -127,6 +134,11 @@ app.date.relative = function(epoch){
         var s = day > 1 ? 's' : '';
         return day + ' day' + s + ' ago';
     }
+}
+app.date.relativeDays = function(date1, date2){
+    var msec = date1.getTime() - date2.getTime();
+    var days = parseInt((msec / 1000 / 60 / 60 / 24), 10);
+    return days;
 }
 app.date.ymd = function(date){
     var month = date.getMonth() + 1;
