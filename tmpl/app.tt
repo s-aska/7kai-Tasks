@@ -706,6 +706,49 @@
               >
               </ul>
             </li>
+            <li class="menu" data-setup="menu">
+              <a
+                class="menu"
+                data-setup="localize"
+                data-text-ja="並び替え"
+              >Sort</a>
+              <ul class="menu-dropdown" style="display: none; ">
+                <li>
+                  <a
+                    data-setup="localize,click"
+                    data-click="sortTask"
+                    data-sort-column="name"
+                    data-text-ja="タイトル"
+                  >Title</a>
+                </li>
+                <li>
+                  <a
+                    data-setup="localize,click"
+                    data-click="sortTask"
+                    data-sort-column="updated_on"
+                    data-sort-reverse="true"
+                    data-text-ja="更新日時"
+                  >Updated</a>
+                </li>
+                <li>
+                  <a
+                    data-setup="localize,click"
+                    data-click="sortTask"
+                    data-sort-column="due_epoch"
+                    data-sort-reverse="true"
+                    data-text-ja="期日"
+                  >Due</a>
+                </li>
+                <li>
+                  <a
+                    data-setup="localize,click"
+                    data-click="sortTask"
+                    data-sort-column="person"
+                    data-text-ja="キーパーソン"
+                  >Person</a>
+                </li>
+              </ul>
+            </li>
           </ul>
           <ul class="nav secondary-nav">
             <li><a
