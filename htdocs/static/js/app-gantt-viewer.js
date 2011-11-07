@@ -212,13 +212,13 @@ app.setup.ganttchartTasks = function(ul){
         if (document.activeElement.tagName !== 'BODY') {
             return;
         }
+        if (!ul.is(':visible')) {
+            return;
+        }
         if (e.ctrlKey || e.altKey || e.metaKey) {
             return;
         }
         if (e.shiftKey) {
-            if (!ul.is(':visible')) {
-                return;
-            }
             if (e.keyCode === 37) { // left
                 e.preventDefault();
                 app.fireEvent('initGanttchart',
