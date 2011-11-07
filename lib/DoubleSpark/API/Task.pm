@@ -109,9 +109,9 @@ sub update {
         # by form
         if (defined $req->param('name')) {
             $task->{assign} = [ $req->param('assign') ];
-             unless ($c->stash->{date_loose}) {
-                $task->{due} = '';
-            }
+        }
+        if (defined $req->param('due') && !$c->stash->{date_loose}) {
+            $task->{due} = '';
         }
         if ($action) {
             push @{$task->{actions}}, {
