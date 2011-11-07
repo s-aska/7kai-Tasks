@@ -400,7 +400,6 @@
                     data-setup="localize,click"
                     data-click="sortTask"
                     data-sort-column="due_epoch"
-                    data-sort-reverse="true"
                     data-text-ja="期日"
                   >Due</a>
                 </li>
@@ -735,7 +734,6 @@
                     data-setup="localize,click"
                     data-click="sortTask"
                     data-sort-column="due_epoch"
-                    data-sort-reverse="true"
                     data-text-ja="期日"
                   >Due</a>
                 </li>
