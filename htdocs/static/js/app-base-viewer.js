@@ -214,6 +214,22 @@ app.addListener('receiveSign', function(){
     }, 300000);
 });
 
+$(w).bind('hashchange', function(){
+    var str = w.location.hash.match(/^#(\d+)-(\d+:\d+)$/)
+    if (str) {
+        var list_id = str[1];
+        var task_id = str[2];
+        if (list_id in app.data.list_map &&
+            (!app.data.current_list || list_id != app.data.current_list.id)) {
+            app.fireEvent('openList', app.data.list_map[list_id]);
+        }
+        if (task_id in app.data.task_map &&
+            (!app.data.current_task || task_id != app.data.current_task.id)) {
+            app.fireEvent('openTask', app.data.task_map[task_id]);
+        }
+    }
+});
+
 app.util.getIconUrl = function(code, size){
     var src;
     if (!navigator.onLine) {
