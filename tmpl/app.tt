@@ -874,7 +874,7 @@
             data-text-ja="メンバー (Twitter)"
           >Member (Twitter)</label>
           <div class="input owner">
-            <div class="input-prepend">
+            <div class="input-prepend" style="height: 28px">
               <span class="add-on">@</span>
               <input
                 type="text"
@@ -1086,7 +1086,7 @@
             >
           </div>
         </div>
-        <div class="clearfix">
+        <div class="clearfix team">
           <label for=""
             data-setup="localize"
             data-text-ja="依頼者"
@@ -1097,7 +1097,7 @@
         </div>
       </div>
       <div class="left" style="margin-left: 20px;">
-        <div class="clearfix">
+        <div class="clearfix team">
           <label for=""
             data-setup="localize"
             data-text-ja="担当者"

@@ -1,5 +1,5 @@
 "use strict";
-(function(ns, w, d) {
+(function(ns, w, d, $) {
 
 var app = ns.app;
 
@@ -493,6 +493,9 @@ app.submit.registerList = function(form){
     })
     .done(function(data){
         if (data.success === 1) {
+            if (data.list.id in app.data.list_map) {
+                $.extend(app.data.list_map[data.list.id], data.list);
+            }
             app.fireEvent('registerList', data.list);
             app.fireEvent('openList', data.list);
             app.dom.reset(form);
@@ -564,4 +567,4 @@ app.setup.receiver = function(ele){
     }, false);
 }
 
-})(this, this, document);
+})(this, window, document, jQuery);

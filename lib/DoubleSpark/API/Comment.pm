@@ -91,7 +91,7 @@ sub delete {
     for my $task (@{ $list->data->{tasks} }) {
         next if $task->{id} ne $task_id;
         @{$task->{actions}} = grep {
-            $_->{id} ne $comment_id
+            ($_->{id} || '') ne $comment_id
         } @{$task->{actions}};
         $target_task = $task;
         last;

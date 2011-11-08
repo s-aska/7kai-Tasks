@@ -10,6 +10,7 @@
 <script src="/static/js/jquery-ui-1.8.13.js"></script>
 <script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>
+<script src="/static/js/app-base-signin.js"></script>
 </head>
 <body id="index-page">
 <div class="topbar">

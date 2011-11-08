@@ -8,7 +8,7 @@ sub index {
 
     if (my $sign = $c->sign) {
         $c->account->update({ authenticated_on => \'now()' });
-        $c->render('app.tt', { sign => $sign });
+        $c->render('app.tt');
     } else {
         $c->render('index.tt');
     }

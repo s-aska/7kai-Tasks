@@ -11,7 +11,7 @@ sub create {
     my $res = DoubleSpark::Validator->validate($c, $req,
         list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
         name      => [qw/NOT_NULL/, [qw/LENGTH 1 50/]],
-        requester  => [qw/NOT_NULL MEMBER/],
+        requester  => [qw/MEMBER/],
         registrant => [qw/NOT_NULL OWNER/],
         due        => [qw/DATE_LOOSE/],
         { assign => [qw/assign/] }, [qw/MEMBERS/],
@@ -19,7 +19,7 @@ sub create {
     return unless $res;
 
     my $name       = $req->param('name');
-    my $requester  = $req->param('requester');
+    my $requester  = $req->param('requester') || $req->param('registrant');
     my $registrant = $req->param('registrant');
     my @assign     = $req->param('assign');
     my $due        = $c->stash->{date_loose};

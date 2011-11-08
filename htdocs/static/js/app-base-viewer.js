@@ -51,6 +51,7 @@ app.addListener('clearList', function(list){
 });
 app.addListener('openTask', function(task){
     app.data.current_task = task;
+    w.location.hash = task.list.id + '-' + task.id;
 });
 app.addListener('missingTask', function(){
     app.data.current_task = null;
@@ -175,12 +176,28 @@ app.addListener('reload', function(){
     app.api.account.me({ reset: true });
 });
 app.addListener('setup', function(option){
+    var option = { setup: true };
+    var hash = w.location.hash;
+    if (!hash.length) {
+        hash = localStorage.getItem('hash');
+        if (hash) {
+            w.location.hash = hash;
+            localStorage.removeItem('hash');
+        }
+    }
+    if (hash) {
+        var str = hash.match(/^#(\d+)-(\d+:\d+)$/)
+        if (str) {
+            option.list_id = str[1];
+            option.task_id = str[2];
+        }
+    }
     if (navigator.onLine){
-        app.api.account.me({ setup: true });
+        app.api.account.me(option);
     } else {
         var data = localStorage.getItem("me");
         if (data) {
-            app.util.buildMe({ setup: true }, JSON.parse(data));
+            app.util.buildMe(option, JSON.parse(data));
         }
     }
 });
@@ -1477,33 +1494,39 @@ app.setup.registerTaskWindow = function(form){
     var setup = function(list){
         assign_list.empty();
         requester_select.empty();
-        var assigns = [list.owner].concat(list.members);
-        for (var i = 0, max_i = assigns.length; i < max_i; i++) {
-            var assign = assigns[i];
-            var friend = app.data.users[assign];
-            var li = $(assign_template);
-            if (friend && friend.icon) {
-                li.find('img').attr('src', friend.icon);
-            } else {
-                li.find('img').attr('src', '/static/img/address.png');
-            }
-            var name = friend ? friend.name : assign;
-            li.find('div.name').text(name);
-            li.find('input').val(assign);
-            li.find('input[type="checkbox"]')
-                .focus(function(){$(this).parent().addClass('focused')})
-                .blur(function(){$(this).parent().removeClass('focused')});
-            li.appendTo(assign_list);
-
-            $('<option/>')
-                .attr('value', assign)
-                .text(name)
-                .appendTo(requester_select);
-        }
-
-        // 依頼者のデフォルトは自分
+        
         var registrant = app.util.getRegistrant(list);
-        requester_select.val(registrant);
+        if (list.members.length) {
+            form.find('.team').show();
+            var assigns = [list.owner].concat(list.members);
+            for (var i = 0, max_i = assigns.length; i < max_i; i++) {
+                var assign = assigns[i];
+                var friend = app.data.users[assign];
+                var li = $(assign_template);
+                if (friend && friend.icon) {
+                    li.find('img').attr('src', friend.icon);
+                } else {
+                    li.find('img').attr('src', '/static/img/address.png');
+                }
+                var name = friend ? friend.name : assign;
+                li.find('div.name').text(name);
+                li.find('input').val(assign);
+                li.find('input[type="checkbox"]')
+                    .focus(function(){$(this).parent().addClass('focused')})
+                    .blur(function(){$(this).parent().removeClass('focused')});
+                li.appendTo(assign_list);
+
+                $('<option/>')
+                    .attr('value', assign)
+                    .text(name)
+                    .appendTo(requester_select);
+            }
+            // 依頼者のデフォルトは自分
+            requester_select.val(registrant);
+        } else {
+            form.find('.team').hide();
+        }
+        
         registrant_input.val(registrant);
         task_id_input.val('');
         list_id_input.val(list.id);
