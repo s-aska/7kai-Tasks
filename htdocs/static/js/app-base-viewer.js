@@ -33,6 +33,9 @@ app.addEvents('checkMute');
 
 app.addEvents('clickNotification');
 
+app.addEvents('receiveMe'); // receive me from api
+
+
 // イベントのキャッシュコントロール
 app.addListener('openList', function(list){
     app.data.current_list = list;
@@ -480,6 +483,8 @@ app.util.buildMe = function(option, data){
             app.fireEvent('sortTask', 'updated', true);
         }
     }
+
+    app.fireEvent('receiveMe', data);
 }
 
 app.api.account.me = function(option){
@@ -1576,6 +1581,71 @@ app.setup.registerTaskWindow = function(form){
             due_input.val(app.date.ymd(task.due_date));
         }
         app.dom.show(form);
+    });
+}
+app.setup.timeline = function(ul){
+    var template = ul.html();
+    ul.empty();
+    app.addListener('receiveMe', function(data){
+        var actions = [];
+        $.each(data.lists, function(i, list){
+            $.each(list.tasks, function(ii, task){
+                task.list = list;
+                if (task.due) {
+                    var degits = task.due.match(/[0-9]+/g);
+                    task.due_epoch = (new Date(degits[2], degits[0] - 1, degits[1])).getTime();
+                }
+                task.action = 'create-task';
+                task.code   = task.registrant;
+                task.time   = task.created_on;
+                if (!app.util.findMe([task.registrant])) {
+                    actions.push(task);
+                }
+                $.each(task.actions, function(iii, action){
+                    action.task = task;
+                    if (!app.util.findMe([action.code])) {
+                        actions.push(action);
+                    }
+                });
+            });
+        });
+        actions.sort(function(a, b){
+            return b.time - a.time;
+        });
+        if (!actions.length) {
+            ul.append($('<li/>').text(ul.data('text-empty-' + app.env.lang)));
+        }
+        $.each(actions, function(i, action){
+            var li = $(template);
+            li.find('.icon').append(app.util.getIcon(action.code, 32));
+            li.find('.listname').text(action.task.list.name);
+            li.find('.taskname').text(action.task.name);
+            li.find('.name').text(app.util.getName(action.code));
+            if (action.message) {
+                li.find('.message').html(
+                    app.util.autolink(action.message).replace(/\r?\n/g, '<br />'));
+            }
+            li.find('.date').text(app.date.relative(action.time));
+            li.find('.status').text(
+                app.data.messages.data('text-' + action.action + '-' + app.env.lang));
+            if (action.action === 'start-task' || action.action === 'fix-task') {
+                li.find('.status').addClass('success');
+            } else if (action.action === 'close-task') {
+                li.find('.status').addClass('closed');
+            } else if (action.action === 'reopen-task') {
+                li.find('.status').addClass('important');
+            }
+            li.click(function(e){
+                e.preventDefault();
+                app.fireEvent('selectTab', 'viewer', 'list');
+                app.fireEvent('openList', action.task.list);
+                app.fireEvent('openTask', action.task);
+            });
+            li.appendTo(ul);
+            if (i > 100) {
+                return false;
+            }
+        });
     });
 }
 

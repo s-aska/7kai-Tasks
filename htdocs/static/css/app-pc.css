@@ -176,6 +176,18 @@ ul.comments li .date {
     font-size: 10px;
 }
 
+.timeline > ul {
+    margin: 10px;
+}
+.timeline > ul li {
+    padding-top: 4px;
+    padding-left: 4px;
+    cursor: pointer;
+}
+.timeline > ul li:hover {
+    background-color: #fefecc;
+}
+
 /********** window **********/
 #register-list-window .member {
     display: none;

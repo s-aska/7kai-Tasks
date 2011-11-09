@@ -105,21 +105,24 @@
           <ul class="menu-dropdown" style="display: none; ">
             <li>
               <a
-                data-setup="tab.menu"
+                data-setup="localize,tab.menu"
                 data-tab='{"group":"viewer","id":"list"}'
-              >List View</a>
+                data-text-ja="タスク一覧"
+              >Task List</a>
             </li>
-            <!-- <li>
-              <a
-                data-setup="tab.menu"
-                data-tab='{"group":"viewer","id":"forum"}'
-              >Forum View</a>
-            </li> -->
             <li>
               <a
-                data-setup="tab.menu"
+                data-setup="localize,tab.menu"
+                data-tab='{"group":"viewer","id":"timeline"}'
+                data-text-ja="メンバータイムライン"
+              >Member Timeline</a>
+            </li>
+            <li>
+              <a
+                data-setup="localize,tab.menu"
                 data-tab='{"group":"viewer","id":"gantt"}'
-              >Gantt View</a>
+                data-text-ja="ガントチャート"
+              >Gantt Chart</a>
             </li>
           </ul>
         </li>
@@ -654,29 +657,47 @@
   class="row"
   style="display: none;"
   data-setup="tab.content"
-  data-tab='{"group":"viewer","id":"forum"}'
+  data-tab='{"group":"viewer","id":"timeline"}'
 >
   <div
-    class="span18 columns leftColumn"
+    class="span18 columns timeline"
     data-setup="stretch"
   >
     <div class="topbar">
       <div class="fill">
         <div class="container">
           <ul class="nav">
-            <li class="menu" data-setup="menu">
-              <a class="menu list-name">now loading...</a>
-              <ul
-                class="menu-dropdown lists"
-                style="display: none"
-              >
-              </ul>
+            <li>
+              <a
+                data-setup="localize"
+                data-text-ja="メンバータイムライン"
+              >Member Timeline</a>
             </li>
           </ul>
         </div>
       </div>
     </div>
-    
+    <ul
+      class="unstyled comments"
+      data-setup="stretch,timeline"
+      data-stretch='{"padding":116}'
+      data-text-empty-en="no member updates, Let's invite a member to the list."
+      data-text-empty-ja="メンバーの更新はありませんでした、[リストを編集...] からリストにメンバーを誘いましょう！"
+    >
+      <li
+        class="clearfix"
+        style="position: relative;"
+      >
+        <div class="icon sq32" style="position: absolute;"></div>
+        <div class="" style="margin-left: 40px;">
+          <span class="listname label notice"></span>
+          <span class="status label"></span>
+          <span class="taskname"></span>
+          <div class="message"></div>
+          <div><span class="date"></span><span class="name"></span></div>
+        </div>
+      </li>
+    </ul>
   </div>
 </div>
 <div
@@ -1796,6 +1817,9 @@
 
 <div
   data-setup="messages"
+
+  data-text-comment-en="comment"
+  data-text-comment-ja="コメント"
 
   data-text-create-task-en="create the task"
   data-text-create-task-ja="タスクを作成"
