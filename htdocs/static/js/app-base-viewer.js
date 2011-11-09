@@ -1595,11 +1595,13 @@ app.setup.timeline = function(ul){
                     var degits = task.due.match(/[0-9]+/g);
                     task.due_epoch = (new Date(degits[2], degits[0] - 1, degits[1])).getTime();
                 }
-                task.action = 'create-task';
-                task.code   = task.registrant;
-                task.time   = task.created_on;
                 if (!app.util.findMe([task.registrant])) {
-                    actions.push(task);
+                    actions.push({
+                        task: task,
+                        action: 'create-task',
+                        code: task.registrant,
+                        time: task.created_on
+                    });
                 }
                 $.each(task.actions, function(iii, action){
                     action.task = task;
