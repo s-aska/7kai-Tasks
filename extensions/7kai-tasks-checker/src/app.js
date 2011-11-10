@@ -1,7 +1,9 @@
 (function(ns, w, d) {
 
 var app = ns.app = {
-    
+    REGEXP: {
+        URL: new RegExp('(?:https?://[\\x21-\\x7e]+)', 'g')
+    },
     option: {
         signed_in_badge_color: {color: [208, 0, 24, 255]},
         error_badge_color: {color: [190, 190, 190, 255]},
@@ -131,7 +133,7 @@ app.click.openSiteMini = function(){
 app.chrome.findTab = function(url, callback) {
     chrome.tabs.getAllInWindow(undefined, function(tabs) {
         for (var i = 0, tab; tab = tabs[i]; i++) {
-            if (tab.url && tab.url === url) {
+            if (tab.url && tab.url.replace(/#.*$/, '') === url) {
                 callback(tab);
                 return;
             }
@@ -254,6 +256,9 @@ app.api.fetch = function(option){
                 app.data.if_modified_since = list.actioned_on;
                 localStorage.setItem('org.7kai.tasks.if_modified_since', list.actioned_on);
             }
+        });
+        actions.sort(function(a, b){
+            return b.time - a.time;
         });
         var notifications = $.grep(actions, function(action){
             return (Number(action.time) > option.data.if_modified_since);
@@ -408,6 +413,22 @@ app.date.relative = function(epoch){
         return day + ' day' + s + ' ago';
     }
 }
+app.util.autolink = function(text){
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(app.REGEXP.URL, function(url){
+        var a = d.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.appendChild(d.createTextNode(url));
+        var div = d.createElement('div');
+        div.appendChild(a);
+        return div.innerHTML;
+    });
+}
 
 // notify
 app.setup.notify = function(ele){
@@ -489,8 +510,14 @@ app.setup.popup = function(ele){
                 li.data('task-id', task.id);
                 li.find('img').attr('src', friend.icon);
                 li.find('.name').text(friend.name);
-                li.find('.action').text(action_name);
                 li.find('.list').text(task.list.name);
+                li.find('.action').text(action_name);
+                if ("message" in action) {
+                    li.find('.message').html(app.util.autolink(action.message));
+                    li.find('.message').append($('<br/>'));
+                } else {
+                    li.find('.message').remove();
+                }
                 li.find('.date').text(app.date.relative(action.time));
                 li.appendTo(ul);
             })

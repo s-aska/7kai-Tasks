@@ -42,7 +42,7 @@ ul {
 #popup-page article li {
     font-size: 11px;
     margin: 0 0 4px 0;
-    padding: 0;
+    padding: 0 0 2px 0;
     line-height: 1;
     cursor: pointer;
     font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
@@ -52,10 +52,13 @@ ul {
 }
 #popup-page article li img {
     display: block;
-    float: left;
+    position: absolute;
     width: 32px;
     height: 32px;
-    vertical-align: top;
+}
+#popup-page article li div {
+    margin-left: 36px;
+    min-height: 36px;
 }
 #popup-page article li span.screen_name {
     margin-left: 4px;
@@ -68,14 +71,18 @@ ul {
     color: #333333;
 }
 #popup-page article li span.list {
-    margin-left: 4px;
     font-weight: bold;
     color: #1E57FF;
 }
 #popup-page article li span.date {
     color: gray;
-    margin-left: 4px;
     font-size: 10px;
+}
+#popup-page article li span.message {
+    margin-bottom: 4px;
+    font-size: 12px;
+    line-height: 16px;
+    word-wrap: break-word;
 }
 #digest {
     display: none;
