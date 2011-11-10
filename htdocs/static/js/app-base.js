@@ -436,7 +436,7 @@ app.setup.tab.content = function(ele){
     });
 }
 app.setup.uiSortable = function(ele){
-    var option = ele.data('uiSortable');
+    var option = ele.data('ui-sortable');
     ele.sortable({
         cancel: '.nosortable',
         cursor: 'move',

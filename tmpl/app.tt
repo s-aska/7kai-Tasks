@@ -218,7 +218,7 @@
                 class="menu-dropdown lists"
                 style="display: none"
                 data-setup="uiSortable"
-                data-uiSortable='{"update":"sortable.list"}'
+                data-ui-sortable='{"update":"sortable.list"}'
               >
                 <li class="nosortable divider"></li>
                 <li class="nosortable"><a
