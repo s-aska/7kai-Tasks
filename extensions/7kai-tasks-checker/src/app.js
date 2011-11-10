@@ -457,15 +457,20 @@ app.setup.notify = function(ele){
 app.click.notification = function(ele){
     var list_id = ele.data('list-id');
     var task_id = ele.data('task-id');
-    app.util.openSite(function(tab){
-        chrome.tabs.update(tab.id, {selected: true});
-        chrome.tabs.sendRequest(tab.id, {
-            event: 'clickNotification',
-            option: {
-                list_id: list_id,
-                task_id: task_id
-            }
-        });
+    app.chrome.findTab(app.option.site_url, function(tab){
+        if (tab) {
+            chrome.tabs.update(tab.id, {selected: true}, function(tab){
+                chrome.tabs.sendRequest(tab.id, {
+                    event: 'clickNotification',
+                    option: {
+                        list_id: list_id,
+                        task_id: task_id
+                    }
+                });
+            });
+        } else {
+            chrome.tabs.create({url: app.option.site_url + '#' + list_id + '-' + task_id});
+        }
     });
 }
 
