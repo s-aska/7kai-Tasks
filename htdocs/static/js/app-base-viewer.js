@@ -1587,6 +1587,7 @@ app.setup.timeline = function(ul){
     var template = ul.html();
     ul.empty();
     app.addListener('receiveMe', function(data){
+        ul.empty();
         var actions = [];
         $.each(data.lists, function(i, list){
             $.each(list.tasks, function(ii, task){
