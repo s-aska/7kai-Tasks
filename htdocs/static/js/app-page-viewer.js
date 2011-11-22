@@ -129,7 +129,7 @@ app.setup.leftColumn = function(ele){
             alert('please select a list.');
             return;
         }
-        var method = checkbox.attr('checked') ? 'on' : 'off';
+        var method = checkbox.is(':checked') ? 'on' : 'off';
         app.api.account.update({
             ns: 'state',
             method: method,
@@ -139,7 +139,7 @@ app.setup.leftColumn = function(ele){
         .done(function(data){
             if (data.success === 1) {
                 app.data.state.mute = data.account.state.mute;
-                app.fireEvent('checkMute', list, checkbox.attr('checked'));
+                app.fireEvent('checkMute', list, checkbox.is(':checked'));
             } else {
                 // 現在 ステータスコード 200 の例外ケースは無い
             }
