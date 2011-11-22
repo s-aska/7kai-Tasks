@@ -129,7 +129,7 @@ app.setup.leftColumn = function(ele){
             alert('please select a list.');
             return;
         }
-        var method = checkbox.attr('checked') ? '+' : '-';
+        var method = checkbox.attr('checked') ? 'on' : 'off';
         app.api.account.update({
             ns: 'state',
             method: method,

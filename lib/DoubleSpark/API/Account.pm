@@ -61,9 +61,9 @@ sub update {
     }
     if ($method eq 'set') {
         $data->{$key} = $val=~/^\d+$/ ? int($val) : $val;
-    } elsif ($method eq '+') {
+    } elsif ($method eq 'on') {
         $data->{$key}->{$val}++;
-    } elsif ($method eq '-') {
+    } elsif ($method eq 'off') {
         delete $data->{$key}->{$val};
     }
     $account->update({

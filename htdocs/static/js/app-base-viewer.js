@@ -676,26 +676,6 @@ app.setup.switchClosed = function(ele){
         }
     });
 }
-app.setup.switchMute = function(ele){
-    ele.click(function(){
-        var method = app.data.state.mute[app.data.current_list.id] ? '-' : '+';
-        app.api.account.update({
-            ns: 'state',
-            method: method,
-            key: 'mute',
-            val: app.data.current_list.id
-        })
-        .done(function(data){
-            if (data.success === 1) {
-                app.data.state.mute = data.account.state.mute;
-                app.fireEvent('checkMute', app.data.current_list,
-                    (app.data.current_list.id in app.data.state.mute));
-            } else {
-                // 現在 ステータスコード 200 の例外ケースは無い
-            }
-        });
-    });
-}
 app.setup.taskCounter = function(ele){
     var count = 0;
     var condition = ele.data('counter-condition');
@@ -1393,9 +1373,9 @@ app.setup.star = function(ele, task){
     }
     ele.click(function(e){
         e.stopPropagation();
-        var method = '+';
+        var method = 'on';
         if (task.id in app.data.state.star) {
-            method = '-';
+            method = 'off';
             delete app.data.state.star[task.id];
             ele.removeClass('icon-star').addClass('icon-star-off');
         } else {
