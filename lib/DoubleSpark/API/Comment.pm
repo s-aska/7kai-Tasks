@@ -12,7 +12,7 @@ sub create {
     my $res = DoubleSpark::Validator->validate($c, $req,
         list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
         task_id    => [qw/NOT_NULL/],
-        message    => ['NOT_NULL', [qw/LENGTH 1 240/]],
+        message    => ['NOT_NULL', [qw/LENGTH 1 400/]],
         registrant => [qw/NOT_NULL OWNER/]
     );
     return unless $res;

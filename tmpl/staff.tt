@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>7kai Tasks</title>
+<link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
+<link rel="stylesheet" href="/static/css/staff.css" media="all">
+<script src="/static/js/jquery-1.6.4.min.js"></script>
+<script src="/static/js/jquery-ui-1.8.13.js"></script>
+<script src="/static/js/jquery.flot.min.js"></script>
+<script src="/static/js/jquery.flot.pie.min.js"></script>
+<script src="/static/js/h5utils.js"></script>
+<script src="/static/js/spin.min.js"></script>
+<script src="/static/js/app-core.js"></script>
+<script src="/static/js/app-base.js"></script>
+<script src="/static/js/staff.js"></script>
+</head>
+<body>
+<div class="topbar">
+  <div class="fill">
+    <div class="container">
+      <a class="brand" href="/">7kai Tasks</a>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="columns span10">
+      <h2>Staff Room</h2>
+      <ul class="tabs">
+        <li class="active">
+          <a
+            data-setup="localize,tab.menu"
+            data-text-ja="要望"
+            data-tab='{"id":"request","group":"main"}'
+          >Request</a>
+        </li>
+        <li>
+          <a
+            data-setup="localize,tab.menu"
+            data-text-ja="質問"
+            data-tab='{"id":"question","group":"main"}'
+          >Question</a>
+        </li>
+        <li>
+          <a
+            data-setup="localize,tab.menu"
+            data-text-ja="統計"
+            data-tab='{"id":"statistics","group":"main"}'
+          >Statistics</a>
+        </li>
+        <li>
+          <a
+            data-setup="localize,tab.menu"
+            data-text-ja="資料"
+            data-tab='{"id":"document","group":"main"}'
+          >Document</a>
+        </li>
+      </ul>
+      <div
+        data-setup="tab.content"
+        data-tab='{"id":"request","group":"main"}'
+      >
+        <form
+          class="form-stacked"
+          data-setup="submit"
+          data-submit="request"
+        >
+          <h3>Write Request</h3>
+          <div>
+            <textarea
+              style="width: 570px; margin-bottom: 10px;"
+              name="request"
+              data-setup="zoom"
+            ></textarea>
+          </div>
+          <div class="clearfix">
+            <label style="position: absolute">
+              <input type="checkbox" name="anonymous" value="1">
+              <span
+                data-setup="localize"
+                data-text-ja="匿名"
+              >anonymous</span>
+            </label>
+            <button
+              class="btn primary right"
+              data-setup="localize"
+              data-text-ja="投稿"
+            >Post</button>
+          </div>
+        </form>
+        <h3>Requests</h3>
+        <ul
+          class="unstyled"
+          data-setup="requests"
+        >
+          <li>
+            <article class="request">
+              <header>
+                <span class="label">Done</span> <span class="stars">&#9734;</span>
+              </header>
+              <figure>
+                <blockquote>now loading...</blockquote>
+                <p>by <span class="name">now loading...</span></p>
+              </figure>
+              <p>実装しました。</p>
+            </article>
+          </li>
+        </ul>
+      </div>
+      <div
+        style="display: none;"
+        data-setup="tab.content"
+        data-tab='{"id":"question","group":"main"}'
+      >
+        <form
+          class="form-stacked"
+          data-setup="submit"
+          data-submit="question"
+        >
+          <h3>Write Question</h3>
+          <div>
+            <textarea
+              style="width: 570px; margin-bottom: 10px;"
+              name="question"
+              data-setup="zoom"
+            ></textarea>
+          </div>
+          <div class="clearfix">
+            <button
+              class="btn primary right"
+              data-setup="localize"
+              data-text-ja="投稿"
+            >Post</button>
+          </div>
+        </form>
+        <h3>Q &amp; A</h3>
+        <ul data-setup="questions">
+          <li>
+            <article class="question">
+              <header></header>
+              <figure>
+                <blockquote>Q. </blockquote>
+              </figure>
+              <p>A. </p>
+            </article>
+          </li>
+        </ul>
+      </div>
+      <div
+        style="display: none;"
+        data-setup="tab.content,statistics"
+        data-tab='{"id":"statistics","group":"main"}'
+      >
+          <h3>Account</h3>
+          <ul>
+            <li>Active Account ... <span class="active_accounts"></span> (1 week)</li>
+            <li>Total Account ... <span class="total_accounts"></span></li>
+          </ul>
+          <div class="tw_vs_fb"></div>
+          <h3>List</h3>
+          <ul>
+            <li>Total List ... <span class="total_lists"></span></li>
+          </ul>
+      </div>
+      <div
+        style="display: none;"
+        data-setup="tab.content"
+        data-tab='{"id":"document","group":"main"}'
+      >
+          <h3>Talk</h3>
+          <ul>
+            <li>YAPC Asia 2011: <a href="http://yapcasia.org/2011/talk/21" target="_blank">How to Build One Page App</a> (20min)</li>
+          </ul>
+          <h3>Document</h3>
+          <ul>
+            <li>Source: <a href="https://github.com/s-aska/7kai-Tasks" target="_blank">https://github.com/s-aska/7kai-Tasks</a></li>
+            <li>Essence: <a href="http://doc.7kai.org/how-to-build-opa/TOP" target="_blank">http://doc.7kai.org/how-to-build-opa/TOP</a></li>
+          </ul>
+          <h3>History</h3>
+          <div class="history">
+            <h4>Start Project 2011/05/26</h4>
+              <img src="http://dl.dropbox.com/u/11475683/screen/tasks1.png" width="500">
+            <h4>v1.01 Bare Born release 2011/06/27</h4>
+              <img src="http://dl.dropbox.com/u/11475683/screen/tasks4.png" width="500">
+            <h4>v1.10 Bare Born release 2011/06/27</h4>
+              <img src="http://dl.dropbox.com/u/11475683/screen/tasks5.png" width="500">
+            <h4>v1.11 Bare Born release 2011/07/17</h4>
+              <img src="http://dl.dropbox.com/u/11475683/screen/tasks6.png" width="500">
+            <h4>v2.00 Orpheus release 2011/09/20</h4>
+              <img src="http://dl.dropbox.com/u/11475683/screen/tasks-ver2.0-1.png" width="500">
+        </div>
+      </div>
+    </div>
+    <div class="columns span6">
+      <p
+        data-setup="localize"
+        data-text-ja="ようこそ Staff Room へ。"
+      >Welcome to the Staff Room.</p>
+      <p
+        data-setup="localize"
+        data-text-ja="ここは品質改善のためのスペースです。"
+      >The space for quality improvement.</p>
+      <h4>Share</h4>
+      <ul>
+        <li>Facebook: <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Share</a></li>
+        <li>Twitter: <a href="https://twitter.com/intent/tweet?source=webclient&text=7kai%20Tasks%20%237kai_tasks&url=https://tasks.7kai.org/" target="_blank">Tweet</a></li>
+      </ul>
+      <h4>Contact</h4>
+      <ul>
+        <li>Facebook: <a href="https://www.facebook.com/s.aska.org" target="_blank">s.aska.org@facebook.com</a></li>
+        <li>Twitter: <a href="https://twitter.com/#!/su_aska" target="_blank">@su_aska</a></li>
+        <li>E-mail: <a href="mailto:s.aska.org@gmail.com" target="_blank">s.aska.org@gmail.com</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<form
+  id="register-request-window"
+  class="modal form-stacked"
+  data-setup="showable,ui,submit,registerRequestWindow,escclose"
+  data-ui="draggable"
+  data-submit="updateRequest"
+  data-showable='{
+    "id":"register-request-window",
+    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
+>
+  <input type="hidden" name="request_id" value="">
+  <div class="modal-header">
+    <h3>Register Request</h3>
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"register-request-window"}'
+    >×</a>
+  </div>
+  <div class="modal-body">
+    <input type="hidden" name="request_id" value="">
+    <div class="clearfix">
+      <label>Lable</label>
+      <div class="input">
+        <select name="label_class">
+          <option value="">default</option>
+          <option>success</option>
+          <option>warning</option>
+          <option>important</option>
+          <option>notice</option>
+        </select>
+        <input type="text" name="label_name" value="" required maxlength="20" data-autofocus="true">
+      </div>
+    </div>
+    <div class="clearfix">
+      <label>Request</label>
+      <div class="input">
+        <textarea name="request"></textarea>
+      </div>
+    </div>
+    <div class="clearfix">
+      <label>Response</label>
+      <div class="input">
+        <textarea name="response"></textarea>
+      </div>
+    </div>
+    <div class="clearfix">
+      <label><input type="checkbox" name="is_public" value="1"> Publish</label>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn primary"
+      data-setup="localize"
+      data-text-ja="登録"
+    >Register</button>
+    <button
+      class="btn secondary"
+      data-setup="localize,hide"
+      data-text-ja="閉じる"
+      data-hide='{"id":"register-request-window"}'
+    >Close</button>
+  </div>
+</form>
+
+<form
+  id="register-question-window"
+  class="modal form-stacked"
+  data-setup="showable,ui,submit,registerQuestionWindow,escclose"
+  data-ui="draggable"
+  data-submit="updateQuestion"
+  data-showable='{
+    "id":"register-question-window",
+    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
+>
+  <input type="hidden" name="question_id" value="">
+  <div class="modal-header">
+    <h3>Register Request</h3>
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"register-question-window"}'
+    >×</a>
+  </div>
+  <div class="modal-body">
+    <input type="hidden" name="question_id" value="">
+    <div class="clearfix">
+      <label>Question</label>
+      <div class="input">
+        <textarea name="question"></textarea>
+      </div>
+    </div>
+    <div class="clearfix">
+      <label>Answer</label>
+      <div class="input">
+        <textarea name="answer"></textarea>
+      </div>
+    </div>
+    <div class="clearfix">
+      <label><input type="checkbox" name="is_public" value="1"> Publish</label>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn primary"
+      data-setup="localize"
+      data-text-ja="登録"
+    >Register</button>
+    <button
+      class="btn secondary"
+      data-setup="localize,hide"
+      data-text-ja="閉じる"
+      data-hide='{"id":"register-question-window"}'
+    >Close</button>
+  </div>
+</form>
+
+<div
+  class="modal"
+  data-setup="showable,notice"
+  data-showable='{
+    "id":"notice",
+    "show":{"effect":"fade","speed":"fast"},
+    "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
+>
+  <div class="modal-header">
+    <h3>Notice</h3>
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"notice"}'
+    >×</a>
+  </div>
+  <div class="modal-body">
+    <p
+      data-text-request_create-ja="リクエストありがとうございます！"
+      data-text-request_create-en="Thank for request!"
+      data-text-question_create-ja="ご質問ありがとうございます！"
+      data-text-question_create-en="Thank for question!"
+    ></p>
+  </div>
+  <div class="modal-footer">
+    <a
+      class="btn primary"
+      data-setup="hide"
+      data-hide='{"id":"notice"}'
+    >Close</a>
+  </div>
+</div>
+
+</body>
+</html>

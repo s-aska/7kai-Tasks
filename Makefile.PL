@@ -11,6 +11,7 @@ WriteMakefile(
         'Plack::Middleware::ReverseProxy' => '0.09',
         'HTML::FillInForm::Lite'          => '1.09',
         'Time::Piece'                     => '1.20',
+        'SQL::Maker'                      => '1.03',
 
         'Crypt::SaltedHash'                   => '0.06',
         'Data::ICal'                          => '0.16',
@@ -26,7 +27,7 @@ WriteMakefile(
         'Scope::Container'                    => '0.04',
         'String::Random'                      => '0.22',
         'Sub::Retry'                          => '0.03',
-        'Teng'                                => '0.11',
+        'Teng'                                => '0.14',
         'XML::RSS'                            => '1.49',
     },
     MIN_PERL_VERSION => '5.008001',

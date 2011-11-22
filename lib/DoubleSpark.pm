@@ -34,7 +34,7 @@ sub db {
         for my $table (values %{ $schema->tables }) {
             next unless grep /^data$/, @{ $table->columns };
             $table->add_inflator('data', sub {
-                decode_json(shift)
+                $_[0] ? decode_json(shift) : {}
             });
             $table->add_deflator('data', sub {
                 encode_json(shift)

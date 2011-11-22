@@ -53,6 +53,7 @@ app.addEvents('clear');        // memory and dom clear
 app.addEvents('reload');       // reset => setup
 app.addEvents('resize');       // window resize
 app.addEvents('alert');        // trouble
+app.addEvents('notice');       // notice
 app.addEvents('selectTab');    // tag component
 app.addEvents('receiveSign');  // receive sign from api
 app.addEvents('receiveToken'); // receive token from api
@@ -85,14 +86,15 @@ app.execute = function(ele, type){
             console.log({
                 message: "missing method.",
                 ele: ele,
-                type: type
+                type: type,
+                key: methods[i]
             });
         }
         app[type][methods[i]].call(app, ele);
     }
 }
 app.ajax = function(option){
-    if ("data" in option && "type" in option && option.type.toLowerCase() === 'post') {
+    if ("data" in option && "type" in option && option.type.toLowerCase() === 'post' && app.env.token) {
         if (typeof option.data === 'object') {
             option.data[app.CSRF_TOKEN_NAME] = app.env.token;
         } else {
@@ -454,6 +456,16 @@ app.setup.alert = function(ele){
     app.addListener('alert', function(status){
         p.text(p.data('text-error-' + status + '-' + app.env.lang));
         app.dom.show(ele);
+    });
+}
+app.setup.notice = function(ele){
+    var p = ele.find('p:first');
+    app.addListener('notice', function(status){
+        var text = p.data('text-' + status + '-' + app.env.lang);
+        if (text) {
+            p.text(text);
+            app.dom.show(ele);
+        }
     });
 }
 app.setup.form = function(form){

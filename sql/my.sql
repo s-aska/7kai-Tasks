@@ -9,6 +9,7 @@ USE doublespark;
 CREATE TABLE account (
     account_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
     , data MEDIUMBLOB NOT NULL
+    , is_owner TINYINT(1)
     , modified_on BIGINT UNSIGNED NOT NULL
     , authenticated_on DATETIME NOT NULL
     , created_on DATETIME NOT NULL
@@ -70,5 +71,32 @@ CREATE TABLE list_member (
     , FOREIGN KEY (list_id) REFERENCES list(list_id) ON DELETE CASCADE
 ) ENGINE=InnoDB charset=utf8;
 CREATE INDEX list_member_code ON list_member(code);
+
+CREATE TABLE request (
+    request_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
+    , code VARCHAR(256) character set ascii NOT NULL COMMENT '*_account.code'
+    , name VARCHAR(256) character set ascii NOT NULL COMMENT 'screen_name'
+    , lang VARCHAR(2) character set ascii NOT NULL
+    , request TEXT NOT NULL
+    , response TEXT NOT NULL
+    , is_public TINYINT(1)
+    , label_class ENUM('success', 'warning', 'important', 'notice')
+    , label_name VARCHAR(16) character set ascii NOT NULL
+    , data MEDIUMBLOB NOT NULL
+    , created_on DATETIME NOT NULL
+    , updated_on DATETIME NOT NULL
+) ENGINE=InnoDB charset=utf8;
+
+CREATE TABLE question (
+    question_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
+    , code VARCHAR(256) character set ascii NOT NULL COMMENT '*_account.code'
+    , lang VARCHAR(2) character set ascii NOT NULL
+    , question TEXT NOT NULL
+    , answer TEXT NOT NULL
+    , is_public TINYINT(1)
+    , data MEDIUMBLOB NOT NULL
+    , created_on DATETIME NOT NULL
+    , updated_on DATETIME NOT NULL
+) ENGINE=InnoDB charset=utf8;
 
 COMMIT;

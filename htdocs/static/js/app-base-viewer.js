@@ -34,7 +34,7 @@ app.addEvents('checkMute');
 app.addEvents('clickNotification');
 
 app.addEvents('receiveMe'); // receive me from api
-
+app.addEvents('receiveNotice');
 
 // イベントのキャッシュコントロール
 app.addListener('openList', function(list){
@@ -406,6 +406,10 @@ app.util.buildMe = function(option, data){
     app.data.if_modified_lists = data.list_ids;
 
     app.fireEvent('receiveSign', app.data.sign);
+
+    if (data.notice) {
+        app.fireEvent('notice', data.notice);
+    }
 
     if (!('mute' in app.data.state)) {
         app.data.state.mute = {};

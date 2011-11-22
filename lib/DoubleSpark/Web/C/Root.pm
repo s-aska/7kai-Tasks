@@ -30,4 +30,10 @@ sub signout {
     $c->redirect('/');
 }
 
+sub staff {
+    my ($class, $c) = @_;
+
+    $c->render('staff.tt');
+}
+
 1;

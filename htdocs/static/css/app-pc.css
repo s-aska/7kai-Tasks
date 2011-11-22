@@ -154,6 +154,7 @@ ul.comments {
 }
 ul.comments li {
     margin-bottom: 4px;
+    min-height: 34px;
 }
 ul.comments li:last-child {
     margin-bottom: 0;
@@ -163,17 +164,27 @@ ul.comments li .icon-cross {
 }
 ul.comments li .message {
     color: #333;
-    font-size: 11px;
+    font-size: 12px;
+    line-height: 12px;
     word-wrap: break-word;
+
+    margin-top: 2px;
+    margin-right: 8px;
+    padding: 4px 4px 4px 4px;
+    background-color: #ffffff;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+ul.comments li .footer {
+    margin-top: 2px;
+    line-height: 10px;
+    font-size: 10px;
 }
 ul.comments li span.name {
     display: inline-block;
     padding-left: 4px;
     color: #333;
-    font-size: 10px;
-}
-ul.comments li .date {
-    font-size: 10px;
 }
 
 .timeline > ul {
@@ -308,6 +319,7 @@ ul.comments li .date {
 .gantttasks li > .left {
     margin-left: 2px;
 }
+
 
 /********** scrollbar **********/
 ul::-webkit-scrollbar {

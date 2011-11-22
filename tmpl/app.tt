@@ -128,21 +128,21 @@
         </li>
       </ul>
       <ul class="nav secondary-nav">
-        <!-- <li class="">
-          <a
-            href="/"
-            data-setup="localize,filterTask"
-          >
-            <span
-              data-setup="localize"
-              data-text-ja="お知らせ"
-            >Notification</span>
-            (<span
-              data-setup="notificationCounter"
-            >0</span>)
-          </a>
-        </li> -->
-        <li id="get-the-extensions">
+          <!-- <li class="">
+            <a
+              href="/"
+              data-setup="localize,filterTask"
+            >
+              <span
+                data-setup="localize"
+                data-text-ja="お知らせ"
+              >Notification</span>
+              (<span
+                data-setup="notificationCounter"
+              >0</span>)
+            </a>
+          </li> -->
+        <!-- <li id="get-the-extensions">
           <a
             href="https://chrome.google.com/webstore/detail/dolhpjcchfcnkcanamhgcgbnmcogdank"
             target="_blank"
@@ -155,6 +155,14 @@
             target="_blank"
             data-setup="getTheChrome"
           >Get the Google Chrome »</a>
+        </li> -->
+        <li class="">
+          <a
+            href="/staff"
+            target="_blank"
+            data-setup="localize"
+            data-text-ja="スタッフルーム"
+          >Staff Room</a>
         </li>
         <li
           class="menu"
@@ -646,7 +654,7 @@
           <div class="" style="margin-left: 40px;">
             <span class="status label"></span>
             <div class="message"></div>
-            <div><span class="date"></span><span class="name"></span></div>
+            <div class="footer"><span class="date"></span><span class="name"></span></div>
           </div>
         </li>
       </ul>
@@ -1571,39 +1579,38 @@
 
 <div
   class="modal"
-  data-setup="showable"
-  data-showable='{"id":"sub-account-notice"}'
+  data-setup="showable,notice"
+  data-showable='{
+    "id":"notice",
+    "show":{"effect":"fade"},
+    "hide":{"effect":"fade"}}'
 >
   <div class="modal-header">
     <h3>Notice</h3>
     <a
       class="close"
       data-setup="hide"
-      data-hide='{"id":"sub-account-notice"}'
+      data-hide='{"id":"notice"}'
     >×</a>
   </div>
   <div class="modal-body">
     <p
-    data-text-tw_account_add-ja="Twitter Account を追加しました。"
-    data-text-tw_account_add-en="Success Add Twitter Account."
-    data-text-tw_account_create-ja="ようこそ。 早速「＋新しいタスク」からタスクを登録してみましょう。"
-    data-text-tw_account_create-en="Welcome! Let's +New Task"
-    data-text-tw_account_move-ja="Twitter Account を割り当て直しました。"
-    data-text-tw_account_move-en="Success Move Twitter Account."
-    data-text-fb_account_add-ja="Facebook Account を追加しました。"
-    data-text-fb_account_add-en="Success Add Facebook Account."
-    data-text-fb_account_create-ja="ようこそ。 早速「＋新しいタスク」からタスクを登録してみましょう。"
-    data-text-fb_account_create-en="Welcome! Let's +New Task"
-    data-text-fb_account_move-ja="Facebook Account を割り当て直しました。"
-    data-text-fb_account_move-en="Success Move Facebook Account."
+      data-text-tw_account_add-ja="Twitter Account を追加しました。"
+      data-text-tw_account_add-en="Success Add Twitter Account."
+      data-text-tw_account_move-ja="Twitter Account を割り当て直しました。"
+      data-text-tw_account_move-en="Success Move Twitter Account."
+      data-text-fb_account_add-ja="Facebook Account を追加しました。"
+      data-text-fb_account_add-en="Success Add Facebook Account."
+      data-text-fb_account_move-ja="Facebook Account を割り当て直しました。"
+      data-text-fb_account_move-en="Success Move Facebook Account."
     ></p>
   </div>
   <div class="modal-footer">
     <a
       class="btn primary"
-      data-setup="click"
-      data-click="hide"
-      data-hide-id="sub-account-notice">Close</a>
+      data-setup="hide"
+      data-hide='{"id":"notice"}'
+    >Close</a>
   </div>
 </div>
 

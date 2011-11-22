@@ -6,7 +6,6 @@ var app = ns.app;
 app.addEvents('moveTask');
 app.addEvents('moveTaskCancel');
 app.addEvents('removeAccountConfirm');
-
 app.addEvents('showListMenu');
 
 // ----------------------------------------------------------------------
@@ -57,6 +56,7 @@ app.setup.settingsWindow = function(ele){
     app.addListener('clear', function(){
         ul.empty();
         ele.hide();
+        li_cache = {};
     });
 }
 app.setup.removeAccountWindow = function(form){
@@ -82,13 +82,13 @@ app.submit.deleteAccount = function(form){
     })
     .done(function(data){
         if (data.success) {
-            app.dom.show($('#success-delete-account'));
+            app.dom.show(app.dom.get('showable', 'success-delete-account'));
             if (data.signout) {
                 setTimeout(function(){
                     location.reload();
                 }, 3000);
             } else {
-                app.fireEvent('resetup');
+                app.fireEvent('reload');
             }
         }
     })

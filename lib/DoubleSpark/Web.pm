@@ -80,6 +80,8 @@ __PACKAGE__->add_trigger(
             return $c->res_401();
         }
 
+        return if $c->req->path eq '/staff';
+
         if ( ( $c->req->user_agent || '' ) !~ /Chrome/ and
             ( $c->req->header('X-Requested-With') || '' ) ne 'XMLHttpRequest' ) {
 #            warnf('no ajax api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
@@ -126,6 +128,12 @@ sub account {
     my $c = shift;
     $c->sign unless $c->{account};
     $c->{account};
+}
+
+sub is_owner {
+    my $c = shift;
+    my $account = $c->account;
+    $account ? $account->is_owner : ();
 }
 
 sub stash {

@@ -8,6 +8,7 @@ sub post($;$$) { connect_with_method('POST', @_) }
 
 get '/' => 'Root#index';
 get '/mock' => 'Root#mock';
+get '/staff' => 'Root#staff';
 get '/token' => 'Root#token';
 
 get '/signout' => 'Root#signout';
@@ -40,6 +41,20 @@ post '/api/1/task/move'   => 'API::Task#move';
 
 post '/api/1/comment/create' => 'API::Comment#create';
 post '/api/1/comment/delete' => 'API::Comment#delete';
+
+get  '/api/1/staff/stat' => 'API::Staff#stat';
+
+get  '/api/1/request/list'   => 'API::Request#list';
+post '/api/1/request/create' => 'API::Request#create';
+post '/api/1/request/update' => 'API::Request#update';
+post '/api/1/request/star'   => 'API::Request#star';
+post '/api/1/request/unstar' => 'API::Request#unstar';
+
+get  '/api/1/question/list'   => 'API::Question#list';
+post '/api/1/question/create' => 'API::Question#create';
+post '/api/1/question/update' => 'API::Question#update';
+post '/api/1/question/star'   => 'API::Question#star';
+post '/api/1/question/unstar' => 'API::Question#unstar';
 
 post '/api/1/twitter/update_friends' => 'API::Twitter#update_friends';
 

@@ -13,7 +13,19 @@ use Log::Minimal;
 sub me {
     my ($class, $c) = @_;
 
+    my $token = $c->session->get('csrf_token');
     my $account = $c->account;
+    if ($c->req->param('minimum')) {
+        return
+            $c->render_json({
+                success      => 1,
+                sign         => $c->sign,
+                token        => $token,
+                account      => $account->data,
+                is_owner     => $account->is_owner,
+                modified_on  => $account->modified_on
+            });
+    }
 
     # サブアカウント取得
     my $tw_accounts = $c->db->search('tw_account', {
@@ -68,7 +80,6 @@ sub me {
             $c->db->search('list', { list_id => [keys %ids] })->all;
     }
 
-    my $token = $c->session->get('csrf_token');
     my $notice = $c->session->remove('notice');
 
     $c->render_json({

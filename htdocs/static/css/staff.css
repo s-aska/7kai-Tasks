@@ -1,0 +1,74 @@
+body {
+    padding-top: 60px;
+}
+h2 {
+    margin-bottom: 10px;
+}
+a {
+    cursor: pointer;
+}
+.action {
+    cursor: pointer;
+}
+.right {
+    float: right;
+}
+/********** staff **********/
+article {
+    padding: 20px 0;
+    border-bottom: 1px solid gray;
+}
+.form-stacked {
+    padding-left: 0;
+}
+.request {
+    
+}
+article form {
+    text-align: right;
+}
+article figure {
+    margin: 0;
+    padding: 0;
+}
+article figure blockquote {
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 14px;
+    line-height: 1.9;
+    border: 1px solid #ddd;
+    background-color: #efefef;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+article figure p {
+    text-align: right;
+}
+article > p {
+    
+}
+article {
+    
+}
+.tw_vs_fb {
+    width: 266px;
+    height: 200px;
+}
+.history {
+    padding-left: 10px;
+}
+.history img {
+    padding-left: 10px;
+    margin-bottom: 10px;
+}
+.modal {
+    display: none;
+}
+.modal textarea {
+    width: 500px;
+    height: 80px;
+}
+.disabled {
+    opacity: 0.6;
+}
