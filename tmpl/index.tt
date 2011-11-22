@@ -9,7 +9,7 @@
 <meta property="og:url" content="https://tasks.7kai.org/">
 <meta property="og:image" content="https://tasks.7kai.org/static/img/logo-128.png">
 <meta property="og:site_name" content="7kai Tasks">
-<meta property="og:description" content="High Speed Social Task Management Service 7kai Tasks">
+<meta property="og:description" content="High Speed Social Task Management Service">
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
 <link rel="stylesheet" href="/static/css/signin.css" media="all">
