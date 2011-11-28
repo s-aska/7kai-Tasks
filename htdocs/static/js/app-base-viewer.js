@@ -1388,7 +1388,7 @@ app.setup.star = function(ele, task){
             key: 'star',
             val: task.id
         });
-        app.fireEvent('checkStar', method === '+');
+        app.fireEvent('checkStar', method === 'on');
     });
 }
 app.setup.human = function(ele, task){
