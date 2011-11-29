@@ -1139,7 +1139,11 @@ app.setup.tasks = function(ul){
             }
         } else {
             li.hide();
-            li.prependTo(ul);
+            if (task.parent_id in taskli_map) {
+                taskli_map[task.parent_id].after(li);
+            } else {
+                li.prependTo(ul);
+            }
             if (app.data.current_filter &&
                 app.util.taskFilter(task, app.data.current_filter)) {
                 li.data('visible', true);
