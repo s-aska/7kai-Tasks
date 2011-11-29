@@ -9,7 +9,7 @@ sub list {
     my ($class, $c) = @_;
     
     my @requests;
-    for my $row ($c->db->search('request')->all) {
+    for my $row ($c->db->search('request', {}, { order_by => 'updated_on desc' })->all) {
         my $req = $row->get_columns;
         $req->{data} = $row->data;
         push @requests, $req;

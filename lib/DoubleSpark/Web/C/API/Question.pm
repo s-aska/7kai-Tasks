@@ -9,7 +9,7 @@ sub list {
     my ($class, $c) = @_;
     
     my @questions;
-    for my $row ($c->db->search('question')->all) {
+    for my $row ($c->db->search('question', {}, { order_by => 'updated_on desc' })->all) {
         my $question = $row->get_columns;
         $question->{data} = $row->data;
         delete $question->{code};
