@@ -19,6 +19,12 @@ h4, h5 {
     line-height: 1;
     margin-bottom: 6px;
 }
+.due-control {
+    margin-left: 4px;
+}
+.due-control .btn {
+    padding: 4px 9px 3px;
+}
 
 /********** layout **********/
 .focused {

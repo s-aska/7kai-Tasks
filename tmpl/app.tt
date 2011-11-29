@@ -1106,13 +1106,17 @@
             data-setup="localize"
             data-text-ja="期日"
           >Due</label>
-          <div class="input">
+          <div class="input left">
             <input
               type="date"
               name="due"
               value=""
               placeholder="&uarr;&darr;"
             >
+          </div>
+          <div class="due-control left">
+            <a class="btn due-minus"><span class="icon icon-minus"></span></a>
+            <a class="btn due-plus"><span class="icon icon-plus"></span></a>
           </div>
         </div>
         <div class="clearfix team">
