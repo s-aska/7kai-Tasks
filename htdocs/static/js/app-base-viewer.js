@@ -1491,7 +1491,6 @@ app.setup.registerTaskWindow = function(form){
         e.preventDefault();
         var due = due_input.val();
         var date = due ? app.date.parse(due) : (new Date());
-        var date = app.date.parse(due);
         date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
         due_input.val(app.date.ymd(date));
     });
