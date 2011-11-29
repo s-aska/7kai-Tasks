@@ -97,6 +97,9 @@ ul.tasks li {
     padding: 4px;
     cursor: pointer;
 }
+ul.tasks li.child {
+    padding-left: 20px;
+}
 ul.tasks li.closed {
     background-color: #CCC;
 }
@@ -300,6 +303,9 @@ ul.comments li span.name {
     margin-left: 10px;
     margin-bottom: 4px;
     cursor: pointer;
+}
+.gantttasks li.child {
+    padding-left: 20px;
 }
 .gantttasks li:hover {
     background-color: rgba(252,252,215,0.6);

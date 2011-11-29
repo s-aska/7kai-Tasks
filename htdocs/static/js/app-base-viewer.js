@@ -22,8 +22,9 @@ app.addEvents('openTask');
 app.addEvents('openTopTask');
 app.addEvents('openBottomTask');
 app.addEvents('missingTask');
-app.addEvents('createTask');   // 登録フォーム表示(新規モード)
-app.addEvents('editTask');     // 登録フォーム表示(編集モード)
+app.addEvents('createTask');    // 登録フォーム表示(新規モード)
+app.addEvents('createSubTask'); // 登録フォーム表示(新規モード)
+app.addEvents('editTask');      // 登録フォーム表示(編集モード)
 app.addEvents('clearTask');
 app.addEvents('sortTask');
 app.addEvents('filterTask');
@@ -317,12 +318,23 @@ app.util.getRegistrant = function(list){
     }
 }
 app.util.taskFilter = function(task, condition){
+    if (task.parent_id) {
+        if (!(task.parent_id in app.data.task_map)) {
+            return false;
+        }
+        if (!(app.util.taskFilterMatch(app.data.task_map[task.parent_id], condition))) {
+            return false;
+        }
+    }
+    return app.util.taskFilterMatch(task, condition);
+}
+app.util.taskFilterMatch = function(task, condition){
     if (condition.closed) {
-        if (!task.closed) {
+        if (!app.util.isCloseTask(task)) {
             return false;
         }
     } else {
-        if (task.closed) {
+        if (app.util.isCloseTask(task)) {
             return false;
         }
     }
@@ -331,7 +343,6 @@ app.util.taskFilter = function(task, condition){
             return false;
         }
     }
-
     if (condition.todo) {
         if (task.list.id in app.data.state.mute) {
             return false;
@@ -437,7 +448,9 @@ app.util.buildMe = function(option, data){
             if (option.setup
                 && data.sign.code === sub_account.code
                 && app.option.auto_sync_friends) {
-                app.api.twitter.friends(sub_account.code.substring(3), '-1', []);
+                if (! app.env.development) {
+                        app.api.twitter.friends(sub_account.code.substring(3), '-1', []);
+                }
             }
         }
 
@@ -483,12 +496,39 @@ app.util.buildMe = function(option, data){
         }
         if (option.setup && !tasks) {
             app.dom.show(app.dom.get('showable', 'welcome'));
-        } else {
-            app.fireEvent('sortTask', 'updated', true);
         }
     }
 
+    if (option.setup || option.reset) {
+        app.fireEvent('sortTask', 'updated_on', true);
+    }
+
     app.fireEvent('receiveMe', data);
+}
+app.util.findChildTasks = function(task, callback){
+    var tasks = [];
+    for (var id in app.data.task_map) {
+        if (app.data.task_map[id].parent_id === task.id) {
+            tasks.push(app.data.task_map[id]);
+            if (callback) {
+                callback(app.data.task_map[id]);
+            }
+        }
+    }
+    return tasks;
+}
+app.util.findParentTask = function(task){
+    return app.data.task_map[task.parent_id];
+}
+app.util.isCloseTask = function(task){
+    if (task.closed) {
+        return true;
+    };
+    if (app.util.findParentTask(task)
+        && app.util.findParentTask(task).closed) {
+        return true;
+    }
+    return false;
 }
 
 app.api.account.me = function(option){
@@ -1028,6 +1068,10 @@ app.setup.tasks = function(ul){
 
         li.data('id', task.id);
 
+        if (task.parent_id && (task.parent_id in app.data.task_map)) {
+            li.addClass('child');
+        }
+
         app.dom.setup(li, task);
 
         app.setup.task(li, task);
@@ -1051,6 +1095,17 @@ app.setup.tasks = function(ul){
                 if (!li.data('visible')) {
                     li.data('visible', true);
                     li.slideDown('fast');
+                    app.util.findChildTasks(task, function(child){
+                        if (child.id && taskli_map[child.id]) {
+                            if (!app.util.taskFilter(child, app.data.current_filter)) {
+                                return ;
+                            }
+                            if (!taskli_map[child.id].data('visible')) {
+                                taskli_map[child.id].data('visible', true);
+                                taskli_map[child.id].slideDown('fast');
+                            }
+                        }
+                    });
                 }
                 if (app.data.current_task &&
                     app.data.current_task.id === task.id) {
@@ -1060,6 +1115,14 @@ app.setup.tasks = function(ul){
                 if (li.data('visible')) {
                     li.data('visible', false);
                     li.slideUp('fast');
+                    app.util.findChildTasks(task, function(child){
+                        if (child.id && taskli_map[child.id]) {
+                            if (taskli_map[child.id].data('visible')) {
+                                taskli_map[child.id].data('visible', false);
+                                taskli_map[child.id].slideUp('fast');
+                            }
+                        }
+                    });
                 }
                 if (app.data.current_task &&
                     app.data.current_task.id === task.id) {
@@ -1128,24 +1191,46 @@ app.setup.tasks = function(ul){
         for (var task_id in app.data.task_map) {
             tasks.push(app.data.task_map[task_id]);
         }
+        var sort;
         if (column === 'name') {
-            tasks.sort(function(a, b){
+            sort = function(a, b){
                 return a.name.localeCompare(b.name);
-            });
+            };
         } else if (column === 'person') {
-            tasks.sort(function(a, b){
-                return a.person > b.person ?  1 :
-                       b.person < a.person ? -1 : 0;
-            });
+            sort = function(a, b){
+                if (a.person === b.person) {
+                    return (Number(a['updated_on']) || 0) - (Number(b['updated_on']) || 0);
+                }
+                return a.person.localeCompare(b.person);
+            };
         } else {
-            tasks.sort(function(a, b){
+            sort = function(a, b){
                 return (Number(a[column]) || 0) - (Number(b[column]) || 0);
-            });
+            };
         }
         if (app.data.current_sort.column === column
             && app.data.current_sort.reverse === reverse) {
             reverse = reverse ? false : true;
         }
+        tasks.sort(function(a, b){
+            if (!a.parent_id && !b.parent_id) {
+                return sort(a, b);
+            } else if (!a.parent_id && b.parent_id) {
+                if (a.id === b.parent_id) {
+                    return reverse ? 1 : -1;
+                }
+                return sort(a, app.data.task_map[b.parent_id]);
+            } else if (a.parent_id && !b.parent_id) {
+                if (a.parent_id === b.id) {
+                    return reverse ? -1 : 1;
+                }
+                return sort(app.data.task_map[a.parent_id], b);
+            } else if (a.parent_id !== b.parent_id) {
+                return sort(app.data.task_map[a.parent_id], app.data.task_map[b.parent_id]);
+            } else {
+                return sort(a, b);
+            }
+        });
         if (reverse) {
             tasks.reverse();
         }
@@ -1469,6 +1554,7 @@ app.setup.recent = function(ele, task){
 app.setup.registerTaskWindow = function(form){
 
     //
+    var h3 = form.find('.modal-header > h3');
     var assign_input = form.find('input[name=assign]');
     var assign_list = form.find('ul.assign');
     var assign_template = assign_list.html();
@@ -1478,6 +1564,7 @@ app.setup.registerTaskWindow = function(form){
     var registrant_input = form.find('input[name=registrant]');
     var task_id_input = form.find('input[name=task_id]');
     var list_id_input = form.find('input[name=list_id]');
+    var parent_id_input = form.find('input[name=parent_id]');
 
     form.find('a.due-plus').click(function(e){
         e.preventDefault();
@@ -1495,7 +1582,7 @@ app.setup.registerTaskWindow = function(form){
         due_input.val(app.date.ymd(date));
     });
 
-    var setup = function(list){
+    var setup = function(list, parentTask){
         assign_list.empty();
         requester_select.empty();
         
@@ -1534,6 +1621,16 @@ app.setup.registerTaskWindow = function(form){
         registrant_input.val(registrant);
         task_id_input.val('');
         list_id_input.val(list.id);
+        if (parentTask) {
+            h3.text(app.dom.text(h3, 'sub'));
+            form.find('.parent-task span').text(parentTask.name);
+            form.find('.parent-task').show();
+            parent_id_input.val(parentTask.id);
+        } else {
+            h3.text(app.dom.text(h3));
+            form.find('.parent-task').hide();
+            parent_id_input.val('');
+        }
     };
 
     app.addListener('createTask', function(){
@@ -1546,13 +1643,27 @@ app.setup.registerTaskWindow = function(form){
         app.dom.show(form);
     });
 
+    app.addListener('createSubTask', function(parentTask){
+        app.dom.reset(form);
+        if (!app.data.current_list) {
+            alert('missing current_list');
+            return;
+        }
+        if (parentTask.parent_id) {
+            app.fireEvent('alert', 'task-nest-limit');
+            return;
+        }
+        setup(app.data.current_list, parentTask);
+        app.dom.show(form);
+    });
+
     app.addListener('editTask', function(task){
         app.dom.reset(form);
         if (!app.data.current_list) {
             alert('missing current_list');
             return;
         }
-        setup(task.list);
+        setup(task.list, app.data.task_map[task.parent_id]);
         name_input.val(task.name);
         if (task.due) {
             due_input.val(app.date.ymd(task.due_date));
@@ -1640,6 +1751,13 @@ app.click.reload = function(){
 }
 app.click.createTask = function(){
     app.fireEvent('createTask');
+}
+app.click.createSubTask = function(){
+    if (app.data.current_task) {
+        app.fireEvent('createSubTask', app.data.current_task);
+    } else {
+        alert('please select a task.');
+    }
 }
 app.click.editTask = function(){
     if (app.data.current_task) {

@@ -70,6 +70,9 @@ app.setup.ganttchartTasks = function(ul){
     app.addListener('registerTask', function(task){
         var li = $(template);
         li.data('id', task.id);
+        if (task.parent_id && (task.parent_id in app.data.task_map)) {
+            li.addClass('child');
+        }
         app.dom.setup(li, task);
         if (task.due) {
             var days = app.date.relativeDays(task.due_date, app.data.gantt.start);

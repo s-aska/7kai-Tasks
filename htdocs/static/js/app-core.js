@@ -22,7 +22,8 @@ var app = ns.app = {
     // Environment
     env: {
         token: '',
-        lang: (/^ja/.test(navigator.language) ? 'ja' : 'en')
+        lang: (/^ja/.test(navigator.language) ? 'ja' : 'en'),
+        development: (window.location.hostname === '127.0.0.1' ? true : false)
     },
     events: {},
     // Utility for native objects
@@ -156,9 +157,9 @@ app.date.mdy = function(date){
 }
 app.dom.text = function(ele, key){
     if (key) {
-        return ele.data('text-' + key + '-' + c.lang);
+        return ele.data('text-' + key + '-' + app.env.lang);
     } else {
-        return ele.data('text-' + c.lang);
+        return ele.data('text-' + app.env.lang);
     }
 }
 

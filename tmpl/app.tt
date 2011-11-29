@@ -366,15 +366,33 @@
             </div>
           </div>
           <ul class="nav secondary-nav">
-            <li><a
-              class="icon-with icon-create-task"
-              style="padding-left: 36px; background-position: 12px 50%;"
-              data-setup="localize,hide,click,shortcut"
-              data-shortcut='{"code":67}'
-              data-click="createTask"
-              data-hide='{"id":"welcome"}'
-              data-text-ja="新しいタスク"
-            >New Task</a>
+            <li class="menu" data-setup="menu">
+              <a
+                class="icon-with icon-create-task"
+                style="padding-left: 36px; background-position: 12px 50%;"
+                data-setup="localize,hide,click,shortcut"
+                data-shortcut='{"code":67}'
+                data-click="createTask"
+                data-hide='{"id":"welcome"}'
+                data-text-ja="新しいタスク"
+              >New Task</a>
+              <ul class="menu-dropdown" style="display: none; left: 0; right: auto;">
+                <li>
+                  <a>
+                    <span
+                      class="icon-with icon-create-task"
+                      style="
+                        display: inline-block;
+                        padding-left: 24px;
+                        background-position: 0 42%;"
+                      data-setup="localize,click"
+                      data-click="createSubTask"
+                      data-sort-column="name"
+                      data-text-ja="新しいサブタスク"
+                    >New Sub Task</span>
+                  </a>
+                </li>
+              </ul>
             </li>
             <li><a
               class="edit-button"
@@ -1078,7 +1096,10 @@
   <div class="modal-header">
     <h3
       data-setup="localize"
+      data-text-en="Register Task"
       data-text-ja="タスク登録"
+      data-text-sub-en="Register Sub Task"
+      data-text-sub-ja="サブタスク登録"
     >Register Task</h3>
     <a
       class="close"
@@ -1091,7 +1112,17 @@
       <div class="left">
         <input type="hidden" name="list_id" value="">
         <input type="hidden" name="task_id" value="">
+        <input type="hidden" name="parent_id" value="">
         <input type="hidden" name="registrant" value="">
+        <div class="clearfix parent-task">
+          <label for=""
+            data-setup="localize"
+            data-text-ja="親タスク"
+          >Parent Task</label>
+          <div class="input">
+            <span></span>
+          </div>
+        </div>
         <div class="clearfix">
           <label for=""
             data-setup="localize"
@@ -1641,6 +1672,8 @@
       data-text-error-offline-queue-ja="インターネット接続時に反映されます。"
       data-text-error-offline-en="Is not connected to the Internet."
       data-text-error-offline-ja="インターネットに接続されていません。"
+      data-text-error-task-nest-limit-en="Sub task is one level only."
+      data-text-error-task-nest-limit-ja="サブタスクは1階層のみ対応の為、サブタスクに更にサブタスクを作ることは出来ません。"
       data-text-error-401-en="Unauthorized, reload soon..."
       data-text-error-401-ja="認証状態が切れました、再認証して下さい。"
       data-text-error-403-en="Your Action Forbidden, auto refresh done."

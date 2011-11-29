@@ -27,6 +27,7 @@ sub create {
     my $time       = int(Time::HiRes::time * 1000);
     my $task_id    = $req->param('task_id') ||
                          $list->list_id . ':' . ++$list->data->{last_task_id};
+    my $parent_id  = $req->param('parent_id');
     for (@{ $list->data->{tasks} }) {
         if ($_->{id} eq $task_id) {
             infof('[%s] duplicate task', $c->sign_name);
@@ -35,6 +36,7 @@ sub create {
     }
     my $task = {
         id => $task_id,
+        parent_id => $parent_id,
         requester => $requester,
         registrant => $registrant,
         assign => \@assign,
@@ -61,7 +63,7 @@ sub update {
     my $res = DoubleSpark::Validator->validate($c, $req,
         list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
         task_id    => [qw/NOT_NULL/],
-        name      => [[qw/LENGTH 1 50/]],
+        name       => [[qw/LENGTH 1 50/]],
         requester  => [qw/MEMBER/],
         registrant => [qw/NOT_NULL OWNER/],
         due        => [qw/DATE_LOOSE/],
@@ -109,6 +111,7 @@ sub update {
         # by form
         if (defined $req->param('name')) {
             $task->{assign} = [ $req->param('assign') ];
+            $task->{parent_id} = $req->param('parent_id');
         }
         if (defined $req->param('due') && !$c->stash->{date_loose}) {
             $task->{due} = '';
