@@ -142,7 +142,7 @@ ul.tasks li div.delete {
 ul.tasks li div.recent-comment {
     position: relative;
     clear: both;
-    margin-left: 48px;
+    margin-left: 54px;
     font-size: 11px;
     color: gray;
 }
