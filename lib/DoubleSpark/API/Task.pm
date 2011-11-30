@@ -79,7 +79,7 @@ sub update {
     for my $task (@{ $list->data->{tasks} }) {
         next if $task->{id} ne $task_id;
 
-        my @keys = qw(status closed name requester);
+        my @keys = qw(status closed name requester parent_id);
         for my $key (@keys) {
             my $val = $req->param($key);
             if (defined $val) {

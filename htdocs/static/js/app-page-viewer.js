@@ -229,11 +229,9 @@ app.setup.leftColumn = function(ele){
 
     // リスト選択
     app.addListener('moveTask', function(task){
-        app.data.dragtask = task;
         list_ul.slideDown('fast');
     });
     app.addListener('moveTaskCancel', function(task){
-        app.data.dragtask = null;
         list_ul.slideUp('fast');
     });
     app.addListener('registerList', function(list){

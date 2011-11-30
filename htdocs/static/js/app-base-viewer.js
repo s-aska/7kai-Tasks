@@ -591,6 +591,9 @@ app.api.task.update = function(params){
     .done(function(data){
         if (data.success === 1) {
             $.extend(app.data.task_map[params.task_id], data.task);
+            if ("parent_id" in params) {
+                app.fireEvent('sortTask');
+            }
             // app.data.task_map[params.task_id].updated_on = data.task.updated_on;
             // app.fireEvent('registerTask', data.task, list); // update updated_on
         } else {
@@ -1068,7 +1071,7 @@ app.setup.tasks = function(ul){
 
         li.data('id', task.id);
 
-        if (task.parent_id && (task.parent_id in app.data.task_map)) {
+        if (task.parent_id) {
             li.addClass('child');
         }
 
@@ -1191,9 +1194,15 @@ app.setup.tasks = function(ul){
     });
 
     app.addListener('sortTask', function(column, reverse){
-        var tasks = [];
+        var tasks = [],
+            resort = false;
         for (var task_id in app.data.task_map) {
             tasks.push(app.data.task_map[task_id]);
+        }
+        if (!column) {
+            column = app.data.current_sort.column;
+            reverse = app.data.current_sort.reverse;
+            resort = true;
         }
         var sort;
         if (column === 'name') {
@@ -1215,7 +1224,8 @@ app.setup.tasks = function(ul){
                 return (Number(a[column]) || 0) - (Number(b[column]) || 0);
             };
         }
-        if (app.data.current_sort.column === column
+        if (!resort
+            && app.data.current_sort.column === column
             && app.data.current_sort.reverse === reverse) {
             reverse = reverse ? false : true;
         }
@@ -1436,13 +1446,47 @@ app.setup.task = function(ele, task){
     if (task.salvage) {
         ele.addClass('salvage');
     }
+    // draggable
     ele.get(0).addEventListener('dragstart', function(e){
+        app.data.dragtask = task;
         app.fireEvent('moveTask', task);
         e.dataTransfer.setData("text", task.id);
     }, false);
     ele.get(0).addEventListener('dragend', function(e){
+        app.data.dragtask = null;
         app.fireEvent('moveTaskCancel');
         e.dataTransfer.clearData();
+    }, false);
+    // droppable
+    ele.get(0).addEventListener('dragover', function(e){
+        if (app.util.findChildTasks(app.data.dragtask).length) {
+            return true;
+        }
+        if (task.id === app.data.dragtask.id) {
+            return true;
+        }
+        if (task.parent_id) {
+            return true;
+        }
+        // if (task.id === app.data.dragtask.parent_id) {
+        //     return true;
+        // }
+        if (e.preventDefault) {
+            e.preventDefault();
+            ele.addClass('active');
+        }
+        return false;
+    });
+    ele.get(0).addEventListener('dragleave', function(e){
+        ele.removeClass('active');
+    });
+    ele.get(0).addEventListener('drop', function(e){
+        app.api.task.update({
+            list_id: app.data.dragtask.list.id,
+            task_id: app.data.dragtask.id,
+            registrant: app.util.getRegistrant(app.data.dragtask.list),
+            parent_id: (app.data.dragtask.parent_id === task.id ? '' : task.id)
+        });
     }, false);
     ele.click(function(e){
         e.stopPropagation();
