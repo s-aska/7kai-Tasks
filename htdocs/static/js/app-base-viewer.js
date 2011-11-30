@@ -1278,7 +1278,11 @@ app.setup.tasks = function(ul){
     app.addListener('clearList', function(list){
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
-            if (list.id === task.list.id && task.closed) {
+            var parentTask = app.util.findParentTask(task);
+            if (
+                list.id === task.list.id &&
+                (task.closed || (parentTask && parentTask.closed))
+            ) {
                 if (task_id in taskli_map) {
                     if (app.data.current_task && app.data.current_task.id === task_id) {
                         app.fireEvent('missingTask');
