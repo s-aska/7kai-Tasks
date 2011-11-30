@@ -1465,6 +1465,9 @@ app.setup.task = function(ele, task){
         if (task.id === app.data.dragtask.id) {
             return true;
         }
+        if (task.list.id !== app.data.dragtask.list.id) {
+            return true;
+        }
         if (task.parent_id) {
             return true;
         }
