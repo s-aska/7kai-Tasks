@@ -1276,13 +1276,25 @@ app.setup.tasks = function(ul){
     });
 
     app.addListener('clearList', function(list){
+        var is_remove = function(task){
+            if (list.id !== task.list.id) {
+                return false;
+            }
+            if (task.closed) {
+                return true;
+            }
+            if (task.parent_id) {
+                var parent = app.data.task_map[task.parent_id];
+                if (!parent || parent.closed) {
+                    return true;
+                }
+            }
+            return false;
+        };
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
             var parentTask = app.util.findParentTask(task);
-            if (
-                list.id === task.list.id &&
-                (task.closed || (parentTask && parentTask.closed))
-            ) {
+            if (is_remove(task)) {
                 if (task_id in taskli_map) {
                     if (app.data.current_task && app.data.current_task.id === task_id) {
                         app.fireEvent('missingTask');
