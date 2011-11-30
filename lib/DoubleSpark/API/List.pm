@@ -165,9 +165,20 @@ sub clear {
 
     my $list = $c->stash->{list};
 
-    @{ $list->data->{tasks} } = grep {
-        !$_->{closed}
-    } @{ $list->data->{tasks} };
+    my $task_map = {};
+    for my $task (@{ $list->data->{tasks} }) {
+        $task_map->{ $task->{id} } = $task;
+    }
+    my $is_alive = sub {
+        my $task = shift;
+        return unless $task->{closed};
+        if ($task->{parent_id}) {
+            return unless $task_map->{ $_->{parent_id} };
+            return unless $task_map->{ $_->{parent_id} }->{closed};
+        }
+        return 1;
+    };
+    @{ $list->data->{tasks} } = grep { $is_alive->($_) } @{ $list->data->{tasks} };
 
     $list->update({ data => $list->data, actioned_on => int(Time::HiRes::time * 1000) });
 

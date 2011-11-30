@@ -1209,6 +1209,9 @@ app.setup.tasks = function(ul){
             };
         } else {
             sort = function(a, b){
+                if (a[column] === b[column]) {
+                    return (Number(a['updated_on']) || 0) - (Number(b['updated_on']) || 0);
+                }
                 return (Number(a[column]) || 0) - (Number(b[column]) || 0);
             };
         }
