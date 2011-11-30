@@ -171,10 +171,10 @@ sub clear {
     }
     my $is_alive = sub {
         my $task = shift;
-        return unless $task->{closed};
+        return if $task->{closed};
         if ($task->{parent_id}) {
             return unless $task_map->{ $_->{parent_id} };
-            return unless $task_map->{ $_->{parent_id} }->{closed};
+            return if $task_map->{ $_->{parent_id} }->{closed};
         }
         return 1;
     };
