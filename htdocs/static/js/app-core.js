@@ -162,6 +162,20 @@ app.dom.text = function(ele, key){
         return ele.data('text-' + app.env.lang);
     }
 }
+app.dom.slideDown = function(ele){
+    if (ele.parent().is(':visible')) {
+        ele.slideDown('fast');
+    } else {
+        ele.show();
+    }
+}
+app.dom.slideUp = function(ele){
+    if (ele.parent().is(':visible')) {
+        ele.slideUp('fast');
+    } else {
+        ele.hide();
+    }
+}
 
 // Utility
 app.util.autolink = function(text){

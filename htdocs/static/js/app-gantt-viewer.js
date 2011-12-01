@@ -113,8 +113,29 @@ app.setup.ganttchartTasks = function(ul){
             if (app.data.current_filter &&
                 app.util.taskFilter(task, app.data.current_filter)) {
                 li.data('visible', true);
+                li.show();
+                app.util.findChildTasks(task, function(child){
+                    if (child.id && taskli_map[child.id]) {
+                        if (!app.util.taskFilter(child, app.data.current_filter)) {
+                            return ;
+                        }
+                        if (!taskli_map[child.id].data('visible')) {
+                            taskli_map[child.id].data('visible', true);
+                            taskli_map[child.id].show();
+                        }
+                    }
+                });
             } else {
+                li.data('visible', false);
                 li.hide();
+                app.util.findChildTasks(task, function(child){
+                    if (child.id && taskli_map[child.id]) {
+                        if (taskli_map[child.id].data('visible')) {
+                            taskli_map[child.id].data('visible', false);
+                            taskli_map[child.id].hide();
+                        }
+                    }
+                });
             }
             if (taskli_map[task.id].hasClass('selected')) {
                 li.addClass('selected');

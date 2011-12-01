@@ -911,7 +911,7 @@ app.setup.rightColumn = function(ele){
             } else if (plus === 'revert') {
                 ele.attr('disabled', !(!task.closed && task.status === 2));
             } else if (plus === 'close') {
-                ele.attr('disabled', !(!task.closed && task.status === 2));
+                ele.attr('disabled', Boolean(task.closed));
             }
         });
         ul.empty();
@@ -1142,7 +1142,7 @@ app.setup.tasks = function(ul){
                 app.util.taskFilter(task, app.data.current_filter)) {
                 if (!li.data('visible')) {
                     li.data('visible', true);
-                    li.slideDown('fast');
+                    app.dom.slideDown(li);
                     app.util.findChildTasks(task, function(child){
                         if (child.id && taskli_map[child.id]) {
                             if (!app.util.taskFilter(child, app.data.current_filter)) {
@@ -1150,7 +1150,7 @@ app.setup.tasks = function(ul){
                             }
                             if (!taskli_map[child.id].data('visible')) {
                                 taskli_map[child.id].data('visible', true);
-                                taskli_map[child.id].slideDown('fast');
+                                app.dom.slideDown(taskli_map[child.id]);
                             }
                         }
                     });
@@ -1162,12 +1162,12 @@ app.setup.tasks = function(ul){
             } else {
                 if (li.data('visible')) {
                     li.data('visible', false);
-                    li.slideUp('fast');
+                    app.dom.slideUp(li);
                     app.util.findChildTasks(task, function(child){
                         if (child.id && taskli_map[child.id]) {
                             if (taskli_map[child.id].data('visible')) {
                                 taskli_map[child.id].data('visible', false);
-                                taskli_map[child.id].slideUp('fast');
+                                app.dom.slideUp(taskli_map[child.id]);
                             }
                         }
                     });
@@ -1195,7 +1195,7 @@ app.setup.tasks = function(ul){
             if (app.data.current_filter &&
                 app.util.taskFilter(task, app.data.current_filter)) {
                 li.data('visible', true);
-                li.slideDown('fast');
+                app.dom.slideDown(li);
             } else {
                 li.data('visible', false);
             }
@@ -1269,7 +1269,7 @@ app.setup.tasks = function(ul){
             if (app.util.taskFilter(task, condition)) {
                 if (!li.data('visible')) {
                     li.data('visible', true);
-                    li.slideDown('fast');
+                    app.dom.slideDown(li);
                 } else {
                     li.show();
                 }
@@ -1277,7 +1277,7 @@ app.setup.tasks = function(ul){
                 if (li.data('visible')) {
                     li.data('visible', false);
                     if (ul.is(':visible')) {
-                        li.slideUp('fast');
+                        app.dom.slideUp(li);
                     } else {
                         li.hide();
                     }
