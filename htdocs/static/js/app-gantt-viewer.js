@@ -142,31 +142,22 @@ app.setup.ganttchartTasks = function(ul){
     });
     
     app.addListener('sortTask', function(column, reverse){
-        var tasks = [];
+        var tasks = [],
+            resort = false;
         for (var task_id in app.data.task_map) {
             tasks.push(app.data.task_map[task_id]);
         }
-        if (column === 'name') {
-            tasks.sort(function(a, b){
-                return a.name.localeCompare(b.name);
-            });
-        } else if (column === 'person') {
-            tasks.sort(function(a, b){
-                return a.person > b.person ?  1 :
-                       b.person < a.person ? -1 : 0;
-            });
-        } else {
-            tasks.sort(function(a, b){
-                return (Number(a[column]) || 0) - (Number(b[column]) || 0);
-            });
+        if (!column) {
+            column = current_sort.column;
+            reverse = current_sort.reverse;
+            resort = true;
         }
-        if (current_sort.column === column
+        if (!resort
+            && current_sort.column === column
             && current_sort.reverse === reverse) {
             reverse = reverse ? false : true;
         }
-        if (reverse) {
-            tasks.reverse();
-        }
+        app.util.sortTask(tasks, column, reverse);
         for (var i = 0, max_i = tasks.length; i < max_i; i++) {
             ul.append(taskli_map[tasks[i].id]);
         }

@@ -530,6 +530,51 @@ app.util.isCloseTask = function(task){
     }
     return false;
 }
+app.util.sortTask = function(tasks, column, reverse){
+    var sort;
+    if (column === 'name') {
+        sort = function(a, b){
+            return a.name.localeCompare(b.name);
+        };
+    } else if (column === 'person') {
+        sort = function(a, b){
+            if (a.person === b.person) {
+                return (Number(a['updated_on']) || 0) - (Number(b['updated_on']) || 0);
+            }
+            return a.person.localeCompare(b.person);
+        };
+    } else {
+        sort = function(a, b){
+            if (a[column] === b[column]) {
+                return (Number(a['updated_on']) || 0) - (Number(b['updated_on']) || 0);
+            }
+            return (Number(a[column]) || 0) - (Number(b[column]) || 0);
+        };
+    }
+    tasks.sort(function(a, b){
+        if (!a.parent_id && !b.parent_id) {
+            return sort(a, b);
+        } else if (!a.parent_id && b.parent_id) {
+            if (a.id === b.parent_id) {
+                return reverse ? 1 : -1;
+            }
+            return sort(a, app.data.task_map[b.parent_id]);
+        } else if (a.parent_id && !b.parent_id) {
+            if (a.parent_id === b.id) {
+                return reverse ? -1 : 1;
+            }
+            return sort(app.data.task_map[a.parent_id], b);
+        } else if (a.parent_id !== b.parent_id) {
+            return sort(app.data.task_map[a.parent_id], app.data.task_map[b.parent_id]);
+        } else {
+            return sort(a, b);
+        }
+    });
+    if (reverse) {
+        tasks.reverse();
+    }
+    return tasks;
+}
 
 app.api.account.me = function(option){
     if (!navigator.onLine) {
@@ -1204,53 +1249,12 @@ app.setup.tasks = function(ul){
             reverse = app.data.current_sort.reverse;
             resort = true;
         }
-        var sort;
-        if (column === 'name') {
-            sort = function(a, b){
-                return a.name.localeCompare(b.name);
-            };
-        } else if (column === 'person') {
-            sort = function(a, b){
-                if (a.person === b.person) {
-                    return (Number(a['updated_on']) || 0) - (Number(b['updated_on']) || 0);
-                }
-                return a.person.localeCompare(b.person);
-            };
-        } else {
-            sort = function(a, b){
-                if (a[column] === b[column]) {
-                    return (Number(a['updated_on']) || 0) - (Number(b['updated_on']) || 0);
-                }
-                return (Number(a[column]) || 0) - (Number(b[column]) || 0);
-            };
-        }
         if (!resort
             && app.data.current_sort.column === column
             && app.data.current_sort.reverse === reverse) {
             reverse = reverse ? false : true;
         }
-        tasks.sort(function(a, b){
-            if (!a.parent_id && !b.parent_id) {
-                return sort(a, b);
-            } else if (!a.parent_id && b.parent_id) {
-                if (a.id === b.parent_id) {
-                    return reverse ? 1 : -1;
-                }
-                return sort(a, app.data.task_map[b.parent_id]);
-            } else if (a.parent_id && !b.parent_id) {
-                if (a.parent_id === b.id) {
-                    return reverse ? -1 : 1;
-                }
-                return sort(app.data.task_map[a.parent_id], b);
-            } else if (a.parent_id !== b.parent_id) {
-                return sort(app.data.task_map[a.parent_id], app.data.task_map[b.parent_id]);
-            } else {
-                return sort(a, b);
-            }
-        });
-        if (reverse) {
-            tasks.reverse();
-        }
+        app.util.sortTask(tasks, column, reverse);
         for (var i = 0, max_i = tasks.length; i < max_i; i++) {
             ul.append(taskli_map[tasks[i].id]);
         }
