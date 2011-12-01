@@ -639,7 +639,7 @@
             data-text-ja="コメント"
           >Comment</button>
           <button
-            class="btn"
+            class="btn success"
             tabindex="0"
             data-setup="localize"
             data-text-ja="+ 処理"
