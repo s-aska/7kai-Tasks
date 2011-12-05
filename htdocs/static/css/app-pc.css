@@ -6,6 +6,9 @@ div.alert {
     bottom: 0px;
     right: 20px;
 }
+.dragging {
+    opacity: 0.5;
+}
 
 /********** redefine **********/
 html, body {

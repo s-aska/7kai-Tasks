@@ -1452,11 +1452,13 @@ app.setup.task = function(ele, task){
     }
     // draggable
     ele.get(0).addEventListener('dragstart', function(e){
+        ele.addClass('dragging');
         app.data.dragtask = task;
         app.fireEvent('moveTask', task);
         e.dataTransfer.setData("text", task.id);
     }, false);
     ele.get(0).addEventListener('dragend', function(e){
+        ele.removeClass('dragging');
         app.data.dragtask = null;
         app.fireEvent('moveTaskCancel');
         e.dataTransfer.clearData();
