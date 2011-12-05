@@ -157,16 +157,22 @@ sub move {
     my $dst_list    = $c->db->single('list', { list_id => $dst_list_id });
     my $time        = int(Time::HiRes::time * 1000);
 
-    my $target_task;
+    my @target_tasks;
     @{ $src_list->data->{tasks} } = grep {
+        my $is_target;
         if ($_->{id} eq $task_id) {
-            $target_task = $_;
+            $_->{parent_id} = '';
+            push @target_tasks, $_;
+            $is_target++;
+        } elsif ($_->{parent_id} eq $task_id) {
+            push @target_tasks, $_;
+            $is_target++;
         }
-        $_->{id} eq $task_id ? 0 : 1;
+        not $is_target;
     } @{ $src_list->data->{tasks} };
-    return unless $target_task;
+    return unless @target_tasks;
 
-    push @{ $dst_list->data->{tasks} }, $target_task;
+    push @{ $dst_list->data->{tasks} }, @target_tasks;
 
     $src_list->update({ data => $src_list->data, actioned_on => $time });
     $dst_list->update({ data => $dst_list->data, actioned_on => $time });
@@ -175,7 +181,7 @@ sub move {
 
     return {
         success => 1,
-        task => $target_task
+        tasks => \@target_tasks
     };
 }
 

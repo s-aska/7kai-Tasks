@@ -674,10 +674,12 @@ app.api.task.move = function(src_list_id, task_id, dst_list_id){
     })
     .done(function(data){
         if (data.success === 1) {
-            app.fireEvent('registerTask', data.task, app.data.list_map[dst_list_id]);
-            if (app.data.current_task && app.data.current_task.id === data.task.id) {
-                app.fireEvent('openTask', data.task);
-            }
+            $.each(data.tasks, function(i, task){
+                app.fireEvent('registerTask', task, app.data.list_map[dst_list_id]);
+                if (app.data.current_task && app.data.current_task.id === task.id) {
+                    app.fireEvent('openTask', task);
+                }
+            });
         }
     });
 }
