@@ -83,6 +83,7 @@ sub update {
         for my $key (@keys) {
             my $val = $req->param($key);
             if (defined $val) {
+                next if $key eq 'parent_id' && $val eq $task->{id};
                 $task->{$key} = $val=~/^\d+$/ ? int($val) : $val;
             }
         }
@@ -111,7 +112,6 @@ sub update {
         # by form
         if (defined $req->param('name')) {
             $task->{assign} = [ $req->param('assign') ];
-            $task->{parent_id} = $req->param('parent_id');
         }
         if (defined $req->param('due') && !$c->stash->{date_loose}) {
             $task->{due} = '';
@@ -122,8 +122,8 @@ sub update {
                 action => $action,
                 time   => $time
             };
+            $task->{updated_on} = $time;
         }
-        $task->{updated_on} = $time;
         $target_task = $task;
         last;
     }
@@ -157,6 +157,19 @@ sub move {
     my $dst_list    = $c->db->single('list', { list_id => $dst_list_id });
     my $time        = int(Time::HiRes::time * 1000);
 
+    my $task_map = {};
+    my $parent_map = {};
+    for my $task (@{ $src_list->data->{tasks} }) {
+        $task_map->{ $task->{id} } = $task;
+    }
+    my $is_parent;
+    $is_parent = sub {
+        my ($task, $parent_id) = @_;
+        return unless $task->{parent_id};
+        return 1 if $task->{parent_id} eq $parent_id;
+        return $is_parent->($task_map->{ $task->{parent_id} }, $parent_id);
+    };
+
     my @target_tasks;
     @{ $src_list->data->{tasks} } = grep {
         my $is_target;
@@ -164,7 +177,7 @@ sub move {
             $_->{parent_id} = '';
             push @target_tasks, $_;
             $is_target++;
-        } elsif ($_->{parent_id} eq $task_id) {
+        } elsif ($is_parent->($_, $task_id)) {
             push @target_tasks, $_;
             $is_target++;
         }

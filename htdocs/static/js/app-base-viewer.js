@@ -318,17 +318,6 @@ app.util.getRegistrant = function(list){
     }
 }
 app.util.taskFilter = function(task, condition){
-    if (task.parent_id) {
-        if (!(task.parent_id in app.data.task_map)) {
-            return false;
-        }
-        if (!(app.util.taskFilterMatch(app.data.task_map[task.parent_id], condition))) {
-            return false;
-        }
-    }
-    return app.util.taskFilterMatch(task, condition);
-}
-app.util.taskFilterMatch = function(task, condition){
     if (condition.closed) {
         if (!app.util.isCloseTask(task)) {
             return false;
@@ -505,70 +494,111 @@ app.util.buildMe = function(option, data){
 
     app.fireEvent('receiveMe', data);
 }
-app.util.findChildTasks = function(task, callback){
-    var tasks = [];
+app.util.findChildTasks = function(task, callback, tasks){
+    if (!tasks) {
+        tasks = [];
+    }
     for (var id in app.data.task_map) {
         if (app.data.task_map[id].parent_id === task.id) {
-            tasks.push(app.data.task_map[id]);
+            var child = app.data.task_map[id];
+            tasks.push(child);
             if (callback) {
-                callback(app.data.task_map[id]);
+                callback(child);
             }
+            app.util.findChildTasks(child, callback, tasks);
         }
     }
     return tasks;
 }
+app.util.isChildTask = function(task, child){
+    var childs = app.util.findChildTasks(task);
+    for (var i = 0, max_i = childs.length; i < max_i; i++) {
+        if (childs[i].id === child.id) {
+            return true;
+        }
+    }
+    return false;
+}
 app.util.findParentTask = function(task){
     return app.data.task_map[task.parent_id];
+}
+app.util.findParentTasks = function(task){
+    var parents = [], current = task;
+    while (current.parent_id && current.parent_id.length && app.data.task_map[current.parent_id]) {
+        var parent = app.data.task_map[current.parent_id];
+        parents.push(parent);
+        current = parent;
+    }
+    return parents;
 }
 app.util.isCloseTask = function(task){
     if (task.closed) {
         return true;
     };
-    if (app.util.findParentTask(task)
-        && app.util.findParentTask(task).closed) {
-        return true;
+    var parents = app.util.findParentTasks(task);
+    for (var i = 0, max_i = parents.length; i < max_i; i++) {
+        if (parents[i].closed) {
+            return true;
+        }
     }
     return false;
 }
 app.util.sortTask = function(tasks, column, reverse){
-    var sort;
+    var compareAttribute;
     if (column === 'name') {
-        sort = function(a, b){
+        compareAttribute = function(a, b){
             return a.name.localeCompare(b.name);
         };
     } else if (column === 'person') {
-        sort = function(a, b){
+        compareAttribute = function(a, b){
             if (a.person === b.person) {
                 return (Number(a['updated_on']) || 0) - (Number(b['updated_on']) || 0);
             }
             return a.person.localeCompare(b.person);
         };
     } else {
-        sort = function(a, b){
+        compareAttribute = function(a, b){
             if (a[column] === b[column]) {
                 return (Number(a['updated_on']) || 0) - (Number(b['updated_on']) || 0);
             }
             return (Number(a[column]) || 0) - (Number(b[column]) || 0);
         };
     }
-    tasks.sort(function(a, b){
+    var compareTask = function(a, b){
+        // root直下同士
         if (!a.parent_id && !b.parent_id) {
-            return sort(a, b);
-        } else if (!a.parent_id && b.parent_id) {
-            if (a.id === b.parent_id) {
-                return reverse ? 1 : -1;
-            }
-            return sort(a, app.data.task_map[b.parent_id]);
-        } else if (a.parent_id && !b.parent_id) {
-            if (a.parent_id === b.id) {
-                return reverse ? -1 : 1;
-            }
-            return sort(app.data.task_map[a.parent_id], b);
-        } else if (a.parent_id !== b.parent_id) {
-            return sort(app.data.task_map[a.parent_id], app.data.task_map[b.parent_id]);
-        } else {
-            return sort(a, b);
+            return compareAttribute(a, b);
         }
+        // 兄弟
+        else if (a.parent_id === b.parent_id) {
+            return compareAttribute(a, b);
+        }
+        else {
+            var parentsA = [a].concat(app.util.findParentTasks(a)),
+                parentsB = [b].concat(app.util.findParentTasks(b)),
+                compareTaskA = parentsA.pop(),
+                compareTaskB = parentsB.pop();
+
+            // 共通の親から離れるまでドリルダウン
+            while (compareTaskA.id === compareTaskB.id) {
+                // A親 - B子
+                if (!parentsA.length) {
+                    return reverse ? 1 : -1;
+                }
+                // B親 - A子
+                else if (!parentsB.length) {
+                    return reverse ? -1 : 1;
+                }
+                compareTaskA = parentsA.pop();
+                compareTaskB = parentsB.pop();
+            }
+
+            // 兄弟
+            return compareAttribute(compareTaskA, compareTaskB);
+        }
+    };
+    tasks.sort(function(a, b){
+        return compareTask(a, b);
     });
     if (reverse) {
         tasks.reverse();
@@ -1113,14 +1143,30 @@ app.setup.tasks = function(ul){
     // 初期化処理
     ul.empty();
 
+    // ネスト解除エリア
+    document.body.addEventListener('dragover', function(e){
+        if (!app.data.dragtask.parent_id) {
+            return true;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    });
+    document.body.addEventListener('dragleave', function(e){
+    });
+    document.body.addEventListener('drop', function(e){
+        app.api.task.update({
+            list_id: app.data.dragtask.list.id,
+            task_id: app.data.dragtask.id,
+            registrant: app.util.getRegistrant(app.data.dragtask.list),
+            parent_id: ''
+        });
+    }, false);
+
     app.addListener('registerTask', function(task){
         var li = $(template);
 
         li.data('id', task.id);
-
-        if (task.parent_id) {
-            li.addClass('child');
-        }
 
         app.dom.setup(li, task);
 
@@ -1137,6 +1183,14 @@ app.setup.tasks = function(ul){
             if (taskli_map[task.id].hasClass('selected')) {
                 li.addClass('selected');
             }
+            // 置き換え元との高さ合わせ
+            var paddingLeft = parseInt(taskli_map[task.id].css('paddingLeft'), 10);
+            if (paddingLeft) {
+                li.css('paddingLeft', paddingLeft + 'px');
+            } else {
+                li.css('paddingLeft', '4px');
+            }
+            // 置き換え
             taskli_map[task.id].after(li);
             taskli_map[task.id].remove();
             taskli_map[task.id] = li;
@@ -1191,6 +1245,10 @@ app.setup.tasks = function(ul){
             li.hide();
             if (task.parent_id in taskli_map) {
                 taskli_map[task.parent_id].after(li);
+                var paddingLeft = parseInt(taskli_map[task.parent_id].css('paddingLeft'), 10);
+                if (paddingLeft) {
+                    li.css('paddingLeft', (paddingLeft + 18) + 'px');
+                }
             } else {
                 li.prependTo(ul);
             }
@@ -1258,7 +1316,14 @@ app.setup.tasks = function(ul){
         }
         app.util.sortTask(tasks, column, reverse);
         for (var i = 0, max_i = tasks.length; i < max_i; i++) {
-            ul.append(taskli_map[tasks[i].id]);
+            var li = taskli_map[tasks[i].id];
+            var parents = app.util.findParentTasks(tasks[i]);
+            if (parents.length) {
+                li.css('paddingLeft', ((parents.length * 18) + 4) + 'px');
+            } else {
+                li.css('paddingLeft', '4px');
+            }
+            ul.append(li);
         }
         app.data.current_sort.column = column;
         app.data.current_sort.reverse = reverse;
@@ -1271,6 +1336,9 @@ app.setup.tasks = function(ul){
             if (app.util.taskFilter(task, condition)) {
                 if (!li.data('visible')) {
                     li.data('visible', true);
+                    if (!task.parent_id) {
+                        li.css('paddingLeft', '4px');
+                    }
                     app.dom.slideDown(li);
                 } else {
                     li.show();
@@ -1467,36 +1535,38 @@ app.setup.task = function(ele, task){
     }, false);
     // droppable
     ele.get(0).addEventListener('dragover', function(e){
-        if (app.util.findChildTasks(app.data.dragtask).length) {
-            return true;
-        }
+        e.stopPropagation();
         if (task.id === app.data.dragtask.id) {
             return true;
         }
         if (task.list.id !== app.data.dragtask.list.id) {
             return true;
         }
-        if (task.parent_id) {
+        if (app.util.isChildTask(app.data.dragtask, task)) {
             return true;
         }
-        // if (task.id === app.data.dragtask.parent_id) {
-        //     return true;
-        // }
-        if (e.preventDefault) {
-            e.preventDefault();
-            ele.addClass('active');
+        if (task.id === app.data.dragtask.parent_id) {
+            return true;
         }
+        ele.addClass('active');
+        e.preventDefault();
         return false;
     });
     ele.get(0).addEventListener('dragleave', function(e){
         ele.removeClass('active');
     });
     ele.get(0).addEventListener('drop', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        // 念の為
+        if (task.id === app.data.dragtask.id) {
+            return true;
+        }
         app.api.task.update({
             list_id: app.data.dragtask.list.id,
             task_id: app.data.dragtask.id,
             registrant: app.util.getRegistrant(app.data.dragtask.list),
-            parent_id: (app.data.dragtask.parent_id === task.id ? '' : task.id)
+            parent_id: task.id
         });
     }, false);
     ele.click(function(e){
@@ -1727,10 +1797,10 @@ app.setup.registerTaskWindow = function(form){
             alert('missing current_list');
             return;
         }
-        if (parentTask.parent_id) {
-            app.fireEvent('alert', 'task-nest-limit');
-            return;
-        }
+        // if (parentTask.parent_id) {
+        //     app.fireEvent('alert', 'task-nest-limit');
+        //     return;
+        // }
         setup(app.data.current_list, parentTask);
         app.dom.show(form);
     });

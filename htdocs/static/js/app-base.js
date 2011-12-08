@@ -511,8 +511,12 @@ app.setup.guide = function(ele){
     app.dom.hover(ele, function(){
         var guide = app.dom.get('showable', option.id);
         var offset = ele.offset();
-        guide.css('top', offset.top + option.top + 'px');
-        guide.css('left', offset.left + option.left + 'px');
+        if (option.top) {
+            guide.css('top', offset.top + option.top + 'px');
+        }
+        if (option.left) {
+            guide.css('left', offset.left + option.left + 'px');
+        }
         app.dom.show(guide);
     }, function(){
         app.dom.hide(app.dom.get('showable', option.id));

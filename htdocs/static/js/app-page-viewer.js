@@ -245,19 +245,19 @@ app.setup.leftColumn = function(ele){
 
         // Task Move
         li.get(0).addEventListener('dragover', function(e){
+            e.stopPropagation();
             if (list.id === app.data.dragtask.list.id) {
                 return true;
             }
-            if (e.preventDefault) {
-                e.preventDefault();
-                li.addClass('active');
-            }
+            e.preventDefault();
+            li.addClass('active');
             return false;
         });
         li.get(0).addEventListener('dragleave', function(e){
             li.removeClass('active');
         });
         li.get(0).addEventListener('drop', function(e){
+            e.stopPropagation();
             list_ul.children().removeClass('active');
             list_ul.slideUp('fast');
             app.api.task.move(app.data.dragtask.list.id, app.data.dragtask.id, list.id);

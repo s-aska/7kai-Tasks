@@ -398,8 +398,14 @@
               class="edit-button"
               data-setup="localize,click"
               data-click="editTask"
-              data-text-ja="タスクを編集"
+              data-text-ja="編集"
             >Edit Task</a></li>
+            <li><a
+              class="edit-button"
+              data-setup="localize,guide"
+              data-guide='{"id":"drag-guide","top":50,"left":-124}'
+              data-text-ja="移動"
+            >Move Task</a></li>
             <li class="menu" data-setup="menu">
               <a
                 class="menu"
@@ -1343,6 +1349,45 @@
           data-setup="localize"
           data-text-ja="デスクトップ通知されなくなります。（ Chrome Extensions利用時 ）"
         >Does not Desktop Notification. ( Chrome Extensions )</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div
+  class="popover below"
+  style="display: none;"
+  data-setup="showable"
+  data-showable='{
+    "id":"drag-guide",
+    "show":{"effect":"fade"},
+    "hide":{"effect":"fade"}}'
+>
+  <div class="arrow"></div>
+  <div class="inner">
+    <h3
+      class="title"
+      data-setup="localize"
+      data-text-ja="タスクの移動について"
+    >How to Move</h3>
+    <div class="content">
+      <p
+        data-setup="localize"
+        data-text-ja="D&Dでタスクを移動します。"
+      >Move a task by Drag and Drop</p>
+      <ul>
+        <li
+          data-setup="localize"
+          data-text-ja="リストメニューにドロップするとリストに移動されます。"
+        >List Menu ... Move to the list.</li>
+        <li
+          data-setup="localize"
+          data-text-ja="タスクにドロップすると、サブタスク化されます。"
+        >Task ... Move to under the task.</li>
+        <li
+          data-setup="localize"
+          data-text-ja="空き領域にドロップすると、サブタスク化が解除されます。"
+        >Space ... Move to the root.</li>
       </ul>
     </div>
   </div>

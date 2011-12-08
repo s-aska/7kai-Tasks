@@ -70,9 +70,6 @@ app.setup.ganttchartTasks = function(ul){
     app.addListener('registerTask', function(task){
         var li = $(template);
         li.data('id', task.id);
-        if (task.parent_id && (task.parent_id in app.data.task_map)) {
-            li.addClass('child');
-        }
         app.dom.setup(li, task);
         if (task.due) {
             var days = app.date.relativeDays(task.due_date, app.data.gantt.start);
@@ -181,6 +178,10 @@ app.setup.ganttchartTasks = function(ul){
         app.util.sortTask(tasks, column, reverse);
         for (var i = 0, max_i = tasks.length; i < max_i; i++) {
             ul.append(taskli_map[tasks[i].id]);
+            var parents = app.util.findParentTasks(tasks[i]);
+            if (parents.length) {
+                taskli_map[tasks[i].id].css('paddingLeft', ((parents.length * 18) + 2) + 'px');
+            }
         }
         current_sort.column = column;
         current_sort.reverse = reverse;
