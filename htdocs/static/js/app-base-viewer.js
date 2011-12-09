@@ -1410,6 +1410,9 @@ app.setup.tasks = function(ul){
         if (e.ctrlKey || e.altKey || e.metaKey) {
             return;
         }
+        if (ul.children().is(':animated')) {
+            return;
+        }
         if (e.shiftKey) {
             if (e.keyCode === 38) { // Up
                 app.fireEvent('openPrevList');
