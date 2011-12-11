@@ -114,8 +114,8 @@
               <a
                 data-setup="localize,tab.menu"
                 data-tab='{"group":"viewer","id":"timeline"}'
-                data-text-ja="メンバータイムライン"
-              >Member Timeline</a>
+                data-text-ja="タイムライン"
+              >Timeline</a>
             </li>
             <li>
               <a
@@ -692,7 +692,7 @@
   data-tab='{"group":"viewer","id":"timeline"}'
 >
   <div
-    class="span18 columns timeline"
+    class="span9 columns timeline"
     data-setup="stretch"
   >
     <div class="topbar">
@@ -702,8 +702,8 @@
             <li>
               <a
                 data-setup="localize"
-                data-text-ja="メンバータイムライン"
-              >Member Timeline</a>
+                data-text-ja="メンバー"
+              >Member</a>
             </li>
           </ul>
         </div>
@@ -715,6 +715,47 @@
       data-stretch='{"padding":116}'
       data-text-empty-en="no member updates, Let's invite a member to the list."
       data-text-empty-ja="メンバーの更新はありませんでした、[リストを編集...] からリストにメンバーを誘いましょう！"
+    >
+      <li
+        class="clearfix"
+        style="position: relative;"
+      >
+        <div class="icon sq32" style="position: absolute;"></div>
+        <div class="" style="margin-left: 40px;">
+          <span class="listname label notice"></span>
+          <span class="status label"></span>
+          <span class="taskname"></span>
+          <div class="message"></div>
+          <div><span class="date"></span><span class="name"></span></div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div
+    class="span9 columns timeline"
+    data-setup="stretch"
+  >
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <ul class="nav">
+            <li>
+              <a
+                data-setup="localize"
+                data-text-ja="あなた"
+              >You</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <ul
+      class="unstyled comments"
+      data-setup="stretch,timeline"
+      data-timeline="me"
+      data-stretch='{"padding":116}'
+      data-text-empty-en=""
+      data-text-empty-ja=""
     >
       <li
         class="clearfix"
@@ -1050,7 +1091,7 @@
   data-submit="deleteList"
   data-showable='{
     "id":"delete-list-window",
-    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "show":{"effect":"fade","speed":"fast"},
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
@@ -1083,7 +1124,6 @@
       data-setup="localize,hide"
       data-text-ja="キャンセル"
       data-hide='{"id":"delete-list-window"}'
-      data-autofocus="true"
     >Cancel</button>
   </div>
 </form>
@@ -1208,7 +1248,7 @@
   data-ui="draggable"
   data-showable='{
     "id":"settings-window",
-    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "show":{"effect":"fade","speed":"fast"},
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
@@ -1256,7 +1296,6 @@
       data-setup="localize,hide"
       data-text-ja="閉じる"
       data-hide='{"id":"settings-window"}'
-      data-autofocus="true"
     >Close</button>
   </div>
 </div>
@@ -1268,7 +1307,7 @@
   data-submit="deleteAccount"
   data-showable='{
     "id":"delete-account-window",
-    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "show":{"effect":"fade","speed":"fast"},
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
@@ -1318,7 +1357,6 @@
       data-setup="localize,hide"
       data-text-ja="キャンセル"
       data-hide='{"id":"delete-account-window"}'
-      data-autofocus="true"
     >Cancel</button>
   </div>
 </form>
@@ -1400,7 +1438,7 @@
   data-setup="showable"
   data-showable='{
     "id":"help-window",
-    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "show":{"effect":"fade","speed":"fast"},
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
@@ -1652,7 +1690,6 @@
       data-setup="localize,hide"
       data-text-ja="閉じる"
       data-hide='{"id":"help-window"}'
-      data-autofocus="true"
     >Close</button>
   </div>
 </form>
@@ -1749,7 +1786,7 @@
   data-submit="clearList"
   data-showable='{
     "id":"clear-list-window",
-    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
+    "show":{"effect":"fade","speed":"fast"},
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
@@ -1774,7 +1811,6 @@
       class="btn danger"
       data-setup="localize"
       data-text-ja="削除"
-      data-autofocus="true"
     >Delete</button>
     <button
       class="btn secondary"

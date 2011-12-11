@@ -1829,6 +1829,7 @@ app.setup.registerTaskWindow = function(form){
     });
 }
 app.setup.timeline = function(ul){
+    var is_me = ul.data('timeline') === 'me' ? true : false;
     var template = ul.html();
     ul.empty();
     app.addListener('receiveMe', function(data){
@@ -1841,7 +1842,7 @@ app.setup.timeline = function(ul){
                     var degits = task.due.match(/[0-9]+/g);
                     task.due_epoch = (new Date(degits[2], degits[0] - 1, degits[1])).getTime();
                 }
-                if (!app.util.findMe([task.registrant])) {
+                if (Boolean(app.util.findMe([task.registrant])) === is_me) {
                     actions.push({
                         task: task,
                         action: 'create-task',
@@ -1851,7 +1852,7 @@ app.setup.timeline = function(ul){
                 }
                 $.each(task.actions, function(iii, action){
                     action.task = task;
-                    if (!app.util.findMe([action.code])) {
+                    if (Boolean(app.util.findMe([action.code])) === is_me) {
                         actions.push(action);
                     }
                 });
@@ -1872,6 +1873,8 @@ app.setup.timeline = function(ul){
             if (action.message) {
                 li.find('.message').html(
                     app.util.autolink(action.message).replace(/\r?\n/g, '<br />'));
+            } else {
+                li.find('.message').remove();
             }
             li.find('.date').text(app.date.relative(action.time));
             li.find('.status').text(
