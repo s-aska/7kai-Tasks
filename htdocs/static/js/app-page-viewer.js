@@ -100,7 +100,12 @@ app.click.addFacebook = function(){
     $('#add-facebook').submit();
 }
 app.click.openMini = function(ele){
-    window.open(window.location.href + '?mobile=1', '',
+    window.open(
+        window.location.protocol
+        + '//'
+        + window.location.host
+        + '/?mobile=1',
+        '',
         'width=320,height=480,left=100,top=100');
 }
 

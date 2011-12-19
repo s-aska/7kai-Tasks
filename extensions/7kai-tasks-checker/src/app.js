@@ -231,6 +231,9 @@ app.api.fetch = function(option){
                 return;
             }
             $.each(list.tasks, function(ii, task){
+                app.data.task_map[task.id] = task;
+            });
+            $.each(list.tasks, function(ii, task){
                 task.list = list;
                 if (task.due) {
                     var degits = task.due.match(/[0-9]+/g);
@@ -301,7 +304,7 @@ app.api.fetch = function(option){
     });
 }
 app.util.isCount = function(task){
-    if (task.closed) {
+    if (app.util.isCloseTask(task)) {
         return false;
     }
     if (
@@ -428,6 +431,27 @@ app.util.autolink = function(text){
         div.appendChild(a);
         return div.innerHTML;
     });
+}
+app.util.isCloseTask = function(task){
+    if (task.closed) {
+        return true;
+    };
+    var parents = app.util.findParentTasks(task);
+    for (var i = 0, max_i = parents.length; i < max_i; i++) {
+        if (parents[i].closed) {
+            return true;
+        }
+    }
+    return false;
+}
+app.util.findParentTasks = function(task){
+    var parents = [], current = task;
+    while (current.parent_id && current.parent_id.length && app.data.task_map[current.parent_id]) {
+        var parent = app.data.task_map[current.parent_id];
+        parents.push(parent);
+        current = parent;
+    }
+    return parents;
 }
 
 // notify
