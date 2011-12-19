@@ -531,6 +531,14 @@ app.util.findParentTasks = function(task){
     }
     return parents;
 }
+app.util.hasChildTask = function(task){
+    for (var task_id in app.data.task_map) {
+        if (app.data.task_map[task_id].parent_id === task.id) {
+            return true;
+        }
+    }
+    return false;
+}
 app.util.isCloseTask = function(task){
     if (task.closed) {
         return true;
@@ -800,12 +808,22 @@ app.setup.taskCounter = function(ele){
     var count = 0;
     var condition = ele.data('counter-condition');
     app.addListener('registerTask', function(task){
-        var before = (task.before && app.util.taskFilter(task.before, condition)) ? 1 : 0;
-        var after = app.util.taskFilter(task, condition) ? 1 : 0;
-        var add = after - before;
-        if (add) {
-            count+= add;
+        if (app.util.hasChildTask(task)) {
+            count = 0;
+            for (var task_id in app.data.task_map) {
+                if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
+                    count++;
+                }
+            }
             ele.text(count);
+        } else {
+            var before = (task.before && app.util.taskFilter(task.before, condition)) ? 1 : 0;
+            var after = app.util.taskFilter(task, condition) ? 1 : 0;
+            var add = after - before;
+            if (add) {
+                count+= add;
+                ele.text(count);
+            }
         }
     });
     app.addListener('checkMute', function(){
@@ -825,8 +843,17 @@ app.setup.taskCounter = function(ele){
 app.setup.starCounter = function(ele){
     var count = 0;
     app.addListener('registerTask', function(task){
+        if (app.util.hasChildTask(task)) {
+            count = 0;
+            for (var task_id in app.data.task_map) {
+                if (app.util.taskFilter(app.data.task_map[task_id], {star: 1})) {
+                    count++;
+                }
+            }
+            ele.text(count);
+        }
         // 初回かつOn
-        if ((!task.before || !app.util.taskFilter(task.before, {star: 1}))
+        else if ((!task.before || !app.util.taskFilter(task.before, {star: 1}))
             && app.util.taskFilter(task, {star: 1})) {
             count++;
             ele.text(count);

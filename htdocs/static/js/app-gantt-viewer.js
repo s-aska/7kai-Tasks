@@ -180,7 +180,9 @@ app.setup.ganttchartTasks = function(ul){
             ul.append(taskli_map[tasks[i].id]);
             var parents = app.util.findParentTasks(tasks[i]);
             if (parents.length) {
-                taskli_map[tasks[i].id].css('paddingLeft', ((parents.length * 18) + 2) + 'px');
+                taskli_map[tasks[i].id].css('paddingLeft', ((parents.length * 18) + 4) + 'px');
+            } else {
+                taskli_map[tasks[i].id].css('paddingLeft', '4px');
             }
         }
         current_sort.column = column;
