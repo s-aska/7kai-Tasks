@@ -49,7 +49,7 @@ app.setup.ganttchartSheet = function(ele){
             }
             if (today.getTime() === date.getTime()) {
                 day.addClass('today');
-            } else if (date.getDay() > 4) {
+            } else if (date.getDay() === 0 || date.getDay() === 6) {
                 day.addClass('holiday');
             }
             date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
