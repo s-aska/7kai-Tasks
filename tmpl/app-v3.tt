@@ -266,10 +266,6 @@
       <div class="fill">
         <div class="container">
           <ul class="nav">
-            <!-- <li><a
-              data-setup="localize"
-              data-text-ja="タスク一覧"
-            >Tasks</a></li> -->
             <li>
               <a
                 href="/"
@@ -489,26 +485,30 @@
             <ul class="unstyled clearfix menu">
               <li class="ui-normal">
                 <a
-                  class="btn"
-                  data-setup="click"
+                  class="btn small"
+                  data-setup="localize,click"
                   data-click="createTask"
+                  data-text-ja="新しいタスク"
                 >New</a>
                 <a
-                  class="btn"
-                  data-setup="click"
+                  class="btn small"
+                  data-setup="localize,click"
                   data-click="editTask"
+                  data-text-ja="編集"
                 >Edit</a>
                 <a
-                  class="btn"
-                  data-setup="click"
+                  class="btn small"
+                  data-setup="localize,click"
                   data-click="createSubTask"
+                  data-text-ja="新しいサブタスク"
                 >Sub</a>
               </li>
               <li class="ui-clear" style="display: none">
                 <a
-                  class="btn"
-                  data-setup="click"
+                  class="btn small"
+                  data-setup="localize,click"
                   data-click='clearList'
+                  data-text-ja="完了済みタスクをクリア"
                 >Clear</a>
               </li>
             </ul>
@@ -533,7 +533,7 @@
     </div>
     <div
       class="twipsy above"
-      style="display: none; top: 40px; left: 200px;"
+      style="display: none; left: 200px;"
       data-setup="showable"
       data-showable='{
         "id":"create-task-twipsy",
@@ -748,10 +748,22 @@
       >
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Members</th>
-            <th>Personal Settings</th>
-            <th>Order</th>
+            <th
+              data-setup="localize"
+              data-text-ja="リスト名"
+            >Name</th>
+            <th
+            data-setup="localize"
+            data-text-ja="メンバー"
+            >Members</th>
+            <th
+            data-setup="localize"
+            data-text-ja="個人設定"
+            >Personal Settings</th>
+            <th
+              data-setup="localize"
+              data-text-ja="表示順序"
+            >Order</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
@@ -769,10 +781,18 @@
               <ul class="unstyled" style="margin: 0">
                 <li>
                   <label>
-                    <input type="checkbox" name="mute" value="1"> Don't count it as Todo.
+                    <input type="checkbox" name="mute" value="1">&nbsp;
+                    <strong
+                      data-setup="localize"
+                      data-text-ja="今日迄"
+                    ></strong>
+                    <span
+                      data-setup="localize"
+                      data-text-ja=" にカウントしない。"
+                    >Don't count it as Todo.</span>
                   </label>
                 </li>
-                <li>
+                <!-- <li>
                   <label>
                     <input type="checkbox" name="hide" value="1"> Hide.
                   </label>
@@ -781,26 +801,36 @@
                   <label>
                     <input type="checkbox" name="hide" value="1"> Receive Clear Report.
                   </label>
-                </li>
+                </li> -->
               </ul>
             </td>
             <td>
               <a
                 class="btn small ui-button-down"
+                data-setup="localize"
+                data-text-ja="下へ"
               >Down</a>
               <a
                 class="btn small ui-button-up"
+                data-setup="localize"
+                data-text-ja="上へ"
               >Up</a>
             </td>
             <td>
               <a
                 class="btn small ui-button-public"
+                data-setup="localize"
+                data-text-ja="公開"
               >Public</a>
               <a
                 class="btn small ui-button-edit"
+                data-setup="localize"
+                data-text-ja="編集"
               >Edit</a>
               <a
                 class="btn small danger ui-button-delete"
+                data-setup="localize"
+                data-text-ja="削除"
               >Delete</a>
             </td>
           </tr>
@@ -911,6 +941,79 @@
       <div class="fill">
         <div class="container">
           <ul class="nav">
+            <li>
+              <a
+                href="/"
+                data-setup="click,shortcut,filterTask"
+                data-click="filterTask"
+                data-shortcut='{"code":84}'
+                data-filter-condition='{"todo":1}'
+              >
+                <span
+                  data-setup="localize"
+                  data-text-ja="今日迄"
+                >Todo</span>
+                (<span
+                  data-setup="taskCounter"
+                  data-counter-condition='{"todo":1}'
+                >0</span>)
+              </a>
+            </li>
+            <li class="active">
+              <a
+                href="/"
+                data-setup="click,shortcut,filterTask"
+                data-click="filterTask"
+                data-shortcut='{"code":86}'
+                data-filter-condition='{"verify":1}'
+              >
+                <span
+                  data-setup="localize"
+                  data-text-ja="確認待ち"
+                >Verify</span>
+                (<span
+                  data-setup="taskCounter"
+                  data-counter-condition='{"verify":1}'
+                >0</span>)
+              </a>
+            </li>
+            <li class="">
+              <a
+                href="/"
+                data-setup="click,shortcut,filterTask"
+                data-click="filterTask"
+                data-shortcut='{"code":82}'
+                data-filter-condition='{"request":1}'
+              >
+                <span
+                  data-setup="localize"
+                  data-text-ja="依頼中"
+                >Request</span>
+                (<span
+                  data-setup="taskCounter"
+                  data-counter-condition='{"request":1}'
+                >0</span>)
+              </a>
+            </li>
+            <li class="">
+              <a
+                href="/"
+                data-setup="click,shortcut,filterTask"
+                data-click="filterTask"
+                data-shortcut='{"code":83}'
+                data-filter-condition='{"star":1}'
+              >
+                <span
+                  data-setup="localize"
+                  data-text-ja="スター"
+                >Star</span>
+                (<span
+                  data-setup="starCounter"
+                >0</span>)
+              </a>
+            </li>
+          </ul>
+          <ul class="nav secondary-nav">
             <li><a
               data-setup="localize,prevWeek"
               data-text-ja="≪ 前へ"
@@ -963,8 +1066,6 @@
                 </li>
               </ul>
             </li>
-          </ul>
-          <ul class="nav secondary-nav">
           </ul>
         </div>
       </div>

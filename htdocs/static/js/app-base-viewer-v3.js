@@ -927,10 +927,14 @@ app.setup.starCounter = function(ele){
 }
 app.setup.filterTask = function(ele){
     app.addListener('filterTask', function(){
-        ele.parent().removeClass('active');
+        if (ele.is(':visible')) {
+            ele.parent().removeClass('active');
+        }
     });
     app.addListener('openList', function(){
-        ele.parent().removeClass('active');
+        if (ele.is(':visible')) {
+            ele.parent().removeClass('active');
+        }
     });
     app.addListener('clear', function(){
         ele.parent().removeClass('active');
@@ -1344,9 +1348,8 @@ app.setup.tasksheet = function(ul){
             }
             li_before.remove();
             app.data.taskli_map[task.id] = li;
-            if (!app.data.current_filter ||
-                app.data.current_filter &&
-                app.util.taskFilter(task, app.data.current_filter)) {
+            var filter = app.data.current_filter || {};
+            if (app.util.taskFilter(task, filter)) {
                 if (!li.data('visible')) {
                     li.data('visible', true);
                     app.dom.slideDown(li);
@@ -1540,6 +1543,9 @@ app.setup.tasksheet = function(ul){
     });
     
     app.addListener('filterTask', function(condition){
+        if (!ul.is(':visible')) {
+            return;
+        }
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
             var li = app.data.taskli_map[task_id];
@@ -2061,11 +2067,31 @@ app.setup.timeline = function(ul){
 app.setup.listtable = function(tbody){
     var template = tbody.html();
     tbody.empty();
+    var updateSort = function(){
+        var sort = {};
+        var lists = tbody.find('> tr');
+        var count = lists.length;
+        lists.each(function(i, element) {
+            var tr = $(element);
+            if (tr.data('id')) {
+                sort[tr.data('id')] = count;
+                count--;
+            }
+        });
+        app.api.account.update({
+            ns: 'state.sort',
+            method: 'set',
+            type: 'json',
+            key: 'list',
+            val: JSON.stringify(sort)
+        });
+    };
     app.addListener('registerList', function(list){
         var tr = $(template);
         tr.data('id', list.id);
         tr.find('.name').text(list.name);
         tr.find('ul.members').empty();
+        app.dom.setup(tr);
         var members = [list.owner].concat(list.members);
         for (var i = 0, max_i = members.length; i < max_i; i++) {
             var code = members[i];
@@ -2074,6 +2100,39 @@ app.setup.listtable = function(tbody){
                 .append(app.util.getIcon(code, 16))
                 .appendTo(tr.find('ul.members'));
         }
+        var mute = tr.find('input[name="mute"]');
+        mute.prop('checked', (list.id in app.data.state.mute) ? true: false);
+        mute.click(function(){
+            var method = mute.prop('checked') ? 'on' : 'off';
+            app.api.account.update({
+                ns: 'state',
+                method: method,
+                key: 'mute',
+                val: list.id
+            })
+            .done(function(data){
+                if (data.success === 1) {
+                    app.data.state.mute = data.account.state.mute;
+                    app.fireEvent('checkMute', list, mute.prop('checked'));
+                } else {
+                    // 現在 ステータスコード 200 の例外ケースは無い
+                }
+            });
+        });
+        tr.find('.ui-button-up').click(function(e){
+            var prev = tr.prevAll(':first');
+            if (prev.length) {
+                prev.before(tr);
+                updateSort();
+            }
+        });
+        tr.find('.ui-button-down').click(function(e){
+            var next = tr.nextAll(':first');
+            if (next.length) {
+                next.after(tr);
+                updateSort();
+            }
+        });
         tr.find('.ui-button-public').click(function(e){
             app.fireEvent('publicListBegin', list);
         });
@@ -2190,7 +2249,11 @@ app.submit.registerTask = function(form){
             if (task_id) {
                 app.dom.hide(form);
             } else {
-                app.dom.show(app.dom.get('showable', 'create-task-twipsy'));
+                var twipsy = app.dom.get('showable', 'create-task-twipsy');
+                var li = app.data.taskli_map[data.task.id];
+                console.log(li.offset().top);
+                twipsy.css('top', li.offset().top - 100 + 'px');
+                app.dom.show(twipsy);
             }
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い

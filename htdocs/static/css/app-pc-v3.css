@@ -71,12 +71,17 @@ ul.tasks li.selected {
     background-color: rgba(252,252,215,0.8);
 }
 
+ul.comments {
+    overflow-x: hidden;
+}
+
 /* ガントチャート */
 .gantttasks li > div.humanContainer {
-    left: 220px;
+    left: 216px;
 }
 .gantttasks {
     position: relative;
+    overflow-x: hidden;
 }
 .gantttasks ul {
     top: auto;
