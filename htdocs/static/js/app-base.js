@@ -1,5 +1,5 @@
 "use strict";
-(function(ns, w, d) {
+(function(ns, w, d, $) {
 
 var app = ns.app;
 
@@ -33,6 +33,7 @@ $.extend(app, {
         signin: false,
         offline: false,
         offline_queue: false,
+        tab: {}
     },
     queue: {}, // Queue Manager
     loading: {
@@ -240,7 +241,7 @@ app.dom.setup = function(){
     });
 }
 app.dom.show = function(target){
-    if (target.is(':visible')) {
+    if (!target || target.is(':visible')) {
         return;
     }
     var data     = target.data('showable');
@@ -266,9 +267,15 @@ app.dom.show = function(target){
             app.dom.hide(target);
         }, timeout);
     }
+    if (effect === 'none') {
+        target.show();
+    }
     return target.show(effect, option, speed, callback);
 }
 app.dom.hide = function(target){
+    if (!target) {
+        return;
+    }
     var data     = target.data('showable');
     var hide     = data.hide     || {};
     var effect   = hide.effect   || 'drop';
@@ -289,9 +296,9 @@ app.dom.hide = function(target){
 }
 app.dom.toggle = function(target){
     if (target.is(':visible')) {
-        app.dom.show(target);
-    } else {
         app.dom.hide(target);
+    } else {
+        app.dom.show(target);
     }
 }
 app.dom.reset = function(form){
@@ -412,6 +419,11 @@ app.setup.tab.menu = function(ele){
     var option = ele.data('tab');
     ele.click(function(){
         app.fireEvent('selectTab', option.group, option.id);
+        // ele.parent().addClass('active');
+        app.state.tab[option.group] = option.id;
+        // if (option.callback) {
+        //     app.setup.tab.callback[option.callback].call(this, ele);
+        // }
     });
     app.addListener('selectTab', function(group, id){
         if (group !== option.group) {
@@ -419,6 +431,7 @@ app.setup.tab.menu = function(ele){
         }
         if (id === option.id) {
             ele.parent().addClass('active');
+            app.state.tab[group] = id;
         } else {
             ele.parent().removeClass('active');
         }
@@ -523,4 +536,4 @@ app.setup.guide = function(ele){
     }, 500);
 }
 
-})(this, this, document);
+})(this, window, document, jQuery);

@@ -310,7 +310,7 @@ ul.comments li span.name {
 .gantttasks li.child {
     padding-left: 20px;
 }
-.gantttasks li:hover {
+.gantttasks li.clearfix:hover {
     background-color: rgba(252,252,215,0.6);
 }
 .gantttasks li.selected {
@@ -337,13 +337,15 @@ ul.comments li span.name {
 
 
 /********** scrollbar **********/
-ul::-webkit-scrollbar {
+ul::-webkit-scrollbar,
+div::-webkit-scrollbar {
     width: 6px;
     height: 6px;
     padding: 18px;
     -webkit-border-radius: 1ex
 }
-ul::-webkit-scrollbar-thumb {
+ul::-webkit-scrollbar-thumb,
+div::-webkit-scrollbar-thumb {
     background-color: rgba(053,057,071,0.3);
     padding: 8px;
     width: 6px;
@@ -351,12 +353,16 @@ ul::-webkit-scrollbar-thumb {
     -webkit-border-radius: 1ex;
 }
 ul::-webkit-scrollbar-button:start:decrement,
-ul::-webkit-scrollbar-button:end:increment {
+ul::-webkit-scrollbar-button:end:increment,
+div::-webkit-scrollbar-button:start:decrement,
+div::-webkit-scrollbar-button:end:increment {
     display: none;
     /*height: 10px;*/
 }
 ul::-webkit-scrollbar-thumb:vertical,
-ul::-webkit-scrollbar-thumb:horizontal {
+ul::-webkit-scrollbar-thumb:horizontal,
+div::-webkit-scrollbar-thumb:vertical,
+div::-webkit-scrollbar-thumb:horizontal {
     height: 3px;
     width: 3px;
     margin: 3px;

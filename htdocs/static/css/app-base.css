@@ -26,6 +26,12 @@ span.icon {
     background-image: url(/static/img/minus.png);
 }
 .icon-cross {
+    background-image: url(/static/img/plus.png);
+    -moz-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+.icon-remove {
     background-image: url(/static/img/cross.png);
 }
 .icon-up {

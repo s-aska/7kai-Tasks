@@ -1,0 +1,100 @@
+.icon-create-task {
+    background-image: url(/static/img/create-task.png);
+}
+.icon-create-task-black {
+    background-image: url(/static/img/create-task-black.png);
+}
+.icon-link {
+    background-image: url(/static/img/link.png);
+}
+.icon-edit {
+    background-image: url(/static/img/edit.png);
+}
+
+div.lists-wrap {
+    overflow: auto;
+    margin: 0 10px 10px 10px;
+}
+ul.lists ul.members {
+    float: left;
+    padding-left: 4px;
+}
+ul.lists ul.members > li {
+    float: left;
+    padding-right: 4px;
+    cursor: pointer;
+}
+ul.lists {
+}
+ul.lists > li {
+    min-height: 37px;
+    padding: 10px 0 5px 0;
+    border-bottom: 1px solid gray;
+}
+ul.lists > li > header {
+    padding: 2px;
+}
+ul.lists > li > header div.name {
+    float: left;
+    font-size: 16px;
+    font-weight: 200;
+    color: #222;
+    padding-top: 3px;
+    padding-left: 2px;
+}
+ul.lists > li > header ul.members {
+    padding-top: 3px;
+}
+ul.lists > li > header ul.members a {
+    padding: 5px 5px 2px 5px;
+}
+ul.lists > li > header ul.menu {
+    float: right;
+    padding-right: 4px;
+}
+ul.lists > li > header ul.menu > li {
+    float: left;
+    padding-left: 2px;
+}
+ul.lists > li > ul {
+    overflow: auto;
+}
+ul.lists > li > ul > li.closed {
+    background-color: transparent;
+    text-decoration: line-through;
+}
+
+ul.tasks li:hover {
+    background-color: rgba(252,252,215,0.6);
+}
+ul.tasks li.selected {
+    background-color: rgba(252,252,215,0.8);
+}
+
+/* ガントチャート */
+.gantttasks li > div.humanContainer {
+    left: 220px;
+}
+.gantttasks {
+    position: relative;
+}
+.gantttasks ul {
+    top: auto;
+}
+.gantttasks ul > li > div > .name {
+    color: #222;
+}
+
+/* リスト管理 */
+table.lists {
+    width: auto;
+}
+table.lists label {
+    width: auto;
+    text-align: left;
+    padding: 0;
+}
+table.lists ul.members > li {
+    float: left;
+    padding-left: 4px;
+}

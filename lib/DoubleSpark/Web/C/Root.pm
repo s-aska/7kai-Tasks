@@ -14,6 +14,17 @@ sub index {
     }
 }
 
+sub v3 {
+    my ($class, $c) = @_;
+
+    if (my $sign = $c->sign) {
+        $c->account->update({ authenticated_on => \'now()' });
+        $c->render('app-v3.tt');
+    } else {
+        $c->render('index.tt');
+    }
+}
+
 sub token {
     my ($class, $c) = @_;
 
