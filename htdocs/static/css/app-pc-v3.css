@@ -18,7 +18,8 @@
 
 div.lists-wrap {
     overflow: auto;
-    margin: 0 10px 10px 10px;
+    margin: 5px;
+    padding: 0px 5px 5px 5px;
 }
 ul.lists ul.members {
     float: left;
@@ -35,6 +36,9 @@ ul.lists > li {
     min-height: 37px;
     padding: 5px 0 0 0;
     border-bottom: 1px solid gray;
+}
+ul.lists > li:first-child {
+    padding-top: 0;
 }
 ul.lists > li > header {
     padding: 2px 0;

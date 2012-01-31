@@ -471,6 +471,7 @@
     <div
       class="lists-wrap"
       data-setup="stretch"
+      data-stretch='{"padding":5}'
     >
       <ul
         class="unstyled lists"
