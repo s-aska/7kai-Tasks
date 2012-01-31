@@ -181,7 +181,7 @@ app.setup.ganttchartListsV3 = function(ul){
             li_before.remove();
             taskli_map[task.id] = li;
         } else {
-            li.css('left', '4px');
+            li.css('left', '0px');
             if (app.util.taskFilter(task, filter)) {
                 li.data('visible', true);
             } else {
@@ -275,9 +275,9 @@ app.setup.ganttchartListsV3 = function(ul){
             ul.append(taskli_map[tasks[i].id]);
             var parents = app.util.findParentTasks(tasks[i]);
             if (parents.length) {
-                taskli_map[tasks[i].id].css('paddingLeft', ((parents.length * 18) + 4) + 'px');
+                taskli_map[tasks[i].id].css('paddingLeft', ((parents.length * 18) + 0) + 'px');
             } else {
-                taskli_map[tasks[i].id].css('paddingLeft', '4px');
+                taskli_map[tasks[i].id].css('paddingLeft', '0px');
             }
         }
         current_sort.column = column;

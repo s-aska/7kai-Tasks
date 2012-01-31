@@ -485,20 +485,20 @@
             <ul class="unstyled clearfix menu">
               <li class="ui-normal">
                 <a
-                  class="btn small"
+                  class="btn x-small"
                   data-setup="localize,click"
                   data-click="createTask"
                   data-text-ja="新しいタスク"
                 >New</a>
                 <a
-                  class="btn small ui-edit"
+                  class="btn x-small ui-edit"
                   disabled="disabled"
                   data-setup="localize,click"
                   data-click="editTask"
                   data-text-ja="編集"
                 >Edit</a>
                 <a
-                  class="btn small ui-sub"
+                  class="btn x-small ui-sub"
                   disabled="disabled"
                   data-setup="localize,click"
                   data-click="createSubTask"
@@ -507,7 +507,7 @@
               </li>
               <li class="ui-clear" style="display: none">
                 <a
-                  class="btn small"
+                  class="btn x-small"
                   data-setup="localize,click"
                   data-click='clearList'
                   data-text-ja="完了済みタスクをクリア"

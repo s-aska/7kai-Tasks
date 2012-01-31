@@ -1,3 +1,8 @@
+.btn.x-small {
+    padding: 3px 7px 3px;
+    font-size: 11px;
+}
+
 .icon-create-task {
     background-image: url(/static/img/create-task.png);
 }
@@ -28,17 +33,17 @@ ul.lists {
 }
 ul.lists > li {
     min-height: 37px;
-    padding: 10px 0 5px 0;
+    padding: 5px 0 0 0;
     border-bottom: 1px solid gray;
 }
 ul.lists > li > header {
-    padding: 2px;
+    padding: 2px 0;
 }
 ul.lists > li > header div.name {
     float: left;
-    font-size: 16px;
+/*    font-size: 12px;
     font-weight: 200;
-    color: #222;
+*/    color: #222;
     padding-top: 3px;
     padding-left: 2px;
 }
@@ -50,7 +55,7 @@ ul.lists > li > header ul.members a {
 }
 ul.lists > li > header ul.menu {
     float: right;
-    padding-right: 4px;
+    padding-right: 0;
 }
 ul.lists > li > header ul.menu > li {
     float: left;
@@ -76,8 +81,11 @@ ul.comments {
 }
 
 /* ガントチャート */
+ul.gantttasks li {
+    margin-left: 0;
+}
 .gantttasks li > div.humanContainer {
-    left: 216px;
+    left: 230px;
 }
 .gantttasks {
     position: relative;
