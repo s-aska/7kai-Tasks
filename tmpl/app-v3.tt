@@ -491,16 +491,18 @@
                   data-text-ja="新しいタスク"
                 >New</a>
                 <a
-                  class="btn small"
+                  class="btn small ui-edit"
+                  disabled="disabled"
                   data-setup="localize,click"
                   data-click="editTask"
                   data-text-ja="編集"
                 >Edit</a>
                 <a
-                  class="btn small"
+                  class="btn small ui-sub"
+                  disabled="disabled"
                   data-setup="localize,click"
                   data-click="createSubTask"
-                  data-text-ja="新しいサブタスク"
+                  data-text-ja="サブタスク"
                 >Sub</a>
               </li>
               <li class="ui-clear" style="display: none">

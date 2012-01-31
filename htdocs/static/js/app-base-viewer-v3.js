@@ -1262,6 +1262,7 @@ app.setup.tasksheet = function(ul){
         li.data('id', list.id);
         li.find('> header .name').text(list.name);
         li.find('> ul').empty();
+
         app.dom.setup(li.find('> header'));
 
         li.get(0).addEventListener('dragover', function(e){
@@ -1421,9 +1422,13 @@ app.setup.tasksheet = function(ul){
 
     app.addListener('openTask', function(task){
         if (!ul.is(':visible')) { return }
+
         ul.find('> li > ul > li').removeClass('selected');
+        ul.find('> li > header .ui-edit, > li > header .ui-sub').attr('disabled', true);
         if (task.id in app.data.taskli_map) {
             app.data.taskli_map[task.id].addClass('selected');
+            app.data.taskli_map[task.id].parent().parent()
+                .find('> header .ui-edit, > header .ui-sub').attr('disabled', false);
         }
     });
 
@@ -1616,10 +1621,12 @@ app.setup.tasksheet = function(ul){
     });
     
     app.addListener('missingTask', function(){
-        if (app.data.current_task &&
-            app.data.current_task.id in app.data.taskli_map) {
-            app.data.taskli_map[app.data.current_task.id].removeClass('selected');
-        }
+        // if (app.data.current_task &&
+        //     app.data.current_task.id in app.data.taskli_map) {
+        //     app.data.taskli_map[app.data.current_task.id].removeClass('selected');
+        // }
+        ul.find('> li > ul > li').removeClass('selected');
+        ul.find('> li > header .ui-edit, > li > header .ui-sub').attr('disabled', true);
     });
 
     app.addListener('clear', function(){
