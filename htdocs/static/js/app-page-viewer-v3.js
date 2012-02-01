@@ -564,6 +564,8 @@ app.sortable.list = function(ele){
 // タスク管理
 // ----------------------------------------------------------------------
 app.click.sortTask = function(ele){
+    ele.parent().children().removeClass('active');
+    ele.addClass('active');
     app.fireEvent('sortTask', ele.data('sort-column'), ele.data('sort-reverse'));
 }
 

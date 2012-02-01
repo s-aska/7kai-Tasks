@@ -46,14 +46,6 @@ app.addEvents('clickNotification');
 app.addEvents('receiveMe'); // receive me from api
 app.addEvents('receiveNotice');
 
-// イベントのキャッシュコントロール
-// app.addListener('openList', function(list){
-//     app.data.current_list = list;
-//     localStorage.setItem('last_list_id', list.id);
-//     app.fireEvent('filterTask', {
-//         list_id: list.id
-//     });
-// });
 app.addListener('registerList', function(list){
     app.data.list_map[list.id] = list;
 });
@@ -168,13 +160,6 @@ app.addListener('clickNotification', function(option){
     app.data.current_filter = { list_id: option.list_id };
     app.api.account.me(option);
 });
-// app.addListener('openList', function(list){
-//     if (list.public_code) {
-//         app.fireEvent('publicList', list);
-//     } else {
-//         app.fireEvent('privateList', list);
-//     }
-// });
 
 // セットアップ
 app.addListener('ready', function(){
@@ -629,6 +614,15 @@ app.util.sortTask = function(tasks, column, reverse){
                 compareTaskA = parentsA.pop(),
                 compareTaskB = parentsB.pop();
 
+            // A親 - B子
+            if (!parentsA.length) {
+                return reverse ? 1 : -1;
+            }
+            // B親 - A子
+            else if (!parentsB.length) {
+                return reverse ? -1 : 1;
+            }
+
             // 共通の親から離れるまでドリルダウン
             while (compareTaskA.id === compareTaskB.id) {
                 // A親 - B子
@@ -654,6 +648,18 @@ app.util.sortTask = function(tasks, column, reverse){
         tasks.reverse();
     }
     return tasks;
+}
+
+app.dom.scrollTopFix = function(wrapper, target){
+    var top           = wrapper.scrollTop();
+    var bottom        = top + wrapper.height();
+    var target_top    = top + target.offset().top - wrapper.offset().top;
+    var target_bottom = target_top + target.height();
+    if (target_top < top) {
+        wrapper.scrollTop(target_top);
+    } else if (target_bottom > bottom) {
+        wrapper.scrollTop(target_top);
+    }
 }
 
 app.api.account.me = function(option){
@@ -928,16 +934,16 @@ app.setup.starCounter = function(ele){
 app.setup.filterTask = function(ele){
     app.addListener('filterTask', function(){
         if (ele.is(':visible')) {
-            ele.parent().removeClass('active');
+            ele.removeClass('active');
         }
     });
-    app.addListener('openList', function(){
-        if (ele.is(':visible')) {
-            ele.parent().removeClass('active');
-        }
-    });
+    // app.addListener('openList', function(){
+    //     if (ele.is(':visible')) {
+    //         ele.parent().removeClass('active');
+    //     }
+    // });
     app.addListener('clear', function(){
-        ele.parent().removeClass('active');
+        ele.removeClass('active');
     });
 }
 app.setup.rightColumn = function(ele){
@@ -1055,11 +1061,11 @@ app.setup.rightColumn = function(ele){
                 li.find('.status').text(
                     app.data.messages.data('text-' + comment.action + '-' + app.env.lang));
                 if (comment.action === 'start-task' || comment.action === 'fix-task') {
-                    li.find('.status').addClass('success');
+                    li.find('.status').addClass('label-success');
                 } else if (comment.action === 'close-task') {
                     li.find('.status').addClass('closed');
                 } else if (comment.action === 'reopen-task') {
-                    li.find('.status').addClass('important');
+                    li.find('.status').addClass('label-important');
                 }
             }
             if (!comment.message) {
@@ -1171,6 +1177,12 @@ app.setup.listmenu = function(ele){
     // });
 }
 
+// app.setup.homemenu = function(ele){
+//     ele.parent().children().removeClass('active');
+//     ele.addClass('active');
+//     
+// }
+
 app.setup.publicListWindow = function(ele){
     ele.find('input').each(function(){
         var input = $(this);
@@ -1185,6 +1197,8 @@ app.setup.publicListWindow = function(ele){
         } else {
             app.fireEvent('privateList', list);
         }
+        ele.data('id', list.id);
+        ele.find('.ui-listname').text(list.name);
         app.dom.show(ele);
     });
     app.addListener('publicList', function(list){
@@ -1207,45 +1221,47 @@ app.setup.publicListWindow = function(ele){
 app.setup.publicListButton = function(ele){
     ele.click(function(e){
         e.preventDefault();
+        var id = ele.parents('form').data('id');
         app.ajax({
             type: 'POST',
             url: '/api/1/list/public',
             data: {
-                list_id: app.data.current_list.id
+                list_id: id
             },
             dataType: 'json'
         }).done(function(data){
-            app.data.current_list.public_code = data.public_code;
-            app.fireEvent('publicList', app.data.current_list);
+            app.data.list_map[id].public_code = data.public_code;
+            app.fireEvent('publicList', app.data.list_map[id]);
         });
     });
     app.addListener('publicList', function(list){
-        ele.addClass('primary');
+        ele.addClass('active');
     });
     app.addListener('privateList', function(list){
-        ele.removeClass('primary');
+        ele.removeClass('active');
     });
 }
 app.setup.privateListButton = function(ele){
     ele.click(function(e){
         e.preventDefault();
+        var id = ele.parents('form').data('id');
         app.ajax({
             type: 'POST',
             url: '/api/1/list/private',
             data: {
-                list_id: app.data.current_list.id
+                list_id: id
             },
             dataType: 'json'
         }).done(function(data){
-            app.data.current_list.public_code = null;
-            app.fireEvent('privateList', app.data.current_list);
+            app.data.list_map[id].public_code = null;
+            app.fireEvent('privateList', app.data.list_map[id]);
         });
     });
     app.addListener('publicList', function(list){
-        ele.removeClass('primary');
+        ele.removeClass('active');
     });
     app.addListener('privateList', function(list){
-        ele.addClass('primary');
+        ele.addClass('active');
     });
 }
 
@@ -1257,13 +1273,33 @@ app.setup.tasksheet = function(ul){
     var task_template = ul.find('> li > ul').html();
     ul.empty();
 
+    var updateSort = function(){
+        var sort = {};
+        var lists = ul.children();
+        var count = lists.length;
+        lists.each(function(i, element) {
+            var li = $(element);
+            if (li.data('id')) {
+                sort[li.data('id')] = count;
+                count--;
+            }
+        });
+        app.api.account.update({
+            ns: 'state.sort',
+            method: 'set',
+            type: 'json',
+            key: 'list',
+            val: JSON.stringify(sort)
+        });
+    };
+
     app.addListener('registerList', function(list){
         var li = $(list_template);
         li.data('id', list.id);
         li.find('> header .name').text(list.name);
         li.find('> ul').empty();
 
-        app.dom.setup(li.find('> header'));
+        app.dom.setup(li);
 
         li.get(0).addEventListener('dragover', function(e){
             e.stopPropagation();
@@ -1284,19 +1320,81 @@ app.setup.tasksheet = function(ul){
             app.api.task.move(app.data.dragtask.list.id, app.data.dragtask.id, list.id);
         }, false);
 
-        var members = [list.owner].concat(list.members);
-        for (var i = 0, max_i = members.length; i < max_i; i++) {
-            var code = members[i];
-            var friend = app.data.users[code];
-            var icon = app.util.getIcon(code, 16);
-            icon.data('code', code);
-            icon.click(function(){
-                app.fireEvent('createTask', list, $(this).data('code'));
+
+
+
+
+        var mute = li.find('.ui-listmenu .icon-volume-off').parent();
+        if (list.id in app.data.state.mute) {
+            mute.addClass('active');
+        }
+        mute.click(function(){
+            var method = mute.hasClass('active') ? 'off' : 'on';
+            app.api.account.update({
+                ns: 'state',
+                method: method,
+                key: 'mute',
+                val: list.id
+            })
+            .done(function(data){
+                if (data.success === 1) {
+                    app.data.state.mute = data.account.state.mute;
+                    app.fireEvent('checkMute', list, mute.hasClass('active'));
+                    mute[ mute.hasClass('active') ? 'removeClass' : 'addClass' ]('active');
+                } else {
+                    // 現在 ステータスコード 200 の例外ケースは無い
+                }
             });
-            $('<li/>')
-                .append(icon)
-                .addClass('member')
-                .appendTo(li.find('ul.members'));
+        });
+        li.find('.ui-listmenu .icon-chevron-up').parent().click(function(e){
+            var prev = li.prevAll(':first');
+            if (prev.length) {
+                prev.before(li);
+                updateSort();
+            }
+        });
+        li.find('.ui-listmenu .icon-chevron-down').parent().click(function(e){
+            var next = li.nextAll(':first');
+            if (next.length) {
+                next.after(li);
+                updateSort();
+            }
+        });
+        li.find('.ui-listmenu .icon-signal').parent().click(function(e){
+            app.fireEvent('publicListBegin', list);
+        });
+        if (list.public_code) {
+            li.find('.ui-listmenu .icon-signal').parent().addClass('active');
+        }
+        li.find('.ui-listmenu .icon-edit').parent().click(function(e){
+            app.fireEvent('editList', list);
+        });
+        li.find('.ui-listmenu .icon-remove-sign').parent().click(function(e){
+            app.fireEvent('deleteListBegin', list);
+        });
+
+
+
+
+
+
+
+
+        if (list.members.length) {
+            var members = [list.owner].concat(list.members);
+            for (var i = 0, max_i = members.length; i < max_i; i++) {
+                var code = members[i];
+                var friend = app.data.users[code];
+                var icon = app.util.getIcon(code, 24);
+                icon.data('code', code);
+                icon.click(function(){
+                    app.fireEvent('createTask', list, $(this).data('code'));
+                });
+                $('<li/>')
+                    .append(icon)
+                    .addClass('member sq24')
+                    .appendTo(li.find('ul.members'));
+            }
         }
 
         if (list.id in app.data.listli_map) {
@@ -1313,6 +1411,13 @@ app.setup.tasksheet = function(ul){
     app.addListener('deleteList', function(list){
         app.data.listli_map[list.id].remove();
         delete app.data.listli_map[list.id];
+    });
+
+    app.addListener('publicList', function(list){
+        app.data.listli_map[list.id].find('.icon-signal').parent().addClass('active');
+    });
+    app.addListener('privateList', function(list){
+        app.data.listli_map[list.id].find('.icon-signal').parent().removeClass('active');
     });
 
     app.addListener('registerTask', function(task){
@@ -1429,6 +1534,7 @@ app.setup.tasksheet = function(ul){
             app.data.taskli_map[task.id].addClass('selected');
             app.data.taskli_map[task.id].parent().parent()
                 .find('> header .ui-edit, > header .ui-sub').attr('disabled', false);
+            app.dom.scrollTopFix(ul.parent(), app.data.taskli_map[task.id]);
         }
     });
 
@@ -1577,13 +1683,19 @@ app.setup.tasksheet = function(ul){
         }
         
         if (condition.closed) {
-            ul.find('> li > header li.ui-normal').fadeOut('fast', function(){
-                ul.find('> li > header li.ui-clear').fadeIn('fast');
-            });
+            // app.fireEvent('selectTab', 'homemenu', 'closed');
+            ul.find('> li > header li.ui-normal, > li > header ul.members')
+                .fadeOut('fast', function(){
+                    ul.find('> li > header li.ui-clear')
+                        .fadeIn('fast');
+                });
         } else {
-            ul.find('> li > header li.ui-clear').fadeOut('fast', function(){
-                ul.find('> li > header li.ui-normal').fadeIn('fast');
-            });
+            // app.fireEvent('selectTab', 'homemenu', 'task');
+            ul.find('> li > header li.ui-clear')
+                .fadeOut('fast', function(){
+                    ul.find('> li > header li.ui-normal, > li > header ul.members')
+                        .fadeIn('fast');
+                });
         }
     });
     
@@ -2059,8 +2171,8 @@ app.setup.timeline = function(ul){
             }
             li.click(function(e){
                 e.preventDefault();
-                app.fireEvent('selectTab', 'viewer', 'list');
-                app.fireEvent('openList', action.task.list);
+                app.fireEvent('selectTab', 'viewer', 'task');
+                // app.fireEvent('openList', action.task.list);
                 app.fireEvent('openTask', action.task);
             });
             li.appendTo(ul);
@@ -2185,12 +2297,12 @@ app.click.editTask = function(){
     }
 }
 app.click.filterTask = function(ele){
-    if (ele.parent().hasClass('active')) {
+    if (ele.hasClass('active')) {
         app.fireEvent('filterTask', {});
-        ele.parent().removeClass('active');
+        ele.removeClass('active');
     } else {
         app.fireEvent('filterTask', ele.data('filter-condition'));
-        ele.parent().addClass('active');
+        ele.addClass('active');
     }
 }
 app.click.clearList = function(ele){

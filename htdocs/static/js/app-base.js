@@ -430,10 +430,18 @@ app.setup.tab.menu = function(ele){
             return;
         }
         if (id === option.id) {
-            ele.parent().addClass('active');
+            if (ele.hasClass('btn')) {
+                ele.addClass('active');
+            } else {
+                ele.parent().addClass('active');
+            }
             app.state.tab[group] = id;
         } else {
-            ele.parent().removeClass('active');
+            if (ele.hasClass('btn')) {
+                ele.removeClass('active');
+            } else {
+                ele.parent().removeClass('active');
+            }
         }
     });
 }
@@ -444,9 +452,18 @@ app.setup.tab.content = function(ele){
             return;
         }
         if (id === option.id) {
-            ele.show();
+            if (option.effect) {
+                ele.show(option.effect, 'fast');
+            } else {
+                ele.show();
+            }
         } else {
-            ele.hide();
+            if (option.effect) {
+                ele.hide();
+                // ele.hide(option.effect, 'fast');
+            } else {
+                ele.hide();
+            }
         }
     });
 }
