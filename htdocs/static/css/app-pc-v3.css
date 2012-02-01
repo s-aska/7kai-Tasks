@@ -15,6 +15,9 @@
 .active .icon-tag {
   background-image: url(../img/glyphicons-halflings.png);
 }
+.ui-autocomplete {
+    z-index: 1051 !important;
+}
 div.icon-star,
 div.icon-plus {
     background-position: 0 0;
@@ -184,6 +187,9 @@ ul.comments {
 /* ガントチャート */
 ul.gantttasks li {
     margin-left: 0;
+}
+div.gantttasks {
+    top: 20px;
 }
 .gantttasks li > div.humanContainer {
     left: 230px;

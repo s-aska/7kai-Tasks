@@ -842,8 +842,7 @@
     </div>
     <div
       class="btn-group"
-      data-setup="localize,tab.content"
-      data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
+      data-setup="localize"
     >
       <a class="btn x-small disabled btn-icon">
         <i class="icon-align-left"></i>
@@ -876,8 +875,7 @@
     </div>
     <div
       class="btn-group"
-      data-setup="localize,tab.content"
-      data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
+      data-setup="localize"
     >
       <a class="btn x-small disabled btn-icon">
         <i class="icon-search"></i>
@@ -963,8 +961,7 @@
     </div>
     <div
       class="btn-group ui-tags"
-      data-setup="localize,tab.content,tags"
-      data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
+      data-setup="localize,tags"
     >
       <a
         class="btn x-small active"

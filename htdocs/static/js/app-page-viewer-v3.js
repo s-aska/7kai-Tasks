@@ -399,6 +399,7 @@ app.setup.registerListWindow = function(form){
     });
     social_member_list.empty();
     social_member_input.autocomplete({
+		zIndex: 1051,
 		source: function(request, response) {
 		    response(autocomplete_filter(request.term));
 		},
