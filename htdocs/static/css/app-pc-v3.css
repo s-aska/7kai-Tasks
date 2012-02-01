@@ -12,6 +12,9 @@
 .icon-chevron-down {
     width: 13px;
 }
+.active .icon-tag {
+  background-image: url(../img/glyphicons-halflings.png);
+}
 div.icon-star,
 div.icon-plus {
     background-position: 0 0;

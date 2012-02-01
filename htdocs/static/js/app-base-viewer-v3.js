@@ -36,6 +36,8 @@ app.addEvents('editTask');      // 登録フォーム表示(編集モード)
 app.addEvents('clearTask');
 app.addEvents('sortTask');
 app.addEvents('filterTask');
+app.addEvents('toggleTag');
+app.addEvents('resetTag');
 
 app.addEvents('checkStar');
 app.addEvents('checkMute');
@@ -440,6 +442,9 @@ app.util.buildMe = function(option, data){
 
     if (!('mute' in app.data.state)) {
         app.data.state.mute = {};
+    }
+    if (!('tags' in app.data.state)) {
+        app.data.state.tags = {};
     }
     if (!('star' in app.data.state)) {
         app.data.state.star = {};
@@ -946,6 +951,27 @@ app.setup.filterTask = function(ele){
         ele.removeClass('active');
     });
 }
+app.setup.tags = function(ul){
+    ul.find('a[data-tag]').each(function(i, element){
+        var ele = $(element);
+        var tag = ele.data('tag');
+        if (tag) {
+            ele.click(function(e){
+                ele[ ele.hasClass('active') ? 'removeClass' : 'addClass' ]('active');
+                app.fireEvent('toggleTag', tag, ele.hasClass('active'));
+                return false;
+            });
+        }
+    });
+    app.addListener('resetTag', function(){
+        ul.find('a[data-tag]').removeClass('active');
+    });
+}
+app.setup.resetTag = function(ele){
+    ele.click(function(){
+        app.fireEvent('resetTag');
+    });
+}
 app.setup.rightColumn = function(ele){
     var list_id_input    = ele.find('input[name=list_id]');
     var task_id_input    = ele.find('input[name=task_id]');
@@ -1272,6 +1298,7 @@ app.setup.tasksheet = function(ul){
     var list_template = ul.html();
     var task_template = ul.find('> li > ul').html();
     ul.empty();
+    var active_tags = {};
 
     var updateSort = function(){
         var sort = {};
@@ -1292,6 +1319,38 @@ app.setup.tasksheet = function(ul){
             val: JSON.stringify(sort)
         });
     };
+
+    app.addListener('toggleTag', function(tag, active){
+        if (!ul.is(':visible')) {
+            return;
+        }
+        if (active) {
+            active_tags[tag] = true;
+        } else if (tag in active_tags) {
+            delete active_tags[tag];
+        }
+        ul.children().each(function(i, element){
+            var li = $(element);
+            var id = li.data('id');
+            var list = app.data.list_map[id];
+            var method = 'show';
+            for (var tag in active_tags) {
+                if (tag in app.data.state.tags &&
+                    list.id in app.data.state.tags[tag]) {
+                    method = 'show';
+                    break;
+                } else {
+                    method = 'hide';
+                }
+            }
+            li[method]();
+        });
+    });
+
+    app.addListener('resetTag', function(){
+        ul.children().show();
+        active_tags = {};
+    });
 
     app.addListener('registerList', function(list){
         var li = $(list_template);
@@ -1345,6 +1404,32 @@ app.setup.tasksheet = function(ul){
                     // 現在 ステータスコード 200 の例外ケースは無い
                 }
             });
+        });
+        li.find('.ui-tags a').each(function(i, element){
+            var ele = $(element);
+            var tag = ele.data('tag');
+            if (tag) {
+                if (tag in app.data.state.tags &&
+                    list.id in app.data.state.tags[tag]) {
+                    ele.addClass('active');
+                }
+                ele.click(function(e){
+                    app.api.account.update({
+                        ns: 'state.tags',
+                        method: (ele.hasClass('active') ? 'off' : 'on'),
+                        key: tag,
+                        val: list.id
+                    })
+                    .done(function(data){
+                        if (data.success === 1) {
+                            app.data.state.tags = data.account.state.tags;
+                            ele[ ele.hasClass('active') ? 'removeClass' : 'addClass' ]('active');
+                        } else {
+                            // 現在 ステータスコード 200 の例外ケースは無い
+                        }
+                    });
+                });
+            }
         });
         li.find('.ui-listmenu .icon-chevron-up').parent().click(function(e){
             var prev = li.prevAll(':first');

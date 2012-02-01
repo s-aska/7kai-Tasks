@@ -128,7 +128,7 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="localize,tab.menu"
+        data-setup="localize,resetTag,tab.menu"
         data-tab='{"group":"homemenu","id":"list"}'
       >
         <i class="icon-list"></i>
@@ -137,6 +137,40 @@
           data-text-ja="リスト管理"
         >List Menu</span>
       </a>
+    </div>
+    <div
+      class="btn-group"
+      data-setup="localize,tab.content"
+      data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
+    >
+      <a class="btn x-small disabled btn-icon">
+        <i class="icon-align-left"></i>
+      </a>
+      <a
+        class="btn x-small"
+        data-setup="click"
+        data-click="sortTask"
+        data-sort-column="name"
+      ><i class="icon-font"></i></a>
+      <a
+        class="btn x-small active"
+        data-setup="click"
+        data-click="sortTask"
+        data-sort-column="updated_on"
+        data-sort-reverse="true"
+      ><i class="icon-time"></i></a>
+      <a
+        class="btn x-small"
+        data-setup="click"
+        data-click="sortTask"
+        data-sort-column="due_epoch"
+      ><i class="icon-calendar"></i></a>
+      <a
+        class="btn x-small"
+        data-setup="click"
+        data-click="sortTask"
+        data-sort-column="person"
+      ><i class="icon-user"></i></a>
     </div>
     <div
       class="btn-group"
@@ -226,38 +260,29 @@
       </a>
     </div>
     <div
-      class="btn-group"
-      data-setup="localize,tab.content"
+      class="btn-group ui-tags"
+      data-setup="localize,tab.content,tags"
       data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
     >
-      <a class="btn x-small disabled btn-icon">
-        <i class="icon-align-left"></i>
-      </a>
-      <a
-        class="btn x-small"
-        data-setup="click"
-        data-click="sortTask"
-        data-sort-column="name"
-      ><i class="icon-font"></i></a>
       <a
         class="btn x-small active"
-        data-setup="click"
-        data-click="sortTask"
-        data-sort-column="updated_on"
-        data-sort-reverse="true"
-      ><i class="icon-time"></i></a>
+      ><i class="icon-tags"></i></a>
       <a
-        class="btn x-small"
-        data-setup="click"
-        data-click="sortTask"
-        data-sort-column="due_epoch"
-      ><i class="icon-calendar"></i></a>
+        class="btn x-small btn-primary"
+        data-tag="primary"
+      ><i class="icon-tag icon-white"></i></a>
       <a
-        class="btn x-small"
-        data-setup="click"
-        data-click="sortTask"
-        data-sort-column="person"
-      ><i class="icon-user"></i></a>
+        class="btn x-small btn-success"
+        data-tag="success"
+      ><i class="icon-tag icon-white"></i></a>
+      <a
+        class="btn x-small btn-warning"
+        data-tag="warning"
+      ><i class="icon-tag icon-white"></i></a>
+      <a
+        class="btn x-small btn-danger"
+        data-tag="danger"
+      ><i class="icon-tag icon-white"></i></a>
     </div>
   </div>
   <div
@@ -344,6 +369,32 @@
                 <a
                   class="btn btn-danger x-small"
                 ><i class="icon-remove-sign icon-white"></i></a>
+              </li>
+              <li
+                class="btn-group ui-tags"
+                style="display: none"
+                data-setup="localize,tab.content"
+                data-tab='{"group":"homemenu","id":"list","effect":"fade"}'
+              >
+                <a
+                  class="btn x-small active"
+                ><i class="icon-tags"></i></a>
+                <a
+                  class="btn x-small btn-primary"
+                  data-tag="primary"
+                ><i class="icon-tag icon-white"></i></a>
+                <a
+                  class="btn x-small btn-success"
+                  data-tag="success"
+                ><i class="icon-tag icon-white"></i></a>
+                <a
+                  class="btn x-small btn-warning"
+                  data-tag="warning"
+                ><i class="icon-tag icon-white"></i></a>
+                <a
+                  class="btn x-small btn-danger"
+                  data-tag="danger"
+                ><i class="icon-tag icon-white"></i></a>
               </li>
             </ul>
             <ul
@@ -795,6 +846,40 @@
       data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
     >
       <a class="btn x-small disabled btn-icon">
+        <i class="icon-align-left"></i>
+      </a>
+      <a
+        class="btn x-small"
+        data-setup="click"
+        data-click="sortTask"
+        data-sort-column="name"
+      ><i class="icon-font"></i></a>
+      <a
+        class="btn x-small active"
+        data-setup="click"
+        data-click="sortTask"
+        data-sort-column="updated_on"
+        data-sort-reverse="true"
+      ><i class="icon-time"></i></a>
+      <a
+        class="btn x-small"
+        data-setup="click"
+        data-click="sortTask"
+        data-sort-column="due_epoch"
+      ><i class="icon-calendar"></i></a>
+      <a
+        class="btn x-small"
+        data-setup="click"
+        data-click="sortTask"
+        data-sort-column="person"
+      ><i class="icon-user"></i></a>
+    </div>
+    <div
+      class="btn-group"
+      data-setup="localize,tab.content"
+      data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
+    >
+      <a class="btn x-small disabled btn-icon">
         <i class="icon-search"></i>
       </a>
       <a
@@ -877,38 +962,29 @@
       </a>
     </div>
     <div
-      class="btn-group"
-      data-setup="localize,tab.content"
+      class="btn-group ui-tags"
+      data-setup="localize,tab.content,tags"
       data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
     >
-      <a class="btn x-small disabled btn-icon">
-        <i class="icon-align-left"></i>
-      </a>
-      <a
-        class="btn x-small"
-        data-setup="click"
-        data-click="sortTask"
-        data-sort-column="name"
-      ><i class="icon-font"></i></a>
       <a
         class="btn x-small active"
-        data-setup="click"
-        data-click="sortTask"
-        data-sort-column="updated_on"
-        data-sort-reverse="true"
-      ><i class="icon-time"></i></a>
+      ><i class="icon-tags"></i></a>
       <a
-        class="btn x-small"
-        data-setup="click"
-        data-click="sortTask"
-        data-sort-column="due_epoch"
-      ><i class="icon-calendar"></i></a>
+        class="btn x-small btn-primary"
+        data-tag="primary"
+      ><i class="icon-tag icon-white"></i></a>
       <a
-        class="btn x-small"
-        data-setup="click"
-        data-click="sortTask"
-        data-sort-column="person"
-      ><i class="icon-user"></i></a>
+        class="btn x-small btn-success"
+        data-tag="success"
+      ><i class="icon-tag icon-white"></i></a>
+      <a
+        class="btn x-small btn-warning"
+        data-tag="warning"
+      ><i class="icon-tag icon-white"></i></a>
+      <a
+        class="btn x-small btn-danger"
+        data-tag="danger"
+      ><i class="icon-tag icon-white"></i></a>
     </div>
   </div>
   <div
