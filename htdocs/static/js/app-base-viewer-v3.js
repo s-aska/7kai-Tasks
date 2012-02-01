@@ -2163,11 +2163,11 @@ app.setup.timeline = function(ul){
             li.find('.status').text(
                 app.data.messages.data('text-' + action.action + '-' + app.env.lang));
             if (action.action === 'start-task' || action.action === 'fix-task') {
-                li.find('.status').addClass('success');
+                li.find('.status').addClass('label-success');
             } else if (action.action === 'close-task') {
                 li.find('.status').addClass('closed');
             } else if (action.action === 'reopen-task') {
-                li.find('.status').addClass('important');
+                li.find('.status').addClass('label-important');
             }
             li.click(function(e){
                 e.preventDefault();

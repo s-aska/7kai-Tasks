@@ -262,7 +262,7 @@
   </div>
   <div
     class="columns span11"
-    style="width: 640px; padding-top: 5px; margin-left: 0;"
+    style="width: 630px; padding-top: 5px; margin-left: 0;"
     data-setup="stretch"
   >
     <div
@@ -412,47 +412,51 @@
         <input type="hidden" name="registrant" value="">
         <input type="hidden" name="status" value="">
         <input type="hidden" name="closed" value="">
-        <label
+        <!-- <label
           data-setup="localize"
           data-text-ja="コメントを添える"
-        >Comment on this task</label>
+        >Comment on this task</label> -->
         <textarea
           name="message"
           style="width: 370px; height: 56px; margin-bottom: 6px; font-size: 1.1em;"></textarea>
         <div class="">
           <button
-            class="btn small"
+            class="btn x-small"
             tabindex="0"
-            data-setup="localize"
-            data-text-ja="コメント"
-          >Comment</button>
+          >
+            <i class="icon-comment"></i>
+            <span
+              data-setup="localize"
+              data-text-ja="コメント"
+            >Comment</span>
+          </button>
           <button
-            class="btn small btn-success"
+            class="btn x-small btn-success"
             tabindex="0"
             data-setup="localize"
-            data-text-ja="+ 処理"
+            data-text-ja="処理"
             data-plus="fix"
-          >+ Fix</button>
+          >Fix</button>
           <button
-            class="btn small btn-danger"
+            class="btn x-small btn-danger"
             tabindex="0"
             data-setup="localize"
-            data-text-ja="+ 差戻"
+            data-text-ja="差戻"
             data-plus="revert"
-          >+ Revert</button>
+          >Revert</button>
           <button
-            class="btn small btn-primary"
+            class="btn x-small btn-primary"
             tabindex="0"
             data-setup="localize"
-            data-text-ja="+ 完了"
+            data-text-ja="完了"
             data-plus="close"
-          >+ Close</button>
+          >Close</button>
         </div>
       </form>
       <ul
         class="unstyled comments"
         data-setup="stretch"
-        data-stretch='{"padding":10}'
+        data-stretch='{"padding":5}'
       >
         <li class="clearfix" style="position: relative;">
           <div class="icon sq32" style="position: absolute;"></div>
@@ -684,23 +688,15 @@
   data-tab='{"group":"viewer","id":"timeline"}'
 >
   <div
-    class="span6 columns timeline"
+    class="span9 columns timeline"
     data-setup="stretch"
   >
-    <div class="navbar">
-      <div class="navbar-inner">
-        <div class="container">
-          <ul class="nav">
-            <li>
-              <a
-                data-setup="localize"
-                data-text-ja="メンバー"
-              >Member</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    <header>
+      <span
+        data-setup="localize"
+        data-text-ja="メンバー"
+      >Member</span>
+    </header>
     <ul
       class="unstyled comments"
       data-setup="stretch,timeline"
@@ -724,23 +720,15 @@
     </ul>
   </div>
   <div
-    class="span6 columns timeline"
+    class="span9 columns timeline"
     data-setup="stretch"
   >
-    <div class="navbar">
-      <div class="navbar-inner">
-        <div class="container">
-          <ul class="nav">
-            <li>
-              <a
-                data-setup="localize"
-                data-text-ja="あなた"
-              >You</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    <header>
+      <span
+        data-setup="localize"
+        data-text-ja="あなた"
+      >You</span>
+    </header>
     <ul
       class="unstyled comments"
       data-setup="stretch,timeline"
