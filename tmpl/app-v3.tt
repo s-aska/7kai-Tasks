@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css">
-<!-- <link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css"> -->
 <link rel="stylesheet" href="/static/css/bootstrap.css">
 <link rel="stylesheet" href="/static/css/app-base-v3.css" media="all">
 <link rel="stylesheet" href="/static/css/app-pc.css" media="all">
@@ -42,8 +41,8 @@
           <a
             data-setup="localize,tab.menu"
             data-tab='{"group":"viewer","id":"timeline"}'
-            data-text-ja="更新履歴"
-          >Timeline</a>
+            data-text-ja="ヒストリー"
+          >Changes</a>
         </li>
       </ul>
       <ul class="nav pull-right">
@@ -301,7 +300,15 @@
       >
         <li class="list">
           <header class="clearfix">
-            <div class="name" style="">7kai Tasks</div>
+            <div style="float: left;">
+              <div class="name" style="">7kai Tasks</div>
+              <div class="symbol-group clearfix">
+                <div class="symbol symbol-primary"></div>
+                <div class="symbol symbol-success"></div>
+                <div class="symbol symbol-warning"></div>
+                <div class="symbol symbol-danger"></div>
+              </div>
+            </div>
             <ul class="unstyled clearfix menu">
               <li
                 class="ui-normal btn-group"
@@ -430,7 +437,7 @@
       </ul>
     </div>
     <div
-      class="twipsy above"
+      class="tooltip top"
       style="display: none; left: 200px;"
       data-setup="showable"
       data-showable='{
@@ -438,8 +445,8 @@
         "show":{"effect":"bounce","speed":"fast","timeout":100},
         "hide":{"speed":"fast","option":{"direction":"right"}}}'
     >
-      <div class="twipsy-arrow"></div>
-      <div class="twipsy-inner">New Task!</div>
+      <div class="tooltip-arrow"></div>
+      <div class="tooltip-inner">New Task!</div>
     </div>
   </div>
   <div
@@ -761,9 +768,9 @@
       >
         <div class="icon sq32" style="position: absolute;"></div>
         <div class="" style="margin-left: 40px;">
-          <span class="listname label notice"></span>
-          <span class="status label"></span>
+          <span class="listname"></span>
           <span class="taskname"></span>
+          <span class="status label"></span>
           <div class="message"></div>
           <div><span class="date"></span><span class="name"></span></div>
         </div>
@@ -794,9 +801,9 @@
       >
         <div class="icon sq32" style="position: absolute;"></div>
         <div class="" style="margin-left: 40px;">
-          <span class="listname label notice"></span>
-          <span class="status label"></span>
+          <span class="listname"></span>
           <span class="taskname"></span>
+          <div><span class="status label"></span></div>
           <div class="message"></div>
           <div><span class="date"></span><span class="name"></span></div>
         </div>
@@ -1022,6 +1029,12 @@
             <div>
               <span class="name"></span>
             </div>
+            <div class="symbol-group clearfix">
+              <div class="symbol symbol-primary"></div>
+              <div class="symbol symbol-success"></div>
+              <div class="symbol symbol-warning"></div>
+              <div class="symbol symbol-danger"></div>
+            </div>
             <ul
               class="gantttasks unstyled"
             >
@@ -1067,15 +1080,15 @@
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
-    <h3
-      data-setup="localize"
-      data-text-ja="リスト登録"
-    >Register List</h3>
     <a
       class="close"
       data-setup="hide"
       data-hide='{"id":"register-list-window"}'
     >×</a>
+    <h3
+      data-setup="localize"
+      data-text-ja="リスト登録"
+    >Register List</h3>
   </div>
   <div class="modal-body">
     <div class="row">
@@ -1178,15 +1191,15 @@
     "hide":{"effect":"fade","speed":"fast"}}'
 >
   <div class="modal-header">
-    <h3
-      data-setup="localize"
-      data-text-ja="リスト公開"
-    >Public List</h3>
     <a
       class="close"
       data-setup="hide"
       data-hide='{"id":"public-list-window"}'
     >×</a>
+    <h3
+      data-setup="localize"
+      data-text-ja="リスト公開"
+    >Public List</h3>
   </div>
   <div class="modal-body">
     <div class="row">
@@ -1239,15 +1252,15 @@
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
-    <h3
-      data-setup="localize"
-      data-text-ja="リスト削除"
-    >Delete List</h3>
     <a
       class="close"
       data-setup="hide"
       data-hide='{"id":"delete-list-window"}'
     >×</a>
+    <h3
+      data-setup="localize"
+      data-text-ja="リスト削除"
+    >Delete List</h3>
   </div>
   <div class="modal-body">
     <p
@@ -1285,6 +1298,11 @@
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"register-task-window"}'
+    >×</a>
     <h3
       data-setup="localize"
       data-text-en="Register Task"
@@ -1292,11 +1310,6 @@
       data-text-sub-en="Register Sub Task"
       data-text-sub-ja="サブタスク登録"
     >Register Task</h3>
-    <a
-      class="close"
-      data-setup="hide"
-      data-hide='{"id":"register-task-window"}'
-    >×</a>
   </div>
   <div class="modal-body">
     <div class="row">
@@ -1397,15 +1410,15 @@
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
-    <h3
-      data-setup="localize"
-      data-text-ja="設定"
-    >Settings</h3>
     <a
       class="close"
       data-setup="hide"
       data-hide='{"id":"settings-window"}'
     >×</a>
+    <h3
+      data-setup="localize"
+      data-text-ja="設定"
+    >Settings</h3>
   </div>
   <div class="modal-body">
     <h3>Add Account</h3>
@@ -1456,15 +1469,15 @@
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
-    <h3
-      data-setup="localize"
-      data-text-ja="アカウント削除"
-    >Delete Account</h3>
     <a
       class="close"
       data-setup="hide"
       data-hide='{"id":"delete-account-window"}'
     >×</a>
+    <h3
+      data-setup="localize"
+      data-text-ja="アカウント削除"
+    >Delete Account</h3>
   </div>
   <div class="modal-body">
     <div class="alert-message warning">
@@ -1587,15 +1600,15 @@
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
-    <h3
-      data-setup="localize"
-      data-text-ja="ヘルプ"
-    >Help</h3>
     <a
       class="close"
       data-setup="hide"
       data-hide='{"id":"help-window"}'
     >×</a>
+    <h3
+      data-setup="localize"
+      data-text-ja="ヘルプ"
+    >Help</h3>
   </div>
   <div class="modal-body">
     <ul class="tabs">
@@ -1848,12 +1861,12 @@
     "hide":{"effect":"fade"}}'
 >
   <div class="modal-header">
-    <h3>Notice</h3>
     <a
       class="close"
       data-setup="hide"
       data-hide='{"id":"notice"}'
     >×</a>
+    <h3>Notice</h3>
   </div>
   <div class="modal-body">
     <p
@@ -1886,12 +1899,12 @@
     "hide":{"effect":"fade"}}'
 >
   <div class="modal-header">
-    <h3>Error</h3>
     <a
       class="close"
       data-setup="hide"
       data-hide='{"id":"alert"}'
     >×</a>
+    <h3>Error</h3>
   </div>
   <div class="modal-body">
     <p
@@ -1935,15 +1948,15 @@
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
-    <h3
-      data-setup="localize"
-      data-text-ja="完了済のタスクを削除"
-    >Clear Closed Task</h3>
     <a
       class="close"
       data-setup="hide"
       data-hide='{"id":"clear-list-window"}'
     >×</a>
+    <h3
+      data-setup="localize"
+      data-text-ja="完了済のタスクを削除"
+    >Clear Closed Task</h3>
   </div>
   <div class="modal-body">
     <p
@@ -1976,11 +1989,11 @@
     "hide":{"effect":"fade"}}'
 >
   <div class="modal-header">
-    <h3>Success</h3>
     <a
       class="close"
       data-setup="hide"
       data-hide='{"id":"success-delete-account"}'>×</a>
+    <h3>Success</h3>
   </div>
   <div class="modal-body">
     <p

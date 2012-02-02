@@ -142,15 +142,44 @@ ul.lists > li > header {
     padding: 2px 0;
 }
 ul.lists > li > header > div {
+    float: left;
 }
 ul.lists > li > header div.name {
-float: left;
 /*    font-size: 12px;
     font-weight: 200;
 */    color: #222;
     padding-top: 3px;
     padding-left: 2px;
 }
+
+.symbol-group {
+    height: 4px;
+    line-height: 4px;
+}
+.symbol {
+    float: left;
+    width: 4px;
+    height: 4px;
+    line-height: 4px;
+    margin-left: 4px;
+}
+.symbol-primary {
+    background-color: #006DCC;
+}
+.symbol-success {
+    background-color: #5BB75B;
+}
+.symbol-warning {
+    background-color: #FAA732;
+}
+.symbol-danger {
+    background-color: #DA4F49;
+}
+.symbol-clear {
+    background: none;
+}
+
+
 ul.lists > li > header ul.members {
     float: right;
 }
@@ -210,15 +239,26 @@ div.gantttasks {
 }
 
 /* リスト管理 */
-table.lists {
-    width: auto;
+.timeline > ul {
+    margin: 10px;
 }
-table.lists label {
-    width: auto;
-    text-align: left;
-    padding: 0;
-}
-table.lists ul.members > li {
-    float: left;
+.timeline > ul li {
+    padding-top: 4px;
     padding-left: 4px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    cursor: pointer;
 }
+.timeline > ul li:hover {
+    background-color: #fefecc;
+}
+.timeline > ul li .listname {
+    color: #3a87ad;
+}
+.timeline > ul li .date {
+    color: gray;
+}
+.timeline > ul li .date,
+.timeline > ul li .name {
+    font-size: 11px;
+}
+

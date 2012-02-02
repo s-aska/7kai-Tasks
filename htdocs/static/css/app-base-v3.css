@@ -101,6 +101,10 @@ span.icon {
     background-color: #0064cd;
 }
 
+.tooltip {
+    opacity: 1;
+}
+
 /********** parts **********/
 .clearfix {
     zoom: 1;

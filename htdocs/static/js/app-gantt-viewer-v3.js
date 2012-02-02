@@ -97,6 +97,22 @@ app.setup.ganttchartListsV3 = function(ul){
         });
     });
 
+    app.addListener('checkTag', function(list, tag, active){
+        var li = listli_map[list.id];
+        li.find('> div .symbol-' + tag).toggleClass('symbol-clear', !active);
+        var method = 'show';
+        for (var tag in active_tags) {
+            if (tag in app.data.state.tags &&
+                list.id in app.data.state.tags[tag]) {
+                method = 'show';
+                break;
+            } else {
+                method = 'hide';
+            }
+        }
+        li[method]();
+    });
+
     app.addListener('resetTag', function(){
         ul.children().show();
         active_tags = {};
@@ -108,6 +124,19 @@ app.setup.ganttchartListsV3 = function(ul){
         li.find('> div .name').text(list.name);
         li.find('> ul').empty();
         // app.dom.setup(li);
+        
+        li.find('> div .symbol').addClass('symbol-clear');
+        $.each([
+            'primary',
+            'success',
+            'warning',
+            'danger'
+        ], function(i, tag){
+            if (tag in app.data.state.tags &&
+                list.id in app.data.state.tags[tag]) {
+                li.find('> div .symbol-' + tag).removeClass('symbol-clear');
+            }
+        });
         
         if (list.id in listli_map) {
             li.find('> ul').append(listli_map[list.id].find('> ul').children());
@@ -206,7 +235,13 @@ app.setup.ganttchartListsV3 = function(ul){
             if (li_before.hasClass('selected')) {
                 li.addClass('selected');
             }
-            li.css('left', li_before.css('left'));
+
+            // 置き換え元との高さ合わせ
+            var paddingLeft = parseInt(li_before.css('paddingLeft'), 10);
+            if (paddingLeft) {
+                li.css('paddingLeft', paddingLeft + 'px');
+            }
+
             // taskli_map[task.id].after(li);
             // taskli_map[task.id].remove();
             // 置き換え

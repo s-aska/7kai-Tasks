@@ -41,6 +41,7 @@ app.addEvents('resetTag');
 
 app.addEvents('checkStar');
 app.addEvents('checkMute');
+app.addEvents('checkTag');
 app.addEvents('resetCounter');
 
 app.addEvents('clickNotification');
@@ -1405,6 +1406,7 @@ app.setup.tasksheet = function(ul){
                 }
             });
         });
+        li.find('> header .symbol').addClass('symbol-clear');
         li.find('.ui-tags a').each(function(i, element){
             var ele = $(element);
             var tag = ele.data('tag');
@@ -1412,6 +1414,7 @@ app.setup.tasksheet = function(ul){
                 if (tag in app.data.state.tags &&
                     list.id in app.data.state.tags[tag]) {
                     ele.addClass('active');
+                    li.find('> header .symbol-' + tag).removeClass('symbol-clear');
                 }
                 ele.click(function(e){
                     app.api.account.update({
@@ -1423,7 +1426,10 @@ app.setup.tasksheet = function(ul){
                     .done(function(data){
                         if (data.success === 1) {
                             app.data.state.tags = data.account.state.tags;
-                            ele[ ele.hasClass('active') ? 'removeClass' : 'addClass' ]('active');
+                            ele.toggleClass('active');
+                            li.find('> header .symbol-' + tag)
+                                .toggleClass('symbol-clear', !ele.hasClass('active'));
+                            app.fireEvent('checkTag', list, tag, ele.hasClass('active'));
                         } else {
                             // 現在 ステータスコード 200 の例外ケースは無い
                         }
@@ -2455,8 +2461,11 @@ app.submit.registerTask = function(form){
             } else {
                 var twipsy = app.dom.get('showable', 'create-task-twipsy');
                 var li = app.data.taskli_map[data.task.id];
-                console.log(li.offset().top);
-                twipsy.css('top', li.offset().top - 100 + 'px');
+                twipsy.css('top',
+                    li.offset().top
+                    - twipsy.height()
+                    - twipsy.parent().offset().top
+                    + 'px');
                 app.dom.show(twipsy);
             }
         } else {
