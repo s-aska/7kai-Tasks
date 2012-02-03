@@ -500,6 +500,7 @@ div::-webkit-scrollbar-thumb:horizontal {
 }
 
 /********** old span **********/
+.input-xlarge,input.xlarge,textarea.xlarge,select.xlarge{width:270px;}
 /*.span1{width:40px;}
 .span2{width:100px;}
 .span3{width:160px;}
@@ -525,7 +526,8 @@ div::-webkit-scrollbar-thumb:horizontal {
 .span22{width:1300px;}
 .span23{width:1360px;}
 .span24{width:1420px;}
-input.span1,textarea.span1,select.span1{display:inline-block;float:none;width:30px;margin-left:0;}
+*/
+/*input.span1,textarea.span1,select.span1{display:inline-block;float:none;width:30px;margin-left:0;}
 input.span2,textarea.span2,select.span2{display:inline-block;float:none;width:90px;margin-left:0;}
 input.span3,textarea.span3,select.span3{display:inline-block;float:none;width:150px;margin-left:0;}
 input.span4,textarea.span4,select.span4{display:inline-block;float:none;width:210px;margin-left:0;}

@@ -1100,8 +1100,8 @@
           <div class="input">
             <input class="span6" type="text" name="html" value=""> ( HTML )<br />
             <input class="span6" type="text" name="json" value=""> ( JSON )<br />
-            <input class="span8" type="text" name="jsonp?callback=" value=""> ( JSONP )<br />
-            <input class="span7" type="text" name="rss" value=""> ( RSS )<br />
+            <input class="span6" type="text" name="jsonp?callback=" value=""> ( JSONP )<br />
+            <input class="span6" type="text" name="rss" value=""> ( RSS )<br />
             <input class="span6" type="text" name="ical" value=""> ( iCal )<br />
             <p>JSON Specification ( <a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format" target="_blank">English</a>, <a href="https://github.com/s-aska/7kai-Tasks/wiki/JSON-Format-ja" target="_blank">Japanese</a> )</p>
           </div>
@@ -1209,7 +1209,7 @@
             data-text-ja="タイトル (1-50文字)"
           >Title (1-50 characters)</label>
           <div class="input">
-            <input class="xlarge" type="text" name="name" value="" required maxlength="50" data-autofocus="true">
+            <input class="span4" type="text" name="name" value="" required maxlength="50" data-autofocus="true">
           </div>
         </div>
         <div class="clearfix">
