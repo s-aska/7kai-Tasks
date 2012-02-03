@@ -282,14 +282,14 @@
   </div>
   <div
     class="columns"
-    style="width: 640px; margin-left: 0;"
+    style="width: 640px; margin-left: 0"
     data-setup="stretch"
   >
     <div
       class="lists-wrap"
-      style="padding-top: 3px"
+      style="margin-top: 3px"
       data-setup="stretch"
-      data-stretch='{"padding":0}'
+      data-stretch='{"padding":3}'
     >
       <ul
         class="unstyled lists"

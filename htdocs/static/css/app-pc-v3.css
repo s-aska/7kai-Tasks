@@ -170,8 +170,8 @@ body > .row > .btn-toolbar {
 /********** tasksheet **********/
 div.lists-wrap {
     overflow: auto;
-    margin: 0px 5px 5px 5px;
-    padding: 0px 5px 5px 5px;
+    margin: 0 5px;
+    padding: 0 5px;
 }
 ul.lists > li {
     min-height: 37px;
