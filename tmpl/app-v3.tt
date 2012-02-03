@@ -20,7 +20,7 @@
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="/">7kai Tasks</a>
+      <span class="brand">7kai Tasks</span>
       <ul class="nav">
         <li class="active">
           <a
@@ -710,7 +710,7 @@
         data-click="createList"
       ><i class="icon-plus icon-white"></i></a>
     </div>
-    <div class="btn-group">
+    <div class="btn-group" style="min-width: 181px;">
       <a
         class="btn x-small"
         data-setup="prevWeek"
