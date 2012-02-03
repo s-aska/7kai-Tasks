@@ -1,3 +1,51 @@
+/********** redefine **********/
+html, body {
+    overflow: hidden;
+    background-color: #F7F7F6;
+    background-color: #e5e5e5;
+}
+a, button, label {
+    cursor: pointer;
+}
+h4, h5 {
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+/********** parts **********/
+div.alert {
+    display: none;
+    position: absolute;
+    width: 360px;
+    bottom: 0px;
+    right: 20px;
+}
+.symbol-group {
+    height: 4px;
+    line-height: 4px;
+}
+.symbol {
+    float: left;
+    width: 4px;
+    height: 4px;
+    line-height: 4px;
+    margin-right: 4px;
+}
+.symbol-primary {
+    background-color: #006DCC;
+}
+.symbol-success {
+    background-color: #5BB75B;
+}
+.symbol-warning {
+    background-color: #FAA732;
+}
+.symbol-danger {
+    background-color: #DA4F49;
+}
+.symbol-clear {
+    background: none;
+}
 .btn.x-small {
     padding: 3px 6px 3px;
     font-size: 12px;
@@ -25,7 +73,434 @@ div.icon-plus {
 div.icon-plus {
     background-image: url(/static/img/plus.png);
 }
-.span1{width:40px;}
+.due-control {
+    margin-left: 4px;
+}
+.due-control .btn {
+    padding: 4px 9px 3px;
+}
+.dragging {
+    opacity: 0.5;
+}
+.focused {
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 1.2);
+}
+
+/********** navbar **********/
+body > .navbar ul li a.profile-name .profile-icon {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+}
+body > .navbar ul li a.profile-name {
+    display: block;
+    position: relative;
+    padding-left: 42px;
+}
+
+/********** row, columns **********/
+body > .row {
+    width: 1060px;
+    margin: 50px auto 0 auto;
+}
+body > .row > .columns {
+    position: relative;
+    float: left;
+    margin-left: 20px;
+    background-color: #F7F7F6;
+    background-color: #F7F7F6;
+/*    border: 1px solid #CCC;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+*/    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+/*    -webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+*/    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding-box;
+    background-clip: padding-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+body > .row > .columns:first-child {
+    margin-left: 0;
+}
+body > .row > .columns .navbar {
+    position: relative;
+    z-index: 1;
+}
+body > .row > .columns .navbar .container {
+    width: auto;
+}
+body > .row > .columns > .container {
+    padding: 10px;
+    width: auto;
+}
+body > .row > .columns > .container > h2 {
+    margin-bottom: 6px;
+    font-size: 14px;
+    line-height: 14px;
+}
+body > .row > .columns > .container > ul,
+body > .row > .columns > .container > dl {
+    margin-bottom: 8px;
+}
+body > .row > .columns > .container ul.members li {
+    padding: 2px 0;
+}
+body > .row > .columns > .container ul.members li img {
+    padding-right: 6px;
+    vertical-align: middle;
+}
+body > .row > .columns > header {
+    padding: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    font-size: 1.4em;
+}
+body > .row > .btn-toolbar {
+    margin: 0 0 5px 0;
+}
+
+/********** tasksheet **********/
+div.lists-wrap {
+    overflow: auto;
+    margin: 0px 5px 5px 5px;
+    padding: 0px 5px 5px 5px;
+}
+ul.lists > li {
+    min-height: 37px;
+    padding: 5px 0 0 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+/*ul.lists > li:first-child {
+    padding-top: 0;
+}*/
+ul.lists > li > header {
+    padding: 2px 0;
+}
+ul.lists > li > header > div {
+    float: left;
+}
+ul.lists > li > header div.name {
+    color: #222;
+}
+ul.lists > li > header ul.members {
+    float: right;
+    padding-left: 4px;
+}
+ul.lists > li > header ul.members > li {
+    float: left;
+    padding-right: 4px;
+    cursor: pointer;
+}
+ul.lists > li > header ul.members a {
+    padding: 5px 5px 2px 5px;
+}
+ul.lists > li > header ul.menu {
+    float: right;
+    padding-right: 0;
+}
+ul.lists > li > header ul.menu > li {
+    float: left;
+    padding-left: 2px;
+}
+ul.lists > li > ul {
+    overflow: auto;
+}
+ul.lists > li > ul > li.closed {
+    background-color: transparent;
+    text-decoration: line-through;
+}
+ul.tasks > li {
+    margin-bottom: 0;
+    padding: 4px;
+    cursor: pointer;
+}
+ul.tasks > li.child {
+    padding-left: 20px;
+}
+ul.tasks > li.closed {
+    background-color: #CCC;
+}
+ul.tasks > li:hover {
+    background-color: rgba(252,252,215,0.6);
+}
+ul.tasks > li.selected {
+    background-color: rgba(252,252,215,0.8);
+}
+ul.tasks > li.closed.selected {
+    background-color: #E0E0B1;
+}
+ul.tasks > li.salvage {
+    background-color: #ffe0e0;
+}
+ul.tasks > li div {
+    float: left;
+}
+ul.tasks > li > div.icon {
+    margin-right: 2px;
+}
+ul.tasks > li > div.delete {
+    margin-right: 0;
+}
+ul.tasks > li div.human {
+    height: 16px;
+}
+ul.tasks > li div.human span {
+    display: inline-block;
+}
+ul.tasks > li div.name {
+    margin-left: 4px;
+    color: #666;
+    word-wrap: break-word;
+}
+ul.tasks > li div.due {
+    float: right;
+    margin-right: 4px;
+}
+ul.tasks > li div.delete {
+    float: right;
+}
+ul.tasks > li div.recent-comment {
+    position: relative;
+    clear: both;
+    margin-left: 54px;
+    font-size: 11px;
+    color: gray;
+}
+ul.tasks > li div.recent-comment .icon {
+    position: absolute;
+}
+ul.tasks > li div.recent-comment .message {
+    margin-left: 20px;
+}
+
+/********** comments **********/
+ul.comments {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 10px;
+}
+ul.comments li {
+    margin-bottom: 4px;
+    min-height: 34px;
+}
+ul.comments li:last-child {
+    margin-bottom: 0;
+}
+ul.comments li .icon-cross {
+    cursor: pointer;
+}
+ul.comments li .message {
+    color: #333;
+    font-size: 12px;
+    line-height: 12px;
+    word-wrap: break-word;
+    margin-top: 2px;
+    margin-right: 8px;
+    padding: 4px 4px 4px 4px;
+    background-color: #ffffff;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+ul.comments li .footer {
+    margin-top: 2px;
+    line-height: 10px;
+    font-size: 10px;
+}
+ul.comments li span.name {
+    display: inline-block;
+    padding-left: 4px;
+    color: #333;
+}
+
+/********** ganttchart **********/
+.ganttchart {
+    position: absolute;
+    left: 236px;
+    top: 0;
+    background-color: white;
+}
+.ganttchart .month {
+    float: left;
+}
+.ganttchart h1 {
+    font-size: 12px;
+    line-height: 12px;
+    margin: 0;
+    padding: 4px 0;
+    text-align: center;
+    border-left: 1px solid rgba(0, 0, 0, 0.20);
+}
+.ganttchart .day {
+    float: left;
+    border-left: 1px solid #dddddd;
+    height: 1200px;
+    background-color: white;
+}
+.ganttchart .holiday {
+    background-color: #efefef;
+}
+.ganttchart .firstday {
+    border-left: 1px solid rgba(0, 0, 0, 0.20);
+}
+.ganttchart .today {
+    background-color: rgba(252,252,215,0.8);
+}
+.ganttchart .day h2 {
+    font-size: 10px;
+    line-height: 10px;
+    font-weight: normal;
+    color: #999999;
+    font-family: arial;
+    margin: 0;
+    padding: 2px 0;
+    width: 22px;
+    text-align: center;
+    background-color: #dddddd;
+}
+.ganttchart .holiday h2 {
+    background-color: #eeeeee;
+}
+.gantttasks {
+    position: relative;
+    top: 20px;
+    width: 1053px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.gantttasks > ul > li {
+    position: relative;
+    margin-left: 10px;
+    margin-bottom: 4px;
+}
+.gantttasks > ul > li > ul > li {
+    cursor: pointer;
+}
+.gantttasks > ul > li > ul > li.clearfix:hover {
+    background-color: rgba(252,252,215,0.6);
+}
+.gantttasks > ul > li > ul > li.selected {
+    background-color: rgba(252,252,215,0.8);
+}
+.gantttasks > ul > li > ul > li.closed {
+    background-color: transparent;
+    text-decoration: line-through;
+}
+.gantttasks > ul > li > ul > li > .left {
+    margin-left: 2px;
+}
+.gantttasks > ul > li > ul > li > div.name {
+    color: #222;
+    max-width: 180px;
+    word-wrap: break-word;
+}
+.gantttasks > ul > li > ul > li > div.humanContainer {
+    position: absolute;
+    left: 230px;
+    width: 780px;
+}
+.gantttasks > ul > li > ul > li div.due {
+    position: absolute;
+    top: 1px;
+    float: left;
+    cursor: pointer;
+}
+
+/********** timeline **********/
+.timeline > ul {
+    margin: 10px;
+}
+.timeline > ul > li {
+    padding-top: 4px;
+    padding-left: 4px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+}
+.timeline > ul > li:hover {
+    background-color: #fefecc;
+}
+.timeline > ul > li .listname {
+    color: #3a87ad;
+}
+.timeline > ul > li .date {
+    color: gray;
+}
+.timeline > ul > li .date,
+.timeline > ul > li .name {
+    font-size: 11px;
+}
+
+/********** window **********/
+#register-list-window .member {
+    display: none;
+}
+#register-list-window ul.members li {
+    margin-bottom: 0;
+    padding: 4px 4px 2px 4px;
+    cursor: pointer;
+}
+#register-list-window ul.members li:hover {
+    background-color: #fefed6;
+}
+#register-list-window ul.members li div {
+    float: left;
+}
+#register-list-window ul.members li div.name {
+    float: left;
+    padding-left: 4px;
+}
+#register-list-window ul.members li div.icon-cross {
+    float: right;
+}
+#register-list-window .description {
+    width: 220px;
+    height: 210px;
+    margin-left: 20px;
+    padding-left: 10px;
+    border-left: 1px solid gray;
+}
+
+/********** scrollbar **********/
+ul::-webkit-scrollbar,
+div::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    padding: 18px;
+    -webkit-border-radius: 1ex
+}
+ul::-webkit-scrollbar-thumb,
+div::-webkit-scrollbar-thumb {
+    background-color: rgba(053,057,071,0.3);
+    padding: 8px;
+    width: 6px;
+    height: 6px;
+    -webkit-border-radius: 1ex;
+}
+ul::-webkit-scrollbar-button:start:decrement,
+ul::-webkit-scrollbar-button:end:increment,
+div::-webkit-scrollbar-button:start:decrement,
+div::-webkit-scrollbar-button:end:increment {
+    display: none;
+}
+ul::-webkit-scrollbar-thumb:vertical,
+ul::-webkit-scrollbar-thumb:horizontal,
+div::-webkit-scrollbar-thumb:vertical,
+div::-webkit-scrollbar-thumb:horizontal {
+    height: 3px;
+    width: 3px;
+    margin: 3px;
+}
+
+/********** old span **********/
+/*.span1{width:40px;}
 .span2{width:100px;}
 .span3{width:160px;}
 .span4{width:220px;}
@@ -66,199 +541,4 @@ input.span13,textarea.span13,select.span13{display:inline-block;float:none;width
 input.span14,textarea.span14,select.span14{display:inline-block;float:none;width:810px;margin-left:0;}
 input.span15,textarea.span15,select.span15{display:inline-block;float:none;width:870px;margin-left:0;}
 input.span16,textarea.span16,select.span16{display:inline-block;float:none;width:930px;margin-left:0;}
-input[disabled],select[disabled],textarea[disabled],input[readonly],select[readonly],textarea[readonly]{background-color:#f5f5f5;border-color:#ddd;cursor:not-allowed;}
-
-/*.icon-edit {
-    background-image: url(/static/img/edit.png);
-}*/
-
-body > .row {
-    margin-top: 55px;
-}
-.row > .btn-toolbar {
-    margin: 0 0 10px 0;
-}
-
-.columns > header {
-    padding: 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-    font-size: 1.4em;
-}
-
-body > .row > .columns {
-    background-color: #F7F7F6;
-    background-color: #F7F7F6;
-    border: 1px solid #CCC;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    -webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
-    -webkit-background-clip: padding-box;
-    -moz-background-clip: padding-box;
-    background-clip: padding-box;
-}
-
-/********** topbar **********/
-body > .navbar ul li a.profile-name .profile-icon {
-    position: absolute;
-    top: 10px;
-    left: 12px;
-    width: 20px;
-    height: 20px;
-}
-body > .navbar ul li a.profile-name {
-    display: block;
-    position: relative;
-    padding-left: 42px;
-}
-
-div.lists-wrap {
-    overflow: auto;
-    margin: 0px 5px 5px 5px;
-    padding: 0px 5px 5px 5px;
-}
-ul.lists ul.members {
-    padding-left: 4px;
-}
-ul.lists ul.members > li {
-    float: left;
-    padding-right: 4px;
-    cursor: pointer;
-}
-ul.lists {
-}
-ul.lists > li {
-    min-height: 37px;
-    padding: 5px 0 0 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-}
-ul.lists > li:first-child {
-    padding-top: 0;
-}
-ul.lists > li > header {
-    padding: 2px 0;
-}
-ul.lists > li > header > div {
-    float: left;
-}
-ul.lists > li > header div.name {
-/*    font-size: 12px;
-    font-weight: 200;
-*/    color: #222;
-    padding-top: 3px;
-    padding-left: 2px;
-}
-
-.symbol-group {
-    height: 4px;
-    line-height: 4px;
-}
-.symbol {
-    float: left;
-    width: 4px;
-    height: 4px;
-    line-height: 4px;
-    margin-left: 4px;
-}
-.symbol-primary {
-    background-color: #006DCC;
-}
-.symbol-success {
-    background-color: #5BB75B;
-}
-.symbol-warning {
-    background-color: #FAA732;
-}
-.symbol-danger {
-    background-color: #DA4F49;
-}
-.symbol-clear {
-    background: none;
-}
-
-
-ul.lists > li > header ul.members {
-    float: right;
-}
-ul.lists > li > header ul.members a {
-    padding: 5px 5px 2px 5px;
-}
-ul.lists > li > header ul.menu {
-    float: right;
-    padding-right: 0;
-}
-ul.lists > li > header ul.menu > li {
-    float: left;
-    padding-left: 2px;
-}
-ul.lists > li > ul {
-    overflow: auto;
-}
-ul.lists > li > ul > li.closed {
-    background-color: transparent;
-    text-decoration: line-through;
-}
-
-ul.tasks li:hover {
-    background-color: rgba(252,252,215,0.6);
-}
-ul.tasks li.selected {
-    background-color: rgba(252,252,215,0.8);
-}
-
-ul.comments {
-    overflow-x: hidden;
-}
-
-/* ガントチャート */
-ul.gantttasks li {
-    margin-left: 0;
-}
-div.gantttasks {
-    top: 20px;
-}
-.gantttasks li > div.humanContainer {
-    left: 230px;
-}
-.gantttasks li.closed {
-    background-color: transparent;
-    text-decoration: line-through;
-}
-.gantttasks {
-    position: relative;
-    overflow-x: hidden;
-}
-.gantttasks ul {
-    top: auto;
-}
-.gantttasks ul > li > div > .name {
-    color: #222;
-}
-
-/* リスト管理 */
-.timeline > ul {
-    margin: 10px;
-}
-.timeline > ul li {
-    padding-top: 4px;
-    padding-left: 4px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-    cursor: pointer;
-}
-.timeline > ul li:hover {
-    background-color: #fefecc;
-}
-.timeline > ul li .listname {
-    color: #3a87ad;
-}
-.timeline > ul li .date {
-    color: gray;
-}
-.timeline > ul li .date,
-.timeline > ul li .name {
-    font-size: 11px;
-}
-
+input[disabled],select[disabled],textarea[disabled],input[readonly],select[readonly],textarea[readonly]{background-color:#f5f5f5;border-color:#ddd;cursor:not-allowed;}*/

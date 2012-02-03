@@ -6,7 +6,6 @@
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="/static/css/bootstrap.css">
 <link rel="stylesheet" href="/static/css/app-base-v3.css" media="all">
-<link rel="stylesheet" href="/static/css/app-pc.css" media="all">
 <link rel="stylesheet" href="/static/css/app-pc-v3.css" media="all">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script src="/static/js/jquery-ui-1.8.13.js"></script>
@@ -23,7 +22,7 @@
     <div class="container">
       <a class="brand" href="/">7kai Tasks</a>
       <ul class="nav">
-        <li>
+        <li class="active">
           <a
             data-setup="localize,tab.menu"
             data-tab='{"group":"viewer","id":"task"}'
@@ -46,7 +45,7 @@
         </li>
       </ul>
       <ul class="nav pull-right">
-          <li class="">
+        <li>
           <a
             href="/staff"
             target="_blank"
@@ -264,9 +263,6 @@
       data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
     >
       <a
-        class="btn x-small active"
-      ><i class="icon-tags"></i></a>
-      <a
         class="btn x-small btn-primary"
         data-tag="primary"
       ><i class="icon-tag icon-white"></i></a>
@@ -285,14 +281,15 @@
     </div>
   </div>
   <div
-    class="columns span11"
-    style="width: 630px; padding-top: 5px; margin-left: 0;"
+    class="columns"
+    style="width: 640px; margin-left: 0;"
     data-setup="stretch"
   >
     <div
       class="lists-wrap"
+      style="padding-top: 3px"
       data-setup="stretch"
-      data-stretch='{"padding":5}'
+      data-stretch='{"padding":0}'
     >
       <ul
         class="unstyled lists"
@@ -301,7 +298,7 @@
         <li class="list">
           <header class="clearfix">
             <div style="float: left;">
-              <div class="name" style="">7kai Tasks</div>
+              <div class="name">7kai Tasks</div>
               <div class="symbol-group clearfix">
                 <div class="symbol symbol-primary"></div>
                 <div class="symbol symbol-success"></div>
@@ -384,9 +381,6 @@
                 data-tab='{"group":"homemenu","id":"list","effect":"fade"}'
               >
                 <a
-                  class="btn x-small active"
-                ><i class="icon-tags"></i></a>
-                <a
                   class="btn x-small btn-primary"
                   data-tag="primary"
                 ><i class="icon-tag icon-white"></i></a>
@@ -450,7 +444,7 @@
     </div>
   </div>
   <div
-    class="columns span7"
+    class="columns"
     style="width: 400px"
     data-setup="stretch,rightColumn"
   >
@@ -470,13 +464,9 @@
         <input type="hidden" name="registrant" value="">
         <input type="hidden" name="status" value="">
         <input type="hidden" name="closed" value="">
-        <!-- <label
-          data-setup="localize"
-          data-text-ja="コメントを添える"
-        >Comment on this task</label> -->
         <textarea
           name="message"
-          style="width: 370px; height: 56px; margin-bottom: 6px; font-size: 1.1em;"></textarea>
+          style="width: 370px; height: 56px; margin-bottom: 10px; font-size: 1.1em;"></textarea>
         <div class="">
           <button
             class="btn x-small"
@@ -547,7 +537,7 @@
         <dd
           data-setup="localize"
           data-text-ja="ショートカットヘルプ表示"
-        >Show Shortct Help.</dd>
+        >Show Shortcut Help.</dd>
         <dt>[C]</dt>
         <dd
           data-setup="localize"
@@ -634,119 +624,13 @@
 </div>
 <div
   class="row"
-  style="display: none;"
-  data-setup="tab.content"
-  data-tab='{"group":"viewer","id":"list"}'
->
-  <div
-    class="span18 columns"
-    data-setup="stretch"
-  >
-    <div
-      style="padding: 10px;"
-    >
-      <div style="margin-bottom: 10px;">
-        <a
-          class="btn"
-          data-setup="localize,click"
-          data-text-ja="新しいリスト"
-          data-click="createList"
-        >New List</a>
-      </div>
-      <table
-        class="lists zebra-striped"
-      >
-        <thead>
-          <tr>
-            <th
-              data-setup="localize"
-              data-text-ja="リスト名"
-            >Name</th>
-            <th
-            data-setup="localize"
-            data-text-ja="メンバー"
-            >Members</th>
-            <th
-            data-setup="localize"
-            data-text-ja="個人設定"
-            >Personal Settings</th>
-            <th
-              data-setup="localize"
-              data-text-ja="表示順序"
-            >Order</th>
-            <th>&nbsp;</th>
-          </tr>
-        </thead>
-        <tbody
-          data-setup="listtable"
-        >
-          <tr>
-            <td class="name">7kai Tasks</td>
-            <td>
-              <ul class="unstyled clearfix members">
-                <li style="float: left;"></li>
-              </ul>
-            </td>
-            <td>
-              <ul class="unstyled" style="margin: 0">
-                <li>
-                  <label>
-                    <input type="checkbox" name="mute" value="1">&nbsp;
-                    <strong
-                      data-setup="localize"
-                      data-text-ja="今日迄"
-                    ></strong>
-                    <span
-                      data-setup="localize"
-                      data-text-ja=" にカウントしない。"
-                    >Don't count it as Todo.</span>
-                  </label>
-                </li>
-              </ul>
-            </td>
-            <td>
-              <a
-                class="btn small ui-button-down"
-                data-setup="localize"
-                data-text-ja="下へ"
-              >Down</a>
-              <a
-                class="btn small ui-button-up"
-                data-setup="localize"
-                data-text-ja="上へ"
-              >Up</a>
-            </td>
-            <td>
-              <a
-                class="btn small ui-button-public"
-                data-setup="localize"
-                data-text-ja="公開"
-              >Public</a>
-              <a
-                class="btn small ui-button-edit"
-                data-setup="localize"
-                data-text-ja="編集"
-              >Edit</a>
-              <a
-                class="btn small btn-danger ui-button-delete"
-                data-setup="localize"
-                data-text-ja="削除"
-              >Delete</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-<div
-  class="row"
-  style="display: none;"
+  style="display: none; padding-top: 10px;"
   data-setup="tab.content"
   data-tab='{"group":"viewer","id":"timeline"}'
 >
   <div
-    class="span9 columns timeline"
+    class="columns timeline"
+    style="width: 520px"
     data-setup="stretch"
   >
     <header>
@@ -770,7 +654,7 @@
         <div class="" style="margin-left: 40px;">
           <span class="listname"></span>
           <span class="taskname"></span>
-          <span class="status label"></span>
+          <div><span class="status label"></span></div>
           <div class="message"></div>
           <div><span class="date"></span><span class="name"></span></div>
         </div>
@@ -778,7 +662,8 @@
     </ul>
   </div>
   <div
-    class="span9 columns timeline"
+    class="columns timeline"
+    style="width: 520px"
     data-setup="stretch"
   >
     <header>
@@ -971,9 +856,6 @@
       data-setup="localize,tags"
     >
       <a
-        class="btn x-small active"
-      ><i class="icon-tags"></i></a>
-      <a
         class="btn x-small btn-primary"
         data-tag="primary"
       ><i class="icon-tag icon-white"></i></a>
@@ -992,8 +874,8 @@
     </div>
   </div>
   <div
-    class="span18 columns leftColumn"
-    style="margin-left: 0"
+    class="left columns"
+    style="width:1060px; margin-left: 0"
     data-setup="stretch"
   >
     <div style="position: relative;">
@@ -1019,7 +901,7 @@
       <div
         class="gantttasks"
         data-setup="stretch"
-        data-stretch='{"offset":140}'
+        data-stretch='{"offset":120}'
       >
         <ul
           class="unstyled"
@@ -1035,9 +917,7 @@
               <div class="symbol symbol-warning"></div>
               <div class="symbol symbol-danger"></div>
             </div>
-            <ul
-              class="gantttasks unstyled"
-            >
+            <ul class="unstyled">
               <li class="clearfix">
                 <div
                   class="left icon icon-tasks-off" 
@@ -1067,7 +947,6 @@
     </div>
   </div>
 </div>
-
 <form
   id="register-list-window"
   class="modal form-stacked"
@@ -1179,7 +1058,6 @@
     >Close</button>
   </div>
 </form>
-
 <form
   id="public-list-window"
   class="modal form-stacked"
@@ -1240,7 +1118,6 @@
     >Close</button>
   </div>
 </form>
-
 <form
   class="modal form-stacked"
   data-setup="showable,ui,submit,deleteListWindow,escclose"
@@ -1285,7 +1162,6 @@
     >Cancel</button>
   </div>
 </form>
-
 <form
   id="register-task-window"
   class="modal form-stacked"
@@ -1399,7 +1275,6 @@
     >Close</button>
   </div>
 </form>
-
 <div
   class="modal"
   data-setup="showable,ui,escclose,settingsWindow"
@@ -1457,7 +1332,6 @@
     >Close</button>
   </div>
 </div>
-
 <form
   class="modal form-stacked"
   data-setup="showable,ui,submit,escclose,removeAccountWindow"
@@ -1518,7 +1392,6 @@
     >Cancel</button>
   </div>
 </form>
-
 <div
   class="popover right"
   style="display: none;"
@@ -1549,7 +1422,6 @@
     </div>
   </div>
 </div>
-
 <div
   class="popover below"
   style="display: none;"
@@ -1588,7 +1460,6 @@
     </div>
   </div>
 </div>
-
 <form
   class="modal form-stacked"
   data-setup="showable,ui,escclose"
@@ -1851,7 +1722,6 @@
     >Close</button>
   </div>
 </form>
-
 <div
   class="modal"
   data-setup="showable,notice"
@@ -1888,7 +1758,6 @@
     >Close</a>
   </div>
 </div>
-
 <div
   class="modal"
   style="display: none;"
@@ -1936,7 +1805,6 @@
     >Close</a>
   </div>
 </div>
-
 <form
   class="modal form-stacked"
   data-setup="showable,ui,submit,escclose"
@@ -1978,7 +1846,6 @@
     >Cancel</button>
   </div>
 </form>
-
 <div
   class="modal"
   style="display: none;"
@@ -2009,7 +1876,6 @@
     >Close</a>
   </div>
 </div>
-
 <div
   class="alert alert-success"
   data-setup="showable"
@@ -2026,7 +1892,6 @@
   <strong>Info</strong>
   <span>Succeeded to salvage.</span>
 </div>
-
 <div
   class="alert alert-success"
   data-setup="showable"
@@ -2043,7 +1908,6 @@
   <strong>Info</strong>
   <span>Succeeded to create a task.</span>
 </div>
-
 <div
   class="alert alert-success"
   data-setup="showable"
@@ -2060,7 +1924,6 @@
   <strong>Info</strong>
   <span>Succeeded to sync friends' data from Twitter.</span>
 </div>
-
 <div
   class="alert alert-error"
   data-setup="showable"
@@ -2077,19 +1940,13 @@
   <strong>Error</strong>
   <span>Failed to sync friends' data from Twitter.</span>
 </div>
-
-<!-- please upgrade your browser to chrome. -->
-
 <div style="display: none;">
-
 <form id="add-twitter" method="post" action="/signin/twitter/signin">
   <input type="hidden" name="mode" value="add">
 </form>
-
 <form id="add-facebook" method="post" action="/signin/facebook/signin">
   <input type="hidden" name="mode" value="add">
 </form>
-
 <div
   data-setup="messages"
 
@@ -2119,13 +1976,7 @@
   data-text-refix-task-en="update (close => fix) the task"
   data-text-refix-task-ja="タスクを更新 (完了 => 処理済)"
 ></div>
-
 </div>
-
-<div
-  id="receiver"
-  style="display: none;"
-  data-setup="receiver"></div>
-
+<div id="receiver" style="display: none;" data-setup="receiver"></div>
 </body>
 </html>

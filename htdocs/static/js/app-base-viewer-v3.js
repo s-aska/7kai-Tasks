@@ -1204,12 +1204,6 @@ app.setup.listmenu = function(ele){
     // });
 }
 
-// app.setup.homemenu = function(ele){
-//     ele.parent().children().removeClass('active');
-//     ele.addClass('active');
-//     
-// }
-
 app.setup.publicListWindow = function(ele){
     ele.find('input').each(function(){
         var input = $(this);
@@ -2576,18 +2570,16 @@ $(d).keydown(function(e){
     if (e.shiftKey) {
         if (e.keyCode === 37) { // Left
             var id = {
-                "task":"list",
+                "task":"timeline",
                 "gantt":"task",
-                "timeline":"gantt",
-                "list":"timeline",
+                "timeline":"gantt"
             }[app.state.tab.viewer || 'task'];
             app.fireEvent('selectTab', 'viewer', id);
         } else if (e.keyCode === 39) { // Right
             var id = {
                 "task":"gantt",
                 "gantt":"timeline",
-                "timeline":"list",
-                "list":"task",
+                "timeline":"task"
             }[app.state.tab.viewer || 'task'];
             app.fireEvent('selectTab', 'viewer', id);
         }

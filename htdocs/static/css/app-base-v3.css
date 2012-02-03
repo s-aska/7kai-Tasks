@@ -16,15 +16,6 @@ span.icon {
 .icon-with {
     background-repeat: no-repeat;
 }
-.icon-create-task {
-    background-image: url(/static/img/create-task.png);
-}
-/*.icon-plus {
-    background-image: url(/static/img/plus.png);
-}*/
-/*.icon-minus {
-    background-image: url(/static/img/minus.png);
-}*/
 .icon-cross {
     background-image: url(/static/img/plus.png);
     -moz-transform: rotate(45deg);
@@ -69,32 +60,6 @@ span.icon {
 }
 .icon-email {
     background-image: url(/static/img/email.png);
-}
-.icon-email24 {
-    width: 24px;
-    height: 24px;
-    background-image: url(/static/img/email24.png);
-}
-.icon-plus24 {
-    background-image: url(/static/img/plus24.png);
-}
-.icon-cross24 {
-    background-image: url(/static/img/cross24.png);
-}
-.icon-star24 {
-    background-image: url(/static/img/star24.png);
-}
-.icon-star-off24 {
-    background-image: url(/static/img/star_off24.png);
-}
-.icon-tasks24 {
-    background-image: url(/static/img/tasks24.png);
-}
-.icon-tasks-half24 {
-    background-image: url(/static/img/tasks_half24.png);
-}
-.icon-tasks-off24 {
-    background-image: url(/static/img/tasks_off24.png);
 }
 
 .label.closed {
