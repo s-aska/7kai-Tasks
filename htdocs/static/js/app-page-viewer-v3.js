@@ -45,6 +45,7 @@ app.setup.settingsWindow = function(ele){
         li.find('button').click(function(){
             app.fireEvent('removeAccountConfirm', sub_account);
         });
+        app.dom.setup(li);
         if (sub_account.code in li_cache) {
             li_cache[sub_account.code].after(li);
             li_cache[sub_account.code].remove();

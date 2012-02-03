@@ -901,10 +901,11 @@
       <div
         class="gantttasks"
         data-setup="stretch"
-        data-stretch='{"offset":120}'
+        data-stretch='{"offset":110}'
       >
         <ul
           class="unstyled"
+          style="margin-bottom: 0"
           data-setup="ganttchartListsV3"
         >
           <li>
@@ -1296,7 +1297,10 @@
     >Settings</h3>
   </div>
   <div class="modal-body">
-    <h3>Add Account</h3>
+    <h3
+    data-setup="localize"
+    data-text-ja="アカウント追加"
+    >Add Account</h3>
     <ul class="unstyled">
       <li style="margin-bottom: 10px;">
         <a
@@ -1314,12 +1318,19 @@
       </li>
     </ul>
     
-    <h3>Delete Account</h3>
+    <h3
+      data-setup="localize"
+      data-text-ja="アカウント削除"
+    >Delete Account</h3>
     <ul class="unstyled accounts">
       <li style="margin-bottom: 10px;">
         <img class="sq24" style="vertical-align: middle;">
         <span class="name"></span>
-        <button class="btn btn-danger">Delete</button>
+        <button
+          class="btn btn-danger"
+          data-setup="localize"
+          data-text-ja="削除"
+        >Delete</button>
       </li>
     </ul>
   </div>

@@ -355,6 +355,8 @@ ul.comments li span.name {
     background-color: rgba(252,252,215,0.8);
 }
 .ganttchart .day h2 {
+    position: relative;
+    z-index: 1;
     font-size: 10px;
     line-height: 10px;
     font-weight: normal;
@@ -398,7 +400,7 @@ ul.comments li span.name {
     margin-left: 2px;
 }
 .gantttasks > ul > li > ul > li > div.name {
-    color: #222;
+    color: #666;
     max-width: 180px;
     word-wrap: break-word;
 }
