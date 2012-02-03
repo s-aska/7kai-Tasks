@@ -908,15 +908,49 @@
           style="margin-bottom: 0"
           data-setup="ganttchartListsV3"
         >
-          <li>
-            <div>
+          <li
+            class="list"
+            style="
+              position: relative;
+              padding-bottom: 5px;
+              margin-bottom: 5px;
+              border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+            "
+          >
+            <div style="min-height: 26px;">
               <span class="name"></span>
-            </div>
-            <div class="symbol-group clearfix">
-              <div class="symbol symbol-primary"></div>
-              <div class="symbol symbol-success"></div>
-              <div class="symbol symbol-warning"></div>
-              <div class="symbol symbol-danger"></div>
+              <ul class="unstyled clearfix" style="position: absolute; top: 0px; left: 139px;">
+                <li
+                  class="ui-normal btn-group"
+                  data-setup="localize"
+                >
+                  <a
+                    class="btn btn-primary x-small"
+                    data-setup="click"
+                    data-click="createTask"
+                  ><i class="icon-plus icon-white"></i></a>
+                  <a
+                    class="btn x-small ui-edit"
+                    disabled="disabled"
+                    data-setup="click"
+                    data-click="editTask"
+                  ><i class="icon-edit"></i></a>
+                  <a
+                    class="btn x-small ui-sub"
+                    disabled="disabled"
+                    data-setup="click"
+                    data-click="createSubTask"
+                  >
+                    <i class="icon-share-alt"></i>
+                  </a>
+                </li>
+              </ul>
+              <div class="symbol-group clearfix">
+                <div class="symbol symbol-primary"></div>
+                <div class="symbol symbol-success"></div>
+                <div class="symbol symbol-warning"></div>
+                <div class="symbol symbol-danger"></div>
+              </div>
             </div>
             <ul class="unstyled">
               <li class="clearfix">

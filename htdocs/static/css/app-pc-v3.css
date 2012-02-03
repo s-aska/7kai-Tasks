@@ -214,7 +214,6 @@ ul.lists > li > ul {
     overflow: auto;
 }
 ul.lists > li > ul > li.closed {
-    background-color: transparent;
     text-decoration: line-through;
 }
 ul.tasks > li {
@@ -225,17 +224,11 @@ ul.tasks > li {
 ul.tasks > li.child {
     padding-left: 20px;
 }
-ul.tasks > li.closed {
-    background-color: #CCC;
-}
 ul.tasks > li:hover {
     background-color: rgba(252,252,215,0.6);
 }
 ul.tasks > li.selected {
     background-color: rgba(252,252,215,0.8);
-}
-ul.tasks > li.closed.selected {
-    background-color: #E0E0B1;
 }
 ul.tasks > li.salvage {
     background-color: #ffe0e0;
@@ -386,15 +379,14 @@ ul.comments li span.name {
 .gantttasks > ul > li > ul > li {
     cursor: pointer;
 }
+.gantttasks > ul > li > ul > li.closed {
+    text-decoration: line-through;
+}
 .gantttasks > ul > li > ul > li.clearfix:hover {
     background-color: rgba(252,252,215,0.6);
 }
 .gantttasks > ul > li > ul > li.selected {
     background-color: rgba(252,252,215,0.8);
-}
-.gantttasks > ul > li > ul > li.closed {
-    background-color: transparent;
-    text-decoration: line-through;
 }
 .gantttasks > ul > li > ul > li > .left {
     margin-left: 2px;

@@ -123,7 +123,7 @@ app.setup.ganttchartListsV3 = function(ul){
         li.data('id', list.id);
         li.find('> div .name').text(list.name);
         li.find('> ul').empty();
-        // app.dom.setup(li);
+        app.dom.setup(li);
         
         li.find('> div .symbol').addClass('symbol-clear');
         $.each([
@@ -206,31 +206,11 @@ app.setup.ganttchartListsV3 = function(ul){
         });
         if (task.id in taskli_map) {
             var li_before = taskli_map[task.id];
-            if (app.util.taskFilter(task, current_filter)) {
-                li.data('visible', true);
-                li.show();
-                app.util.findChildTasks(task, function(child){
-                    if (child.id && taskli_map[child.id]) {
-                        if (!app.util.taskFilter(task, current_filter)) {
-                            return ;
-                        }
-                        if (!taskli_map[child.id].data('visible')) {
-                            taskli_map[child.id].data('visible', true);
-                            taskli_map[child.id].show();
-                        }
-                    }
-                });
-            } else {
+            if (!li_before.data('visible')) {
                 li.data('visible', false);
                 li.hide();
-                app.util.findChildTasks(task, function(child){
-                    if (child.id && taskli_map[child.id]) {
-                        if (taskli_map[child.id].data('visible')) {
-                            taskli_map[child.id].data('visible', false);
-                            taskli_map[child.id].hide();
-                        }
-                    }
-                });
+            } else {
+                li.data('visible', true);
             }
             if (li_before.hasClass('selected')) {
                 li.addClass('selected');
@@ -242,8 +222,6 @@ app.setup.ganttchartListsV3 = function(ul){
                 li.css('paddingLeft', paddingLeft + 'px');
             }
 
-            // taskli_map[task.id].after(li);
-            // taskli_map[task.id].remove();
             // 置き換え
             if (task.before &&
                 task.before.list.id !== task.list.id) {
@@ -252,25 +230,74 @@ app.setup.ganttchartListsV3 = function(ul){
                 li_before.after(li);
             }
             li_before.remove();
+            if (app.util.taskFilter(task, current_filter)) {
+                li.data('visible', true);
+                app.dom.slideDown(li);
+                app.util.findChildTasks(task, function(child){
+                    if (child.id && taskli_map[child.id]) {
+                        if (!app.util.taskFilter(child, current_filter)) {
+                            return;
+                        }
+                        if (!taskli_map[child.id].data('visible')) {
+                            taskli_map[child.id].data('visible', true);
+                            app.dom.slideDown(taskli_map[child.id]);
+                        }
+                    }
+                });
+            } else {
+                li.data('visible', false);
+                app.dom.slideUp(li);
+                app.util.findChildTasks(task, function(child){
+                    if (child.id && taskli_map[child.id]) {
+                        if (app.util.taskFilter(child, current_filter)) {
+                            return;
+                        }
+                        if (taskli_map[child.id].data('visible')) {
+                            taskli_map[child.id].data('visible', false);
+                            app.dom.slideUp(taskli_map[child.id]);
+                        }
+                    }
+                });
+                if (li.hasClass('selected')) {
+                    var next = li.nextAll(':visible:first');
+                    if (!next.length) {
+                        next = li.prevAll(':visible:first');
+                    }
+                    if (next.length) {
+                        app.fireEvent('openTask', app.data.task_map[next.data('id')]);
+                    } else {
+                        app.fireEvent('missingTask');
+                    }
+                }
+            }
             taskli_map[task.id] = li;
         } else {
             li.css('left', '0px');
+            li.hide();
+            taskli_map[task.id] = li;
+            if (task.parent_id in taskli_map) {
+                taskli_map[task.parent_id].after(li);
+                var paddingLeft = parseInt(taskli_map[task.parent_id].css('paddingLeft'), 10);
+                li.css('paddingLeft', (paddingLeft + 18) + 'px');
+            } else {
+                li.prependTo(ul);
+            }
             if (app.util.taskFilter(task, current_filter)) {
                 li.data('visible', true);
-            } else {
-                li.hide();
+                app.dom.slideDown(li);
             }
-            taskli_map[task.id] = li;
-            li.appendTo(ul);
         }
     });
     
     app.addListener('openTask', function(task){
         ul.find('> li > ul > li').removeClass('selected');
+        ul.find('.ui-edit, .ui-sub').attr('disabled', true);
         if (task.id in taskli_map) {
             taskli_map[task.id].addClass('selected');
+            taskli_map[task.id].parent().parent()
+                .find('.ui-edit, .ui-sub').attr('disabled', false);
+                app.dom.scrollTopFix(ul.parent(), taskli_map[task.id]);
         }
-        app.dom.scrollTopFix(ul.parent(), taskli_map[task.id]);
     });
 
     app.addListener('openNextTask', function(task){
@@ -518,7 +545,11 @@ $(d).keydown(function(e){
         app.fireEvent('openPrevTask');
     } else if (e.keyCode === 40) { // Down
         app.fireEvent('openNextTask');
-    } else if (e.keyCode === 37) { // Left
+    }
+    if (!app.data.current_task) {
+        return;
+    }
+    if (e.keyCode === 37) { // Left
         var task = app.data.current_task;
         var today = new Date();
         var due;
@@ -548,6 +579,15 @@ $(d).keydown(function(e){
             task_id: task.id,
             registrant: app.util.getRegistrant(task.list),
             due: due
+        });
+    } else if (e.keyCode === 13) { // Enter
+        var task = app.data.current_task;
+        var closed = task.closed ? 0 : 1;
+        app.api.task.update({
+            list_id: task.list.id,
+            task_id: task.id,
+            registrant: app.util.getRegistrant(task.list),
+            closed: closed
         });
     }
 });

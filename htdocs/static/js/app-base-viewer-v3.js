@@ -108,9 +108,6 @@ app.addListener('registerTask', function(task, list){
         app.data.current_task = task;
     }
 });
-app.addListener('filterTask', function(filter){
-    app.data.current_filter = filter;
-});
 app.addListener('registerFriends', function(friends, owner){
     for (var i = 0, max_i = friends.length; i < max_i; i++) {
         var friend = friends[i];
@@ -160,7 +157,7 @@ app.addListener('registerSubAccount', function(sub_account){
     };
 });
 app.addListener('clickNotification', function(option){
-    app.data.current_filter = { list_id: option.list_id };
+    app.fireEvent('selectTab', 'viewer', 'task');
     app.api.account.me(option);
 });
 
@@ -614,20 +611,19 @@ app.util.sortTask = function(tasks, column, reverse){
         else if (a.parent_id === b.parent_id) {
             return compareAttribute(a, b);
         }
+        // A親 - B子
+        else if (a.id === b.parent_id) {
+            return reverse ? 1 : -1;
+        }
+        // B親 - A子
+        else if (a.parent_id === b.id) {
+            return reverse ? -1 : 1;
+        }
         else {
             var parentsA = [a].concat(app.util.findParentTasks(a)),
                 parentsB = [b].concat(app.util.findParentTasks(b)),
                 compareTaskA = parentsA.pop(),
                 compareTaskB = parentsB.pop();
-
-            // A親 - B子
-            if (!parentsA.length) {
-                return reverse ? 1 : -1;
-            }
-            // B親 - A子
-            else if (!parentsB.length) {
-                return reverse ? -1 : 1;
-            }
 
             // 共通の親から離れるまでドリルダウン
             while (compareTaskA.id === compareTaskB.id) {
@@ -1294,6 +1290,7 @@ app.setup.tasksheet = function(ul){
     var task_template = ul.find('> li > ul').html();
     ul.empty();
     var active_tags = {};
+    var current_filter = {};
 
     var updateSort = function(){
         var sort = {};
@@ -1458,13 +1455,6 @@ app.setup.tasksheet = function(ul){
             app.fireEvent('deleteListBegin', list);
         });
 
-
-
-
-
-
-
-
         if (list.members.length) {
             var members = [list.owner].concat(list.members);
             for (var i = 0, max_i = members.length; i < max_i; i++) {
@@ -1511,7 +1501,6 @@ app.setup.tasksheet = function(ul){
         li.data('id', task.id);
         app.dom.setup(li, task);
         app.setup.task(li, task);
-
         if (task.id in app.data.taskli_map) {
             var li_before = app.data.taskli_map[task.id];
             if (!li_before.data('visible')) {
@@ -1539,15 +1528,14 @@ app.setup.tasksheet = function(ul){
             }
             li_before.remove();
             app.data.taskli_map[task.id] = li;
-            var filter = app.data.current_filter || {};
-            if (app.util.taskFilter(task, filter)) {
+            if (app.util.taskFilter(task, current_filter)) {
                 if (!li.data('visible')) {
                     li.data('visible', true);
                     app.dom.slideDown(li);
                     app.util.findChildTasks(task, function(child){
                         if (child.id && app.data.taskli_map[child.id]) {
                             var child_li = app.data.taskli_map[child.id];
-                            if (!app.util.taskFilter(child, app.data.current_filter)) {
+                            if (!app.util.taskFilter(child, current_filter)) {
                                 return ;
                             }
                             if (!child_li.data('visible')) {
@@ -1567,6 +1555,9 @@ app.setup.tasksheet = function(ul){
                     app.dom.slideUp(li);
                     app.util.findChildTasks(task, function(child){
                         if (child.id && app.data.taskli_map[child.id]) {
+                            if (app.util.taskFilter(child, current_filter)) {
+                                return ;
+                            }
                             if (app.data.taskli_map[child.id].data('visible')) {
                                 app.data.taskli_map[child.id].data('visible', false);
                                 app.dom.slideUp(app.data.taskli_map[child.id]);
@@ -1598,9 +1589,9 @@ app.setup.tasksheet = function(ul){
             } else {
                 li.prependTo(ul);
             }
-            if ((!app.data.current_filter && !task.closed) ||
-                (app.data.current_filter &&
-                 app.util.taskFilter(task, app.data.current_filter))) {
+            if ((!current_filter && !task.closed) ||
+                (current_filter &&
+                 app.util.taskFilter(task, current_filter))) {
                 li.data('visible', true);
                 app.dom.slideDown(li);
             } else {
@@ -1677,36 +1668,6 @@ app.setup.tasksheet = function(ul){
         }
     });
     
-    // app.addListener('openTopTask', function(list){
-    //     if (!ul.is(':visible')) { return }
-    //     var lis = app.data.listli_map[list.id].find('> ul > li');
-    //     for (var i = 0, max_i = lis.length; i < max_i; i++) {
-    //         var li = $(lis[i]);
-    //         if (li.data('visible')) {
-    //             var id = li.data('id');
-    //             if (id in app.data.task_map) {
-    //                 app.fireEvent('openTask', app.data.task_map[id]);
-    //             }
-    //             break;
-    //         }
-    //     }
-    // });
-    // 
-    // app.addListener('openBottomTask', function(list){
-    //     if (!ul.is(':visible')) { return }
-    //     var lis = app.data.listli_map[list.id].find('> ul > li');
-    //     for (var i = 0, max_i = lis.length; i < max_i; i++) {
-    //         var li = $(lis[max_i - i - 1]);
-    //         if (li.data('visible')) {
-    //             var id = li.data('id');
-    //             if (id in app.data.task_map) {
-    //                 app.fireEvent('openTask', app.data.task_map[id]);
-    //             }
-    //             break;
-    //         }
-    //     }
-    // });
-    
     app.addListener('sortTask', function(column, reverse){
         var tasks = [],
             resort = false;
@@ -1742,6 +1703,7 @@ app.setup.tasksheet = function(ul){
         if (!ul.is(':visible')) {
             return;
         }
+        current_filter = condition;
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
             var li = app.data.taskli_map[task_id];
