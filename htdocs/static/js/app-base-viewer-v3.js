@@ -58,11 +58,11 @@ app.addListener('deleteList', function(list){
 app.addListener('clearList', function(list){
 });
 app.addListener('openTask', function(task){
-    app.data.current_task = task;
+    // app.data.current_task = task;
     w.location.hash = task.list.id + '-' + task.id;
 });
 app.addListener('missingTask', function(){
-    app.data.current_task = null;
+    // app.data.current_task = null;
 });
 app.addListener('registerTask', function(task, list){
     // リスト
@@ -104,9 +104,9 @@ app.addListener('registerTask', function(task, list){
     }
 
     app.data.task_map[task.id] = task;
-    if (app.data.current_task && task.id === app.data.current_task.id) {
-        app.data.current_task = task;
-    }
+    // if (app.data.current_task && task.id === app.data.current_task.id) {
+    //     app.data.current_task = task;
+    // }
 });
 app.addListener('registerFriends', function(friends, owner){
     for (var i = 0, max_i = friends.length; i < max_i; i++) {
@@ -188,8 +188,8 @@ app.addListener('clear', function(){
     app.data.task_map = {};
     app.data.users = {};
     app.data.assigns = [];
-    app.data.current_list = null;
-    app.data.current_task = null;
+    // app.data.current_list = null;
+    // app.data.current_task = null;
 });
 app.addListener('reload', function(){
     // app.api.account.me({ reset: true });
@@ -244,14 +244,14 @@ $(w).bind('hashchange', function(){
     if (str) {
         var list_id = str[1];
         var task_id = str[2];
-        if (list_id in app.data.list_map &&
-            (!app.data.current_list || list_id != app.data.current_list.id)) {
-            app.fireEvent('openList', app.data.list_map[list_id]);
-        }
-        if (task_id in app.data.task_map &&
-            (!app.data.current_task || task_id != app.data.current_task.id)) {
+        // if (list_id in app.data.list_map &&
+        //     (!app.data.current_list || list_id != app.data.current_list.id)) {
+        //     app.fireEvent('openList', app.data.list_map[list_id]);
+        // }
+        // if (task_id in app.data.task_map &&
+        //     (!app.data.current_task || task_id != app.data.current_task.id)) {
             app.fireEvent('openTask', app.data.task_map[task_id]);
-        }
+        // }
     }
 });
 
@@ -774,9 +774,9 @@ app.api.task.move = function(src_list_id, task_id, dst_list_id){
         if (data.success === 1) {
             $.each(data.tasks, function(i, task){
                 app.fireEvent('registerTask', task, app.data.list_map[dst_list_id]);
-                if (app.data.current_task && app.data.current_task.id === task.id) {
-                    app.fireEvent('openTask', task);
-                }
+                // if (app.data.current_task && app.data.current_task.id === task.id) {
+                //     app.fireEvent('openTask', task);
+                // }
             });
         }
     });
@@ -1016,12 +1016,12 @@ app.setup.rightColumn = function(ele){
             return;
         }
         if (e.shiftKey) {
-            if (!app.data.current_task) {
-                return;
-            }
-            if (!ele.is(':visible')) {
-                return;
-            }
+            // if (!app.data.current_task) {
+            //     return;
+            // }
+            // if (!ele.is(':visible')) {
+            //     return;
+            // }
             // if (e.keyCode === 39) { // right
             //     e.preventDefault();
             //     ele.find('textarea:first').focus();
@@ -1301,6 +1301,7 @@ app.setup.tasksheet = function(ul){
     ul.empty();
     var active_tags = {};
     var current_filter = {};
+    var current_task;
 
     var updateSort = function(){
         var sort = {};
@@ -1381,10 +1382,6 @@ app.setup.tasksheet = function(ul){
             app.api.task.move(app.data.dragtask.list.id, app.data.dragtask.id, list.id);
         }, false);
 
-
-
-
-
         var mute = li.find('.ui-listmenu .icon-volume-off').parent();
         if (list.id in app.data.state.mute) {
             mute.addClass('active');
@@ -1463,6 +1460,12 @@ app.setup.tasksheet = function(ul){
         });
         li.find('.ui-listmenu .icon-remove-sign').parent().click(function(e){
             app.fireEvent('deleteListBegin', list);
+        });
+        li.find('.ui-normal .ui-edit').click(function(e){
+            app.fireEvent('editTask', current_task);
+        });
+        li.find('.ui-normal .ui-sub').click(function(e){
+            app.fireEvent('createSubTask', current_task);
         });
 
         if (list.members.length) {
@@ -1555,8 +1558,8 @@ app.setup.tasksheet = function(ul){
                         }
                     });
                 }
-                if (app.data.current_task &&
-                    app.data.current_task.id === task.id) {
+                if (current_task &&
+                    current_task.id === task.id) {
                     app.fireEvent('openTask', task);
                 }
             } else {
@@ -1575,8 +1578,8 @@ app.setup.tasksheet = function(ul){
                         }
                     });
                 }
-                if (app.data.current_task &&
-                    app.data.current_task.id === task.id) {
+                if (current_task &&
+                    current_task.id === task.id) {
                     var next = li.nextAll(':visible:first');
                     if (!next.length) {
                         next = li.prevAll(':visible:first');
@@ -1622,14 +1625,15 @@ app.setup.tasksheet = function(ul){
                 .find('> header .ui-edit, > header .ui-sub').attr('disabled', false);
             app.dom.scrollTopFix(ul.parent(), app.data.taskli_map[task.id]);
         }
+        current_task = task;
     });
 
     app.addListener('openNextTask', function(task){
         var next;
-        if (app.data.current_task) {
-            next = app.data.taskli_map[app.data.current_task.id].nextAll(':visible:first');
+        if (current_task) {
+            next = app.data.taskli_map[current_task.id].nextAll(':visible:first');
             if (!next.length) {
-                app.data.listli_map[app.data.current_task.list.id]
+                app.data.listli_map[current_task.list.id]
                     .nextAll(':visible')
                     .each(function(i, li){
                         next = $(li).find('> ul > li:visible:first');
@@ -1653,10 +1657,10 @@ app.setup.tasksheet = function(ul){
 
     app.addListener('openPrevTask', function(task){
         var next;
-        if (app.data.current_task) {
-            next = app.data.taskli_map[app.data.current_task.id].prevAll(':visible:first');
+        if (current_task) {
+            next = app.data.taskli_map[current_task.id].prevAll(':visible:first');
             if (!next.length) {
-                app.data.listli_map[app.data.current_task.list.id]
+                app.data.listli_map[current_task.list.id]
                     .prevAll(':visible')
                     .each(function(i, li){
                         next = $(li).find('> ul > li:visible:last');
@@ -1732,8 +1736,8 @@ app.setup.tasksheet = function(ul){
                     li.data('visible', false);
                     app.dom.slideUp(li);
                 }
-                if (app.data.current_task &&
-                    app.data.current_task.id === task.id) {
+                if (current_task &&
+                    current_task.id === task.id) {
                     app.fireEvent('missingTask');
                 }
             }
@@ -1777,8 +1781,8 @@ app.setup.tasksheet = function(ul){
             var parentTask = app.util.findParentTask(task);
             if (is_remove(task)) {
                 if (task_id in app.data.taskli_map) {
-                    if (app.data.current_task &&
-                        app.data.current_task.id === task_id) {
+                    if (current_task &&
+                        current_task.id === task_id) {
                         app.fireEvent('missingTask');
                     }
                     app.data.taskli_map[task_id].remove();
@@ -1790,12 +1794,13 @@ app.setup.tasksheet = function(ul){
     });
     
     app.addListener('missingTask', function(){
-        // if (app.data.current_task &&
-        //     app.data.current_task.id in app.data.taskli_map) {
-        //     app.data.taskli_map[app.data.current_task.id].removeClass('selected');
+        // if (current_task &&
+        //     current_task.id in app.data.taskli_map) {
+        //     app.data.taskli_map[current_task.id].removeClass('selected');
         // }
         ul.find('> li > ul > li').removeClass('selected');
         ul.find('> li > header .ui-edit, > li > header .ui-sub').attr('disabled', true);
+        current_task = null;
     });
 
     app.addListener('clear', function(){
@@ -1806,8 +1811,8 @@ app.setup.tasksheet = function(ul){
 
     app.addListener('openNextList', function(){
         var next;
-        if (app.data.current_task) {
-            next = app.data.listli_map[app.data.current_task.list.id].nextAll(':first');
+        if (current_task) {
+            next = app.data.listli_map[current_task.list.id].nextAll(':first');
         }
         if (!next) {
             next = ul.find('> li:first');
@@ -1822,8 +1827,8 @@ app.setup.tasksheet = function(ul){
 
     app.addListener('openPrevList', function(){
         var prev;
-        if (app.data.current_task) {
-            prev = app.data.listli_map[app.data.current_task.list.id].prevAll(':first');
+        if (current_task) {
+            prev = app.data.listli_map[current_task.list.id].prevAll(':first');
         }
         if (!prev) {
             prev = ul.find('> li:first');
@@ -1849,8 +1854,8 @@ app.setup.tasksheet = function(ul){
         }
         e.preventDefault();
         if (e.keyCode === 67) { // C
-            var list = app.data.current_task
-                     ? app.data.current_task.list
+            var list = current_task
+                     ? current_task.list
                      : app.data.list_map[ul.find('> li:first').data('id')];
             app.fireEvent('createTask', list);
         }
@@ -2143,7 +2148,7 @@ app.setup.registerTaskWindow = function(form){
         //     app.fireEvent('alert', 'task-nest-limit');
         //     return;
         // }
-        setup(app.data.current_task.list, parentTask);
+        setup(parentTask.list, parentTask);
         app.dom.show(form);
     });
 
@@ -2339,20 +2344,20 @@ app.click.reload = function(){
 app.click.createTask = function(ele){
     app.fireEvent('createTask', app.data.list_map[ele.parents('li.list:first').data('id')]);
 }
-app.click.createSubTask = function(){
-    if (app.data.current_task) {
-        app.fireEvent('createSubTask', app.data.current_task);
-    } else {
-        alert('please select a task.');
-    }
-}
-app.click.editTask = function(){
-    if (app.data.current_task) {
-        app.fireEvent('editTask', app.data.current_task);
-    } else {
-        alert('please select a task.');
-    }
-}
+// app.click.createSubTask = function(ele){
+//     if (app.data.current_task) {
+//         app.fireEvent('createSubTask', app.data.current_task);
+//     } else {
+//         alert('please select a task.');
+//     }
+// }
+// app.click.editTask = function(){
+//     if (app.data.current_task) {
+//         app.fireEvent('editTask', app.data.current_task);
+//     } else {
+//         alert('please select a task.');
+//     }
+// }
 app.click.filterTask = function(ele){
     if (ele.hasClass('active')) {
         app.fireEvent('filterTask', {});

@@ -67,6 +67,7 @@ app.setup.ganttchartListsV3 = function(ul){
     var task_template = ul.find('> li > ul').html();
     ul.empty();
 
+    var current_task;
     var current_filter = {};
     var active_tags = {};
 
@@ -136,6 +137,13 @@ app.setup.ganttchartListsV3 = function(ul){
                 list.id in app.data.state.tags[tag]) {
                 li.find('> div .symbol-' + tag).removeClass('symbol-clear');
             }
+        });
+        
+        li.find('.ui-edit').click(function(e){
+            app.fireEvent('editTask', current_task);
+        });
+        li.find('.ui-sub').click(function(e){
+            app.fireEvent('createSubTask', current_task);
         });
         
         if (list.id in listli_map) {
@@ -290,6 +298,7 @@ app.setup.ganttchartListsV3 = function(ul){
     });
     
     app.addListener('openTask', function(task){
+        if (!ul.is(':visible')) { return }
         ul.find('> li > ul > li').removeClass('selected');
         ul.find('.ui-edit, .ui-sub').attr('disabled', true);
         if (task.id in taskli_map) {
@@ -298,14 +307,15 @@ app.setup.ganttchartListsV3 = function(ul){
                 .find('.ui-edit, .ui-sub').attr('disabled', false);
                 app.dom.scrollTopFix(ul.parent(), taskli_map[task.id]);
         }
+        current_task = task;
     });
 
     app.addListener('openNextTask', function(task){
         var next;
-        if (app.data.current_task) {
-            next = taskli_map[app.data.current_task.id].nextAll(':visible:first');
+        if (current_task) {
+            next = taskli_map[current_task.id].nextAll(':visible:first');
             if (!next.length) {
-                listli_map[app.data.current_task.list.id]
+                listli_map[current_task.list.id]
                     .nextAll(':visible')
                     .each(function(i, li){
                         next = $(li).find('> ul > li:visible:first');
@@ -329,10 +339,10 @@ app.setup.ganttchartListsV3 = function(ul){
     
     app.addListener('openPrevTask', function(task){
         var next;
-        if (app.data.current_task) {
-            next = taskli_map[app.data.current_task.id].prevAll(':visible:first');
+        if (current_task) {
+            next = taskli_map[current_task.id].prevAll(':visible:first');
             if (!next.length) {
-                listli_map[app.data.current_task.list.id]
+                listli_map[current_task.list.id]
                     .prevAll(':visible')
                     .each(function(i, li){
                         next = $(li).find('> ul > li:visible:last');
@@ -428,8 +438,8 @@ app.setup.ganttchartListsV3 = function(ul){
 
     // app.addListener('openNextList', function(){
     //     var next;
-    //     if (app.data.current_task) {
-    //         next = listli_map[app.data.current_task.list.id].nextAll(':first');
+    //     if (current_task) {
+    //         next = listli_map[current_task.list.id].nextAll(':first');
     //     }
     //     if (!next) {
     //         next = ul.find('> li:first');
@@ -444,8 +454,8 @@ app.setup.ganttchartListsV3 = function(ul){
     // 
     // app.addListener('openPrevList', function(){
     //     var prev;
-    //     if (app.data.current_task) {
-    //         prev = listli_map[app.data.current_task.list.id].prevAll(':first');
+    //     if (current_task) {
+    //         prev = listli_map[current_task.list.id].prevAll(':first');
     //     }
     //     if (!prev) {
     //         prev = ul.find('> li:first');
@@ -486,6 +496,93 @@ app.setup.ganttchartListsV3 = function(ul){
             }
         }
     });
+
+    app.addListener('missingTask', function(){
+        if (!ul.is(':visible')) { return }
+        current_task = null;
+    });
+    
+    $(d).keydown(function(e){
+        if (document.activeElement.tagName !== 'BODY') {
+            return;
+        }
+        if (e.ctrlKey || e.altKey || e.metaKey) {
+            return;
+        }
+        if (app.state.tab.viewer !== 'gantt') {
+            return;
+        }
+        e.preventDefault();
+        // if (e.shiftKey) {
+        //     if (e.keyCode === 37) { // left
+        //         e.preventDefault();
+        //         app.fireEvent('initGanttchart',
+        //             new Date(
+        //                 app.data.gantt.start.getFullYear(),
+        //                 app.data.gantt.start.getMonth(),
+        //                 app.data.gantt.start.getDate() - 7));
+        //     }
+        //     if (e.keyCode === 39) { // right
+        //         e.preventDefault();
+        //         app.fireEvent('initGanttchart',
+        //             new Date(
+        //                 app.data.gantt.start.getFullYear(),
+        //                 app.data.gantt.start.getMonth(),
+        //                 app.data.gantt.start.getDate() + 7));
+        //     }
+        //     return;
+        // }
+
+        if (e.keyCode === 38) { // Up
+            app.fireEvent('openPrevTask');
+        } else if (e.keyCode === 40) { // Down
+            app.fireEvent('openNextTask');
+        }
+        if (!current_task) {
+            return;
+        }
+        if (e.keyCode === 37) { // Left
+            var task = current_task;
+            var today = new Date();
+            var due;
+            if (task.due_date && task.due_date.getTime() > today.getTime()) {
+                due = app.date.mdy(new Date(task.due_date.getTime() - (24 * 60 * 60 * 1000)));
+            } else {
+                due = '';
+            }
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                due: due
+            });
+        } else if (e.keyCode === 39) { // Right
+            var task = current_task;
+            var today = new Date();
+            var date;
+            if (task.due_date && task.due_date.getTime() > today.getTime()) {
+                date = new Date(task.due_date.getTime() + (24 * 60 * 60 * 1000));
+            } else {
+                date = new Date(today.getTime() + (24 * 60 * 60 * 1000));
+            }
+            var due = app.date.mdy(date);
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                due: due
+            });
+        } else if (e.keyCode === 13) { // Enter
+            var task = current_task;
+            var closed = task.closed ? 0 : 1;
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                closed: closed
+            });
+        }
+    });
 }
 app.setup.nextWeek = function(ele){
     ele.click(function(e){
@@ -509,87 +606,5 @@ app.setup.prevWeek = function(ele){
     });
     ele.disableSelection();
 }
-
-$(d).keydown(function(e){
-    if (document.activeElement.tagName !== 'BODY') {
-        return;
-    }
-    if (e.ctrlKey || e.altKey || e.metaKey) {
-        return;
-    }
-    if (app.state.tab.viewer !== 'gantt') {
-        return;
-    }
-    e.preventDefault();
-    // if (e.shiftKey) {
-    //     if (e.keyCode === 37) { // left
-    //         e.preventDefault();
-    //         app.fireEvent('initGanttchart',
-    //             new Date(
-    //                 app.data.gantt.start.getFullYear(),
-    //                 app.data.gantt.start.getMonth(),
-    //                 app.data.gantt.start.getDate() - 7));
-    //     }
-    //     if (e.keyCode === 39) { // right
-    //         e.preventDefault();
-    //         app.fireEvent('initGanttchart',
-    //             new Date(
-    //                 app.data.gantt.start.getFullYear(),
-    //                 app.data.gantt.start.getMonth(),
-    //                 app.data.gantt.start.getDate() + 7));
-    //     }
-    //     return;
-    // }
-    
-    if (e.keyCode === 38) { // Up
-        app.fireEvent('openPrevTask');
-    } else if (e.keyCode === 40) { // Down
-        app.fireEvent('openNextTask');
-    }
-    if (!app.data.current_task) {
-        return;
-    }
-    if (e.keyCode === 37) { // Left
-        var task = app.data.current_task;
-        var today = new Date();
-        var due;
-        if (task.due_date && task.due_date.getTime() > today.getTime()) {
-            due = app.date.mdy(new Date(task.due_date.getTime() - (24 * 60 * 60 * 1000)));
-        } else {
-            due = '';
-        }
-        app.api.task.update({
-            list_id: task.list.id,
-            task_id: task.id,
-            registrant: app.util.getRegistrant(task.list),
-            due: due
-        });
-    } else if (e.keyCode === 39) { // Right
-        var task = app.data.current_task;
-        var today = new Date();
-        var date;
-        if (task.due_date && task.due_date.getTime() > today.getTime()) {
-            date = new Date(task.due_date.getTime() + (24 * 60 * 60 * 1000));
-        } else {
-            date = new Date(today.getTime() + (24 * 60 * 60 * 1000));
-        }
-        var due = app.date.mdy(date);
-        app.api.task.update({
-            list_id: task.list.id,
-            task_id: task.id,
-            registrant: app.util.getRegistrant(task.list),
-            due: due
-        });
-    } else if (e.keyCode === 13) { // Enter
-        var task = app.data.current_task;
-        var closed = task.closed ? 0 : 1;
-        app.api.task.update({
-            list_id: task.list.id,
-            task_id: task.id,
-            registrant: app.util.getRegistrant(task.list),
-            closed: closed
-        });
-    }
-});
 
 })(this, window, document, jQuery);

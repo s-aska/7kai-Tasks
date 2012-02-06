@@ -359,16 +359,14 @@
                 <a
                   class="btn x-small ui-edit"
                   disabled="disabled"
-                  data-setup="click,tooltip"
-                  data-click="editTask"
+                  data-setup="tooltip"
                   data-text-ja="編集"
                   data-text-en="Edit Task"
                 ><i class="icon-edit"></i></a>
                 <a
                   class="btn x-small ui-sub"
                   disabled="disabled"
-                  data-setup="click,tooltip"
-                  data-click="createSubTask"
+                  data-setup="tooltip"
                   data-text-ja="新しいサブタスク"
                   data-text-en="New Child"
                 >
@@ -1024,14 +1022,10 @@
                   <a
                     class="btn x-small ui-edit"
                     disabled="disabled"
-                    data-setup="click"
-                    data-click="editTask"
                   ><i class="icon-edit"></i></a>
                   <a
                     class="btn x-small ui-sub"
                     disabled="disabled"
-                    data-setup="click"
-                    data-click="createSubTask"
                   >
                     <i class="icon-share-alt"></i>
                   </a>
