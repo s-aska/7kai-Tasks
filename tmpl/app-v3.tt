@@ -187,7 +187,7 @@
         data-click="sortTask"
         data-sort-column="person"
         data-text-ja="ターン (未処理: 担当者, 処理済: 依頼者)"
-        data-text-en="Turn"
+        data-text-en="Whose turn is it"
       ><i class="icon-user"></i></a>
     </div>
     <div
@@ -209,8 +209,8 @@
         data-click="filterTask"
         data-shortcut='{"code":84}'
         data-filter-condition='{"todo":1}'
-        data-text-ja="帰るまでに片付けよう"
-        data-text-en="My turn, no future, no mute"
+        data-text-ja="何かすべきです（処理/保留/移譲/延期）"
+        data-text-en="Processing or postponement."
       >
         <span
           data-setup="localize"
@@ -228,7 +228,7 @@
         data-shortcut='{"code":86}'
         data-filter-condition='{"verify":1}'
         data-text-ja="あなたの確認を待っています"
-        data-text-en="My order and fixed"
+        data-text-en="Waiting for your confirmation."
       >
         <span
           data-setup="localize"
@@ -246,7 +246,7 @@
         data-shortcut='{"code":82}'
         data-filter-condition='{"request":1}'
         data-text-ja="せっかちなあなたに"
-        data-text-en="My order and no fixed"
+        data-text-en="Check the progress."
       >
         <span
           data-setup="localize"
@@ -280,7 +280,7 @@
         data-click="filterTask"
         data-filter-condition='{"closed":1}'
         data-text-ja="確認後クリアすると動きも軽くなります"
-        data-text-en="Please confirm and clear"
+        data-text-en="Please confirm and clear."
       >
         <span
           data-setup="localize"
@@ -296,7 +296,7 @@
       class="btn-group ui-tags"
       data-setup="tab.content,tags,tooltip"
       data-text-ja="選択した色のリストのみ表示"
-      data-text-en="List tag"
+      data-text-en="Display the list of same colors."
       data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
     >
       <a
@@ -351,20 +351,26 @@
               >
                 <a
                   class="btn btn-primary x-small"
-                  data-setup="click"
+                  data-setup="click,tooltip"
                   data-click="createTask"
+                  data-text-ja="新しいタスク"
+                  data-text-en="New Task"
                 ><i class="icon-plus icon-white"></i></a>
                 <a
                   class="btn x-small ui-edit"
                   disabled="disabled"
-                  data-setup="click"
+                  data-setup="click,tooltip"
                   data-click="editTask"
+                  data-text-ja="編集"
+                  data-text-en="Edit Task"
                 ><i class="icon-edit"></i></a>
                 <a
                   class="btn x-small ui-sub"
                   disabled="disabled"
-                  data-setup="click"
+                  data-setup="click,tooltip"
                   data-click="createSubTask"
+                  data-text-ja="新しいサブタスク"
+                  data-text-en="New Child"
                 >
                   <i class="icon-share-alt"></i>
                 </a>
@@ -377,45 +383,62 @@
               >
                 <a
                   class="btn btn-warning x-small"
-                  data-setup="click"
+                  data-setup="click,tooltip"
                   data-click='clearList'
+                  data-text-ja="クリア"
+                  data-text-en="Clear"
                 ><i class="icon-trash icon-white"></i></a>
               </li>
               <li
                 class="btn-group ui-listmenu"
                 style="display: none"
-                data-setup="localize,tab.content"
+                data-setup="tab.content"
                 data-tab='{"group":"homemenu","id":"list","effect":"fade"}'
               >
                 <a
                   class="btn x-small"
+                  data-setup="tooltip"
+                  data-text-ja="Up"
+                  data-text-en="Up"
                 ><i class="icon-chevron-up"></i></a>
                 <a
                   class="btn x-small"
+                  data-setup="tooltip"
+                  data-text-ja="Down"
+                  data-text-en="Down"
                 ><i class="icon-chevron-down"></i></a>
                 <a
                   class="btn x-small"
+                  data-setup="tooltip"
+                  data-text-ja="公開"
+                  data-text-en="Public"
                 ><i class="icon-signal"></i></a>
                 <a
                   class="btn x-small"
+                  data-setup="tooltip"
+                  data-text-ja="[今日迄]にカウントしない"
+                  data-text-en="Will not be displayed on the [Todo]."
                 ><i class="icon-volume-off"></i></a>
                 <a
                   class="btn x-small"
+                  data-setup="tooltip"
+                  data-text-ja="編集"
+                  data-text-en="Edit"
                 ><i class="icon-edit"></i></a>
                 <a
-                  class="btn btn-warning x-small"
-                  data-setup="click"
-                  data-click='clearList'
-                ><i class="icon-trash icon-white"></i></a>
-                <a
                   class="btn btn-danger x-small"
+                  data-setup="tooltip"
+                  data-text-ja="リスト削除"
+                  data-text-en="Delete List"
                 ><i class="icon-remove-sign icon-white"></i></a>
               </li>
               <li
                 class="btn-group ui-tags"
                 style="display: none"
-                data-setup="localize,tab.content"
+                data-setup="tab.content,tooltip"
                 data-tab='{"group":"homemenu","id":"list","effect":"fade"}'
+                data-text-ja="リストにタグを付ける"
+                data-text-en="Tag"
               >
                 <a
                   class="btn x-small btn-primary"
@@ -437,8 +460,10 @@
             </ul>
             <ul
               class="unstyled clearfix members"
-              data-setup="localize,tab.content"
+              data-setup="tab.content,tooltip"
               data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
+              data-text-ja="担当者指名"
+              data-text-en="New Task with Assign"
             >
             </ul>
           </header>
@@ -743,8 +768,10 @@
     <div class="btn-group">
       <a
         class="btn btn-primary x-small"
-        data-setup="click"
+        data-setup="click,tooltip"
         data-click="createList"
+        data-text-ja="新しいリスト"
+        data-text-en="New List"
       ><i class="icon-plus icon-white"></i></a>
     </div>
     <div class="btn-group" style="min-width: 181px;">
@@ -771,50 +798,68 @@
     </div>
     <div
       class="btn-group"
-      data-setup="localize"
     >
-      <a class="btn x-small disabled btn-icon">
+      <a
+        class="btn x-small disabled btn-icon"
+        data-setup="tooltip"
+        data-text-ja="ソート"
+        data-text-en="Sort"
+      >
         <i class="icon-align-left"></i>
       </a>
       <a
         class="btn x-small"
-        data-setup="click"
+        data-setup="click,tooltip"
         data-click="sortTask"
         data-sort-column="name"
+        data-text-ja="タスク名"
+        data-text-en="Name"
       ><i class="icon-font"></i></a>
       <a
         class="btn x-small active"
-        data-setup="click"
+        data-setup="click,tooltip"
         data-click="sortTask"
         data-sort-column="updated_on"
         data-sort-reverse="true"
+        data-text-ja="更新日時"
+        data-text-en="Updated"
       ><i class="icon-time"></i></a>
       <a
         class="btn x-small"
-        data-setup="click"
+        data-setup="click,tooltip"
         data-click="sortTask"
         data-sort-column="due_epoch"
+        data-text-ja="期日"
+        data-text-en="Due"
       ><i class="icon-calendar"></i></a>
       <a
         class="btn x-small"
-        data-setup="click"
+        data-setup="click,tooltip"
         data-click="sortTask"
         data-sort-column="person"
+        data-text-ja="ターン (未処理: 担当者, 処理済: 依頼者)"
+        data-text-en="Whose turn is it"
       ><i class="icon-user"></i></a>
     </div>
     <div
       class="btn-group"
-      data-setup="localize"
     >
-      <a class="btn x-small disabled btn-icon">
+      <a
+        class="btn x-small disabled btn-icon"
+        data-setup="tooltip"
+        data-text-ja="絞り込み"
+        data-text-en="Filter"
+      >
         <i class="icon-search"></i>
       </a>
       <a
         class="btn x-small"
-        data-setup="click,shortcut,filterTask"
+        data-setup="click,shortcut,filterTask,tooltip"
         data-click="filterTask"
         data-shortcut='{"code":84}'
         data-filter-condition='{"todo":1}'
+        data-text-ja="何かすべきです（処理/保留/移譲/延期）"
+        data-text-en="Processing or postponement."
       >
         <span
           data-setup="localize"
@@ -827,10 +872,12 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="click,shortcut,filterTask"
+        data-setup="click,shortcut,filterTask,tooltip"
         data-click="filterTask"
         data-shortcut='{"code":86}'
         data-filter-condition='{"verify":1}'
+        data-text-ja="あなたの確認を待っています"
+        data-text-en="Waiting for your confirmation."
       >
         <span
           data-setup="localize"
@@ -843,10 +890,12 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="click,shortcut,filterTask"
+        data-setup="click,shortcut,filterTask,tooltip"
         data-click="filterTask"
         data-shortcut='{"code":82}'
         data-filter-condition='{"request":1}'
+        data-text-ja="せっかちなあなたに"
+        data-text-en="Check the progress."
       >
         <span
           data-setup="localize"
@@ -859,10 +908,12 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="click,shortcut,filterTask"
+        data-setup="click,shortcut,filterTask,tooltip"
         data-click="filterTask"
         data-shortcut='{"code":83}'
         data-filter-condition='{"star":1}'
+        data-text-ja="気になるタスク"
+        data-text-en="Star"
       >
         <span
           data-setup="localize"
@@ -874,9 +925,11 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="click,filterTask"
+        data-setup="click,filterTask,tooltip"
         data-click="filterTask"
         data-filter-condition='{"closed":1}'
+        data-text-ja="確認後クリアすると動きも軽くなります"
+        data-text-en="Please confirm and clear."
       >
         <span
           data-setup="localize"
@@ -890,7 +943,9 @@
     </div>
     <div
       class="btn-group ui-tags"
-      data-setup="localize,tags"
+      data-setup="tags,tooltip"
+      data-text-ja="選択した色のリストのみ表示"
+      data-text-en="Display the list of same colors."
     >
       <a
         class="btn x-small btn-primary"
