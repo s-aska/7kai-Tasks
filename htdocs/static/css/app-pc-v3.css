@@ -11,6 +11,9 @@ h4, h5 {
     line-height: 1;
     margin-bottom: 6px;
 }
+.navbar-fixed-top {
+    z-index: 1;
+}
 
 /********** parts **********/
 div.alert {
@@ -26,8 +29,8 @@ div.alert {
 }
 .symbol {
     float: left;
-    width: 4px;
-    height: 4px;
+    width: 8px;
+    height: 8px;
     line-height: 4px;
     margin-right: 4px;
 }

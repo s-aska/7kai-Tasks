@@ -663,6 +663,16 @@ app.dom.scrollTopFix = function(wrapper, target){
         wrapper.scrollTop(target_top);
     }
 }
+app.setup.tooltip = function(ele){
+    ele.tooltip({
+        title: app.dom.text(ele),
+        placement: 'bottom',
+        delay: {
+            show: 800,
+            hide: 200
+        }
+    });
+}
 
 app.api.account.me = function(option){
     if (!navigator.onLine) {

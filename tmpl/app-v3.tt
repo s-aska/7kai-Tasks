@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="/static/css/app-pc-v3.css" media="all">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script src="/static/js/jquery-ui-1.8.13.js"></script>
+<script src="/static/js/bootstrap-tooltip.js"></script>
 <script src="/static/js/h5utils.js"></script>
 <script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>
@@ -108,15 +109,19 @@
     <div class="btn-group">
       <a
         class="btn btn-primary x-small"
-        data-setup="click"
+        data-setup="click,tooltip"
         data-click="createList"
+        data-text-ja="新しいリスト"
+        data-text-en="New List"
       ><i class="icon-plus icon-white"></i></a>
     </div>
     <div class="btn-group">
       <a
         class="btn active x-small"
-        data-setup="tab.menu"
+        data-setup="tab.menu,tooltip"
         data-tab='{"group":"homemenu","id":"task"}'
+        data-text-ja="タスクを管理するモード"
+        data-text-en="Task Management Mode"
       >
         <i class="icon-ok"></i>
         <span
@@ -126,8 +131,10 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="localize,resetTag,tab.menu"
+        data-setup="resetTag,tab.menu,tooltip"
         data-tab='{"group":"homemenu","id":"list"}'
+        data-text-ja="リストを管理するモード"
+        data-text-en="List Management Mode"
       >
         <i class="icon-list"></i>
         <span
@@ -141,33 +148,46 @@
       data-setup="localize,tab.content"
       data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
     >
-      <a class="btn x-small disabled btn-icon">
+      <a
+        class="btn x-small disabled btn-icon"
+        data-setup="tooltip"
+        data-text-ja="ソート"
+        data-text-en="Sort"
+      >
         <i class="icon-align-left"></i>
       </a>
       <a
         class="btn x-small"
-        data-setup="click"
+        data-setup="click,tooltip"
         data-click="sortTask"
         data-sort-column="name"
+        data-text-ja="タスク名"
+        data-text-en="Name"
       ><i class="icon-font"></i></a>
       <a
         class="btn x-small active"
-        data-setup="click"
+        data-setup="click,tooltip"
         data-click="sortTask"
         data-sort-column="updated_on"
         data-sort-reverse="true"
+        data-text-ja="更新日時"
+        data-text-en="Updated"
       ><i class="icon-time"></i></a>
       <a
         class="btn x-small"
-        data-setup="click"
+        data-setup="click,tooltip"
         data-click="sortTask"
         data-sort-column="due_epoch"
+        data-text-ja="期日"
+        data-text-en="Due"
       ><i class="icon-calendar"></i></a>
       <a
         class="btn x-small"
-        data-setup="click"
+        data-setup="click,tooltip"
         data-click="sortTask"
         data-sort-column="person"
+        data-text-ja="ターン (未処理: 担当者, 処理済: 依頼者)"
+        data-text-en="Turn"
       ><i class="icon-user"></i></a>
     </div>
     <div
@@ -175,15 +195,22 @@
       data-setup="localize,tab.content"
       data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
     >
-      <a class="btn x-small disabled btn-icon">
+      <a
+        class="btn x-small disabled btn-icon"
+        data-setup="tooltip"
+        data-text-ja="絞り込み"
+        data-text-en="Filter"
+      >
         <i class="icon-search"></i>
       </a>
       <a
         class="btn x-small"
-        data-setup="click,shortcut,filterTask"
+        data-setup="click,shortcut,filterTask,tooltip"
         data-click="filterTask"
         data-shortcut='{"code":84}'
         data-filter-condition='{"todo":1}'
+        data-text-ja="帰るまでに片付けよう"
+        data-text-en="My turn, no future, no mute"
       >
         <span
           data-setup="localize"
@@ -196,10 +223,12 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="click,shortcut,filterTask"
+        data-setup="click,shortcut,filterTask,tooltip"
         data-click="filterTask"
         data-shortcut='{"code":86}'
         data-filter-condition='{"verify":1}'
+        data-text-ja="あなたの確認を待っています"
+        data-text-en="My order and fixed"
       >
         <span
           data-setup="localize"
@@ -212,10 +241,12 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="click,shortcut,filterTask"
+        data-setup="click,shortcut,filterTask,tooltip"
         data-click="filterTask"
         data-shortcut='{"code":82}'
         data-filter-condition='{"request":1}'
+        data-text-ja="せっかちなあなたに"
+        data-text-en="My order and no fixed"
       >
         <span
           data-setup="localize"
@@ -228,10 +259,12 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="click,shortcut,filterTask"
+        data-setup="click,shortcut,filterTask,tooltip"
         data-click="filterTask"
         data-shortcut='{"code":83}'
         data-filter-condition='{"star":1}'
+        data-text-ja="気になるタスク"
+        data-text-en="Star"
       >
         <span
           data-setup="localize"
@@ -243,9 +276,11 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="click,filterTask"
+        data-setup="click,filterTask,tooltip"
         data-click="filterTask"
         data-filter-condition='{"closed":1}'
+        data-text-ja="確認後クリアすると動きも軽くなります"
+        data-text-en="Please confirm and clear"
       >
         <span
           data-setup="localize"
@@ -259,7 +294,9 @@
     </div>
     <div
       class="btn-group ui-tags"
-      data-setup="localize,tab.content,tags"
+      data-setup="tab.content,tags,tooltip"
+      data-text-ja="選択した色のリストのみ表示"
+      data-text-en="List tag"
       data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
     >
       <a
@@ -1527,7 +1564,7 @@
     >Help</h3>
   </div>
   <div class="modal-body">
-    <ul class="tabs">
+    <ul class="nav nav-tabs">
       <li class="active">
         <a
           data-setup="localize,tab.menu"
