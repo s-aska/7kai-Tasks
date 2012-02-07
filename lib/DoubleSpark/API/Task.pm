@@ -99,7 +99,7 @@ sub update {
         };
         if (defined $status && length $status) {
             $action = $status_action_map->{$status} or die "unknown status $status";
-        } elsif (defined $closed && length $status) {
+        } elsif (defined $closed && length $closed) {
             $action = $closed
                     ? 'close-task'
                     : 're' . $status_action_map->{$task->{status}};
