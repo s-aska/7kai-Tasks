@@ -319,6 +319,9 @@ app.util.isTodoTask = function(task){
     if (task.status === 2) {
         return false;
     }
+    if (task.pending) {
+        return false;
+    }
     if (task.assign.length) {
         if (!app.util.findMe(task.assign)) {
             return false;
