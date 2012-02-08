@@ -44,6 +44,7 @@ sub create {
         due => $due,
         status => 0,
         closed => 0,
+        pending => 0,
         actions => [],
         created_on => $time,
         updated_on => $time
@@ -79,7 +80,7 @@ sub update {
     for my $task (@{ $list->data->{tasks} }) {
         next if $task->{id} ne $task_id;
 
-        my @keys = qw(status closed name requester parent_id);
+        my @keys = qw(status closed pending name requester parent_id);
         for my $key (@keys) {
             my $val = $req->param($key);
             if (defined $val) {

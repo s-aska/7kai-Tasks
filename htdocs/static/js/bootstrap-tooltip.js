@@ -74,7 +74,7 @@
         self.show()
       } else {
         self.hoverState = 'in'
-        setTimeout(function() {
+        this.enterId = setTimeout(function() {
           if (self.hoverState == 'in') {
             self.show()
           }
@@ -161,6 +161,10 @@
   , hide: function () {
       var that = this
         , $tip = this.tip()
+
+      if (this.enterId) {
+          clearTimeout(this.enterId);
+      }
 
       $tip.removeClass('in')
 

@@ -499,6 +499,12 @@
               <div class="human" data-setup="human"></div>
               <div class="name" data-setup="name">now loading...</div>
               <div class="icon icon-cross delete" data-setup="close"></div>
+              <div
+                class="icon pending"
+                data-setup="pending,tooltip"
+                data-text-ja="保留"
+                data-text-en="Pending"
+              ><i class="icon-pause"></i></div>
               <div class="due" data-setup="due"></div>
               <div class="recent-comment" data-setup="recent">
                 <div class="icon"></div>

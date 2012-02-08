@@ -357,6 +357,9 @@ app.util.taskFilter = function(task, condition){
         if (task.list.id in app.data.state.mute) {
             return false;
         }
+        if (task.pending) {
+            return false;
+        }
         if (task.status === 2) {
             return false;
         }
@@ -1890,6 +1893,9 @@ app.setup.task = function(ele, task){
     if (task.salvage) {
         ele.addClass('salvage');
     }
+    if (task.pending) {
+        ele.addClass('pending');
+    }
     // draggable
     ele.get(0).addEventListener('dragstart', function(e){
         ele.addClass('dragging');
@@ -2028,6 +2034,26 @@ app.setup.close = function(ele, task){
             task_id: task.id,
             registrant: app.util.getRegistrant(task.list),
             closed: (task.closed ? 0 : 1)
+        });
+    });
+}
+app.setup.pending = function(ele, task){
+    if (!task) return;
+    if (task.pending) {
+        ele.parent().addClass('pending');
+        ele.find('i').removeClass('icon-pause').addClass('icon-play');
+    } else {
+        ele.find('i').removeClass('icon-play').addClass('icon-pause');
+    }
+    ele.click(function(e){
+        ele.tooltip('hide');
+        e.preventDefault();
+        e.stopPropagation();
+        app.api.task.update({
+            list_id: task.list.id,
+            task_id: task.id,
+            registrant: app.util.getRegistrant(task.list),
+            pending: (task.pending ? 0 : 1)
         });
     });
 }

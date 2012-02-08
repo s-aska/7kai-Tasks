@@ -248,11 +248,17 @@ ul.tasks > li div.name {
     color: #666;
     word-wrap: break-word;
 }
+ul.tasks > li.pending div.name {
+    color: rgba(0, 0, 0, 0.3);
+}
 ul.tasks > li div.due {
     float: right;
     margin-right: 4px;
 }
 ul.tasks > li div.delete {
+    float: right;
+}
+ul.tasks > li div.pending {
     float: right;
 }
 ul.tasks > li div.recent-comment {
