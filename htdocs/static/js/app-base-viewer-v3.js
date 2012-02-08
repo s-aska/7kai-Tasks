@@ -1024,7 +1024,9 @@ app.setup.rightColumn = function(ele){
     var list_name        = ele.find('.list_name');
     var task_name        = ele.find('.task_name');
     var ul               = ele.find('ul.comments');
+    var counter          = ele.find('.ui-counter');
     var template         = ul.html();
+
 
     // 初期化処理
     ul.empty();
@@ -1032,7 +1034,8 @@ app.setup.rightColumn = function(ele){
     buttons.attr('disabled', true);
 
     var textarea_watch = function(){
-        button.attr('disabled', !textarea.val().length)
+        button.attr('disabled', !textarea.val().length);
+        counter.text(400 - textarea.val().length);
     };
     textarea
         .change(textarea_watch)
@@ -1095,6 +1098,7 @@ app.setup.rightColumn = function(ele){
         textarea.val('');
         textarea.attr('disabled', false);
         button.attr('disabled', true);
+        counter.text(400);
         buttons.each(function(i, element){
             var ele = $(element);
             var plus = ele.data('plus');
@@ -1183,6 +1187,7 @@ app.setup.rightColumn = function(ele){
         textarea.attr('disabled', true);
         list_name.text('-');
         task_name.text('-');
+        counter.text(400);
     });
 
     app.addListener('clear', function(){
@@ -1191,6 +1196,7 @@ app.setup.rightColumn = function(ele){
         textarea.attr('disabled', true);
         list_name.text('-');
         task_name.text('-');
+        counter.text(400);
     });
 }
 
@@ -1443,10 +1449,14 @@ app.setup.tasksheet = function(ul){
             app.fireEvent('deleteListBegin', list);
         });
         li.find('.ui-normal .ui-edit').click(function(e){
-            app.fireEvent('editTask', current_task);
+            if (current_task) {
+                app.fireEvent('editTask', current_task);
+            }
         });
         li.find('.ui-normal .ui-sub').click(function(e){
-            app.fireEvent('createSubTask', current_task);
+            if (current_task) {
+                app.fireEvent('createSubTask', current_task);
+            }
         });
 
         if (list.members.length) {
@@ -2452,6 +2462,10 @@ app.submit.registerComment = function(form){
         } else {
             return false;
         }
+    }
+    if (message.length > 400) {
+        alert('400 over.');
+        return false;
     }
     app.ajax({
         type: 'POST',

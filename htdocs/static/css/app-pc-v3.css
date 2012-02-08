@@ -299,6 +299,11 @@ ul.tasks > li div.recent-comment .message {
 body > .row > .columns.ui-comments {
     background-color: transparent;
 }
+.ui-comments .ui-counter {
+    float: right;
+    color: #666;
+    font-size: 16px;
+}
 .ui-comments .container {
     background-color: #F7F7F6;
     -webkit-border-radius: 4px;
