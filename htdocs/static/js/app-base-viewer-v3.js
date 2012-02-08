@@ -2259,6 +2259,7 @@ app.setup.timeline = function(ul){
             li.click(function(e){
                 e.preventDefault();
                 app.fireEvent('selectTab', 'viewer', 'task');
+                app.fireEvent('selectTab', 'homemenu', 'task');
                 // app.fireEvent('openList', action.task.list);
                 app.fireEvent('openTask', action.task);
             });
