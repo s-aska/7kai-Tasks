@@ -58,11 +58,9 @@ app.addListener('deleteList', function(list){
 app.addListener('clearList', function(list){
 });
 app.addListener('openTask', function(task){
-    // app.data.current_task = task;
     w.location.hash = task.list.id + '-' + task.id;
 });
 app.addListener('missingTask', function(){
-    // app.data.current_task = null;
 });
 app.addListener('registerTask', function(task, list){
     // リスト
@@ -160,6 +158,9 @@ app.addListener('clickNotification', function(option){
     app.fireEvent('selectTab', 'viewer', 'task');
     app.api.account.me(option);
 });
+app.addListener('createTask', function(){
+    app.dom.hide(app.dom.get('showable', 'welcome'));
+});
 
 // セットアップ
 app.addListener('ready', function(){
@@ -188,8 +189,6 @@ app.addListener('clear', function(){
     app.data.task_map = {};
     app.data.users = {};
     app.data.assigns = [];
-    // app.data.current_list = null;
-    // app.data.current_task = null;
 });
 app.addListener('reload', function(){
     // app.api.account.me({ reset: true });
@@ -244,14 +243,9 @@ $(w).bind('hashchange', function(){
     if (str) {
         var list_id = str[1];
         var task_id = str[2];
-        // if (list_id in app.data.list_map &&
-        //     (!app.data.current_list || list_id != app.data.current_list.id)) {
-        //     app.fireEvent('openList', app.data.list_map[list_id]);
-        // }
-        // if (task_id in app.data.task_map &&
-        //     (!app.data.current_task || task_id != app.data.current_task.id)) {
+        if (task_id in app.data.task_map) {
             app.fireEvent('openTask', app.data.task_map[task_id]);
-        // }
+        }
     }
 });
 
@@ -518,6 +512,12 @@ app.util.buildMe = function(option, data){
     //     }
     // }
 
+    if (option.setup && !tasks) {
+        setTimeout(function(){
+            app.dom.show(app.dom.get('showable', 'welcome'));
+        }, 600);
+    }
+
     if (option.setup || option.reset) {
         app.fireEvent('sortTask', 'updated_on', true);
     }
@@ -653,6 +653,9 @@ app.util.sortTask = function(tasks, column, reverse){
 }
 
 app.dom.scrollTopFix = function(wrapper, target){
+    if (target.is(':first-child')) {
+        target = target.parent().parent();
+    }
     var top           = wrapper.scrollTop();
     var bottom        = top + wrapper.height();
     var target_top    = top + target.offset().top - wrapper.offset().top;
@@ -662,16 +665,6 @@ app.dom.scrollTopFix = function(wrapper, target){
     } else if (target_bottom > bottom) {
         wrapper.scrollTop(target_top);
     }
-}
-app.setup.tooltip = function(ele){
-    ele.tooltip({
-        title: app.dom.text(ele),
-        placement: 'bottom',
-        delay: {
-            show: 800,
-            hide: 200
-        }
-    });
 }
 
 app.api.account.me = function(option){
@@ -720,6 +713,27 @@ app.api.task.update = function(params){
     if (!(params.task_id in app.data.task_map)) {
         // FIXME
         return;
+    }
+    var action;
+    var status_map = {
+        0: 'reopen-task',
+        1: 'start-task',
+        2: 'fix-task'
+    };
+    if ("status" in params) {
+        action = status_map[params.status];
+    }
+    if ("closed" in params) {
+        action = params.closed ? 'close-task' : 're' + status_map[task.status];
+    }
+    if (action) {
+        var time = (new Date()).getTime();
+        app.data.task_map[params.task_id].actions.push({
+            code: params.registrant,
+            action: action,
+            time: time
+        });
+        app.data.task_map[params.task_id].updated_on = time;
     }
     var task = $.extend({}, app.data.task_map[params.task_id], params);
     app.fireEvent('registerTask', task, list);
@@ -831,6 +845,16 @@ app.api.twitter.friends = function(user_id, cursor, cache){
     });
 }
 
+app.setup.tooltip = function(ele){
+    ele.tooltip({
+        title: app.dom.text(ele),
+        placement: 'bottom',
+        delay: {
+            show: 800,
+            hide: 200
+        }
+    });
+}
 app.setup.messages = function(ele){
     app.data.messages = ele;
 }
@@ -1049,7 +1073,9 @@ app.setup.rightColumn = function(ele){
         }
     });
 
-    app.addListener('openTask', function(task){
+    var current_task;
+    var render = function(task){
+        current_task = task;
         list_id_input.val(task.list.id);
         task_id_input.val(task.id);
         registrant_input.val(app.util.getRegistrant(task.list));
@@ -1132,6 +1158,14 @@ app.setup.rightColumn = function(ele){
             li.find('.date').text(app.date.relative(comment.time));
             li.prependTo(ul);
         });
+    };
+
+    app.addListener('openTask', render);
+    app.addListener('registerTask', function(task){
+        if (current_task &&
+            current_task.id === task.id) {
+            render(task);
+        }
     });
 
     app.addListener('missingTask', function(){
@@ -1149,65 +1183,6 @@ app.setup.rightColumn = function(ele){
         list_name.text('-');
         task_name.text('-');
     });
-}
-app.setup.registerCommentPlus = function(ele){
-    var update = ele.data('update');
-    app.addListener('openTask', function(task){
-        
-    });
-    ele.click(function(){
-        
-    });
-}
-
-app.setup.listname = function(ele){
-    app.addListener('openList', function(list){
-        ele.text(list.name);
-    });
-}
-app.setup.listmenu = function(ele){
-    var members = ele.find('> .members:first');
-    var menu = ele.find('> .menu:first');
-    var openMenu = menu.find('> :not(.clear)');
-    var closedMenu = menu.find('> .clear');
-    app.addListener('filterTask', function(condition){
-        if (condition.none){
-            members.hide();
-            menu.show();
-            openMenu.show();
-            closedMenu.hide();
-        } else if (condition.closed) {
-            members.hide();
-            menu.show();
-            openMenu.hide();
-            closedMenu.show();
-        } else {
-            members.show();
-            menu.hide();
-        }
-    });
-    // var li_cache = {};
-    // ul.empty();
-    // app.addListener('registerList', function(list){
-    //     var li = $('<li/>')
-    //         .data('id', list.id)
-    //         .append(
-    //             $('<a/>').text(list.name).click(function(){
-    //                 app.fireEvent('openList', list);
-    //             })
-    //         );
-    //     if (list.id in li_cache) {
-    //         li_cache[list.id].after(li);
-    //         li_cache[list.id].remove();
-    //     } else {
-    //         li.prependTo(ul);
-    //     }
-    //     li_cache[list.id] = li;
-    // });
-    // app.addListener('clear', function(){
-    //     ul.empty();
-    //     li_cache = {};
-    // });
 }
 
 app.setup.publicListWindow = function(ele){
@@ -1292,9 +1267,6 @@ app.setup.privateListButton = function(ele){
     });
 }
 
-app.setup.filter = function(ele){
-    
-}
 app.setup.tasksheet = function(ul){
     var list_template = ul.html();
     var task_template = ul.find('> li > ul').html();
@@ -1858,6 +1830,58 @@ app.setup.tasksheet = function(ul){
                      ? current_task.list
                      : app.data.list_map[ul.find('> li:first').data('id')];
             app.fireEvent('createTask', list);
+        } else if (e.keyCode === 37) { // Left
+            var task = current_task;
+            var today = new Date();
+            var due;
+            if (task.due_date && task.due_date.getTime() > today.getTime()) {
+                due = app.date.mdy(new Date(task.due_date.getTime() - (24 * 60 * 60 * 1000)));
+            } else {
+                due = '';
+            }
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                due: due
+            });
+        } else if (e.keyCode === 39) { // Right
+            var task = current_task;
+            var today = new Date();
+            var date;
+            if (task.due_date && task.due_date.getTime() > today.getTime()) {
+                date = new Date(task.due_date.getTime() + (24 * 60 * 60 * 1000));
+            } else {
+                date = new Date(today.getTime() + (24 * 60 * 60 * 1000));
+            }
+            var due = app.date.mdy(date);
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                due: due
+            });
+        } else if (e.keyCode === 32) { // Space
+            var task = current_task;
+            var status = task.status === 2 ? 0 : task.status + 1;
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                status: status
+            });
+        } else if (e.keyCode === 13) { // Enter
+            var task = current_task;
+            var closed = task.closed ? 0 : 1;
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                closed: closed
+            });
+        } else if (e.keyCode === 69) { // E
+            var task = current_task;
+            app.fireEvent('editTask', task);
         }
     });
 }
@@ -2077,6 +2101,7 @@ app.setup.registerTaskWindow = function(form){
     });
 
     var setup = function(list, parentTask, assignMember){
+        form.find('.ui-listname').text(list.name);
         assign_list.empty();
         requester_select.empty();
         
@@ -2245,119 +2270,12 @@ app.setup.timeline = function(ul){
     });
 }
 
-app.setup.listtable = function(tbody){
-    var template = tbody.html();
-    tbody.empty();
-    var updateSort = function(){
-        var sort = {};
-        var lists = tbody.find('> tr');
-        var count = lists.length;
-        lists.each(function(i, element) {
-            var tr = $(element);
-            if (tr.data('id')) {
-                sort[tr.data('id')] = count;
-                count--;
-            }
-        });
-        app.api.account.update({
-            ns: 'state.sort',
-            method: 'set',
-            type: 'json',
-            key: 'list',
-            val: JSON.stringify(sort)
-        });
-    };
-    app.addListener('registerList', function(list){
-        var tr = $(template);
-        tr.data('id', list.id);
-        tr.find('.name').text(list.name);
-        tr.find('ul.members').empty();
-        app.dom.setup(tr);
-        var members = [list.owner].concat(list.members);
-        for (var i = 0, max_i = members.length; i < max_i; i++) {
-            var code = members[i];
-            var friend = app.data.users[code];
-            $('<li/>')
-                .append(app.util.getIcon(code, 16))
-                .appendTo(tr.find('ul.members'));
-        }
-        var mute = tr.find('input[name="mute"]');
-        mute.prop('checked', (list.id in app.data.state.mute) ? true: false);
-        mute.click(function(){
-            var method = mute.prop('checked') ? 'on' : 'off';
-            app.api.account.update({
-                ns: 'state',
-                method: method,
-                key: 'mute',
-                val: list.id
-            })
-            .done(function(data){
-                if (data.success === 1) {
-                    app.data.state.mute = data.account.state.mute;
-                    app.fireEvent('checkMute', list, mute.prop('checked'));
-                } else {
-                    // 現在 ステータスコード 200 の例外ケースは無い
-                }
-            });
-        });
-        tr.find('.ui-button-up').click(function(e){
-            var prev = tr.prevAll(':first');
-            if (prev.length) {
-                prev.before(tr);
-                updateSort();
-            }
-        });
-        tr.find('.ui-button-down').click(function(e){
-            var next = tr.nextAll(':first');
-            if (next.length) {
-                next.after(tr);
-                updateSort();
-            }
-        });
-        tr.find('.ui-button-public').click(function(e){
-            app.fireEvent('publicListBegin', list);
-        });
-        tr.find('.ui-button-edit').click(function(e){
-            app.fireEvent('editList', list);
-        });
-        tr.find('.ui-button-delete').click(function(e){
-            app.fireEvent('deleteListBegin', list);
-        });
-        if (list.id in app.data.listtr_map) {
-            app.data.listtr_map[list.id].after(tr);
-            app.data.listtr_map[list.id].remove();
-        } else {
-            tr.prependTo(tbody);
-        }
-        app.data.listtr_map[list.id] = tr;
-    });
-
-    app.addListener('deleteList', function(list){
-        app.data.listtr_map[list.id].remove();
-        delete app.data.listtr_map[list.id];
-    });
-}
-
 app.click.reload = function(){
     app.fireEvent('reload');
 }
 app.click.createTask = function(ele){
     app.fireEvent('createTask', app.data.list_map[ele.parents('li.list:first').data('id')]);
 }
-// app.click.createSubTask = function(ele){
-//     if (app.data.current_task) {
-//         app.fireEvent('createSubTask', app.data.current_task);
-//     } else {
-//         alert('please select a task.');
-//     }
-// }
-// app.click.editTask = function(){
-//     if (app.data.current_task) {
-//         app.fireEvent('editTask', app.data.current_task);
-//     } else {
-//         alert('please select a task.');
-//     }
-// }
 app.click.filterTask = function(ele){
     if (ele.hasClass('active')) {
         app.fireEvent('filterTask', {});
@@ -2579,60 +2497,6 @@ $(d).keydown(function(e){
         app.fireEvent('openPrevTask');
     } else if (e.keyCode === 40) { // Down
         app.fireEvent('openNextTask');
-    } else if (!app.data.current_task) {
-        return;
-    } else if (e.keyCode === 37) { // Left
-        var task = app.data.current_task;
-        var today = new Date();
-        var due;
-        if (task.due_date && task.due_date.getTime() > today.getTime()) {
-            due = app.date.mdy(new Date(task.due_date.getTime() - (24 * 60 * 60 * 1000)));
-        } else {
-            due = '';
-        }
-        app.api.task.update({
-            list_id: task.list.id,
-            task_id: task.id,
-            registrant: app.util.getRegistrant(task.list),
-            due: due
-        });
-    } else if (e.keyCode === 39) { // Right
-        var task = app.data.current_task;
-        var today = new Date();
-        var date;
-        if (task.due_date && task.due_date.getTime() > today.getTime()) {
-            date = new Date(task.due_date.getTime() + (24 * 60 * 60 * 1000));
-        } else {
-            date = new Date(today.getTime() + (24 * 60 * 60 * 1000));
-        }
-        var due = app.date.mdy(date);
-        app.api.task.update({
-            list_id: task.list.id,
-            task_id: task.id,
-            registrant: app.util.getRegistrant(task.list),
-            due: due
-        });
-    } else if (e.keyCode === 32) { // Space
-        var task = app.data.current_task;
-        var status = task.status === 2 ? 0 : task.status + 1;
-        app.api.task.update({
-            list_id: task.list.id,
-            task_id: task.id,
-            registrant: app.util.getRegistrant(task.list),
-            status: status
-        });
-    } else if (e.keyCode === 13) { // Enter
-        var task = app.data.current_task;
-        var closed = task.closed ? 0 : 1;
-        app.api.task.update({
-            list_id: task.list.id,
-            task_id: task.id,
-            registrant: app.util.getRegistrant(task.list),
-            closed: closed
-        });
-    } else if (e.keyCode === 69) { // E
-        var task = app.data.current_task;
-        app.fireEvent('editTask', task);
     }
 });
 

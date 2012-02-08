@@ -7,6 +7,9 @@ app.data.gantt = {
     start: null,
     max_days: 33
 };
+
+var app = ns.app;
+
 app.data.gantt_taskli_map = {};
 
 app.addEvents('initGanttchart');

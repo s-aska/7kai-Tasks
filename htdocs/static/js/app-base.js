@@ -409,7 +409,8 @@ app.setup.shortcut = function(ele){
             && !e.ctrlKey
             && !e.altKey
             && !e.metaKey
-            && e.keyCode === option.code) {
+            && e.keyCode === option.code
+            && ele.is(':visible')) {
             ele.click();
         }
     });
@@ -466,6 +467,13 @@ app.setup.tab.content = function(ele){
             }
         }
     });
+    if (option.group in app.state.tab) {
+        if (app.state.tab[option.group] !== option.id) {
+            ele.hide();
+        } else {
+            ele.show();
+        }
+    }
 }
 app.setup.uiSortable = function(ele){
     var option = ele.data('ui-sortable');
