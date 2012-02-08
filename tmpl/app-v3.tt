@@ -276,9 +276,7 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="click,filterTask,tooltip"
-        data-click="filterTask"
-        data-filter-condition='{"closed":1}'
+        data-setup="switchClosed,tooltip"
         data-text-ja="確認後クリアすると動きも軽くなります"
         data-text-en="Please confirm and clear."
       >

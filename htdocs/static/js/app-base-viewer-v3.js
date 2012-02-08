@@ -25,6 +25,7 @@ app.addEvents('privateList');
 
 app.addEvents('registerTask'); // サーバーから取得又は登録フォームから登録した場合発火
 app.addEvents('openTask');
+app.addEvents('openTaskInHome');
 app.addEvents('openNextTask');
 app.addEvents('openPrevTask');
 app.addEvents('openTopTask');
@@ -59,6 +60,14 @@ app.addListener('clearList', function(list){
 });
 app.addListener('openTask', function(task){
     w.location.hash = task.list.id + '-' + task.id;
+});
+app.addListener('openTaskInHome', function(task){
+    app.fireEvent('selectTab', 'viewer', 'task');
+    app.fireEvent('selectTab', 'homemenu', 'task');
+    if (task.closed) {
+        app.fireEvent('filterTask', { closed: 1 });
+    }
+    app.fireEvent('openTask', task);
 });
 app.addListener('missingTask', function(){
 });
@@ -244,7 +253,7 @@ $(w).bind('hashchange', function(){
         var list_id = str[1];
         var task_id = str[2];
         if (task_id in app.data.task_map) {
-            app.fireEvent('openTask', app.data.task_map[task_id]);
+            app.fireEvent('openTaskInHome', app.data.task_map[task_id]);
         }
     }
 });
@@ -499,12 +508,7 @@ app.util.buildMe = function(option, data){
 
     //
     // var last_list_id = localStorage.getItem('last_list_id');
-    // if (option.list_id && (option.list_id in app.data.list_map)) {
-    //     app.fireEvent('openList', app.data.list_map[option.list_id]);
-    //     if (option.task_id in app.data.task_map) {
-    //         app.fireEvent('openTask', app.data.task_map[option.task_id]);
-    //     }
-    // } else if (option.setup || option.reset) {
+    // else if (option.setup || option.reset) {
     //     if (last_list_id && (last_list_id in app.data.list_map)) {
     //         app.fireEvent('openList', app.data.list_map[last_list_id]);
     //     } else if (data.lists.length) {
@@ -523,6 +527,10 @@ app.util.buildMe = function(option, data){
 
     if (option.setup || option.reset) {
         app.fireEvent('sortTask', 'updated_on', true);
+    }
+
+    if (option.task_id in app.data.task_map) {
+        app.fireEvent('openTaskInHome', app.data.task_map[option.task_id]);
     }
 
     app.fireEvent('receiveMe', data);
@@ -875,18 +883,15 @@ app.setup.switchClosed = function(ele){
     });
     ele.click(function(){
         var val = ele.hasClass('active') ? 0 : 1;
-        app.fireEvent('filterTask', {
-            list_id: app.data.current_list.id,
-            closed: val
-        });
+        app.fireEvent('filterTask', { closed: val });
         if (val) {
             ele.addClass('active');
         } else {
             ele.removeClass('active');
         }
     });
-    app.addListener('clickNotification', function(option){
-        if (ele.hasClass('active')) {
+    app.addListener('openTaskInHome', function(task){
+        if (Boolean(task.closed) !== Boolean(ele.hasClass('active'))) {
             ele.click();
         }
     });
@@ -971,7 +976,7 @@ app.setup.starCounter = function(ele){
     });
 }
 app.setup.filterTask = function(ele){
-    app.addListener('filterTask', function(){
+    app.addListener('filterTask', function(condition){
         if (ele.is(':visible')) {
             ele.removeClass('active');
         }
@@ -2293,10 +2298,7 @@ app.setup.timeline = function(ul){
             }
             li.click(function(e){
                 e.preventDefault();
-                app.fireEvent('selectTab', 'viewer', 'task');
-                app.fireEvent('selectTab', 'homemenu', 'task');
-                // app.fireEvent('openList', action.task.list);
-                app.fireEvent('openTask', action.task);
+                app.fireEvent('openTaskInHome', action.task);
             });
             li.appendTo(ul);
             if (i > 100) {
