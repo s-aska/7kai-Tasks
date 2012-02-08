@@ -735,7 +735,8 @@ app.api.task.update = function(params){
         action = status_map[params.status];
     }
     if ("closed" in params) {
-        action = params.closed ? 'close-task' : 're' + status_map[task.status];
+        action = params.closed ? 'close-task' : 're' +
+            status_map[app.data.task_map[params.task_id].status];
     }
     if (action) {
         var time = (new Date()).getTime();
