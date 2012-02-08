@@ -538,14 +538,16 @@
     >
       <li class="active">
         <a
-          data-setup="tab.menu"
+          data-setup="localize,tab.menu"
           data-tab='{"id":"comments","group":"rightColumn"}'
+          data-text-ja="コメント"
         >Comment</a>
       </li>
       <li>
         <a
-          data-setup="tab.menu"
+          data-setup="localize,tab.menu"
           data-tab='{"id":"shortcut-key","group":"rightColumn"}'
+          data-text-ja="ショートカットキー"
         >Shortcut Keys</a>
       </li>
     </ul>
@@ -706,6 +708,13 @@
               data-setup="localize"
               data-text-ja="タスクを閉じる"
             >Closed a Task.</td>
+          </tr>
+          <tr>
+            <th>[P]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="タスクを保留"
+            >Pending a Task.</td>
           </tr>
           <tr>
             <th>[E]</th>

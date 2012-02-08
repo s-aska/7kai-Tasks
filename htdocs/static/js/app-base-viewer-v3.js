@@ -1882,6 +1882,15 @@ app.setup.tasksheet = function(ul){
                 registrant: app.util.getRegistrant(task.list),
                 closed: closed
             });
+        } else if (e.keyCode === 80) { // P
+            var task = current_task;
+            var pending = task.pending ? 0 : 1;
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                pending: pending
+            });
         } else if (e.keyCode === 69) { // E
             var task = current_task;
             app.fireEvent('editTask', task);
