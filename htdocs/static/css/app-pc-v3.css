@@ -250,6 +250,7 @@ ul.tasks > li div.name {
 }
 ul.tasks > li.pending div.name {
     color: rgba(0, 0, 0, 0.3);
+    font-style: italic;
 }
 ul.tasks > li div.due {
     float: right;
