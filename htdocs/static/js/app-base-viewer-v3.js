@@ -858,12 +858,43 @@ app.api.twitter.friends = function(user_id, cursor, cache){
 }
 
 app.setup.tooltip = function(ele){
-    ele.tooltip({
-        title: app.dom.text(ele),
-        placement: 'bottom',
-        delay: {
-            show: 800,
-            hide: 200
+    var tooltip = $('#ui-tooltip');
+    var text = app.dom.text(ele);
+    var show = function(){
+        if (!ele.is(':visible')) {
+            return;
+        }
+        tooltip
+            .find('.tooltip-inner').text(text);
+        tooltip
+            .remove()
+            .css({ top: 0, left: 0, display: 'block' })
+            .appendTo(d.body);
+        var pos = ele.offset();
+        pos.width = ele.get(0).offsetWidth;
+        pos.height = ele.get(0).offsetHeight;
+        var left = pos.left + pos.width / 2 - tooltip.get(0).offsetWidth / 2;
+        var css = {
+            top: pos.top + pos.height,
+            left: (left > 0 ? left : 0)
+        };
+        tooltip.css(css);
+    };
+    var timer;
+    ele.hover(function(){
+        if (timer) {
+            clearTimeout(timer);
+        }
+        timer = setTimeout(function(){
+            show();
+            timer = null;
+        }, 800);
+    }, function(){
+        if (timer) {
+            clearTimeout(timer);
+            timer = null;
+        } else {
+            tooltip.hide();
         }
     });
 }
@@ -1495,6 +1526,7 @@ app.setup.tasksheet = function(ul){
     app.addListener('publicList', function(list){
         app.data.listli_map[list.id].find('.icon-signal').parent().addClass('active');
     });
+
     app.addListener('privateList', function(list){
         app.data.listli_map[list.id].find('.icon-signal').parent().removeClass('active');
     });
@@ -2091,8 +2123,6 @@ app.setup.pending = function(ele, task){
         ele.find('i').removeClass('icon-play').addClass('icon-pause');
     }
     ele.click(function(e){
-        ele.tooltip('hide');
-        ele.tooltip('disable');
         e.preventDefault();
         e.stopPropagation();
         app.api.task.update({

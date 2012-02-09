@@ -174,11 +174,6 @@ app.setup.ganttchartListsV3 = function(ul){
         var li = $(task_template);
         li.data('id', task.id);
 
-        // if (current_task &&
-        //     current_task.id === task.id) {
-        //     current_task = task;
-        // }
-
         app.dom.setup(li, task);
 
         if (task.closed) {

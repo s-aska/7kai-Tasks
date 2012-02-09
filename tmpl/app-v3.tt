@@ -209,8 +209,8 @@
         data-click="filterTask"
         data-shortcut='{"code":84}'
         data-filter-condition='{"todo":1}'
-        data-text-ja="何かすべきです（処理/保留/移譲/延期）"
-        data-text-en="Processing or postponement."
+        data-text-ja="何かすべき(処理/保留/依頼/延期) ... [T]"
+        data-text-en="Processing or postponement. ... [T]"
       >
         <span
           data-setup="localize"
@@ -227,8 +227,8 @@
         data-click="filterTask"
         data-shortcut='{"code":86}'
         data-filter-condition='{"verify":1}'
-        data-text-ja="あなたの確認を待っています"
-        data-text-en="Waiting for your confirmation."
+        data-text-ja="あなたの確認を待っています ... [V]"
+        data-text-en="Waiting for your confirmation. ... [V]"
       >
         <span
           data-setup="localize"
@@ -245,8 +245,8 @@
         data-click="filterTask"
         data-shortcut='{"code":82}'
         data-filter-condition='{"request":1}'
-        data-text-ja="せっかちなあなたに"
-        data-text-en="Check the progress."
+        data-text-ja="せっかちなあなたに ... [R]"
+        data-text-en="Check the progress. ... [R]"
       >
         <span
           data-setup="localize"
@@ -263,8 +263,8 @@
         data-click="filterTask"
         data-shortcut='{"code":83}'
         data-filter-condition='{"star":1}'
-        data-text-ja="気になるタスク"
-        data-text-en="Star"
+        data-text-ja="気になるタスク ... [S]"
+        data-text-en="Star ... [S]"
       >
         <span
           data-setup="localize"
@@ -278,8 +278,8 @@
         class="btn x-small"
         data-setup="shortcut,switchClosed,tooltip"
         data-shortcut='{"code":67}'
-        data-text-ja="確認後クリアすると動きも軽くなります"
-        data-text-en="Please confirm and clear."
+        data-text-ja="クリアすると軽くなります ... [C]"
+        data-text-en="Please confirm and clear. ... [C]"
       >
         <span
           data-setup="localize"
@@ -371,22 +371,22 @@
                   class="btn btn-primary x-small"
                   data-setup="click,tooltip"
                   data-click="createTask"
-                  data-text-ja="新しいタスク"
-                  data-text-en="New Task"
+                  data-text-ja="新しいタスク ... [N]"
+                  data-text-en="New Task ... [N]"
                 ><i class="icon-plus icon-white"></i></a>
                 <a
                   class="btn x-small ui-edit"
                   disabled="disabled"
                   data-setup="tooltip"
-                  data-text-ja="編集"
-                  data-text-en="Edit Task"
+                  data-text-ja="編集 ... [E]"
+                  data-text-en="Edit Task ... [E]"
                 ><i class="icon-edit"></i></a>
                 <a
                   class="btn x-small ui-sub"
                   disabled="disabled"
                   data-setup="tooltip"
-                  data-text-ja="新しいサブタスク"
-                  data-text-en="New Child"
+                  data-text-ja="新しいサブタスク ... [Shift-N]"
+                  data-text-en="New Child ... [Shift-N]"
                 >
                   <i class="icon-share-alt"></i>
                 </a>
@@ -401,8 +401,8 @@
                   class="btn btn-warning x-small"
                   data-setup="click,tooltip"
                   data-click='clearList'
-                  data-text-ja="クリア"
-                  data-text-en="Clear"
+                  data-text-ja="クリア ... [Shift-C]"
+                  data-text-en="Clear ... [Shift-C]"
                 ><i class="icon-trash icon-white"></i></a>
               </li>
               <li
@@ -492,19 +492,52 @@
               class="clearfix"
               draggable="true"
             >
-              <div class="icon icon-grip"></div>
-              <div class="icon icon-tasks-off" data-setup="status"></div>
-              <div class="icon icon-star-off" data-setup="star"></div>
-              <div class="human" data-setup="human"></div>
-              <div class="name" data-setup="name">now loading...</div>
-              <div class="icon icon-cross delete" data-setup="close"></div>
+              <div
+                class="icon icon-grip"
+                data-setup="tooltip"
+                data-text-ja="ドラッグ可"
+                data-text-en="Drag"
+              ></div>
+              <div
+                class="icon icon-tasks-off"
+                data-setup="status,tooltip"
+                data-text-ja="進捗 ... [Space]"
+                data-text-en="Progress ... [Space]"
+              ></div>
+              <div
+                class="icon icon-star-off"
+                data-setup="star,tooltip"
+                data-text-ja="スター"
+                data-text-en="Star"
+              ></div>
+              <div
+                class="human"
+                data-setup="human,tooltip"
+                data-text-ja="担当者 / 依頼者"
+                data-text-en="Assign / Requester"
+              ></div>
+              <div
+                class="name"
+                data-setup="name"
+              >now loading...</div>
+              <div
+                class="icon icon-cross delete"
+                data-setup="close,tooltip"
+                data-text-ja="完了 ... [Enter]"
+                data-text-en="Closed ... [Enter]"
+              ></div>
               <div
                 class="icon pending"
                 data-setup="pending,tooltip"
-                data-text-ja="保留"
-                data-text-en="Pending"
+                data-text-ja="保留 ... [P]"
+                data-text-en="Pending ... [P]"
               ><i class="icon-pause"></i></div>
-              <div class="due" data-setup="due"></div>
+              <div
+                class="due"
+                data-setup="due,tooltip"
+                data-text-ja="期日"
+                data-text-en="Due"
+              ></div>
               <div class="recent-comment" data-setup="recent">
                 <div class="icon"></div>
                 <div class="message">{<span></span></div>
@@ -2175,6 +2208,10 @@
   >×</a>
   <strong>Error</strong>
   <span>Failed to sync friends' data from Twitter.</span>
+</div>
+<div id="ui-tooltip" class="tooltip bottom" style="display: none;">
+  <div class="tooltip-arrow"></div>
+  <div class="tooltip-inner"></div>
 </div>
 <div style="display: none;">
 <form id="add-twitter" method="post" action="/signin/twitter/signin">
