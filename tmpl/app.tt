@@ -158,6 +158,12 @@
         </li> -->
         <li class="">
           <a
+            href="/v3"
+            target="_blank"
+          >v3 Beta</a>
+        </li>
+        <li class="">
+          <a
             href="/staff"
             target="_blank"
             data-setup="localize"

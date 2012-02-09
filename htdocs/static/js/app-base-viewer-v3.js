@@ -1651,13 +1651,15 @@ app.setup.tasksheet = function(ul){
         current_task = task;
     });
 
-    app.addListener('openNextTask', function(task){
+    app.addListener('openNextTask', function(skip){
         if (!ul.is(':visible')) {
             return;
         }
         var next;
         if (current_task) {
-            next = app.data.taskli_map[current_task.id].nextAll(':visible:first');
+            if (!skip) {
+                next = app.data.taskli_map[current_task.id].nextAll(':visible:first');
+            }
             if (!next.length) {
                 app.data.listli_map[current_task.list.id]
                     .nextAll(':visible')
@@ -1681,13 +1683,15 @@ app.setup.tasksheet = function(ul){
         }
     });
 
-    app.addListener('openPrevTask', function(task){
+    app.addListener('openPrevTask', function(skip){
         if (!ul.is(':visible')) {
             return;
         }
         var next;
         if (current_task) {
-            next = app.data.taskli_map[current_task.id].prevAll(':visible:first');
+            if (!skip) {
+                next = app.data.taskli_map[current_task.id].prevAll(':visible:first');
+            }
             if (!next.length) {
                 app.data.listli_map[current_task.list.id]
                     .prevAll(':visible')
@@ -1839,37 +1843,19 @@ app.setup.tasksheet = function(ul){
     });
 
     app.addListener('openNextList', function(){
-        var next;
-        if (current_task) {
-            next = app.data.listli_map[current_task.list.id].nextAll(':first');
+        if (!ul.is(':visible')) {
+            return;
         }
-        if (!next) {
-            next = ul.find('> li:first');
-        }
-        if (next && next.length) {
-            var list_id = next.data('id');
-            if (list_id in app.data.list_map) {
-                app.fireEvent('openTopTask', app.data.list_map[list_id]);
-            }
-        }
+        app.fireEvent('openNextTask', true);
     });
 
     app.addListener('openPrevList', function(){
-        var prev;
-        if (current_task) {
-            prev = app.data.listli_map[current_task.list.id].prevAll(':first');
+        if (!ul.is(':visible')) {
+            return;
         }
-        if (!prev) {
-            prev = ul.find('> li:first');
-        }
-        if (prev && prev.length) {
-            var list_id = prev.data('id');
-            if (list_id in app.data.list_map) {
-                app.fireEvent('openBottomTask', app.data.list_map[list_id]);
-            }
-        }
+        app.fireEvent('openPrevTask', true);
     });
-    
+
     $(d).keydown(function(e){
         if (document.activeElement.tagName !== 'BODY') {
             return;

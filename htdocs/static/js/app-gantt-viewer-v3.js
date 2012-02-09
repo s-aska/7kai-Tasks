@@ -439,37 +439,19 @@ app.setup.ganttchartListsV3 = function(ul){
         }
     });
 
-    // app.addListener('openNextList', function(){
-    //     var next;
-    //     if (current_task) {
-    //         next = listli_map[current_task.list.id].nextAll(':first');
-    //     }
-    //     if (!next) {
-    //         next = ul.find('> li:first');
-    //     }
-    //     if (next && next.length) {
-    //         var list_id = next.data('id');
-    //         if (list_id in app.data.list_map) {
-    //             app.fireEvent('openTopTask', app.data.list_map[list_id]);
-    //         }
-    //     }
-    // });
-    // 
-    // app.addListener('openPrevList', function(){
-    //     var prev;
-    //     if (current_task) {
-    //         prev = listli_map[current_task.list.id].prevAll(':first');
-    //     }
-    //     if (!prev) {
-    //         prev = ul.find('> li:first');
-    //     }
-    //     if (prev && prev.length) {
-    //         var list_id = prev.data('id');
-    //         if (list_id in app.data.list_map) {
-    //             app.fireEvent('openBottomTask', app.data.list_map[list_id]);
-    //         }
-    //     }
-    // });
+    app.addListener('openNextList', function(){
+        if (!ul.is(':visible')) {
+            return;
+        }
+        app.fireEvent('openNextTask', true);
+    });
+
+    app.addListener('openPrevList', function(){
+        if (!ul.is(':visible')) {
+            return;
+        }
+        app.fireEvent('openPrevTask', true);
+    });
 
     app.addListener('clearList', function(list){
         var is_remove = function(task){
