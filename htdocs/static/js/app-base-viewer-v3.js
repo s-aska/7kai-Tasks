@@ -747,7 +747,7 @@ app.api.task.update = function(params){
         });
         app.data.task_map[params.task_id].updated_on = time;
     }
-    var task = $.extend({}, app.data.task_map[params.task_id], params);
+    var task = $.extend(app.data.task_map[params.task_id], params);
     app.fireEvent('registerTask', task, list);
     app.ajax({
         type: 'POST',
