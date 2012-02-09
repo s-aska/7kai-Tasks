@@ -536,15 +536,15 @@ app.setup.ganttchartListsV3 = function(ul){
         //     return;
         // }
 
-        if (e.keyCode === 38) { // Up
+        if (e.keyCode === 38 || e.keyCode === 75) { // Up / J
             app.fireEvent('openPrevTask');
-        } else if (e.keyCode === 40) { // Down
+        } else if (e.keyCode === 40 || e.keyCode === 74) { // Down / K
             app.fireEvent('openNextTask');
         }
         if (!current_task) {
             return;
         }
-        if (e.keyCode === 37) { // Left
+        if (e.keyCode === 37 || e.keyCode === 72) { // Left / H
             var task = current_task;
             var today = new Date();
             var due;
@@ -559,7 +559,7 @@ app.setup.ganttchartListsV3 = function(ul){
                 registrant: app.util.getRegistrant(task.list),
                 due: due
             });
-        } else if (e.keyCode === 39) { // Right
+        } else if (e.keyCode === 39 || e.keyCode === 76) { // Right / L
             var task = current_task;
             var today = new Date();
             var date;

@@ -673,7 +673,7 @@
           style="overflow: auto"
         >
           <tr>
-            <th>[H]</th>
+            <th>[? or /]</th>
             <td
               data-setup="localize"
               data-text-ja="ショートカットヘルプ表示"
@@ -701,21 +701,21 @@
             >Close Some Dialog.</td>
           </tr>
           <tr>
-            <th>[Down]</th>
+            <th>[J or Down]</th>
             <td
               data-setup="localize"
               data-text-ja="次のタスクを選択"
             >Select Next Task.</td>
           </tr>
           <tr>
-            <th>[Up]</th>
+            <th>[K or Up]</th>
             <td
               data-setup="localize"
               data-text-ja="前のタスクを選択"
             >Select Previous Task.</td>
           </tr>
           <tr>
-            <th>[Right] / [Left]</th>
+            <th>[H or Right] / [L or Left]</th>
             <td
               data-setup="localize"
               data-text-ja="期日を１日延長 / 短縮"

@@ -1082,20 +1082,20 @@ app.setup.rightColumn = function(ele){
         if (e.ctrlKey || e.altKey || e.metaKey) {
             return;
         }
-        if (e.shiftKey) {
-            // if (!app.data.current_task) {
-            //     return;
-            // }
-            // if (!ele.is(':visible')) {
-            //     return;
-            // }
-            // if (e.keyCode === 39) { // right
-            //     e.preventDefault();
-            //     ele.find('textarea:first').focus();
-            // }
-            return;
-        }
-        if (e.keyCode === 72) { // h
+        // if (e.shiftKey) {
+        //     if (!app.data.current_task) {
+        //         return;
+        //     }
+        //     if (!ele.is(':visible')) {
+        //         return;
+        //     }
+        //     if (e.keyCode === 39) { // right
+        //         e.preventDefault();
+        //         ele.find('textarea:first').focus();
+        //     }
+        //     return;
+        // }
+        if (e.keyCode === 191) { // h
             e.preventDefault();
             if ($('#shotcut-key').is(':visible')) {
                 app.fireEvent('selectTab', 'rightColumn', 'comments');
@@ -1901,7 +1901,7 @@ app.setup.tasksheet = function(ul){
                      ? current_task.list
                      : app.data.list_map[ul.find('> li:first').data('id')];
             app.fireEvent('createTask', list);
-        } else if (e.keyCode === 37) { // Left
+        } else if (e.keyCode === 37 || e.keyCode === 72) { // Left / H
             var task = current_task;
             var today = new Date();
             var due;
@@ -1916,7 +1916,7 @@ app.setup.tasksheet = function(ul){
                 registrant: app.util.getRegistrant(task.list),
                 due: due
             });
-        } else if (e.keyCode === 39) { // Right
+        } else if (e.keyCode === 39 || e.keyCode === 76) { // Right / L
             var task = current_task;
             var today = new Date();
             var date;
@@ -2597,9 +2597,9 @@ $(d).keydown(function(e){
         }
         return;
     }
-    if (e.keyCode === 38) { // Up
+    if (e.keyCode === 38 || e.keyCode === 75) { // Up / K
         app.fireEvent('openPrevTask');
-    } else if (e.keyCode === 40) { // Down
+    } else if (e.keyCode === 40 || e.keyCode === 74) { // Down / J
         app.fireEvent('openNextTask');
     }
 });
