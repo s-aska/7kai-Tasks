@@ -247,16 +247,16 @@ app.addListener('receiveSign', function(){
     }, 300000);
 });
 
-$(w).bind('hashchange', function(){
-    var str = w.location.hash.match(/^#(\d+)-(\d+:\d+)$/)
-    if (str) {
-        var list_id = str[1];
-        var task_id = str[2];
-        if (task_id in app.data.task_map) {
-            app.fireEvent('openTaskInHome', app.data.task_map[task_id]);
-        }
-    }
-});
+// $(w).bind('hashchange', function(){
+//     var str = w.location.hash.match(/^#(\d+)-(\d+:\d+)$/)
+//     if (str) {
+//         var list_id = str[1];
+//         var task_id = str[2];
+//         if (task_id in app.data.task_map) {
+//             app.fireEvent('openTaskInHome', app.data.task_map[task_id]);
+//         }
+//     }
+// });
 
 app.util.getIconUrl = function(code, size){
     var src;
@@ -1620,6 +1620,9 @@ app.setup.tasksheet = function(ul){
     });
 
     app.addListener('openNextTask', function(task){
+        if (!ul.is(':visible')) {
+            return;
+        }
         var next;
         if (current_task) {
             next = app.data.taskli_map[current_task.id].nextAll(':visible:first');
@@ -1647,6 +1650,9 @@ app.setup.tasksheet = function(ul){
     });
 
     app.addListener('openPrevTask', function(task){
+        if (!ul.is(':visible')) {
+            return;
+        }
         var next;
         if (current_task) {
             next = app.data.taskli_map[current_task.id].prevAll(':visible:first');
@@ -1836,7 +1842,7 @@ app.setup.tasksheet = function(ul){
         if (document.activeElement.tagName !== 'BODY') {
             return;
         }
-        if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) {
+        if (e.ctrlKey || e.altKey || e.metaKey) {
             return;
         }
         if (app.state.tab.viewer &&
@@ -1844,7 +1850,21 @@ app.setup.tasksheet = function(ul){
             return;
         }
         e.preventDefault();
-        if (e.keyCode === 67) { // C
+        if (e.shiftKey) {
+            if (e.keyCode === 67) { // C
+                if (current_task) {
+                    var form = app.dom.get('showable', 'clear-list-window');
+                    form.data('id', current_task.list.id);
+                    app.dom.show(form);
+                }
+            } else if (e.keyCode === 78) { // N
+                if (current_task) {
+                    app.fireEvent('createSubTask', current_task);
+                }
+            }
+            return;
+        }
+        if (e.keyCode === 78) { // N
             var list = current_task
                      ? current_task.list
                      : app.data.list_map[ul.find('> li:first').data('id')];
@@ -1882,7 +1902,7 @@ app.setup.tasksheet = function(ul){
             });
         } else if (e.keyCode === 32) { // Space
             var task = current_task;
-            var status = task.status === 2 ? 0 : task.status + 1;
+            var status = task.status >= 2 ? 0 : task.status + 1;
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
@@ -2072,6 +2092,7 @@ app.setup.pending = function(ele, task){
     }
     ele.click(function(e){
         ele.tooltip('hide');
+        ele.tooltip('disable');
         e.preventDefault();
         e.stopPropagation();
         app.api.task.update({

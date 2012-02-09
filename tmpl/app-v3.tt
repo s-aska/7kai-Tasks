@@ -115,7 +115,7 @@
         data-text-en="New List"
       ><i class="icon-plus icon-white"></i></a>
     </div>
-    <div class="btn-group">
+    <div class="btn-group" style="min-width: 181px;">
       <a
         class="btn active x-small"
         data-setup="tab.menu,tooltip"
@@ -276,7 +276,8 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="switchClosed,tooltip"
+        data-setup="shortcut,switchClosed,tooltip"
+        data-shortcut='{"code":67}'
         data-text-ja="確認後クリアすると動きも軽くなります"
         data-text-en="Please confirm and clear."
       >
@@ -600,6 +601,7 @@
             data-text-ja="完了"
             data-plus="close"
           >Close</button>
+          <div class="ui-counter">400</div>
         </div>
       </form>
       <ul
@@ -645,11 +647,18 @@
             >Show Shortcut Help.</td>
           </tr>
           <tr>
-            <th>[C]</th>
+            <th>[N]</th>
             <td
               data-setup="localize"
               data-text-ja="新しいタスクを作成"
-            >Create a New Task.</td>
+            >New Task.</td>
+          </tr>
+          <tr>
+            <th>[Shift-N]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="新しいサブタスクを作成"
+            >New Sub Task.</td>
           </tr>
           <tr>
             <th>[ESC]</th>
@@ -672,20 +681,6 @@
               data-text-ja="前のタスクを選択"
             >Select Previous Task.</td>
           </tr>
-          <!-- <tr>
-            <th>[Shift-Down]</th>
-            <td
-              data-setup="localize"
-              data-text-ja="次のリストを選択"
-            >Select Next List.</td>
-          </tr>
-          <tr>
-            <th>[Shift-Up]</th>
-            <td
-              data-setup="localize"
-              data-text-ja="前のリストを選択"
-            >Select Previous List.</td>
-          </tr> -->
           <tr>
             <th>[Right] / [Left]</th>
             <td
@@ -755,6 +750,20 @@
               data-setup="localize"
               data-text-ja="[スター]で絞り込み"
             >Open Star.</td>
+          </tr>
+          <tr>
+            <th>[C]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="[完了済み]で絞り込み"
+            >Open Closed.</td>
+          </tr>
+          <tr>
+            <th>[Shift-C]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="完了済みをクリア"
+            >Clear Closed Tasks in List.</td>
           </tr>
           <tr>
             <th>[Shift-(Right / Left)]</th>
@@ -2038,7 +2047,7 @@
   data-submit="clearList"
   data-showable='{
     "id":"clear-list-window",
-    "show":{"effect":"fade","speed":"fast"},
+    "show":{"effect":"fade","speed":"fast","callback":"dom.autofocus"},
     "hide":{"effect":"fade","speed":"fast","callback":"dom.blur"}}'
 >
   <div class="modal-header">
@@ -2062,6 +2071,7 @@
     <button
       class="btn btn-danger"
       data-setup="localize"
+      data-autofocus="true"
       data-text-ja="削除"
     >Delete</button>
     <button
