@@ -387,7 +387,6 @@ ul.comments li span.name {
 }
 .ganttchart .day h2 {
     position: relative;
-    z-index: 1;
     font-size: 10px;
     line-height: 10px;
     font-weight: normal;
@@ -404,7 +403,7 @@ ul.comments li span.name {
 }
 .gantttasks {
     position: relative;
-    top: 20px;
+    top: 36px;
     width: 1053px;
     overflow-y: auto;
     overflow-x: hidden;
