@@ -110,7 +110,9 @@ app.addListener('registerTask', function(task, list){
         task.person = task.requester;
     }
 
-    app.data.task_map[task.id] = task;
+    $.extend(app.data.task_map[task.id], task);
+
+    // app.data.task_map[task.id] = task;
     // if (app.data.current_task && task.id === app.data.current_task.id) {
     //     app.data.current_task = task;
     // }
@@ -747,7 +749,7 @@ app.api.task.update = function(params){
         });
         app.data.task_map[params.task_id].updated_on = time;
     }
-    var task = $.extend(app.data.task_map[params.task_id], params);
+    var task = $.extend({}, app.data.task_map[params.task_id], params);
     app.fireEvent('registerTask', task, list);
     app.ajax({
         type: 'POST',
