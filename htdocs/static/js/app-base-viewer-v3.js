@@ -96,7 +96,7 @@ app.addListener('registerTask', function(task, list){
 
     // 更新前の状態
     if (task.id in app.data.task_map) {
-        task.before = app.data.task_map[task.id];
+        task.before = $.extend({}, app.data.task_map[task.id]);
     }
 
     // 責任者
