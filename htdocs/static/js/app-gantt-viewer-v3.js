@@ -517,11 +517,11 @@ app.setup.ganttchartListsV3 = function(ul){
         } else if (e.keyCode === 40 || e.keyCode === 74) { // Down / K
             app.fireEvent('openNextTask');
         }
-        if (!current_task) {
+        if (!current_task || !(current_task.id in app.data.task_map)) {
             return;
         }
         if (e.keyCode === 37 || e.keyCode === 72) { // Left / H
-            var task = current_task;
+            var task = app.data.task_map[current_task.id];
             var today = new Date();
             var due;
             if (task.due_date && task.due_date.getTime() > today.getTime()) {
@@ -536,7 +536,7 @@ app.setup.ganttchartListsV3 = function(ul){
                 due: due
             });
         } else if (e.keyCode === 39 || e.keyCode === 76) { // Right / L
-            var task = current_task;
+            var task = app.data.task_map[current_task.id];
             var today = new Date();
             var date;
             if (task.due_date && task.due_date.getTime() > today.getTime()) {
@@ -552,7 +552,7 @@ app.setup.ganttchartListsV3 = function(ul){
                 due: due
             });
         } else if (e.keyCode === 13) { // Enter
-            var task = current_task;
+            var task = app.data.task_map[current_task.id];
             var closed = task.closed ? 0 : 1;
             app.api.task.update({
                 list_id: task.list.id,
