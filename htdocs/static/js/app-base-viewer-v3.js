@@ -112,7 +112,8 @@ app.addListener('registerTask', function(task, list){
 
     $.extend(app.data.task_map[task.id], task);
 
-    // app.data.task_map[task.id] = task;
+    app.data.task_map[task.id] = task;
+
     // if (app.data.current_task && task.id === app.data.current_task.id) {
     //     app.data.current_task = task;
     // }
