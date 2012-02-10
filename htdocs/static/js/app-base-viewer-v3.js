@@ -1660,7 +1660,7 @@ app.setup.tasksheet = function(ul){
             if (!skip) {
                 next = app.data.taskli_map[current_task.id].nextAll(':visible:first');
             }
-            if (!next.length) {
+            if (!next || !next.length) {
                 app.data.listli_map[current_task.list.id]
                     .nextAll(':visible')
                     .each(function(i, li){
@@ -1692,11 +1692,13 @@ app.setup.tasksheet = function(ul){
             if (!skip) {
                 next = app.data.taskli_map[current_task.id].prevAll(':visible:first');
             }
-            if (!next.length) {
+            if (!next || !next.length) {
                 app.data.listli_map[current_task.list.id]
                     .prevAll(':visible')
                     .each(function(i, li){
-                        next = $(li).find('> ul > li:visible:last');
+                        next = skip
+                             ? $(li).find('> ul > li:visible:first')
+                             : $(li).find('> ul > li:visible:last');
                         if (next.length) {
                             return false;
                         }
@@ -2568,7 +2570,6 @@ $(d).keydown(function(e){
             }[app.state.tab.viewer || 'task'];
             app.fireEvent('selectTab', 'viewer', id);
         }
-        return;
     }
     if (app.state.tab.viewer &&
         app.state.tab.viewer !== 'task') {

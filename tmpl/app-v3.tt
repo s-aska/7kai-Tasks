@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="/static/css/app-pc-v3.css" media="all">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script src="/static/js/jquery-ui-1.8.13.js"></script>
-<script src="/static/js/bootstrap-tooltip.js"></script>
 <script src="/static/js/h5utils.js"></script>
 <script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>

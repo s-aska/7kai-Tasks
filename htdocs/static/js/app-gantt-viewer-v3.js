@@ -313,11 +313,13 @@ app.setup.ganttchartListsV3 = function(ul){
         current_task = task;
     });
 
-    app.addListener('openNextTask', function(task){
+    app.addListener('openNextTask', function(skip){
         var next;
         if (current_task) {
-            next = taskli_map[current_task.id].nextAll(':visible:first');
-            if (!next.length) {
+            if (!skip) {
+                next = taskli_map[current_task.id].nextAll(':visible:first');
+            }
+            if (!next || !next.length) {
                 listli_map[current_task.list.id]
                     .nextAll(':visible')
                     .each(function(i, li){
@@ -340,15 +342,19 @@ app.setup.ganttchartListsV3 = function(ul){
         }
     });
     
-    app.addListener('openPrevTask', function(task){
+    app.addListener('openPrevTask', function(skip){
         var next;
         if (current_task) {
-            next = taskli_map[current_task.id].prevAll(':visible:first');
-            if (!next.length) {
+            if (!skip) {
+                next = taskli_map[current_task.id].prevAll(':visible:first');
+            }
+            if (!next || !next.length) {
                 listli_map[current_task.list.id]
                     .prevAll(':visible')
                     .each(function(i, li){
-                        next = $(li).find('> ul > li:visible:last');
+                        next = skip
+                             ? $(li).find('> ul > li:visible:first')
+                             : $(li).find('> ul > li:visible:last');
                         if (next.length) {
                             return false;
                         }
@@ -491,33 +497,21 @@ app.setup.ganttchartListsV3 = function(ul){
         if (document.activeElement.tagName !== 'BODY') {
             return;
         }
-        if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) {
+        if (e.ctrlKey || e.altKey || e.metaKey) {
             return;
         }
         if (app.state.tab.viewer !== 'gantt') {
             return;
         }
         e.preventDefault();
-        // if (e.shiftKey) {
-        //     if (e.keyCode === 37) { // left
-        //         e.preventDefault();
-        //         app.fireEvent('initGanttchart',
-        //             new Date(
-        //                 app.data.gantt.start.getFullYear(),
-        //                 app.data.gantt.start.getMonth(),
-        //                 app.data.gantt.start.getDate() - 7));
-        //     }
-        //     if (e.keyCode === 39) { // right
-        //         e.preventDefault();
-        //         app.fireEvent('initGanttchart',
-        //             new Date(
-        //                 app.data.gantt.start.getFullYear(),
-        //                 app.data.gantt.start.getMonth(),
-        //                 app.data.gantt.start.getDate() + 7));
-        //     }
-        //     return;
-        // }
-
+        if (e.shiftKey) {
+            if (e.keyCode === 38) { // Up
+                app.fireEvent('openPrevList');
+            } else if (e.keyCode === 40) { // Down
+                app.fireEvent('openNextList');
+            }
+            return;
+        }
         if (e.keyCode === 38 || e.keyCode === 75) { // Up / J
             app.fireEvent('openPrevTask');
         } else if (e.keyCode === 40 || e.keyCode === 74) { // Down / K
