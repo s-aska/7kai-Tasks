@@ -896,6 +896,7 @@ app.setup.tooltip = function(ele){
         if (timer) {
             clearTimeout(timer);
             timer = null;
+            tooltip.hide();
         } else {
             tooltip.hide();
         }
@@ -1425,7 +1426,7 @@ app.setup.tasksheet = function(ul){
                 }
             });
         });
-        li.find('> header .symbol').addClass('symbol-clear');
+        li.find('.symbol').addClass('symbol-clear');
         li.find('.ui-tags a').each(function(i, element){
             var ele = $(element);
             var tag = ele.data('tag');
@@ -1433,7 +1434,7 @@ app.setup.tasksheet = function(ul){
                 if (tag in app.data.state.tags &&
                     list.id in app.data.state.tags[tag]) {
                     ele.addClass('active');
-                    li.find('> header .symbol-' + tag).removeClass('symbol-clear');
+                    li.find('.symbol-' + tag).removeClass('symbol-clear');
                 }
                 ele.click(function(e){
                     app.api.account.update({
@@ -1446,7 +1447,7 @@ app.setup.tasksheet = function(ul){
                         if (data.success === 1) {
                             app.data.state.tags = data.account.state.tags;
                             ele.toggleClass('active');
-                            li.find('> header .symbol-' + tag)
+                            li.find('.symbol-' + tag)
                                 .toggleClass('symbol-clear', !ele.hasClass('active'));
                             app.fireEvent('checkTag', list, tag, ele.hasClass('active'));
                         } else {
@@ -2109,9 +2110,9 @@ app.setup.pending = function(ele, task){
     if (!task) return;
     if (task.pending) {
         ele.parent().addClass('pending');
-        ele.find('i').removeClass('icon-pause').addClass('icon-play');
+        // ele.find('i').addClass('off');
     } else {
-        ele.find('i').removeClass('icon-play').addClass('icon-pause');
+        // ele.find('i').removeClass('off');
     }
     ele.click(function(e){
         e.preventDefault();

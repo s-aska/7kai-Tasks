@@ -317,7 +317,7 @@
   </div>
   <div
     class="columns"
-    style="width: 640px; margin-left: 0"
+    style="width: 640px; margin-left: 0; background-color: transparent;"
     data-setup="stretch"
   >
     <div
@@ -341,7 +341,7 @@
     </div>
     <div
       class="lists-wrap"
-      style="margin-top: 3px"
+      style2="margin-top: 3px"
       data-setup="stretch"
       data-stretch='{"padding":3}'
     >
@@ -350,15 +350,15 @@
         data-setup="tasksheet"
       >
         <li class="list">
+          <div class="symbol-group clearfix">
+            <div class="symbol symbol-primary"></div>
+            <div class="symbol symbol-success"></div>
+            <div class="symbol symbol-warning"></div>
+            <div class="symbol symbol-danger"></div>
+          </div>
           <header class="clearfix">
             <div style="float: left;">
               <div class="name">7kai Tasks</div>
-              <div class="symbol-group clearfix">
-                <div class="symbol symbol-primary"></div>
-                <div class="symbol symbol-success"></div>
-                <div class="symbol symbol-warning"></div>
-                <div class="symbol symbol-danger"></div>
-              </div>
             </div>
             <ul class="unstyled clearfix menu">
               <li
@@ -565,7 +565,7 @@
     data-setup="stretch,rightColumn"
   >
     <ul
-      class="nav nav-tabs"
+      class="nav nav-pills"
     >
       <li class="active">
         <a
@@ -600,7 +600,7 @@
         <input type="hidden" name="closed" value="">
         <textarea
           name="message"
-          style="width: 370px; height: 56px; margin-bottom: 10px; font-size: 1.1em;"></textarea>
+          style="width: 390px; height: 56px; margin-bottom: 10px; font-size: 1.1em;"></textarea>
         <div class="">
           <button
             class="btn x-small"
@@ -1124,12 +1124,17 @@
               position: relative;
               padding-bottom: 5px;
               margin-bottom: 5px;
-              border-bottom: 1px solid rgba(0, 0, 0, 0.15);
             "
           >
             <div style="min-height: 26px;">
+              <div class="symbol-group clearfix">
+                <div class="symbol symbol-primary"></div>
+                <div class="symbol symbol-success"></div>
+                <div class="symbol symbol-warning"></div>
+                <div class="symbol symbol-danger"></div>
+              </div>
               <span class="name"></span>
-              <ul class="unstyled clearfix" style="position: absolute; top: 0px; left: 139px;">
+              <ul class="unstyled clearfix" style="position: absolute; top: 6px; left: 139px;">
                 <li
                   class="ui-normal btn-group"
                   data-setup="localize"
@@ -1151,12 +1156,6 @@
                   </a>
                 </li>
               </ul>
-              <div class="symbol-group clearfix">
-                <div class="symbol symbol-primary"></div>
-                <div class="symbol symbol-success"></div>
-                <div class="symbol symbol-warning"></div>
-                <div class="symbol symbol-danger"></div>
-              </div>
             </div>
             <ul class="unstyled">
               <li class="clearfix">

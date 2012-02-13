@@ -3,6 +3,7 @@ html, body {
     overflow: hidden;
     background-color: #F7F7F6;
     background-color: #e5e5e5;
+    background-color: #F7F7F6;
 }
 a, button, label {
     cursor: pointer;
@@ -27,15 +28,15 @@ div.alert {
     right: 20px;
 }
 .symbol-group {
-    height: 4px;
-    line-height: 4px;
+    height: 2px;
+    line-height: 2px;
+    background-color: rgba(0, 0, 0, 0.15);
 }
 .symbol {
     float: left;
-    width: 8px;
-    height: 8px;
-    line-height: 4px;
-    margin-right: 4px;
+    width: 30px;
+    height: 2px;
+    line-height: 2px;
 }
 .symbol-primary {
     background-color: #006DCC;
@@ -140,7 +141,7 @@ body > .row > .columns .navbar .container {
     width: auto;
 }
 body > .row > .columns > .container {
-    padding: 10px;
+    /*padding: 10px;*/
     width: auto;
 }
 body > .row > .columns > .container > h2 {
@@ -171,13 +172,19 @@ body > .row > .btn-toolbar {
 /********** tasksheet **********/
 div.lists-wrap {
     overflow: auto;
-    margin: 0 5px;
+/*    margin: 0 5px;
     padding: 0 5px;
-}
+*/}
 ul.lists > li {
-    min-height: 35px;
-    padding: 5px 0 0 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    min-height: 34px;
+    padding: 0 0 0 0;
+    /*border-bottom: 1px solid rgba(0, 0, 0, 0.15);*/
+}
+ul.lists > li > .symbol-group {
+    margin-bottom: 1px;
+}
+ul.lists > li > .symbol-group > .symbol {
+    width: 80px;
 }
 ul.lists > li > header {
     padding: 2px 0;
@@ -186,6 +193,7 @@ ul.lists > li > header > div {
     float: left;
 }
 ul.lists > li > header div.name {
+    padding-top: 3px;
     color: #222;
 }
 ul.lists > li > header ul.members {
@@ -218,6 +226,10 @@ ul.tasks > li {
     margin-bottom: 0;
     padding: 4px;
     cursor: pointer;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.075);
+}
+ul.tasks > li:last-child {
+    border-bottom: none;
 }
 ul.tasks > li.child {
     padding-left: 20px;
@@ -286,19 +298,22 @@ ul.tasks > li div.recent-comment .message {
     vertical-align: middle;
 }
 .ui-comments ul.nav {
-    background-color: #E5E5E5;
+/*    background-color: #E5E5E5;
     border-bottom: 1px solid #E5E5E5;
-    padding: 0 0 0 20px;
-    margin-bottom: 0;
+*/    padding: 0;
+    margin-bottom: 6px;
 }
 .ui-comments ul.nav li > a {
-    
 }
-.ui-comments ul.nav li.active > a,
+/*.nav-pills .active > a,
+.nav-pills .active > a:hover {
+    color: black;
+}
+*/.ui-comments ul.nav li.active > a,
 .ui-comments ul.nav li.active > a:hover {
-    background-color: #F7F7F6;
+/*    background-color: #F7F7F6;
     border: 1px solid #F7F7F6;
-}
+*/}
 body > .row > .columns.ui-comments {
     background-color: transparent;
 }
