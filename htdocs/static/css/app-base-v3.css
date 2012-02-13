@@ -61,6 +61,9 @@ span.icon {
 .icon-email {
     background-image: url(/static/img/email.png);
 }
+.icon-keyboard {
+    background-image: url(/static/img/keyboard.png);
+}
 .icon-pause {
     opacity: 0.5;
 }

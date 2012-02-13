@@ -244,7 +244,7 @@ app.setup.ganttchartListsV3 = function(ul){
                 return;
             }
             var due = '';
-            var x = e.offsetX - 230 + 2;
+            var x = e.offsetX - 240 + 2;
             if (x > 23) {
                 due = app.date.mdy(
                     new Date(
@@ -272,7 +272,7 @@ app.setup.ganttchartListsV3 = function(ul){
         //         clearTimeout(timer);
         //         timer = null;
         //     }
-        //     var x = parseInt((e.offsetX - 230 + 2) / 23, 10);
+        //     var x = parseInt((e.offsetX - 240 + 2) / 23, 10);
         //     if (x < 0) {
         //         return;
         //     }

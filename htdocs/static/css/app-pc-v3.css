@@ -18,6 +18,9 @@ h4, h5 {
 /*.label {
     text-transform: none;
 }*/
+.btn-group + .btn-group {
+    margin-left: 6px;
+}
 
 /********** parts **********/
 div.alert {
@@ -188,7 +191,7 @@ ul.lists > li > .symbol-group > .symbol {
     /*width: 80px;*/
 }
 ul.lists > li > header {
-    padding: 2px 0;
+    padding: 2px 0 3px 0;
 }
 ul.lists > li > header > div {
     float: left;
@@ -295,10 +298,14 @@ ul.tasks > li div.recent-comment .message {
     padding: 4px;
     vertical-align: middle;
 }
+.ui-comments {
+    margin-top: 5px;
+}
 .ui-comments ul.nav {
 /*    background-color: #E5E5E5;
     border-bottom: 1px solid #E5E5E5;
-*/    padding: 0;
+*/
+    padding: 0;
     margin-bottom: 6px;
 }
 .ui-comments ul.nav li > a {
@@ -307,11 +314,13 @@ ul.tasks > li div.recent-comment .message {
 .nav-pills .active > a:hover {
     color: black;
 }
-*/.ui-comments ul.nav li.active > a,
+*/
+.ui-comments ul.nav li.active > a,
 .ui-comments ul.nav li.active > a:hover {
 /*    background-color: #F7F7F6;
     border: 1px solid #F7F7F6;
-*/}
+*/
+}
 body > .row > .columns.ui-comments {
     background-color: transparent;
 }
@@ -420,14 +429,14 @@ ul.comments li span.name {
 .gantttasks {
     position: relative;
     top: 36px;
-    width: 1048px;
-    padding-right: 5px;
+    width: 1041px;
+    padding-right: 10px;
     overflow-y: auto;
     overflow-x: hidden;
 }
 .gantttasks > ul > li {
     position: relative;
-    margin-left: 10px;
+    margin-left: 0;
     margin-bottom: 4px;
 }
 .gantttasks > ul > li > ul > li {
@@ -455,7 +464,7 @@ ul.comments li span.name {
 }
 .gantttasks > ul > li > ul > li > div.humanContainer {
     position: absolute;
-    left: 230px;
+    left: 240px;
     width: 780px;
 }
 .gantttasks > ul > li > ul > li div.due {

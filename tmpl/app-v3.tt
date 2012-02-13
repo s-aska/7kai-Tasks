@@ -314,15 +314,28 @@
         data-tag="danger"
       ><i class="icon-tag icon-white"></i></a>
     </div>
+    <div
+      class="btn-group"
+      style="float: right;"
+    >
+      <a
+        class="btn x-small"
+        style="padding: 3px 5px 3px;"
+        data-setup="tab.menu,tooltip"
+        data-tab='{"id":"shortcut-key","group":"rightColumn","toggle":"comments"}'
+        data-text-ja="ショートカット表示 ... [? or /]"
+        data-text-en="Display the shortcuts ... [? or /]"
+      ><i class="icon-keyboard" style="width: 16px; background-position: 0 0;"></i></a>
+    </div>
   </div>
   <div
     class="columns"
-    style="width: 640px; margin-left: 0; background-color: transparent;"
+    style="width: 640px; margin-left: 0; background-color: transparent; padding-top: 5px;"
     data-setup="stretch"
   >
     <div
       class="popover bottom in"
-      style="display: none; top: 35px; left: 415px; z-index: 9999;"
+      style="display: none; top: 35px; left: 418px; z-index: 9999;"
       data-setup="showable"
       data-showable='{
         "id":"welcome",
@@ -387,7 +400,7 @@
                   data-text-ja="新しいサブタスク ... [Shift-N]"
                   data-text-en="New Child ... [Shift-N]"
                 >
-                  <i class="icon-share-alt"></i>
+                  <i class="icon-leaf"></i>
                 </a>
               </li>
               <li
@@ -564,7 +577,7 @@
     style="width: 400px"
     data-setup="stretch,rightColumn"
   >
-    <ul
+    <!-- <ul
       class="nav nav-pills"
     >
       <li class="active">
@@ -581,7 +594,7 @@
           data-text-ja="ショートカットキー"
         >Shortcut Keys</a>
       </li>
-    </ul>
+    </ul> -->
     <div
       class="container"
       data-setup="tab.content"
@@ -1115,7 +1128,7 @@
       >
         <ul
           class="unstyled"
-          style="margin-bottom: 0"
+          style="margin-bottom: 0; margin-left: 0;"
           data-setup="ganttchartListsV3"
         >
           <li
@@ -1134,7 +1147,7 @@
                 <div class="symbol symbol-danger"></div>
               </div>
               <span class="name"></span>
-              <ul class="unstyled clearfix" style="position: absolute; top: 6px; left: 139px;">
+              <ul class="unstyled clearfix" style="position: absolute; top: 6px; left: 150px;">
                 <li
                   class="ui-normal btn-group"
                   data-setup="localize"
@@ -1152,7 +1165,7 @@
                     class="btn x-small ui-sub"
                     disabled="disabled"
                   >
-                    <i class="icon-share-alt"></i>
+                    <i class="icon-leaf"></i>
                   </a>
                 </li>
               </ul>
