@@ -188,26 +188,50 @@ app.setup.ganttchartListsV3 = function(ul){
                 li.find('.due').css('left', ((days + 1) * 23) + 'px'); 
             }
         }
-        li.find('.human').draggable({
-            axis: 'x',
-            containment: 'parent',
-            grid: [23],
-            stop: function(e, ui){
+        // li.find('.human').draggable({
+        //     axis: 'x',
+        //     containment: 'parent',
+        //     grid: [23],
+        //     stop: function(e, ui){
+        //         var date = new Date(
+        //             app.data.gantt.start.getFullYear()
+        //             , app.data.gantt.start.getMonth()
+        //             , app.data.gantt.start.getDate() + parseInt(ui.position.left / 23, 10) - 1
+        //         );
+        //         var due = app.date.mdy(date);
+        //         app.api.task.update({
+        //             list_id: task.list.id,
+        //             task_id: task.id,
+        //             registrant: app.util.getRegistrant(task.list),
+        //             due: due
+        //         });
+        //     }
+        // });
+        li.find('.humanContainer').click(function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.target &&
+                e.target.tagName === 'IMG') {
+                return;
+            }
+            var due = '';
+            if ((e.offsetX + 2) > 23) {
                 var date = new Date(
                     app.data.gantt.start.getFullYear()
                     , app.data.gantt.start.getMonth()
-                    , app.data.gantt.start.getDate() + parseInt(ui.position.left / 23, 10) - 1
+                    , app.data.gantt.start.getDate() + parseInt((e.offsetX + 2) / 23, 10) - 1
                 );
                 var due = app.date.mdy(date);
-                app.api.task.update({
-                    list_id: task.list.id,
-                    task_id: task.id,
-                    registrant: app.util.getRegistrant(task.list),
-                    due: due
-                });
             }
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                due: due
+            });
         });
         li.click(function(e){
+            e.preventDefault();
             e.stopPropagation();
             app.fireEvent('openTask', task);
         });

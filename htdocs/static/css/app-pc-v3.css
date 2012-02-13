@@ -420,7 +420,8 @@ ul.comments li span.name {
 .gantttasks {
     position: relative;
     top: 36px;
-    width: 1053px;
+    width: 1048px;
+    padding-right: 5px;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -433,6 +434,10 @@ ul.comments li span.name {
     cursor: pointer;
     padding-top: 2px;
     padding-bottom: 2px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.075);
+}
+.gantttasks > ul > li > ul > li:last-child {
+    border-bottom: none;
 }
 .gantttasks > ul > li > ul > li.closed {
     text-decoration: line-through;
@@ -454,6 +459,7 @@ ul.comments li span.name {
 .gantttasks > ul > li > ul > li > div.humanContainer {
     position: absolute;
     left: 230px;
+    height: 21px;
     width: 780px;
 }
 .gantttasks > ul > li > ul > li div.due {
