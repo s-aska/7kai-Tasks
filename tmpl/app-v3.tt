@@ -1126,7 +1126,7 @@
               margin-bottom: 0;
             "
           >
-            <div style="min-height: 32px;">
+            <div style="min-height: 36px;">
               <div class="symbol-group clearfix" style="margin-bottom: 6px;">
                 <div class="symbol symbol-primary"></div>
                 <div class="symbol symbol-success"></div>
