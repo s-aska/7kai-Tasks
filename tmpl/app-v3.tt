@@ -1111,7 +1111,7 @@
       <div
         class="gantttasks"
         data-setup="stretch"
-        data-stretch='{"offset":110}'
+        data-stretch='{"offset":125}'
       >
         <ul
           class="unstyled"
@@ -1122,12 +1122,12 @@
             class="list"
             style="
               position: relative;
-              padding-bottom: 5px;
-              margin-bottom: 5px;
+              padding-bottom: 0;
+              margin-bottom: 0;
             "
           >
-            <div style="min-height: 26px;">
-              <div class="symbol-group clearfix">
+            <div style="min-height: 32px;">
+              <div class="symbol-group clearfix" style="margin-bottom: 6px;">
                 <div class="symbol symbol-primary"></div>
                 <div class="symbol symbol-success"></div>
                 <div class="symbol symbol-warning"></div>
