@@ -13,6 +13,7 @@ var app = ns.app;
 app.data.gantt_taskli_map = {};
 
 app.addEvents('initGanttchart');
+app.addEvents('selectDay');
 
 app.addListener('initGanttchart', function(start){
     app.data.gantt.start = new Date(
@@ -24,6 +25,7 @@ app.setup.ganttchartSheet = function(ele){
               + '<div class="day firstday"><h2>&nbsp;</h2></div></div></div>';
     var now   = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var day_array = [];
     var createMonth = function(date, width){
         var label = width > 3
                   ? $('<h1/>').text(app.MONTH_NAMES[date.getMonth()] + ' ' + date.getFullYear())
@@ -35,6 +37,7 @@ app.setup.ganttchartSheet = function(ele){
     
     app.addListener('initGanttchart', function(start){
         ele.html(blank);
+        day_array = [];
         var date = new Date(start.getFullYear(), start.getMonth(), start.getDate());
         var days = $('<div class="days clearfix"></div>');
         var width =
@@ -57,12 +60,35 @@ app.setup.ganttchartSheet = function(ele){
                 day.addClass('holiday');
             }
             date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
+            day_array.push(day);
+            // console.log(day.offset().left);
+            // day_map[] = day;
+            // day.hover(function(){
+            //     $(this).parent().children().removeClass('hover');
+            //     $(this).addClass('hover');
+            // }, function(){
+            //     $(this).removeClass('hover');
+            // });
         }
         ele.append($(blank));
     });
     
     app.fireEvent('initGanttchart',
         new Date(now.getFullYear(), now.getMonth(), now.getDate()));
+    
+    app.addListener('selectDay', function(e){
+        for (var i = 0, max_i = day_array.length; i < max_i; i++) {
+            var day = day_array[i];
+            var lx = day.offset().left;
+            var rx = lx + 23;
+            if (e.pageX > lx &&
+                e.pageX < rx) {
+                day.addClass('hover');
+            } else {
+                day.removeClass('hover');
+            }
+        }
+    });
 }
 app.setup.ganttchartListsV3 = function(ul){
     var listli_map = {};
@@ -207,6 +233,9 @@ app.setup.ganttchartListsV3 = function(ul){
         //         });
         //     }
         // });
+        li.mousemove(function(e){
+            app.fireEvent('selectDay', e);
+        });
         li.click(function(e){
             e.preventDefault();
             e.stopPropagation();
@@ -236,6 +265,33 @@ app.setup.ganttchartListsV3 = function(ul){
                 app.fireEvent('openTask', task);
             }
         });
+        // var user = $('#ui-icon-user');
+        // var timer;
+        // li.mousemove(function(e){
+        //     if (timer) {
+        //         clearTimeout(timer);
+        //         timer = null;
+        //     }
+        //     var x = parseInt((e.offsetX - 230 + 2) / 23, 10);
+        //     if (x < 0) {
+        //         return;
+        //     }
+        //     user.css({
+        //         top: 1 + 'px',
+        //         left: 2 + (x * 23) + 'px'
+        //     });
+        //     user.appendTo(li.find('.humanContainer'));
+        //     user.show();
+        // });
+        // li.mouseout(function(e){
+        //     if (timer) {
+        //         clearTimeout(timer);
+        //         timer = null;
+        //     }
+        //     timer = setTimeout(function(){
+        //         user.hide();
+        //     }, 300);
+        // });
         // li.find('.humanContainer').height(li.get(0).offsetHeight);
         // li.click(function(e){
         //     e.preventDefault();

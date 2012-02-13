@@ -414,6 +414,9 @@ ul.comments li span.name {
     text-align: center;
     background-color: #dddddd;
 }
+.ganttchart .day.hover {
+    background-color: rgba(252, 252, 215, 0.6);
+}
 .ganttchart .holiday h2 {
     background-color: #eeeeee;
 }
@@ -465,6 +468,10 @@ ul.comments li span.name {
     position: absolute;
     top: 1px;
     cursor: pointer;
+}
+#ui-icon-user {
+    position: absolute;
+    opacity: 0.5;
 }
 
 /********** timeline **********/
