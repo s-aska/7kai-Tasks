@@ -459,14 +459,15 @@ ul.comments li span.name {
 .gantttasks > ul > li > ul > li > div.humanContainer {
     position: absolute;
     left: 230px;
-    height: 21px;
     width: 780px;
 }
 .gantttasks > ul > li > ul > li div.due {
     position: absolute;
     top: 1px;
-    float: left;
     cursor: pointer;
+}
+.gantttasks > ul > li > ul > li div.due img {
+    float: left;
 }
 
 /********** timeline **********/

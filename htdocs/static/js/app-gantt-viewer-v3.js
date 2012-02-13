@@ -207,7 +207,7 @@ app.setup.ganttchartListsV3 = function(ul){
         //         });
         //     }
         // });
-        li.find('.humanContainer').click(function(e){
+        li.click(function(e){
             e.preventDefault();
             e.stopPropagation();
             if (e.target &&
@@ -215,26 +215,33 @@ app.setup.ganttchartListsV3 = function(ul){
                 return;
             }
             var due = '';
-            if ((e.offsetX + 2) > 23) {
-                var date = new Date(
-                    app.data.gantt.start.getFullYear()
-                    , app.data.gantt.start.getMonth()
-                    , app.data.gantt.start.getDate() + parseInt((e.offsetX + 2) / 23, 10) - 1
+            var x = e.offsetX - 230 + 2;
+            if (x > 23) {
+                due = app.date.mdy(
+                    new Date(
+                        app.data.gantt.start.getFullYear()
+                        , app.data.gantt.start.getMonth()
+                        , app.data.gantt.start.getDate() + parseInt(x / 23, 10) - 1
+                    )
                 );
-                var due = app.date.mdy(date);
             }
-            app.api.task.update({
-                list_id: task.list.id,
-                task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
-                due: due
-            });
+            if (x > 0) {
+                app.api.task.update({
+                    list_id: task.list.id,
+                    task_id: task.id,
+                    registrant: app.util.getRegistrant(task.list),
+                    due: due
+                });
+            } else {
+                app.fireEvent('openTask', task);
+            }
         });
-        li.click(function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            app.fireEvent('openTask', task);
-        });
+        // li.find('.humanContainer').height(li.get(0).offsetHeight);
+        // li.click(function(e){
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        //     app.fireEvent('openTask', task);
+        // });
         li.dblclick(function(e){
             e.stopPropagation();
             app.fireEvent('editTask', task);
