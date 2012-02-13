@@ -466,9 +466,6 @@ ul.comments li span.name {
     top: 1px;
     cursor: pointer;
 }
-.gantttasks > ul > li > ul > li div.due img {
-    float: left;
-}
 
 /********** timeline **********/
 .timeline > ul {

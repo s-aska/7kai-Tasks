@@ -1175,7 +1175,7 @@
                   class="humanContainer"
                 >
                   <div
-                    class="due human clearfix"
+                    class="due human"
                     data-setup="human"
                   ></div>
                 </div>
