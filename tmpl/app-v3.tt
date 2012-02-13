@@ -118,7 +118,7 @@
       <a
         class="btn active x-small"
         data-setup="tab.menu,tooltip"
-        data-tab='{"group":"homemenu","id":"task"}'
+        data-tab='{"group":"homemenu","id":"task","toggle":"list"}'
         data-text-ja="タスクを管理するモード"
         data-text-en="Task Management Mode"
       >
@@ -131,7 +131,7 @@
       <a
         class="btn x-small"
         data-setup="resetTag,tab.menu,tooltip"
-        data-tab='{"group":"homemenu","id":"list"}'
+        data-tab='{"group":"homemenu","id":"list","toggle":"task"}'
         data-text-ja="リストを管理するモード"
         data-text-en="List Management Mode"
       >

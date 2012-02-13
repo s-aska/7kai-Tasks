@@ -34,7 +34,7 @@ div.alert {
 }
 .symbol {
     float: left;
-    width: 30px;
+    width: 56px;
     height: 2px;
     line-height: 2px;
 }
@@ -185,7 +185,7 @@ ul.lists > li > .symbol-group {
     margin-bottom: 1px;
 }
 ul.lists > li > .symbol-group > .symbol {
-    width: 80px;
+    /*width: 80px;*/
 }
 ul.lists > li > header {
     padding: 2px 0;

@@ -419,12 +419,14 @@ app.setup.tab = {};
 app.setup.tab.menu = function(ele){
     var option = ele.data('tab');
     ele.click(function(){
-        app.fireEvent('selectTab', option.group, option.id);
-        // ele.parent().addClass('active');
-        app.state.tab[option.group] = option.id;
-        // if (option.callback) {
-        //     app.setup.tab.callback[option.callback].call(this, ele);
-        // }
+        if (ele.hasClass('active') &&
+            option.toggle) {
+                app.fireEvent('selectTab', option.group, option.toggle);
+                app.state.tab[option.group] = option.toggle;
+        } else {
+            app.fireEvent('selectTab', option.group, option.id);
+            app.state.tab[option.group] = option.id;
+        }
     });
     app.addListener('selectTab', function(group, id){
         if (group !== option.group) {
