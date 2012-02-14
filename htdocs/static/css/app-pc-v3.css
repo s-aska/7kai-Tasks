@@ -36,7 +36,7 @@ div.alert {
 .icon-chevron-down {
     width: 13px;
 }
-.icon-chevron-left {
+.icon .icon-chevron-left {
     margin-left: 2px;
     margin-bottom: 1px;
     vertical-align: baseline;
