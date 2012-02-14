@@ -1539,7 +1539,7 @@ app.setup.tasksheet = function(ul){
         app.data.listli_map[list.id].find('.icon-signal').parent().removeClass('active');
     });
 
-    app.addListener('registerTask', function(task){
+    app.addListener('registerTask', function(task, list, slide){
         var ul = app.data.listli_map[task.list.id].find('> ul');
         var li = $(task_template);
         li.data('id', task.id);
@@ -1637,7 +1637,11 @@ app.setup.tasksheet = function(ul){
                 (current_filter &&
                  app.util.taskFilter(task, current_filter))) {
                 li.data('visible', true);
-                app.dom.slideDown(li);
+                if (slide) {
+                    app.dom.slideDown(li);
+                } else {
+                    li.show();
+                }
             } else {
                 li.data('visible', false);
             }
@@ -2437,7 +2441,7 @@ app.submit.registerTask = function(form){
     })
     .done(function(data){
         if (data.success === 1) {
-            app.fireEvent('registerTask', data.task, list);
+            app.fireEvent('registerTask', data.task, list, !task_id);
             app.fireEvent('openTask', data.task);
             app.dom.reset(form);
             if (task_id) {
