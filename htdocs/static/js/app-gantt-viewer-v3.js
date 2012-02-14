@@ -444,16 +444,14 @@ app.setup.ganttchartListsV3 = function(ul){
             var task = app.data.task_map[task_id];
             var li = taskli_map[task_id];
             if (app.util.taskFilter(task, condition)) {
+                li.show();
                 if (!li.data('visible')) {
                     li.data('visible', true);
-                    li.slideDown('fast');
-                } else {
-                    li.slideDown('fast');
                 }
             } else {
                 if (li.data('visible')) {
                     li.data('visible', false);
-                    li.slideUp('fast');
+                    li.hide();
                 }
             }
         }

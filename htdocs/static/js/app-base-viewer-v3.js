@@ -1765,19 +1765,17 @@ app.setup.tasksheet = function(ul){
             var task = app.data.task_map[task_id];
             var li = app.data.taskli_map[task_id];
             if (app.util.taskFilter(task, condition)) {
-                if (li.data('visible')) {
-                    li.show();
-                } else {
+                li.show();
+                if (!li.data('visible')) {
                     li.data('visible', true);
                     if (!task.parent_id) {
                         li.css('paddingLeft', '4px');
                     }
-                    app.dom.slideDown(li);
                 }
             } else {
                 if (li.data('visible')) {
                     li.data('visible', false);
-                    app.dom.slideUp(li);
+                    li.hide();
                 }
                 if (current_task &&
                     current_task.id === task.id) {
