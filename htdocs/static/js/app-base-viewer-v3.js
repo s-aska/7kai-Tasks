@@ -2046,8 +2046,9 @@ app.setup.status = function(ele, task){
 }
 app.setup.star = function(ele, task){
     if (!task) return;
-    if (task.id in app.data.state.star) {
-        ele.removeClass('icon-star-off').addClass('icon-star');
+    var i = ele.find('i');
+    if (!(task.id in app.data.state.star)) {
+        i.addClass('icon-gray');
     }
     ele.click(function(e){
         e.stopPropagation();
@@ -2055,10 +2056,10 @@ app.setup.star = function(ele, task){
         if (task.id in app.data.state.star) {
             method = 'off';
             delete app.data.state.star[task.id];
-            ele.removeClass('icon-star').addClass('icon-star-off');
+            i.addClass('icon-gray');
         } else {
             app.data.state.star[task.id] = 1;
-            ele.removeClass('icon-star-off').addClass('icon-star');
+            i.removeClass('icon-gray');
         }
         app.api.account.update({
             ns: 'state',
@@ -2092,9 +2093,9 @@ app.setup.close = function(ele, task){
     if (!task) return;
     if (task.closed) {
         ele.parent().addClass('closed');
-        ele.removeClass('icon-cross').addClass('icon-plus');
+        ele.find('i').removeClass('icon-remove').addClass('icon-plus');
     } else {
-        ele.removeClass('icon-plus').addClass('icon-cross');
+        ele.find('i').removeClass('icon-plus').addClass('icon-remove');
     }
     ele.click(function(e){
         e.stopPropagation();
@@ -2110,9 +2111,9 @@ app.setup.pending = function(ele, task){
     if (!task) return;
     if (task.pending) {
         ele.parent().addClass('pending');
-        // ele.find('i').addClass('off');
+        ele.find('i').removeClass('icon-gray');
     } else {
-        // ele.find('i').removeClass('off');
+        ele.find('i').addClass('icon-gray');
     }
     ele.click(function(e){
         e.preventDefault();

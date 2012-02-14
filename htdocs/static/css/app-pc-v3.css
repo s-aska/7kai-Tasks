@@ -2,22 +2,14 @@
 html, body {
     overflow: hidden;
     background-color: #F7F7F6;
-    background-color: #e5e5e5;
-    background-color: #F7F7F6;
 }
-a, button, label {
+a, button, i, label {
     cursor: pointer;
 }
 h4, h5 {
     line-height: 1;
     margin-bottom: 6px;
 }
-.navbar-fixed-top {
-    z-index: 1;
-}
-/*.label {
-    text-transform: none;
-}*/
 .btn-group + .btn-group {
     margin-left: 6px;
 }
@@ -29,32 +21,6 @@ div.alert {
     width: 360px;
     bottom: 0px;
     right: 20px;
-}
-.symbol-group {
-    height: 2px;
-    line-height: 2px;
-    background-color: rgba(0, 0, 0, 0.15);
-}
-.symbol {
-    float: left;
-    width: 59px;
-    height: 2px;
-    line-height: 2px;
-}
-.symbol-primary {
-    background-color: #006DCC;
-}
-.symbol-success {
-    background-color: #5BB75B;
-}
-.symbol-warning {
-    background-color: #FAA732;
-}
-.symbol-danger {
-    background-color: #DA4F49;
-}
-.symbol-clear {
-    background: none;
 }
 .btn.x-small {
     padding: 3px 6px 3px;
@@ -76,18 +42,11 @@ div.alert {
 .ui-autocomplete {
     z-index: 1051 !important;
 }
-div.icon-star,
-div.icon-plus {
-    background-position: 0 0;
-}
-div.icon-plus {
-    background-image: url(/static/img/plus.png);
-}
 .due-control {
-    margin-left: 4px;
+    margin-left: 5px;
 }
 .due-control .btn {
-    padding: 4px 9px 3px;
+    padding: 3px 8px 4px 9px;
 }
 .dragging {
     opacity: 0.5;
@@ -120,75 +79,56 @@ body > .row > .columns {
     position: relative;
     float: left;
     margin-left: 20px;
-    background-color: #F7F7F6;
-    background-color: #F7F7F6;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    -webkit-background-clip: padding-box;
-    -moz-background-clip: padding-box;
-    background-clip: padding-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    box-sizing: border-box;
 }
 body > .row > .columns:first-child {
     margin-left: 0;
 }
-body > .row > .columns .navbar {
-    position: relative;
-    z-index: 1;
-}
-body > .row > .columns .navbar .container {
-    width: auto;
-}
 body > .row > .columns > .container {
-    /*padding: 10px;*/
     width: auto;
-}
-body > .row > .columns > .container > h2 {
-    margin-bottom: 6px;
-    font-size: 14px;
-    line-height: 14px;
-}
-body > .row > .columns > .container > ul,
-body > .row > .columns > .container > dl {
-    margin-bottom: 8px;
-}
-body > .row > .columns > .container ul.members li {
-    padding: 2px 0;
-}
-body > .row > .columns > .container ul.members li img {
-    padding-right: 6px;
-    vertical-align: middle;
-}
-body > .row > .columns > header {
-    padding: 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-    font-size: 1.4em;
 }
 body > .row > .btn-toolbar {
     margin: 0 0 5px 0;
+}
+
+/********** tasksheet and Gantt chart **********/
+.symbol-group {
+    height: 2px;
+    line-height: 2px;
+    background-color: rgba(0, 0, 0, 0.15);
+}
+.symbol {
+    float: left;
+    width: 59px;
+    height: 2px;
+    line-height: 2px;
+}
+.symbol-primary {
+    background-color: #006DCC;
+}
+.symbol-success {
+    background-color: #5BB75B;
+}
+.symbol-warning {
+    background-color: #FAA732;
+}
+.symbol-danger {
+    background-color: #DA4F49;
+}
+.symbol-clear {
+    background: none;
 }
 
 /********** tasksheet **********/
 div.lists-wrap {
     overflow: auto;
     padding-right: 5px;
-/*    margin: 0 5px;
-    padding: 0 5px;
-*/}
+}
 ul.lists > li {
     min-height: 34px;
-    padding: 0 0 0 0;
-    /*border-bottom: 1px solid rgba(0, 0, 0, 0.15);*/
+    padding: 0;
 }
 ul.lists > li > .symbol-group {
     margin-bottom: 1px;
-}
-ul.lists > li > .symbol-group > .symbol {
-    /*width: 80px;*/
 }
 ul.lists > li > header {
     padding: 2px 0 3px 0;
@@ -269,12 +209,10 @@ ul.tasks > li.pending div.name {
     font-style: italic;
 }
 ul.tasks > li div.due {
-    float: right;
     margin-right: 4px;
 }
-ul.tasks > li div.delete {
-    float: right;
-}
+ul.tasks > li div.due,
+ul.tasks > li div.delete,
 ul.tasks > li div.pending {
     float: right;
 }
@@ -293,33 +231,17 @@ ul.tasks > li div.recent-comment .message {
 }
 
 /********** comments **********/
-.shortcutkeys th,
-.shortcutkeys td {
+.ui-shortcutkeys th,
+.ui-shortcutkeys td {
     padding: 4px;
     vertical-align: middle;
 }
+.ui-shortcutkeys th {
+    padding-top: 3px;
+    letter-spacing: 1px;
+}
 .ui-comments {
     margin-top: 5px;
-}
-.ui-comments ul.nav {
-/*    background-color: #E5E5E5;
-    border-bottom: 1px solid #E5E5E5;
-*/
-    padding: 0;
-    margin-bottom: 6px;
-}
-.ui-comments ul.nav li > a {
-}
-/*.nav-pills .active > a,
-.nav-pills .active > a:hover {
-    color: black;
-}
-*/
-.ui-comments ul.nav li.active > a,
-.ui-comments ul.nav li.active > a:hover {
-/*    background-color: #F7F7F6;
-    border: 1px solid #F7F7F6;
-*/
 }
 body > .row > .columns.ui-comments {
     background-color: transparent;
@@ -328,12 +250,6 @@ body > .row > .columns.ui-comments {
     float: right;
     color: #666;
     font-size: 16px;
-}
-.ui-comments .container {
-    background-color: #F7F7F6;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
 }
 ul.comments {
     overflow-y: auto;
@@ -409,14 +325,14 @@ ul.comments li span.name {
 }
 .ganttchart .day h2 {
     position: relative;
-    font-size: 10px;
-    line-height: 10px;
-    font-weight: normal;
-    color: #999999;
-    font-family: arial;
     margin: 0;
     padding: 2px 0;
     width: 22px;
+    line-height: 10px;
+    font-size: 10px;
+    font-weight: normal;
+    font-family: arial;
+    color: #999999;
     text-align: center;
     background-color: #dddddd;
 }
@@ -434,10 +350,26 @@ ul.comments li span.name {
     overflow-y: auto;
     overflow-x: hidden;
 }
+.gantttasks > ul {
+    margin-bottom: 0;
+    margin-left: 0;
+}
 .gantttasks > ul > li {
     position: relative;
     margin-left: 0;
-    margin-bottom: 4px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.gantttasks > ul > li > div {
+    min-height: 36px;
+}
+.gantttasks > ul > li > div > .symbol-group {
+    margin-bottom: 6px;
+}
+.gantttasks > ul > li > div > ul {
+    position: absolute;
+    top: 6px;
+    left: 150px;
 }
 .gantttasks > ul > li > ul > li {
     cursor: pointer;
@@ -448,7 +380,7 @@ ul.comments li span.name {
 .gantttasks > ul > li > ul > li.closed {
     text-decoration: line-through;
 }
-.gantttasks > ul > li > ul > li.clearfix:hover {
+.gantttasks > ul > li > ul > li:hover {
     background-color: rgba(252, 252, 215, 0.6);
 }
 .gantttasks > ul > li > ul > li.selected {
@@ -472,19 +404,26 @@ ul.comments li span.name {
     top: 1px;
     cursor: pointer;
 }
-#ui-icon-user {
-    position: absolute;
-    opacity: 0.5;
-}
 
 /********** timeline **********/
+body > .row > .columns > .container > h2 {
+    margin-bottom: 6px;
+    font-size: 14px;
+    line-height: 14px;
+}
+body > .row > .columns > header {
+    padding: 10px;
+    font-size: 1.4em;
+}
 .timeline > ul {
-    margin: 10px;
+    margin: 0;
+    padding-right: 5px;
 }
 .timeline > ul > li {
+    margin: 0;
     padding-top: 4px;
     padding-left: 4px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
     cursor: pointer;
 }
 .timeline > ul > li:hover {
@@ -520,7 +459,7 @@ ul.comments li span.name {
     float: left;
     padding-left: 4px;
 }
-#register-list-window ul.members li div.icon-cross {
+#register-list-window ul.members li div.icon {
     float: right;
 }
 #register-list-window .description {
@@ -563,4 +502,9 @@ div::-webkit-scrollbar-thumb:horizontal {
 }
 
 /********** old span **********/
-.input-xlarge,input.xlarge,textarea.xlarge,select.xlarge{width:270px;}
+.input-xlarge,
+input.xlarge,
+textarea.xlarge,
+select.xlarge {
+    width: 270px;
+}

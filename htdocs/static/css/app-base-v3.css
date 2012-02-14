@@ -13,36 +13,6 @@
 span.icon {
     display: inline-block;
 }
-.icon-with {
-    background-repeat: no-repeat;
-}
-.icon-cross {
-    background-image: url(/static/img/plus.png);
-    -moz-transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
-    transform: rotate(45deg);
-}
-.icon-remove {
-    background-image: url(/static/img/cross.png);
-}
-.icon-up {
-    background-image: url(/static/img/up.png);
-}
-.icon-down {
-    background-image: url(/static/img/down.png);
-}
-.icon-right {
-    background-image: url(/static/img/right.png);
-}
-.icon-left {
-    background-image: url(/static/img/left.png);
-}
-.icon-star {
-    background-image: url(/static/img/star.png);
-}
-.icon-star-off {
-    background-image: url(/static/img/star_off.png);
-}
 .icon-tasks {
     background-image: url(/static/img/tasks.png);
 }
@@ -55,26 +25,15 @@ span.icon {
 .icon-grip {
     background-image: url(/static/img/grip.png);
 }
-.icon-address {
-    background-image: url(/static/img/address.png);
-}
-.icon-email {
-    background-image: url(/static/img/email.png);
-}
 .icon-keyboard {
     background-image: url(/static/img/keyboard.png);
 }
-.icon-pause {
+.icon-gray {
     opacity: 0.5;
 }
-li.pending .icon-pause {
-    opacity: 1;
-}
-
 .label.closed {
     background-color: #0064cd;
 }
-
 .tooltip {
     opacity: 1;
 }

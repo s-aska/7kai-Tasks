@@ -444,9 +444,9 @@
                 <a
                   class="btn x-small"
                   data-setup="tooltip"
-                  data-text-ja="[今日迄]にカウントしない"
-                  data-text-en="Will not be displayed on the [Todo]."
-                ><i class="icon-volume-off"></i></a>
+                  data-text-ja="保留"
+                  data-text-en="Pending"
+                ><i class="icon-pause" style="opacity: 1;"></i></a>
                 <a
                   class="btn x-small"
                   data-setup="tooltip"
@@ -517,11 +517,11 @@
                 data-text-en="Progress ... [Space]"
               ></div>
               <div
-                class="icon icon-star-off"
+                class="icon"
                 data-setup="star,tooltip"
                 data-text-ja="スター"
                 data-text-en="Star"
-              ></div>
+              ><i class="icon-star"></i></div>
               <div
                 class="human"
                 data-setup="human,tooltip"
@@ -533,11 +533,11 @@
                 data-setup="name"
               >now loading...</div>
               <div
-                class="icon icon-cross delete"
+                class="icon delete"
                 data-setup="close,tooltip"
                 data-text-ja="完了 ... [Enter]"
                 data-text-en="Closed ... [Enter]"
-              ></div>
+              ><i class="icon-remove"></i></div>
               <div
                 class="icon pending"
                 data-setup="pending,tooltip"
@@ -577,24 +577,6 @@
     style="width: 400px"
     data-setup="stretch,rightColumn"
   >
-    <!-- <ul
-      class="nav nav-pills"
-    >
-      <li class="active">
-        <a
-          data-setup="localize,tab.menu"
-          data-tab='{"id":"comments","group":"rightColumn"}'
-          data-text-ja="コメント"
-        >Comment</a>
-      </li>
-      <li>
-        <a
-          data-setup="localize,tab.menu"
-          data-tab='{"id":"shortcut-key","group":"rightColumn"}'
-          data-text-ja="ショートカットキー"
-        >Shortcut Keys</a>
-      </li>
-    </ul> -->
     <div
       class="container"
       data-setup="tab.content"
@@ -656,7 +638,7 @@
       >
         <li class="clearfix" style="position: relative;">
           <div class="icon sq32" style="position: absolute;"></div>
-          <div class="icon icon-cross" style="position: absolute; right: -10px;"></div>
+          <div class="icon" style="position: absolute; right: -10px;"><i class="icon-remove"></i></div>
           <div class="" style="margin-left: 40px;">
             <span class="status label"></span>
             <div class="message"></div>
@@ -681,7 +663,7 @@
         data-stretch='{"offset":100,"padding":10}'
       >
         <table
-          class="table table-striped shortcutkeys"
+          class="table table-striped ui-shortcutkeys"
           style="overflow: auto"
         >
           <tr>
@@ -1128,26 +1110,18 @@
       >
         <ul
           class="unstyled"
-          style="margin-bottom: 0; margin-left: 0;"
           data-setup="ganttchartListsV3"
         >
-          <li
-            class="list"
-            style="
-              position: relative;
-              padding-bottom: 0;
-              margin-bottom: 0;
-            "
-          >
-            <div style="min-height: 36px;">
-              <div class="symbol-group clearfix" style="margin-bottom: 6px;">
+          <li class="list">
+            <div>
+              <div class="symbol-group clearfix">
                 <div class="symbol symbol-primary"></div>
                 <div class="symbol symbol-success"></div>
                 <div class="symbol symbol-warning"></div>
                 <div class="symbol symbol-danger"></div>
               </div>
               <span class="name"></span>
-              <ul class="unstyled clearfix" style="position: absolute; top: 6px; left: 150px;">
+              <ul class="unstyled clearfix">
                 <li
                   class="ui-normal btn-group"
                   data-setup="localize"
@@ -1177,9 +1151,9 @@
                   data-setup="status"
                 ></div>
                 <div
-                  class="left icon icon-star-off" 
+                  class="left icon" 
                   data-setup="star"
-                ></div>
+                ><i class="icon-star"></i></div>
                 <div
                   class="left name" 
                   data-setup="name"
@@ -1272,7 +1246,7 @@
             <div><img width="16" height="16"></div>
             <div class="name"></div>
             <div><input type="hidden" name="members"></div>
-            <div class="icon icon-cross"></div>
+            <div class="icon"><i class="icon-remove"></i></div>
           </li>
         </ul>
       </div>
@@ -1664,36 +1638,6 @@
     >Cancel</button>
   </div>
 </form>
-<div
-  class="popover right"
-  style="display: none;"
-  data-setup="showable"
-  data-showable='{
-    "id":"what-mute",
-    "show":{"effect":"fade"},
-    "hide":{"effect":"fade"}}'
->
-  <div class="arrow"></div>
-  <div class="inner">
-    <h3
-      class="title"
-      data-setup="localize"
-      data-text-ja="ミュートについて"
-    >What's Mute</h3>
-    <div class="content">
-      <ul>
-        <li
-          data-setup="localize"
-          data-text-ja="「今日迄」にカウント・表示されなくなります。"
-        >Will not be displayed on the [Todo].</li>
-        <li
-          data-setup="localize"
-          data-text-ja="デスクトップ通知されなくなります。（ Chrome Extensions利用時 ）"
-        >Does not Desktop Notification. ( Chrome Extensions )</li>
-      </ul>
-    </div>
-  </div>
-</div>
 <div
   class="popover below"
   style="display: none;"
