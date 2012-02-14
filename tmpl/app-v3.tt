@@ -1934,9 +1934,21 @@
   </div>
   <div class="modal-body">
     <p
+    >
+    <span
       data-setup="localize"
-      data-text-ja="本当に完了済のタスク及びそのサブタスクを削除しますか？"
-    >Do you really want to clear the closed task?</p>
+      data-text-ja="本当に完了済のタスク"
+    >Do you really want to clear the closed task?</span>
+    <strong
+      style="color: #b94a48;"
+      data-setup="localize"
+      data-text-ja="及びそのサブタスク"
+    ></strong>
+    <span
+      data-setup="localize"
+      data-text-ja="を削除しますか？"
+    ></span>
+    </p>
   </div>
   <div class="modal-footer">
     <button
