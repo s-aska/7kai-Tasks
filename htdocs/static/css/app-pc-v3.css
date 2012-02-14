@@ -38,6 +38,7 @@ div.alert {
 }
 .icon-chevron-left {
     margin-left: 2px;
+    margin-bottom: 1px;
     vertical-align: baseline;
 }
 .active .icon-tag {
