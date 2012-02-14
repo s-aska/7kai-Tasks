@@ -1935,7 +1935,7 @@
   <div class="modal-body">
     <p
       data-setup="localize"
-      data-text-ja="本当に完了済のタスクを削除しますか？"
+      data-text-ja="本当に完了済のタスク及びそのサブタスクを削除しますか？"
     >Do you really want to clear the closed task?</p>
   </div>
   <div class="modal-footer">
