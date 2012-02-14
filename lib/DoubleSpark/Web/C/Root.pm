@@ -6,10 +6,12 @@ use Log::Minimal;
 sub index {
     my ($class, $c) = @_;
 
-    my $v = $c->session->get('version');
     if (my $sign = $c->sign) {
+        if (my $v = $c->session->get('version')) {
+            return $c->redirect('/' . $v);
+        }
         $c->account->update({ authenticated_on => \'now()' });
-        $c->render($v ? "app-${v}.tt" : 'app.tt');
+        $c->render('app.tt');
     } else {
         $c->session->remove('version');
         $c->render('index.tt');
@@ -24,7 +26,7 @@ sub v3 {
         $c->render('app-v3.tt');
     } else {
         $c->session->set('version', 'v3');
-        $c->render('index.tt');
+        $c->render('index-v3.tt');
     }
 }
 

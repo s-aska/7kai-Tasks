@@ -88,6 +88,13 @@ app.obj.get = function(obj, keys){
     }
     return f;
 }
+app.obj.keys = function(obj){
+    var keys = [];
+    for (var key in obj) {
+        keys.push(key);
+    }
+    return keys;
+}
 app.func.debounce = function(f, threshold){
     var timeout;
 

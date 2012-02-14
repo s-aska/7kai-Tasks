@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">
+<head>
+<meta charset="utf-8">
+<meta name="keywords" content="Task,Management,Twitter,Facebook,タスク管理,タスク共有">
+<meta property="fb:admins" content="272550092773416">
+<meta property="og:title" content="7kai Tasks">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tasks.7kai.org/">
+<meta property="og:image" content="https://tasks.7kai.org/static/img/logo-128.png">
+<meta property="og:site_name" content="7kai Tasks">
+<meta property="og:description" content="High Speed Social Task Management Service">
+<title>7kai Tasks</title>
+<link rel="stylesheet" href="/static/css/bootstrap.css">
+<link rel="stylesheet" href="/static/css/signin.css" media="all">
+<script src="/static/js/jquery-1.6.4.min.js"></script>
+<script src="/static/js/jquery-ui-1.8.13.js"></script>
+<script src="/static/js/app-core.js"></script>
+<script src="/static/js/app-base.js"></script>
+<script src="/static/js/app-base-signin.js"></script>
+</head>
+<body id="index-page">
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <span class="brand">7kai Tasks</span>
+      <ul class="nav pull-right">
+        <li>
+          <a
+            data-setup="show"
+            data-show='{"id":"signin"}'
+          >Sign In / Sign Up</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="container">
+    <div style="text-align: center;">
+      <h1>7kai Tasks</h1>
+      <h2>High Speed Social Task Management Service</h2>
+    </div>
+    <div class="columns">
+      <img src="http://screen.chihaya-pm.org/0c1f7443e7e521e669b217a6cd4458ba.png">
+    </div>
+    <div class="columns">
+      <img src="http://screen.chihaya-pm.org/d41e08862cfe35d51d27835f1d29fea7.png">
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <ul>
+      <li><a href="/static/tos.html">Terms</a></li>
+      <li><a href="/static/privacy.html">Privacy</a></li>
+      <li><a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank">Support(facebook page)</a></li>
+      <li><a href="https://github.com/s-aska/7kai-Tasks" target="_blank">Github</a></li>
+      <li><a href="https://twitter.com/#!/su_aska" target="_blank">Author</a></li>
+      <li><a href="https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Ftasks.7kai.org%2F&source=tweetbutton&text=7kai+Tasks&url=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Share(twitter)</a></li>
+      <li><a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Share(facebook)</a></li>    </ul>
+  </div>
+</footer>
+<div id="fb-root"></div>
+<div
+  class="modal"
+  data-setup="showable"
+  data-showable='{"id":"signin","show":{"effect":"fade"},"hide":{"effect":"fade"}}'
+>
+  <div class="modal-header">
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"signin"}'
+    >×</a>
+    <h3>Sign In</h3>
+  </div>
+  <div class="modal-body">
+    <div
+      style="text-align: center;"
+      data-setup="tab.content"
+      data-tab='{"id":"social","group":"signin"}'
+    >
+      <form method="post" action="/signin/twitter/signin">
+        <div><button class="btn btn-large btn-primary"style="width: 190px;">Connect with Twitter</button></div>
+      </form>
+      <form method="post" action="/signin/facebook/signin">
+        <div><button class="btn btn-large btn-primary">Connect with Facebook</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

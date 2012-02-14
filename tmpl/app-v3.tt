@@ -819,7 +819,7 @@
       data-setup="stretch,timeline"
       data-stretch='{"padding":116}'
       data-text-empty-en="no member updates, Let's invite a member to the list."
-      data-text-empty-ja="メンバーの更新はありませんでした、[リストを編集...] からリストにメンバーを誘いましょう！"
+      data-text-empty-ja="メンバーの更新はありませんでした、[ホーム > リスト管理 > 編集]からリストにメンバーを誘いましょう！"
     >
       <li
         class="clearfix"

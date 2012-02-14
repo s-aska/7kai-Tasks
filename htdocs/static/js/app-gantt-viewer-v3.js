@@ -177,6 +177,11 @@ app.setup.ganttchartListsV3 = function(ul){
         listli_map[list.id] = li;
     });
 
+    app.addListener('deleteList', function(list){
+        listli_map[list.id].remove();
+        delete listli_map[list.id];
+    });
+
     app.addListener('clear', function(){
         ul.empty();
         app.data.gantt_listli_map = listli_map = {};

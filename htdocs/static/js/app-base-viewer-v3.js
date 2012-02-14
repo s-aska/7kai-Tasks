@@ -1480,9 +1480,6 @@ app.setup.tasksheet = function(ul){
         li.find('.ui-listmenu .icon-edit').parent().click(function(e){
             app.fireEvent('editList', list);
         });
-        li.find('.ui-listmenu .icon-remove-sign').parent().click(function(e){
-            app.fireEvent('deleteListBegin', list);
-        });
         li.find('.ui-normal .ui-edit').click(function(e){
             if (current_task) {
                 app.fireEvent('editTask', current_task);
@@ -1493,6 +1490,13 @@ app.setup.tasksheet = function(ul){
                 app.fireEvent('createSubTask', current_task);
             }
         });
+        if (list.original) {
+            li.find('.ui-listmenu .icon-remove-sign').parent().attr('disabled', true);
+        } else {
+            li.find('.ui-listmenu .icon-remove-sign').parent().click(function(e){
+                app.fireEvent('deleteListBegin', list);
+            });
+        }
 
         if (list.members.length) {
             var members = [list.owner].concat(list.members);
