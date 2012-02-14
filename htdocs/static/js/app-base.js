@@ -33,7 +33,8 @@ $.extend(app, {
         signin: false,
         offline: false,
         offline_queue: false,
-        tab: {}
+        tab: {},
+        animation: true
     },
     queue: {}, // Queue Manager
     loading: {

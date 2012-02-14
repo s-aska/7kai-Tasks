@@ -497,6 +497,8 @@ app.util.buildMe = function(option, data){
         return app.data.state.sort.list[a.id] - app.data.state.sort.list[b.id];
     });
 
+    app.state.animation = false;
+
     var tasks = 0;
     $.each(data.lists, function(i, list){
         if (list.actioned_on > app.data.if_modified_since) {
@@ -508,6 +510,8 @@ app.util.buildMe = function(option, data){
             app.fireEvent('registerTask', task, list);
         });
     });
+
+    app.state.animation = true;
 
     //
     // var last_list_id = localStorage.getItem('last_list_id');
@@ -1637,11 +1641,7 @@ app.setup.tasksheet = function(ul){
                 (current_filter &&
                  app.util.taskFilter(task, current_filter))) {
                 li.data('visible', true);
-                if (slide) {
-                    app.dom.slideDown(li);
-                } else {
-                    li.show();
-                }
+                app.dom.slideDown(li);
             } else {
                 li.data('visible', false);
             }

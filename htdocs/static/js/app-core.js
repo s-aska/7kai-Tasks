@@ -170,14 +170,14 @@ app.dom.text = function(ele, key){
     }
 }
 app.dom.slideDown = function(ele){
-    if (ele.parent().is(':visible')) {
+    if (ele.parent().is(':visible') && app.state.animation) {
         ele.slideDown('fast');
     } else {
         ele.show();
     }
 }
 app.dom.slideUp = function(ele){
-    if (ele.parent().is(':visible')) {
+    if (ele.parent().is(':visible') && app.state.animation) {
         ele.slideUp('fast');
     } else {
         ele.hide();
