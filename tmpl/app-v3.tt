@@ -1783,7 +1783,7 @@
             >Star Off</span>
           </li>
           <li>
-            <span class="icon icon-address"></span>
+            <span class="icon"><i class="icon-user"></i></span>
             <span class="icon"></span>
             <span class="icon"></span>
             <span class="icon"></span>
@@ -1794,9 +1794,9 @@
             >Requester ( Requester must be assign or fixed )</span>
           </li>
           <li>
-            <span class="icon icon-address"></span>
-            <span class="icon icon-left"></span>
-            <span class="icon icon-address"></span>
+            <span class="icon"><i class="icon-user"></i></span>
+            <span class="icon"><i class="icon-chevron-left"></i></span>
+            <span class="icon"><i class="icon-user"></i></span>
             <span class="icon"></span>
             <span class="icon"></span>
             <span
@@ -1805,11 +1805,11 @@
             >Assign &lt; Requester ( Assign must be fixed )</span>
           </li>
           <li>
-            <span class="icon icon-address"></span>
-            <span class="icon icon-left"></span>
-            <span class="icon icon-address"></span>
-            <span class="icon icon-left"></span>
-            <span class="icon icon-address"></span>
+            <span class="icon"><i class="icon-user"></i></span>
+            <span class="icon"><i class="icon-chevron-left"></i></span>
+            <span class="icon"><i class="icon-user"></i></span>
+            <span class="icon"><i class="icon-chevron-left"></i></span>
+            <span class="icon"><i class="icon-user"></i></span>
             <span
               data-setup="localize"
               data-text-ja="依頼者 < 担当者 < 依頼者 ( 依頼者は確認し閉じる )"

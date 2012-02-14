@@ -36,8 +36,12 @@ div.alert {
 .icon-chevron-down {
     width: 13px;
 }
+.icon-chevron-left {
+    margin-left: 2px;
+    vertical-align: baseline;
+}
 .active .icon-tag {
-  background-image: url(../img/glyphicons-halflings.png);
+    background-image: url(../img/glyphicons-halflings.png);
 }
 .ui-autocomplete {
     z-index: 1051 !important;

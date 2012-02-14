@@ -2075,13 +2075,13 @@ app.setup.human = function(ele, task){
     var size = ele.data('human-size') || 16;
     ele.prepend(app.util.getIcon(task.requester, size));
     if (task.assign.length) {
-        ele.prepend($('<span class="icon icon-left"/>'));
+        ele.prepend($('<span class="icon"><i class="icon-chevron-left"></i></span>'));
         $.each(task.assign, function(i, assign){
             ele.prepend(app.util.getIcon(assign, size));
         });
     }
     if (task.status == 2 && task.assign.length) {
-        ele.prepend($('<span class="icon icon-left"/>'));
+        ele.prepend($('<span class="icon"><i class="icon-chevron-left"></i></span>'));
         ele.prepend(app.util.getIcon(task.requester, size));
     }
 }
