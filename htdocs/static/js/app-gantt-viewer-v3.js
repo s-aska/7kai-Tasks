@@ -61,14 +61,6 @@ app.setup.ganttchartSheet = function(ele){
             }
             date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
             day_array.push(day);
-            // console.log(day.offset().left);
-            // day_map[] = day;
-            // day.hover(function(){
-            //     $(this).parent().children().removeClass('hover');
-            //     $(this).addClass('hover');
-            // }, function(){
-            //     $(this).removeClass('hover');
-            // });
         }
         ele.append($(blank));
     });
@@ -214,25 +206,6 @@ app.setup.ganttchartListsV3 = function(ul){
                 li.find('.due').css('left', ((days + 1) * 23) + 'px'); 
             }
         }
-        // li.find('.human').draggable({
-        //     axis: 'x',
-        //     containment: 'parent',
-        //     grid: [23],
-        //     stop: function(e, ui){
-        //         var date = new Date(
-        //             app.data.gantt.start.getFullYear()
-        //             , app.data.gantt.start.getMonth()
-        //             , app.data.gantt.start.getDate() + parseInt(ui.position.left / 23, 10) - 1
-        //         );
-        //         var due = app.date.mdy(date);
-        //         app.api.task.update({
-        //             list_id: task.list.id,
-        //             task_id: task.id,
-        //             registrant: app.util.getRegistrant(task.list),
-        //             due: due
-        //         });
-        //     }
-        // });
         li.mousemove(function(e){
             app.fireEvent('selectDay', e);
         });
@@ -265,39 +238,6 @@ app.setup.ganttchartListsV3 = function(ul){
                 app.fireEvent('openTask', task);
             }
         });
-        // var user = $('#ui-icon-user');
-        // var timer;
-        // li.mousemove(function(e){
-        //     if (timer) {
-        //         clearTimeout(timer);
-        //         timer = null;
-        //     }
-        //     var x = parseInt((e.offsetX - 240 + 2) / 23, 10);
-        //     if (x < 0) {
-        //         return;
-        //     }
-        //     user.css({
-        //         top: 1 + 'px',
-        //         left: 2 + (x * 23) + 'px'
-        //     });
-        //     user.appendTo(li.find('.humanContainer'));
-        //     user.show();
-        // });
-        // li.mouseout(function(e){
-        //     if (timer) {
-        //         clearTimeout(timer);
-        //         timer = null;
-        //     }
-        //     timer = setTimeout(function(){
-        //         user.hide();
-        //     }, 300);
-        // });
-        // li.find('.humanContainer').height(li.get(0).offsetHeight);
-        // li.click(function(e){
-        //     e.preventDefault();
-        //     e.stopPropagation();
-        //     app.fireEvent('openTask', task);
-        // });
         li.dblclick(function(e){
             e.stopPropagation();
             app.fireEvent('editTask', task);

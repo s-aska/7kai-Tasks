@@ -22,7 +22,7 @@ var app = ns.app = {
     // Environment
     env: {
         token: '',
-        lang: (/^ja/.test(navigator.language) ? 'ja' : 'en'),
+        lang: (/^ja/.test(navigator.language || navigator.userLanguage) ? 'ja' : 'en'),
         development: (window.location.hostname === '127.0.0.1' ? true : false)
     },
     events: {},
