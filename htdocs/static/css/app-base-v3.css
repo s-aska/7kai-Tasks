@@ -29,7 +29,7 @@ span.icon {
     background-image: url(/static/img/keyboard.png);
 }
 .icon-gray {
-    opacity: 0.5;
+    opacity: 0.3;
 }
 .label.closed {
     background-color: #0064cd;
