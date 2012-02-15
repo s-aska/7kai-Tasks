@@ -1475,11 +1475,11 @@ app.setup.tasksheet = function(ul){
                 updateSort();
             }
         });
-        li.find('.ui-listmenu .icon-signal').parent().click(function(e){
+        li.find('.ui-listmenu .icon-pause').parent().click(function(e){
             app.fireEvent('publicListBegin', list);
         });
         if (list.public_code) {
-            li.find('.ui-listmenu .icon-signal').parent().addClass('active');
+            li.find('.ui-listmenu .icon-pause').parent().addClass('active');
         }
         li.find('.ui-listmenu .icon-edit').parent().click(function(e){
             app.fireEvent('editList', list);
@@ -1536,11 +1536,11 @@ app.setup.tasksheet = function(ul){
     });
 
     app.addListener('publicList', function(list){
-        app.data.listli_map[list.id].find('.icon-signal').parent().addClass('active');
+        app.data.listli_map[list.id].find('.icon-pause').parent().addClass('active');
     });
 
     app.addListener('privateList', function(list){
-        app.data.listli_map[list.id].find('.icon-signal').parent().removeClass('active');
+        app.data.listli_map[list.id].find('.icon-pause').parent().removeClass('active');
     });
 
     app.addListener('registerTask', function(task, list, slide){
