@@ -22,32 +22,36 @@
 <script src="/static/js/app-base-signin.js"></script>
 </head>
 <body id="index-page">
-<div class="navbar navbar-fixed-top">
+<!-- <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
       <span class="brand">7kai Tasks</span>
     </div>
   </div>
-</div>
+</div> -->
 <div class="container">
   <div class="row">
     <div class="span12">
       <div style="text-align: center;">
       </div>
       <div class="hero-unit">
-        <h1
-          data-setup="localize"
-          data-text-ja="最速をあなたに！"
-        >Fastest For You.</h1>
-        <p>
-          <span
-            data-setup="localize"
-            data-text-ja="シンプルで軽快なインターフェースとソーシャルコラボレーション。"
-          >Simple and lightness Interface, and Social Collaboration.</span><br>
-          <span
-            data-setup="localize"
-            data-text-ja="煩雑なタスク管理から解放され、重要な事に集中しましょう。"
-          >You can concentrate on an important thing.</span></p>
+        <div class="row">
+          <div class="span2">
+            <img src="/static/img/logo-128.png">
+          </div>
+          <div class="span8">
+            <h1>7kai Tasks.</h1>
+            <p>
+              <span
+                data-setup="localize"
+                data-text-ja="シンプルで軽快なインターフェースとソーシャルコラボレーション。"
+              >Simple and lightness Interface, and Social Collaboration.</span><br>
+              <span
+                data-setup="localize"
+                data-text-ja="煩雑なタスク管理から解放され、重要な事に集中しましょう。"
+              >You can concentrate on an important thing.</span></p>
+          </div>
+        </div>
         <div id="myCarousel" class="carousel">
           <!-- Carousel items -->
           <div class="carousel-inner">
@@ -75,6 +79,8 @@
           By signing up, you accept 7kai Tasks's <a href="/static/tos.html">terms</a> of use and <a href="/static/privacy.html">privacy policy</a>.
         </div>
       </div>
+
+      <hr>
 
       <div class="row" style="margin-bottom: 20px;">
         <div class="span4">
@@ -154,6 +160,8 @@
         </div>
       </div>
 
+      <hr>
+
       <h2
         data-setup="localize"
         data-text-ja="チュートリアル"
@@ -216,6 +224,8 @@
         </li>
       </ul>
 
+      <hr>
+
       <h2
         data-setup="localize"
         data-text-ja="ドラッグアンドドロップ"
@@ -265,6 +275,8 @@
           </table>
         </li>
       </ul>
+
+      <hr>
 
       <h2
         data-setup="localize"
