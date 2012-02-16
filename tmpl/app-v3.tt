@@ -737,6 +737,13 @@
             >Pending a Task.</td>
           </tr>
           <tr>
+            <th>[*] or [;] or [:]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="スターを付ける"
+            >Check star a Task.</td>
+          </tr>
+          <tr>
             <th>[E]</th>
             <td
               data-setup="localize"

@@ -522,6 +522,16 @@ app.setup.ganttchartListsV3 = function(ul){
         if (!ul.is(':visible')) { return }
         current_task = null;
     });
+
+    app.addListener('checkStar', function(on, task){
+        var li = taskli_map[task.id];
+        var i = li.find('.icon-star');
+        if (on) {
+            i.removeClass('icon-gray');
+        } else {
+            i.addClass('icon-gray');
+        }
+    });
     
     $(d).keydown(function(e){
         if (document.activeElement.tagName !== 'BODY') {

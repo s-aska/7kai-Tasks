@@ -250,17 +250,6 @@ app.addListener('receiveSign', function(){
     }, 300000);
 });
 
-// $(w).bind('hashchange', function(){
-//     var str = w.location.hash.match(/^#(\d+)-(\d+:\d+)$/)
-//     if (str) {
-//         var list_id = str[1];
-//         var task_id = str[2];
-//         if (task_id in app.data.task_map) {
-//             app.fireEvent('openTaskInHome', app.data.task_map[task_id]);
-//         }
-//     }
-// });
-
 app.util.getIconUrl = function(code, size){
     var src;
     if (!navigator.onLine) {
@@ -1867,6 +1856,16 @@ app.setup.tasksheet = function(ul){
         }
         app.fireEvent('openPrevTask', true);
     });
+    
+    app.addListener('checkStar', function(on, task){
+        var li = app.data.taskli_map[task.id];
+        var i = li.find('.icon-star');
+        if (on) {
+            i.removeClass('icon-gray');
+        } else {
+            i.addClass('icon-gray');
+        }
+    });
 
     $(d).keydown(function(e){
         if (document.activeElement.tagName !== 'BODY') {
@@ -1948,6 +1947,22 @@ app.setup.tasksheet = function(ul){
                 registrant: app.util.getRegistrant(task.list),
                 closed: closed
             });
+        } else if (e.keyCode === 59 || e.keyCode === 186) { // :;*
+            var task = current_task;
+            var method = 'on';
+            if (task.id in app.data.state.star) {
+                method = 'off';
+                delete app.data.state.star[task.id];
+            } else {
+                app.data.state.star[task.id] = 1;
+            }
+            app.api.account.update({
+                ns: 'state',
+                method: method,
+                key: 'star',
+                val: task.id
+            });
+            app.fireEvent('checkStar', method === 'on', task);
         } else if (e.keyCode === 80) { // P
             var task = current_task;
             var pending = task.pending ? 0 : 1;
@@ -2062,10 +2077,8 @@ app.setup.star = function(ele, task){
         if (task.id in app.data.state.star) {
             method = 'off';
             delete app.data.state.star[task.id];
-            i.addClass('icon-gray');
         } else {
             app.data.state.star[task.id] = 1;
-            i.removeClass('icon-gray');
         }
         app.api.account.update({
             ns: 'state',
@@ -2073,7 +2086,7 @@ app.setup.star = function(ele, task){
             key: 'star',
             val: task.id
         });
-        app.fireEvent('checkStar', method === 'on');
+        app.fireEvent('checkStar', method === 'on', task);
     });
 }
 app.setup.human = function(ele, task){
@@ -2566,14 +2579,14 @@ $(d).keydown(function(e){
         return;
     }
     if (e.shiftKey) {
-        if (e.keyCode === 37) { // Left
+        if (e.keyCode === 37 || e.keyCode === 72) { // Left
             var id = {
                 "task":"timeline",
                 "gantt":"task",
                 "timeline":"gantt"
             }[app.state.tab.viewer || 'task'];
             app.fireEvent('selectTab', 'viewer', id);
-        } else if (e.keyCode === 39) { // Right
+        } else if (e.keyCode === 39 || e.keyCode === 76) { // Right
             var id = {
                 "task":"gantt",
                 "gantt":"timeline",
