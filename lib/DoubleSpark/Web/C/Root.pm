@@ -14,7 +14,7 @@ sub index {
         $c->render('app.tt');
     } else {
         $c->session->remove('version');
-        $c->render('index.tt');
+        $c->render('index-v3.tt');
     }
 }
 
