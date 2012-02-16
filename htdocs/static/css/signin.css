@@ -1,38 +1,52 @@
-.row {
-    margin-top: 60px;
-    margin-left: auto;
-    margin-right: auto;
+html, body {
+    overflow: auto;
 }
-.columns {
-    float: left;
+body {
+    padding-top: 60px;
 }
 .modal {
     display: none;
 }
-html, body {
-    overflow: auto;
+.icon-facebook {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    background-image: url(/static/img/facebook.png);
+    background-position: 0 0;
+}
+.icon-twitter {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    background-image: url(/static/img/twitter_t.png);
+    background-position: 0 0;
+}
+.thumbnail p {
+    padding: 10px 10px 0 10px;
+    line-height: 14px;
+}
+.hero-unit h1 {
+    margin-bottom: 10px;
+}
+.table {
+    margin-bottom: 0;
+}
+h2,
+h3 {
+    margin-bottom: 10px;
+}
+th {
+    width: 40%;
+}
+a, button, label {
+    cursor: pointer;
+}
+footer {
+    margin-top: 40px;
+    padding: 20px;
     background-color: #F7F7F6;
-}
-h1 {
-    font-size: 48px;
-    line-height: 56px;
-    margin-bottom: 10px;
-}
-h2 {
-    margin-bottom: 10px;
-}
-dl dt {
-    font-size: 20px;
-    line-height: 36px;
-}
-dl dd {
-    font-size: 18px;
-    line-height: 24px;
 }
 footer a {
     display: inline-block;
     margin-right: 6px;
-}
-a, button, label {
-    cursor: pointer;
 }

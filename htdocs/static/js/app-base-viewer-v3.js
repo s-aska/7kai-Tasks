@@ -222,7 +222,7 @@ app.addListener('setup', function(option){
         }
     }
     if (hash) {
-        var str = hash.match(/^#(\d+)-(\d+:\d+)$/)
+        var str = hash.match(/^#(\d+)-(\d+:\d+)$/);
         if (str) {
             option.list_id = str[1];
             option.task_id = str[2];

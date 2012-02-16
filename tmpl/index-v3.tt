@@ -13,8 +13,10 @@
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap.css">
 <link rel="stylesheet" href="/static/css/signin.css" media="all">
-<script src="/static/js/jquery-1.6.4.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script src="/static/js/jquery-ui-1.8.13.js"></script>
+<script src="/static/js/bootstrap-transition.js"></script>
+<script src="/static/js/bootstrap-carousel.js"></script>
 <script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>
 <script src="/static/js/app-base-signin.js"></script>
@@ -24,71 +26,483 @@
   <div class="navbar-inner">
     <div class="container">
       <span class="brand">7kai Tasks</span>
-      <ul class="nav pull-right">
-        <li>
-          <a
-            data-setup="show"
-            data-show='{"id":"signin"}'
-          >Sign In / Sign Up</a>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="span12">
+      <div style="text-align: center;">
+      </div>
+      <div class="hero-unit">
+        <h1
+          data-setup="localize"
+          data-text-ja="最速をあなたに！"
+        >Fastest For You.</h1>
+        <p>
+          <span
+            data-setup="localize"
+            data-text-ja="シンプルで軽快なインターフェースとソーシャルコラボレーション。"
+          >Simple and lightness Interface, and Social Collaboration.</span><br>
+          <span
+            data-setup="localize"
+            data-text-ja="煩雑なタスク管理から解放され、重要な事に集中しましょう。"
+          >You can concentrate on an important thing.</span></p>
+        <div id="myCarousel" class="carousel">
+          <!-- Carousel items -->
+          <div class="carousel-inner">
+            <div class="item active">
+              <img src="/static/img/tasks-home.png">
+            </div>
+            <div class="item">
+              <img src="/static/img/tasks-gantt.png">
+            </div>
+            <div class="item">
+              <img src="/static/img/tasks-changes.png">
+            </div>
+          </div>
+          <!-- Carousel nav -->
+          <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+          <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+        </div>
+        <form method="post" action="/signin/twitter/signin">
+          <div><button class="btn btn-large btn-primary">Connect with Twitter</button></div>
+        </form>
+        <form method="post" action="/signin/facebook/signin">
+          <div><button class="btn btn-large btn-primary">Connect with Facebook</button></div>
+        </form>
+        <div class="alert alert-info">
+          By signing up, you accept 7kai Tasks's <a href="/static/tos.html">terms</a> of use and <a href="/static/privacy.html">privacy policy</a>.
+        </div>
+      </div>
+
+      <div class="row" style="margin-bottom: 20px;">
+        <div class="span4">
+          <h3>Social</h3>
+          <div class="thumbnail">
+            <img src="/static/img/tasks-concept-social.png">
+            <p
+              data-setup="localize"
+              data-text-ja="ソーシャルからフレンドを加えられます。"
+            >Easily added a friend from social account.</p>
+          </div>
+        </div>
+        <div class="span4">
+          <h3>Multi list with tag</h3>
+          <div class="thumbnail">
+            <img src="/static/img/tasks-concept-tag.png">
+            <p
+              data-setup="localize"
+              data-text-ja="4つの色でリストを分類できます。"
+            >You can assort it with a four colors.</p>
+          </div>
+        </div>
+        <div class="span4">
+          <h3>Quick Filter</h3>
+          <div class="thumbnail">
+            <img src="/static/img/tasks-concept-filter.png">
+            <p
+              data-setup="localize"
+              data-text-ja="関心にすぐアクセス出来ます。"
+            >You can access interest immediately.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-bottom: 40px;">
+        <div class="span4">
+          <h3>Flexible</h3>
+          <div class="thumbnail">
+            <img src="/static/img/tasks-concept-flexible.png">
+            <p
+              data-setup="localize"
+              data-text-ja="多くの状態・フラグを扱えます。"
+            >Support many status and flagged.</p>
+            <ul>
+              <li>Open</li>
+              <li>Start</li>
+              <li>Fixed</li>
+              <li>Closed</li>
+              <li>Pending</li>
+              <li>Star</li>
+            </ul>
+          </div>
+        </div>
+        <div class="span4">
+          <h3>Public</h3>
+          <div class="thumbnail">
+            <img src="/static/img/tasks-concept-format.png">
+            <p
+              data-setup="localize"
+              data-text-ja="多くの公開フォーマットに対応しています。"
+            >Support many public format.</p>
+            <ul>
+              <li>RSS</li>
+              <li>iCal</li>
+              <li>JSON</li>
+              <li>JSONP</li>
+              <li>HTML</li>
+            </ul>
+          </div>
+        </div>
+        <div class="span4">
+          <h3>Chrome Extensions</h3>
+          <div class="thumbnail">
+            <img src="/static/img/tasks-concept-ext.png">
+            <p>Official Chrome Extensions <a href="https://chrome.google.com/webstore/detail/dolhpjcchfcnkcanamhgcgbnmcogdank">here</a>.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2
+        data-setup="localize"
+        data-text-ja="チュートリアル"
+      >Quick Tutorial</h2>
+      <ul class="thumbnails">
+        <li class="span4">
+          <div class="thumbnail">
+            <img src="/static/img/tasks-tour-new-task.png" alt="">
+          </div>
+        </li>
+        <li class="span6">
+          <h3><span
+            data-setup="localize"
+            data-text-ja="基本操作"
+          >Basic Operation</span> ... [N] [Enter] [ESC] [C] [Shift-C]</h3>
+          <table class="table table-striped">
+            <tr>
+              <th>[N]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="タスク登録ウィンドウを表示"
+              >Open New Task Window.</td>
+            </tr>
+            <tr>
+              <th>Input and [Enter]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="タスクを登録"
+              >New Task.</td>
+            </tr>
+            <tr>
+              <th>[ESC]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="タスク登録ウィンドウを閉じる"
+              >Close New Task Window.</td>
+            </tr>
+            <tr>
+              <th>[Enter]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="選択されているタスクを完了"
+              >Closed the Task.</td>
+            </tr>
+            <tr>
+              <th>[C]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="完了タスクを表示"
+              >Show Closed Task.</td>
+            </tr>
+            <tr>
+              <th>[Shift-C]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="完了タスクをクリア"
+              >Clear Closed Task.</td>
+            </tr>
+          </table>
+        </li>
+      </ul>
+
+      <h2
+        data-setup="localize"
+        data-text-ja="ドラッグアンドドロップ"
+      >Drag and Drop</h2>
+      <ul class="thumbnails">
+        <li class="span4">
+          <div class="thumbnail">
+            <img src="/static/img/tasks-tour-dd.png" alt="">
+          </div>
+        </li>
+        <li class="span6">
+          <h3
+            data-setup="localize"
+            data-text-ja="ドロップ先"
+          >Drop to</h3>
+          <table class="table table-striped">
+            <tr>
+              <th
+                data-setup="localize"
+                data-text-ja="リスト名"
+              >over the List</th>
+              <td
+                data-setup="localize"
+                data-text-ja="リストへ移動"
+              >move to the list.</td>
+            </tr>
+            <tr>
+              <th
+                data-setup="localize"
+                data-text-ja="タスク"
+              >over the Task</th>
+              <td
+                data-setup="localize"
+                data-text-ja="タスク配下に移動"
+              >belong to the task.</td>
+            </tr>
+            <tr>
+              <th
+                data-setup="localize"
+                data-text-ja="画面内余白"
+              >Out</th>
+              <td
+                data-setup="localize"
+                data-text-ja="サブタスク解除（サブタスク限定）"
+              >move to the root.</td>
+            </tr>
+          </table>
+        </li>
+      </ul>
+
+      <h2
+        data-setup="localize"
+        data-text-ja="ショートカットキー"
+      >More Shortcut Keys</h2>
+      <ul class="thumbnails">
+        <li class="span4">
+          <div class="thumbnail">
+            <img src="/static/img/tasks-tour-help.png" alt="">
+          </div>
+        </li>
+        <li class="span6">
+          <h3><span
+            data-setup="localize"
+            data-text-ja="ヘルプ"
+          >Help</span> ... [?] or [/]</h3>
+          <table class="table table-striped">
+            <tr>
+              <th>[?] or [/]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="ショートカットキー表示"
+              >Show Shortcut Keys.</td>
+            </tr>
+          </table>
+        </li>
+      </ul>
+      <ul class="thumbnails">
+        <li class="span4">
+          <div class="thumbnail">
+            <img src="/static/img/tasks-tour-menu.png" alt="">
+          </div>
+        </li>
+        <li class="span6">
+          <h3><span
+            data-setup="localize"
+            data-text-ja="メニュー切り替え"
+          >Main Menu Switch</span> ... [Shift-Left/H] [Shift-Right/L]</h3>
+          <table class="table table-striped">
+            <tr>
+              <th>[Shift-Right] or [Shift-L]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="次のメニュー"
+              >Next Menu.</td>
+            </tr>
+            <tr>
+              <th>[Shift-Left] or [Shift-H]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="前のメニュー"
+              >Previous Menu.</td>
+            </tr>
+          </table>
+        </li>
+      </ul>
+      <ul class="thumbnails">
+        <li class="span4">
+          <div class="thumbnail">
+            <img src="/static/img/tasks-tour-selection.png" alt="">
+          </div>
+        </li>
+        <li class="span6">
+          <h3><span
+            data-setup="localize"
+            data-text-ja="タスク選択"
+          >Task Selection</span> ... [Up] [Down] or [J] [K]</h3>
+          <table class="table table-striped">
+            <tr>
+              <th>[Down] or [J]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="次のタスク"
+              >Next Task</td>
+            </tr>
+            <tr>
+              <th>[Up] or [K]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="前のタスク"
+              >Previous Task</td>
+            </tr>
+            <tr>
+              <th>[Shift-Down] or [Shift-J]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="次のリスト"
+              >Next List</td>
+            </tr>
+            <tr>
+              <th>[Shift-Up] or [Shift-K]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="前のリスト"
+              >Previous List</td>
+            </tr>
+          </table>
+        </li>
+      </ul>
+      <ul class="thumbnails">
+        <li class="span4">
+          <div class="thumbnail">
+            <img src="/static/img/tasks-tour-operation.png" alt="">
+          </div>
+        </li>
+        <li class="span6">
+          <h3><span
+            data-setup="localize"
+            data-text-ja="タスク操作"
+          >Task Operation</span> ... [Enter] [Space] [P] [*] [E] [Shift-N]</h3>
+          <table class="table table-striped">
+            <tr>
+              <th>[Enter]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="完了"
+              >Closed.</td>
+            </tr>
+            <tr>
+              <th>[Space]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="進捗更新"
+              >Rotate Progress.</td>
+            </tr>
+            <tr>
+              <th>[P]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="保留 (on/off)"
+              >Pending. ( on/off )</td>
+            </tr>
+            <tr>
+              <th>[*]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="スター (on/off)"
+              >Starred. ( on/off )</td>
+            </tr>
+            <tr>
+              <th>[E]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="編集"
+              >Edit.</td>
+            </tr>
+            <tr>
+              <th>[Shift-N]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="新しいサブタスク"
+              >New Sub Task.</td>
+            </tr>
+          </table>
+        </li>
+      </ul>
+      <ul class="thumbnails">
+        <li class="span4">
+          <div class="thumbnail">
+            <img src="/static/img/tasks-concept-filter.png" alt="">
+          </div>
+        </li>
+        <li class="span6">
+          <h3><span
+            data-setup="localize"
+            data-text-ja="クイックフィルター"
+          >Quick Filter</span> ... [T] [V] [R] [S] [C]</h3>
+          <table class="table table-striped">
+            <tr>
+              <th>[T]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="今日迄"
+              >Todo</td>
+            </tr>
+            <tr>
+              <th>[V]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="確認待ち"
+              >Verify</td>
+            </tr>
+            <tr>
+              <th>[R]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="依頼中"
+              >Request</td>
+            </tr>
+            <tr>
+              <th>[S]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="スター"
+              >Star</td>
+            </tr>
+            <tr>
+              <th>[C]</th>
+              <td
+                data-setup="localize"
+                data-text-ja="完了済"
+              >Close</td>
+            </tr>
+          </table>
         </li>
       </ul>
     </div>
   </div>
 </div>
-<div class="row">
-  <div class="container">
-    <div style="text-align: center;">
-      <h1>7kai Tasks</h1>
-      <h2>High Speed Social Task Management Service</h2>
-    </div>
-    <div class="columns">
-      <img src="http://screen.chihaya-pm.org/0c1f7443e7e521e669b217a6cd4458ba.png">
-    </div>
-    <div class="columns">
-      <img src="http://screen.chihaya-pm.org/d41e08862cfe35d51d27835f1d29fea7.png">
-    </div>
-  </div>
-</div>
 <footer class="footer">
   <div class="container">
-    <ul>
-      <li><a href="/static/tos.html">Terms</a></li>
-      <li><a href="/static/privacy.html">Privacy</a></li>
-      <li><a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank">Support(facebook page)</a></li>
-      <li><a href="https://github.com/s-aska/7kai-Tasks" target="_blank">Github</a></li>
-      <li><a href="https://twitter.com/#!/su_aska" target="_blank">Author</a></li>
-      <li><a href="https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Ftasks.7kai.org%2F&source=tweetbutton&text=7kai+Tasks&url=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Share(twitter)</a></li>
-      <li><a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Share(facebook)</a></li>    </ul>
+    <div class="row">
+      <div class="span2">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="/static/tos.html">Terms</a></li>
+          <li><a href="/static/privacy.html">Privacy</a></li>
+          <li><a href="https://github.com/s-aska/7kai-Tasks" target="_blank">Github</a></li>
+        </ul>
+      </div>
+      <div class="span2">
+        <h4>Share</h4>
+        <ul>
+          <li><a href="https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Ftasks.7kai.org%2F&source=tweetbutton&text=7kai+Tasks&url=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Twitter</a></li>
+          <li><a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Facebook</a></li>
+        </ul>
+      </div>
+      <div class="span2">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="https://twitter.com/#!/su_aska" target="_blank">Author</a></li>
+          <li><a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank">Facebook Page</a></li>
+        </ul>
+      </div>
+    </div>
+    <address>&copy; Shinichiro Aska</address>
   </div>
 </footer>
 <div id="fb-root"></div>
-<div
-  class="modal"
-  data-setup="showable"
-  data-showable='{"id":"signin","show":{"effect":"fade"},"hide":{"effect":"fade"}}'
->
-  <div class="modal-header">
-    <a
-      class="close"
-      data-setup="hide"
-      data-hide='{"id":"signin"}'
-    >×</a>
-    <h3>Sign In</h3>
-  </div>
-  <div class="modal-body">
-    <div
-      style="text-align: center;"
-      data-setup="tab.content"
-      data-tab='{"id":"social","group":"signin"}'
-    >
-      <form method="post" action="/signin/twitter/signin">
-        <div><button class="btn btn-large btn-primary"style="width: 190px;">Connect with Twitter</button></div>
-      </form>
-      <form method="post" action="/signin/facebook/signin">
-        <div><button class="btn btn-large btn-primary">Connect with Facebook</button></div>
-      </form>
-    </div>
-  </div>
-</div>
 </body>
 </html>

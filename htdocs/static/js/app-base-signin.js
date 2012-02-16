@@ -9,6 +9,7 @@ app.addListener('setup', function(){
     } else {
         localStorage.removeItem('hash');
     }
+    $('.carousel').carousel();
 });
 
 })(this, window, document, jQuery);
