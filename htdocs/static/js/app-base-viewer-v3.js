@@ -1652,6 +1652,21 @@ app.setup.tasksheet = function(ul){
         current_task = task;
     });
 
+    app.addListener('selectTab', function(group, id){
+        if (group === 'viewer' && id === 'task') {
+            var hash = w.location.hash;
+            if (hash) {
+                var str = hash.match(/^#(\d+)-(\d+:\d+)$/);
+                if (str) {
+                    var task = app.data.task_map[str[2]];
+                    if (task) {
+                        app.fireEvent('openTask', task);
+                    }
+                }
+            }
+        }
+    });
+
     app.addListener('openNextTask', function(skip){
         if (!ul.is(':visible')) {
             return;

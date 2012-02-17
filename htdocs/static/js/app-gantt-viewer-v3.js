@@ -202,6 +202,9 @@ app.setup.ganttchartListsV3 = function(ul){
         if (task.closed) {
             li.addClass('closed');
         }
+        if (task.pending) {
+            li.addClass('pending');
+        }
 
         if (task.due) {
             var days = app.date.relativeDays(task.due_date, app.data.gantt.start);
@@ -343,6 +346,21 @@ app.setup.ganttchartListsV3 = function(ul){
                 app.dom.scrollTopFix(ul.parent(), taskli_map[task.id]);
         }
         current_task = task;
+    });
+
+    app.addListener('selectTab', function(group, id){
+        if (group === 'viewer' && id === 'gantt') {
+            var hash = w.location.hash;
+            if (hash) {
+                var str = hash.match(/^#(\d+)-(\d+:\d+)$/);
+                if (str) {
+                    var task = app.data.task_map[str[2]];
+                    if (task) {
+                        app.fireEvent('openTask', task);
+                    }
+                }
+            }
+        }
     });
 
     app.addListener('openNextTask', function(skip){
@@ -544,11 +562,16 @@ app.setup.ganttchartListsV3 = function(ul){
             return;
         }
         e.preventDefault();
+        var task = current_task ? app.data.task_map[current_task.id] : null;
         if (e.shiftKey) {
-            if (e.keyCode === 38) { // Up
+            if (e.keyCode === 38 || e.keyCode === 75) { // Up
                 app.fireEvent('openPrevList');
-            } else if (e.keyCode === 40) { // Down
+            } else if (e.keyCode === 40 || e.keyCode === 72) { // Down
                 app.fireEvent('openNextList');
+            } else if (e.keyCode === 78) {
+                if (task) {
+                    app.fireEvent('createSubTask', task);
+                }
             }
             return;
         }
@@ -557,11 +580,17 @@ app.setup.ganttchartListsV3 = function(ul){
         } else if (e.keyCode === 40 || e.keyCode === 74) { // Down / K
             app.fireEvent('openNextTask');
         }
+        if (e.keyCode === 78) { // N
+            var list = task
+                     ? task.list
+                     : app.data.list_map[ul.find('> li:first').data('id')];
+            app.fireEvent('createTask', list);
+        }
         if (!current_task || !(current_task.id in app.data.task_map)) {
             return;
         }
+        var task = app.data.task_map[current_task.id];
         if (e.keyCode === 37 || e.keyCode === 72) { // Left / H
-            var task = app.data.task_map[current_task.id];
             var today = new Date();
             var due;
             if (task.due_date && task.due_date.getTime() > today.getTime()) {
@@ -576,7 +605,6 @@ app.setup.ganttchartListsV3 = function(ul){
                 due: due
             });
         } else if (e.keyCode === 39 || e.keyCode === 76) { // Right / L
-            var task = app.data.task_map[current_task.id];
             var today = new Date();
             var date;
             if (task.due_date && task.due_date.getTime() > today.getTime()) {
@@ -591,8 +619,40 @@ app.setup.ganttchartListsV3 = function(ul){
                 registrant: app.util.getRegistrant(task.list),
                 due: due
             });
+        } else if (e.keyCode === 32) { // Space
+            var status = task.status >= 2 ? 0 : task.status + 1;
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                status: status
+            });
+        } else if (e.keyCode === 59 || e.keyCode === 186) { // :;*
+            var method = 'on';
+            if (task.id in app.data.state.star) {
+                method = 'off';
+                delete app.data.state.star[task.id];
+            } else {
+                app.data.state.star[task.id] = 1;
+            }
+            app.api.account.update({
+                ns: 'state',
+                method: method,
+                key: 'star',
+                val: task.id
+            });
+            app.fireEvent('checkStar', method === 'on', task);
+        } else if (e.keyCode === 80) { // P
+            var pending = task.pending ? 0 : 1;
+            app.api.task.update({
+                list_id: task.list.id,
+                task_id: task.id,
+                registrant: app.util.getRegistrant(task.list),
+                pending: pending
+            });
+        } else if (e.keyCode === 69) { // E
+            app.fireEvent('editTask', task);
         } else if (e.keyCode === 13) { // Enter
-            var task = app.data.task_map[current_task.id];
             var closed = task.closed ? 0 : 1;
             app.api.task.update({
                 list_id: task.list.id,

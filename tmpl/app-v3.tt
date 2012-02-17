@@ -1045,7 +1045,8 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="click,filterTask,tooltip"
+        data-setup="click,shortcut,filterTask,tooltip"
+        data-shortcut='{"code":67}'
         data-click="filterTask"
         data-filter-condition='{"closed":1}'
         data-text-ja="確認後クリアすると動きも軽くなります"

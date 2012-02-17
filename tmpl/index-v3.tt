@@ -44,11 +44,11 @@
             <p>
               <span
                 data-setup="localize"
-                data-text-ja="シンプルで軽快なインターフェースとソーシャルコラボレーション。"
+                data-text-ja="軽快な操作感とソーシャルコラボレーション。"
               >Simple and lightness Interface, and Social Collaboration.</span><br>
               <span
                 data-setup="localize"
-                data-text-ja="煩雑なタスク管理から解放され、重要な事に集中しましょう。"
+                data-text-ja="やるべき事を忘れる恐怖からあなたを解放します。"
               >You can concentrate on an important thing.</span></p>
           </div>
         </div>

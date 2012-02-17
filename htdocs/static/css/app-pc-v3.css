@@ -391,6 +391,10 @@ ul.comments li span.name {
 .gantttasks > ul > li > ul > li.selected {
     background-color: rgba(252, 252, 215, 0.8);
 }
+.gantttasks > ul > li > ul > li.pending div.name {
+    color: rgba(0, 0, 0, 0.3);
+    font-style: italic;
+}
 .gantttasks > ul > li > ul > li > .left {
     margin-left: 2px;
 }
