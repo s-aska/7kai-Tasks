@@ -34,15 +34,21 @@ article ul {
 article ul li {
     background: url(/static/img/list-mark.gif) no-repeat 6px 10px;
     font-size: 18px;
-    padding: 16px 0 16px 50px;
     border-bottom: 1px solid #C6C6C6;
+    overflow: hidden;
 }
-article ul li div > a {
+article ul li > div {
+    padding: 0 0 16px 50px;
+}
+article ul li > div:first-child {
+    padding-top: 16px;
+}
+article ul li > div:first-child a {
     float: right;
     padding-right: 10px;
 }
 article ul li div.row {
-    margin-top: 10px;
+    
 }
 article ul li div.row h2 {
     font-size: 18px;

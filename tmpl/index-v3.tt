@@ -100,6 +100,15 @@
           <p>Work and a private or importance ...etc</p>
         </div>
         <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-tag2.png">
+        </div>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h2>Can be used as a filter.</h2>
+          <p></p>
+        </div>
+        <div class="span6 thumbnail">
           <img src="/static/img/tasks-concept-tag.png">
         </div>
       </div>
@@ -192,6 +201,39 @@
         </div>
       </div>
     </li>
+    <li>
+      <div>
+        <span>Easily a move and hierarchy setting by the Drag and Drop.</span>
+        <a><img src="/static/img/button-cross.gif"></a>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h2>Move to under the task.</h2>
+          <p>Drop to a Task.</p>
+        </div>
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-nest.png">
+        </div>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h2>Move to the root.</h2>
+          <p>Drop to a Space.</p>
+        </div>
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-nest2.png">
+        </div>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h2>Move to the list.</h2>
+          <p>Drop to a list.</p>
+        </div>
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-dd-list.png">
+        </div>
+      </div>
+    </li>
   </ul>
 </article>
 <footer class="footer">
@@ -216,8 +258,7 @@
     <address>&copy; Shinichiro Aska</address>
     <ul class="unstyled clearfix" style="margin: 0">
       <li style="float: left">
-        <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://tasks.7kai.org/" data-via="su_aska">Tweet</a>
-        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        <a href="https://twitter.com/share" class="twitter-share-button" data-text="7kai Tasks - The web-based task management software" data-url="https://tasks.7kai.org/">Tweet</a>
       </li>
       <li style="float: left">
         <div class="fb-like" data-href="https://tasks.7kai.org/" data-send="true" data-layout="button_count" data-width="120" data-show-faces="false"></div>
@@ -275,7 +316,6 @@
   </div>
   <div class="modal-body">
     <div id="myCarousel" class="carousel">
-      <!-- Carousel items -->
       <div class="carousel-inner">
         <div class="item active">
           <img src="/static/img/tasks-home.png">
@@ -284,13 +324,15 @@
           <img src="/static/img/tasks-gantt.png">
         </div>
       </div>
-      <!-- Carousel nav -->
       <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
       <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
     </div>
   </div>
 </div>
 <div id="fb-root"></div>
+<script>
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+</script>
 <script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
