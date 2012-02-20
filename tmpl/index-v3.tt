@@ -9,7 +9,7 @@
 <meta property="og:url" content="https://tasks.7kai.org/">
 <meta property="og:image" content="https://tasks.7kai.org/static/img/logo-128.png">
 <meta property="og:site_name" content="7kai Tasks">
-<meta property="og:description" content="High Speed Social Task Management Service">
+<meta property="og:description" content="The web-based task management software.">
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap.css">
 <link rel="stylesheet" href="/static/css/signin.css" media="all">
@@ -21,471 +21,179 @@
 <script src="/static/js/app-base.js"></script>
 <script src="/static/js/app-base-signin.js"></script>
 </head>
-<body id="index-page">
-<!-- <div class="navbar navbar-fixed-top">
-  <div class="navbar-inner">
-    <div class="container">
-      <span class="brand">7kai Tasks</span>
+<body>
+<header>
+  <p>Never forget anything again.</p>
+  <h1>7kai Tasks</h1>
+  <nav><a
+    data-setup="show"
+    data-show='{"id":"signin"}'
+  ><img src="/static/img/button-start.gif"></a></nav>
+  <div class="container">
+    <div
+      class="row"
+      style="cursor: pointer"
+      data-setup="show"
+      data-show='{"id":"screenshot"}'
+    >
+      <div class="span4 offset2">
+        <div class="thumbnail"><img src="/static/img/tasks-home.png"></div>
+      </div>
+      <div class="span4">
+        <div class="thumbnail"><img src="/static/img/tasks-gantt.png"></div>
+      </div>
     </div>
   </div>
-</div> -->
-<div class="container">
-  <div class="row">
-    <div class="span12">
-      <div style="text-align: center;">
+</header>
+<article>
+  <ul class="unstyled">
+    <li>
+			<div>
+      	<span>The web-based task management software.</span>
+      	<a><img src="/static/img/button-cross.gif"></a>
+    	</div>
+		</li>
+    <li>
+      <div>
+				<span>Collaborations with your friend of Twitter and Facebook.</span>
+	      <a><img src="/static/img/button-cross.gif"></a>
+			</div>
+			<div class="row">
+        <div class="span6">
+          <h2>Assign members to a list.</h2>
+          <p></p>
+        </div>
+	      <div class="span6 thumbnail">
+	        <img src="/static/img/tasks-concept-social.png">
+	      </div>
       </div>
-      <div class="hero-unit">
-        <div class="row">
-          <div class="span2">
-            <img src="/static/img/logo-128.png">
-          </div>
-          <div class="span8">
-            <h1>7kai Tasks.</h1>
-            <p>
-              <span
-                data-setup="localize"
-                data-text-ja="軽快な操作感とソーシャルコラボレーション。"
-              >Simple and lightness Interface, and Social Collaboration.</span><br>
-              <span
-                data-setup="localize"
-                data-text-ja="やるべき事を忘れる恐怖からあなたを解放します。"
-              >You can concentrate on an important thing.</span></p>
-          </div>
+    </li>
+    <li>
+      <div>
+        <span>Easily a rescheduling by the Gantt chart.</span>
+        <a><img src="/static/img/button-cross.gif"></a>
+      </div>
+      <div class="row">
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-gantt.png">
         </div>
-        <div id="myCarousel" class="carousel">
-          <!-- Carousel items -->
-          <div class="carousel-inner">
-            <div class="item active">
-              <img src="/static/img/tasks-home.png">
-            </div>
-            <div class="item">
-              <img src="/static/img/tasks-gantt.png">
-            </div>
-            <div class="item">
-              <img src="/static/img/tasks-changes.png">
-            </div>
-          </div>
-          <!-- Carousel nav -->
-          <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-          <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
-        </div>
-        <form method="post" action="/signin/twitter/signin">
-          <div><button class="btn btn-large btn-primary">Connect with Twitter</button></div>
-        </form>
-        <form method="post" action="/signin/facebook/signin">
-          <div><button class="btn btn-large btn-primary">Connect with Facebook</button></div>
-        </form>
-        <div class="alert alert-info">
-          By signing up, you accept 7kai Tasks's <a href="/static/tos.html">terms</a> of use and <a href="/static/privacy.html">privacy policy</a>.
+        <div class="span6">
+          <h2>Use the cursor control keys or click cell.</h2>
+          <p>
+            Selection task ... [Top] / [Down].<br>
+            Setting due dates ... [Left] / [Right].
+          </p>
+          <p>
+            It is caused by a bad tool that a date is vague.
+          </p>
         </div>
       </div>
-
-      <hr>
-
-      <div class="row" style="margin-bottom: 20px;">
-        <div class="span4">
-          <h3>Social</h3>
-          <div class="thumbnail">
-            <img src="/static/img/tasks-concept-social.png">
-            <p
-              data-setup="localize"
-              data-text-ja="ソーシャルからフレンドを加えられます。"
-            >Easily added a friend from social account.</p>
-          </div>
+    </li>
+    <li>
+      <div>
+        <span>Display only an available list depending on the situation.</span>
+        <a><img src="/static/img/button-cross.gif"></a>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h2>Classify lists with a color.</h2>
+          <p>Work and a private or importance ...etc</p>
         </div>
-        <div class="span4">
-          <h3>Multi list with tag</h3>
-          <div class="thumbnail">
-            <img src="/static/img/tasks-concept-tag.png">
-            <p
-              data-setup="localize"
-              data-text-ja="4つの色でリストを分類できます。"
-            >You can assort it with a four colors.</p>
-          </div>
-        </div>
-        <div class="span4">
-          <h3>Quick Filter</h3>
-          <div class="thumbnail">
-            <img src="/static/img/tasks-concept-filter.png">
-            <p
-              data-setup="localize"
-              data-text-ja="関心にすぐアクセス出来ます。"
-            >You can access interest immediately.</p>
-          </div>
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-tag.png">
         </div>
       </div>
-
-      <div class="row" style="margin-bottom: 40px;">
-        <div class="span4">
-          <h3>Flexible</h3>
-          <div class="thumbnail">
-            <img src="/static/img/tasks-concept-flexible.png">
-            <p
-              data-setup="localize"
-              data-text-ja="多くの状態・フラグを扱えます。"
-            >Support many status and flagged.</p>
-            <ul>
-              <li>Open</li>
-              <li>Start</li>
-              <li>Fixed</li>
-              <li>Closed</li>
-              <li>Pending</li>
-              <li>Star</li>
-            </ul>
-          </div>
+    </li>
+    <li>
+      <div>
+        <span>Obvious from the counter.</span>
+        <a><img src="/static/img/button-cross.gif"></a>
+      </div>
+      <div class="row">
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-filter.png">
         </div>
-        <div class="span4">
-          <h3>Public</h3>
-          <div class="thumbnail">
-            <img src="/static/img/tasks-concept-format.png">
-            <p
-              data-setup="localize"
-              data-text-ja="多くの公開フォーマットに対応しています。"
-            >Support many public format.</p>
-            <ul>
-              <li>RSS</li>
-              <li>iCal</li>
-              <li>JSON</li>
-              <li>JSONP</li>
-              <li>HTML</li>
-            </ul>
-          </div>
-        </div>
-        <div class="span4">
-          <h3>Chrome Extensions</h3>
-          <div class="thumbnail">
-            <img src="/static/img/tasks-concept-ext.png">
-            <p>Official Chrome Extensions <a href="https://chrome.google.com/webstore/detail/dolhpjcchfcnkcanamhgcgbnmcogdank">here</a>.</p>
-          </div>
+        <div class="span6">
+          <h2>Quick Filter with a counter.</h2>
+          <p>
+            When Verify was 1, somebody fixed your request.
+          </p>
         </div>
       </div>
-
-      <hr>
-
-      <h2
-        data-setup="localize"
-        data-text-ja="チュートリアル"
-      >Quick Tutorial</h2>
-      <ul class="thumbnails">
-        <li class="span4">
-          <div class="thumbnail">
-            <img src="/static/img/tasks-tour-new-task.png" alt="">
-          </div>
-        </li>
-        <li class="span6">
-          <h3><span
-            data-setup="localize"
-            data-text-ja="基本操作"
-          >Basic Operation</span> ... [N] [Enter] [ESC] [C] [Shift-C]</h3>
-          <table class="table table-striped">
-            <tr>
-              <th>[N]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="タスク登録ウィンドウを表示"
-              >Open New Task Window.</td>
-            </tr>
-            <tr>
-              <th>Input and [Enter]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="タスクを登録"
-              >New Task.</td>
-            </tr>
-            <tr>
-              <th>[ESC]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="タスク登録ウィンドウを閉じる"
-              >Close New Task Window.</td>
-            </tr>
-            <tr>
-              <th>[Enter]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="選択されているタスクを完了"
-              >Closed the Task.</td>
-            </tr>
-            <tr>
-              <th>[C]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="完了タスクを表示"
-              >Show Closed Task.</td>
-            </tr>
-            <tr>
-              <th>[Shift-C]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="完了タスクをクリア"
-              >Clear Closed Task.</td>
-            </tr>
-          </table>
-        </li>
-      </ul>
-
-      <hr>
-
-      <h2
-        data-setup="localize"
-        data-text-ja="ドラッグアンドドロップ"
-      >Drag and Drop</h2>
-      <ul class="thumbnails">
-        <li class="span4">
-          <div class="thumbnail">
-            <img src="/static/img/tasks-tour-dd.png" alt="">
-          </div>
-        </li>
-        <li class="span6">
-          <h3
-            data-setup="localize"
-            data-text-ja="ドロップ先"
-          >Drop to</h3>
-          <table class="table table-striped">
-            <tr>
-              <th
-                data-setup="localize"
-                data-text-ja="リスト名"
-              >over the List</th>
-              <td
-                data-setup="localize"
-                data-text-ja="リストへ移動"
-              >move to the list.</td>
-            </tr>
-            <tr>
-              <th
-                data-setup="localize"
-                data-text-ja="タスク"
-              >over the Task</th>
-              <td
-                data-setup="localize"
-                data-text-ja="タスク配下に移動"
-              >belong to the task.</td>
-            </tr>
-            <tr>
-              <th
-                data-setup="localize"
-                data-text-ja="画面内余白"
-              >Out</th>
-              <td
-                data-setup="localize"
-                data-text-ja="サブタスク解除（サブタスク限定）"
-              >move to the root.</td>
-            </tr>
-          </table>
-        </li>
-      </ul>
-
-      <hr>
-
-      <h2
-        data-setup="localize"
-        data-text-ja="ショートカットキー"
-      >More Shortcut Keys</h2>
-      <ul class="thumbnails">
-        <li class="span4">
-          <div class="thumbnail">
-            <img src="/static/img/tasks-tour-help.png" alt="">
-          </div>
-        </li>
-        <li class="span6">
-          <h3><span
-            data-setup="localize"
-            data-text-ja="ヘルプ"
-          >Help</span> ... [?] or [/]</h3>
-          <table class="table table-striped">
-            <tr>
-              <th>[?] or [/]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="ショートカットキー表示"
-              >Show Shortcut Keys.</td>
-            </tr>
-          </table>
-        </li>
-      </ul>
-      <ul class="thumbnails">
-        <li class="span4">
-          <div class="thumbnail">
-            <img src="/static/img/tasks-tour-menu.png" alt="">
-          </div>
-        </li>
-        <li class="span6">
-          <h3><span
-            data-setup="localize"
-            data-text-ja="メニュー切り替え"
-          >Main Menu Switch</span> ... [Shift-Left/H] [Shift-Right/L]</h3>
-          <table class="table table-striped">
-            <tr>
-              <th>[Shift-Right] or [Shift-L]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="次のメニュー"
-              >Next Menu.</td>
-            </tr>
-            <tr>
-              <th>[Shift-Left] or [Shift-H]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="前のメニュー"
-              >Previous Menu.</td>
-            </tr>
-          </table>
-        </li>
-      </ul>
-      <ul class="thumbnails">
-        <li class="span4">
-          <div class="thumbnail">
-            <img src="/static/img/tasks-tour-selection.png" alt="">
-          </div>
-        </li>
-        <li class="span6">
-          <h3><span
-            data-setup="localize"
-            data-text-ja="タスク選択"
-          >Task Selection</span> ... [Up] [Down] or [J] [K]</h3>
-          <table class="table table-striped">
-            <tr>
-              <th>[Down] or [J]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="次のタスク"
-              >Next Task</td>
-            </tr>
-            <tr>
-              <th>[Up] or [K]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="前のタスク"
-              >Previous Task</td>
-            </tr>
-            <tr>
-              <th>[Shift-Down] or [Shift-J]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="次のリスト"
-              >Next List</td>
-            </tr>
-            <tr>
-              <th>[Shift-Up] or [Shift-K]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="前のリスト"
-              >Previous List</td>
-            </tr>
-          </table>
-        </li>
-      </ul>
-      <ul class="thumbnails">
-        <li class="span4">
-          <div class="thumbnail">
-            <img src="/static/img/tasks-tour-operation.png" alt="">
-          </div>
-        </li>
-        <li class="span6">
-          <h3><span
-            data-setup="localize"
-            data-text-ja="タスク操作"
-          >Task Operation</span> ... [Enter] [Space] [P] [*] [E] [Shift-N]</h3>
-          <table class="table table-striped">
-            <tr>
-              <th>[Enter]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="完了"
-              >Closed.</td>
-            </tr>
-            <tr>
-              <th>[Space]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="進捗更新"
-              >Rotate Progress.</td>
-            </tr>
-            <tr>
-              <th>[P]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="保留 (on/off)"
-              >Pending. ( on/off )</td>
-            </tr>
-            <tr>
-              <th>[*]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="スター (on/off)"
-              >Starred. ( on/off )</td>
-            </tr>
-            <tr>
-              <th>[E]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="編集"
-              >Edit.</td>
-            </tr>
-            <tr>
-              <th>[Shift-N]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="新しいサブタスク"
-              >New Sub Task.</td>
-            </tr>
-          </table>
-        </li>
-      </ul>
-      <ul class="thumbnails">
-        <li class="span4">
-          <div class="thumbnail">
-            <img src="/static/img/tasks-concept-filter.png" alt="">
-          </div>
-        </li>
-        <li class="span6">
-          <h3><span
-            data-setup="localize"
-            data-text-ja="クイックフィルター"
-          >Quick Filter</span> ... [T] [V] [R] [S] [C]</h3>
-          <table class="table table-striped">
-            <tr>
-              <th>[T]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="今日迄"
-              >Todo</td>
-            </tr>
-            <tr>
-              <th>[V]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="確認待ち"
-              >Verify</td>
-            </tr>
-            <tr>
-              <th>[R]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="依頼中"
-              >Request</td>
-            </tr>
-            <tr>
-              <th>[S]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="スター"
-              >Star</td>
-            </tr>
-            <tr>
-              <th>[C]</th>
-              <td
-                data-setup="localize"
-                data-text-ja="完了済"
-              >Close</td>
-            </tr>
-          </table>
-        </li>
-      </ul>
-    </div>
-  </div>
-</div>
+    </li>
+    <li>
+      <div>
+        <span>It is not counted when I make pending.</span>
+        <a><img src="/static/img/button-cross.gif"></a>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h2>Pending Task.</h2>
+          <p>If a list and the task that are not active are pending, you can concentrate on your playing.</p>
+        </div>
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-flexible.png">
+        </div>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h2>Pending List.</h2>
+          <p>It is an idea to make a list to collect pending task.</p>
+        </div>
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-pending-list.png">
+        </div>
+      </div>
+    </li>
+    <li>
+      <div>
+        <span>Subscribe in RSS Reader.</span>
+        <a><img src="/static/img/button-cross.gif"></a>
+      </div>
+      <div class="row">
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-format.png">
+        </div>
+        <div class="span6">
+          <h2>Supports many public formats.</h2>
+          <p>RSS, iCal, HTML, JSON, JSONP.</p>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div>
+        <span>Check in Browser Extensions.</span>
+        <a><img src="/static/img/button-cross.gif"></a>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h2>Chrome Extensions.</h2>
+          <p>Even if you do not open the page, extensions displayed number of todo.</p>
+          <p><strong>Never forget anything again.</strong></p>
+          <p><a href="https://chrome.google.com/webstore/detail/dolhpjcchfcnkcanamhgcgbnmcogdank" target="_blank">7kai Tasks Checker (Chrome Web Store)</a></p>
+        </div>
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-ext.png">
+        </div>
+      </div>
+    </li>
+    <li>
+      <div>
+        <span>Once you learn a few shortcut keys and get comfortable.</span>
+        <a><img src="/static/img/button-cross.gif"></a>
+      </div>
+      <div class="row">
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-key.png">
+        </div>
+        <div class="span6">
+          <h2>Display the Shortcut Keys.</h2>
+          <p>click keyboard icon or press [?] or [/] key.</p>
+        </div>
+      </div>
+    </li>
+  </ul>
+</article>
 <footer class="footer">
   <div class="container">
     <div class="row">
@@ -498,13 +206,6 @@
         </ul>
       </div>
       <div class="span2">
-        <h4>Share</h4>
-        <ul>
-          <li><a href="https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Ftasks.7kai.org%2F&source=tweetbutton&text=7kai+Tasks&url=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Twitter</a></li>
-          <li><a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Facebook</a></li>
-        </ul>
-      </div>
-      <div class="span2">
         <h4>Support</h4>
         <ul>
           <li><a href="https://twitter.com/#!/su_aska" target="_blank">Author</a></li>
@@ -513,8 +214,106 @@
       </div>
     </div>
     <address>&copy; Shinichiro Aska</address>
+    <ul class="unstyled clearfix" style="margin: 0">
+      <li style="float: left">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://tasks.7kai.org/" data-via="su_aska">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </li>
+      <li style="float: left">
+        <div class="fb-like" data-href="https://tasks.7kai.org/" data-send="true" data-layout="button_count" data-width="120" data-show-faces="false"></div>
+      </li>
+      <li style="float: left">
+        <div class="g-plusone" data-size="medium" data-href="https://tasks.7kai.org/"></div>
+      </li>
+    </ul>
   </div>
 </footer>
+<div
+  class="modal"
+  data-setup="showable"
+  data-showable='{"id":"signin","show":{"effect":"fade"},"hide":{"effect":"fade"}}'
+>
+  <div class="modal-header">
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"signin"}'
+    >×</a>
+    <h3>Sign In</h3>
+  </div>
+  <div class="modal-body">
+    <div
+      style="text-align: center;"
+      data-setup="tab.content"
+      data-tab='{"id":"social","group":"signin"}'
+    >
+      <form method="post" action="/signin/twitter/signin">
+        <div><button class="btn btn-large btn-primary"style="width: 190px;">Connect with Twitter</button></div>
+      </form>
+      <form method="post" action="/signin/facebook/signin">
+        <div><button class="btn btn-large btn-primary">Connect with Facebook</button></div>
+      </form>
+      <div class="alert alert-info">
+        By signing up, you accept 7kai Tasks's <a href="/static/tos.html">terms</a> of use and <a href="/static/privacy.html">privacy policy</a>.
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal"
+  style="width: 940px; margin-left: -470px; max-height: 600px;"
+  data-setup="showable"
+  data-showable='{"id":"screenshot","show":{"effect":"fade"},"hide":{"effect":"fade"}}'
+>
+  <div class="modal-header">
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"screenshot"}'
+    >×</a>
+    <h3>Screenshots</h3>
+  </div>
+  <div class="modal-body">
+    <div id="myCarousel" class="carousel">
+      <!-- Carousel items -->
+      <div class="carousel-inner">
+        <div class="item active">
+          <img src="/static/img/tasks-home.png">
+        </div>
+        <div class="item">
+          <img src="/static/img/tasks-gantt.png">
+        </div>
+      </div>
+      <!-- Carousel nav -->
+      <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+      <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+    </div>
+  </div>
+</div>
 <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=272550092773416";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-11100870-4']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
 </body>
 </html>

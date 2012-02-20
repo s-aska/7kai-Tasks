@@ -1230,10 +1230,10 @@
         <div class="clearfix member twitter-member">
           <label for=""
             data-setup="localize"
-            data-text-tw-en="メンバー (Twitter)"
-            data-text-fb-en="メンバー (Facebook)"
-            data-text-tw-ja="Member (Twitter)"
-            data-text-fb-ja="Member (Facebook)"
+            data-text-tw-ja="メンバー (Twitter)"
+            data-text-fb-ja="メンバー (Facebook)"
+            data-text-tw-en="Member (Twitter)"
+            data-text-fb-en="Member (Facebook)"
             data-text-ja="メンバー (Twitter)"
           >Member (Twitter)</label>
           <div class="input owner">
