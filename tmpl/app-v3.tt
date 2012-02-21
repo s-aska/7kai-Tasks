@@ -1267,11 +1267,6 @@
           </li>
           <li
             data-setup="localize"
-            data-text-ja="登録されたリストは左カラム上部メニューからご選択下さい。">
-            list show to left menu.
-          </li>
-          <li
-            data-setup="localize"
             data-text-ja="フォームは自動で閉じません。">
             no auto close.
           </li>
