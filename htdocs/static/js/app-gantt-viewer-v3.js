@@ -169,6 +169,7 @@ app.setup.ganttchartListsV3 = function(ul){
         
         if (list.id in listli_map) {
             li.find('> ul').append(listli_map[list.id].find('> ul').children());
+            li.css('display', listli_map[list.id].css('display'));
             listli_map[list.id].after(li);
             listli_map[list.id].remove();
         } else {

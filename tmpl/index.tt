@@ -13,7 +13,7 @@
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
 <link rel="stylesheet" href="/static/css/signin.css" media="all">
-<script src="/static/js/jquery-1.6.4.min.js"></script>
+<script src="/static/js/jquery-1.7.1.min.js"></script>
 <script src="/static/js/jquery-ui-1.8.13.js"></script>
 <script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>

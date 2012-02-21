@@ -1511,6 +1511,7 @@ app.setup.tasksheet = function(ul){
         if (list.id in app.data.listli_map) {
             li.find('> ul.tasks').append(
                 app.data.listli_map[list.id].find('> ul.tasks').children());
+            li.css('display', app.data.listli_map[list.id].css('display'));
             app.data.listli_map[list.id].after(li);
             app.data.listli_map[list.id].remove();
         } else {

@@ -12,10 +12,10 @@ header h1 {
     padding-top: 162px;
     margin-bottom: 84px;
     font-size: 24px;
-    font-weight:200;
+    font-weight: 200;
     opacity: 0;
     text-shadow: 0px 1px 0px gray;
-    letter-spacing:0.05em;
+    letter-spacing: 0.05em;
 }
 header nav img {
    -moz-transition: all 0.5s;
@@ -39,34 +39,31 @@ article {
     margin-left: auto;
     margin-right: auto;
 }
-article ul {
+article > ul {
     border-top: 2px solid black;
 }
-article ul li {
+article > ul > li {
     background: url(/static/img/list-mark.png) no-repeat 6px 10px;
     font-size: 18px;
     border-bottom: 1px solid #C6C6C6;
     overflow: hidden;
 }
 
-article ul li:hover {
-	background-color:#f7f7f7;
+article > ul > li:hover {
+	background-color: #f7f7f7;
 }
 
-article ul li > div {
+article > ul > li > div {
     padding: 0 0 16px 50px;
 }
-article ul li > div:first-child {
+article > ul > li > div:first-child {
     padding-top: 16px;
 }
-article ul li > div:first-child a {
+article > ul > li > div:first-child a {
     float: right;
     padding-right: 10px;
 }
-article ul li div.row {
-    
-}
-article ul li div.row h2 {
+article > ul > li div.row h2 {
     font-size: 18px;
     margin-bottom: 10px;
 }
