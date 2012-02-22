@@ -13,7 +13,7 @@ header h1 {
     margin-bottom: 84px;
     font-size: 24px;
     font-weight: 200;
-    opacity: 0;
+    /*opacity: 0;*/
     text-shadow: 0px 1px 0px gray;
     letter-spacing: 0.05em;
 }
