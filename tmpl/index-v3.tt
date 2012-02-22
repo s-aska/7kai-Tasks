@@ -25,7 +25,7 @@
 <header>
   <p
     data-setup="localize"
-    data-text-ja="もう忘れないし忘れさせない///"
+    data-text-ja="もう忘れない、絶対に。"
   >Never forget anything again.</p>
   <h1>7kai Tasks</h1>
   <nav><a
