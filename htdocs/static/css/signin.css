@@ -44,11 +44,12 @@ article > ul {
 }
 article > ul > li {
     background: url(/static/img/list-mark.png) no-repeat 6px 10px;
-    font-size: 18px;
     border-bottom: 1px solid #C6C6C6;
     overflow: hidden;
 }
-
+article > ul > li > div > span {
+    font-size: 18px;
+}
 article > ul > li:hover {
 	background-color: #f7f7f7;
 }
