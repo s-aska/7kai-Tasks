@@ -23,7 +23,10 @@
 </head>
 <body>
 <header>
-  <p>Never forget anything again.</p>
+  <p
+    data-setup="localize"
+    data-text-ja="もう忘れないし忘れさせない///"
+  >Never forget anything again.</p>
   <h1>7kai Tasks</h1>
   <nav><a
     data-setup="show"
