@@ -69,7 +69,7 @@ __PACKAGE__->add_trigger(
         my ( $c ) = @_;
 
         return if $c->req->path eq '/';
-        return if $c->req->path eq '/v3';
+        return if $c->req->path eq '/v2';
         return if $c->req->path =~m|^/signin|;
         return if $c->req->path eq '/signout';
         return if $c->req->path eq '/token';

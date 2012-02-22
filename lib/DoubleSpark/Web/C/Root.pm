@@ -7,25 +7,20 @@ sub index {
     my ($class, $c) = @_;
 
     if (my $sign = $c->sign) {
-        if (my $v = $c->session->get('version')) {
-            return $c->redirect('/' . $v);
-        }
         $c->account->update({ authenticated_on => \'now()' });
-        $c->render('app.tt');
+        $c->render('app-v3.tt');
     } else {
-        $c->session->remove('version');
         $c->render('index-v3.tt');
     }
 }
 
-sub v3 {
+sub v2 {
     my ($class, $c) = @_;
 
     if (my $sign = $c->sign) {
         $c->account->update({ authenticated_on => \'now()' });
-        $c->render('app-v3.tt');
+        $c->render('app.tt');
     } else {
-        $c->session->set('version', 'v3');
         $c->render('index-v3.tt');
     }
 }

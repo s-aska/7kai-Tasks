@@ -45,6 +45,11 @@
         </li>
       </ul>
       <ul class="nav pull-right">
+        <li class="">
+          <a
+            href="/v2"
+          >Old UI</a>
+        </li>
         <li>
           <a
             href="/staff"
