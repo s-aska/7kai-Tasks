@@ -62,6 +62,7 @@ article > ul > li > div:first-child {
 }
 article > ul > li > div:first-child a {
     float: right;
+    padding-top: 4px;
     padding-right: 10px;
 }
 article > ul > li div.row h2 {

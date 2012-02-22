@@ -368,6 +368,15 @@
         </div>
       </div>
     </li>
+    <li>
+      <div>
+        <span
+          data-setup="localize"
+          data-text-ja="さあ、あたらしいタスク管理を体験しましょう。"
+        >Enjoy comfortable life! :)</span>
+        <a><img src="/static/img/button-cross.gif"></a>
+      </div>
+    </li>
   </ul>
 </article>
 <footer class="footer">
