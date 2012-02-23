@@ -1456,7 +1456,7 @@
             <input class="span4" type="text" name="name" value="" required maxlength="50" data-autofocus="true">
           </div>
         </div>
-        <div class="clearfix">
+        <div class="clearfix control-group">
           <label for=""
             data-setup="localize"
             data-text-ja="期日"
@@ -1466,7 +1466,8 @@
               type="date"
               name="due"
               value=""
-              placeholder="&uarr;&darr;"
+              placeholder="YYYY-MM-DD"
+              pattern="^\d{4}-\d{1,2}-\d{1,2}$"
             >
           </div>
           <div class="due-control left">

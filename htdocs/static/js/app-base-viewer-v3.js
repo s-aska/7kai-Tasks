@@ -2214,20 +2214,43 @@ app.setup.registerTaskWindow = function(form){
     var list_id_input = form.find('input[name=list_id]');
     var parent_id_input = form.find('input[name=parent_id]');
 
+    var due_wrap = due_input.parent().parent();
+    var due_check = function(){
+        var val = due_input.val();
+        if (!val || /^\d{4}-\d{1,2}-\d{1,2}$/.test(val)) {
+            due_wrap.removeClass('error');
+        } else {
+            due_wrap.addClass('error');
+        }
+    };
+    due_input
+        .change(due_check)
+        .keydown(due_check)
+        .keyup(due_check)
+        .bind('paste', due_check);
+
     form.find('a.due-plus').click(function(e){
         e.preventDefault();
         var due = due_input.val();
-        var date = due ? app.date.parse(due) : (new Date());
+        var date = due ? app.date.parse(String(due)) : (new Date());
+        if (!date || isNaN(date)) {
+            date = new Date();
+        }
         date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
         due_input.val(app.date.ymd(date));
+        due_wrap.removeClass('error');
     });
 
     form.find('a.due-minus').click(function(e){
         e.preventDefault();
         var due = due_input.val();
-        var date = due ? app.date.parse(due) : (new Date());
+        var date = due ? app.date.parse(String(due)) : (new Date());
+        if (!date || isNaN(date)) {
+            date = new Date();
+        }
         date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
         due_input.val(app.date.ymd(date));
+        due_wrap.removeClass('error');
     });
 
     var setup = function(list, parentTask, assignMember){

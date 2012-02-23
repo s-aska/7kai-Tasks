@@ -113,7 +113,9 @@ app.func.debounce = function(f, threshold){
 }
 app.date.parse = function(str){
     var degits = str.match(/[0-9]+/g);
-    if (degits[0].length === 4) {
+    if (!degits) {
+        return;
+    } else if (degits[0].length === 4) {
         return new Date(degits[0], degits[1] - 1, degits[2]);
     } else {
         return new Date(degits[2], degits[0] - 1, degits[1]);
