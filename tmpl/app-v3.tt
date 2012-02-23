@@ -1459,16 +1459,19 @@
         <div class="clearfix control-group">
           <label for=""
             data-setup="localize"
-            data-text-ja="期日"
-          >Due</label>
+            data-text-ja="期日 (YYYY-MM-DD)"
+          >Due (YYYY-MM-DD)</label>
           <div class="input left">
             <input
               type="date"
               name="due"
               value=""
-              placeholder="YYYY-MM-DD"
               pattern="^\d{4}-\d{1,2}-\d{1,2}$"
+              style="width: 80px"
             >
+          </div>
+          <div class="week left" style="color: gray; padding: 6px 0 0 6px; width: 24px; text-align: center;">
+            
           </div>
           <div class="due-control left">
             <a class="btn x-small due-minus"><i class="icon-minus"></i></a>

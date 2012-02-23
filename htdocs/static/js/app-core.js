@@ -18,6 +18,12 @@ var app = ns.app = {
     MONTH_NAMES_SHORT: [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    WEEK_NAMES: [
+        'Sun','Mon','Tue','Wed','Thu','Fri','Sat'
+    ],
+    WEEK_NAMES_JA: [
+        '日','月','火','水','木','金','土'
+    ],
     
     // Environment
     env: {

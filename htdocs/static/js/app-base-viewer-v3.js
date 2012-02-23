@@ -2214,13 +2214,25 @@ app.setup.registerTaskWindow = function(form){
     var list_id_input = form.find('input[name=list_id]');
     var parent_id_input = form.find('input[name=parent_id]');
 
+    var due_week = form.find('.week');
     var due_wrap = due_input.parent().parent();
     var due_check = function(){
         var val = due_input.val();
         if (!val || /^\d{4}-\d{1,2}-\d{1,2}$/.test(val)) {
             due_wrap.removeClass('error');
+            if (val) {
+                var date = app.date.parse(String(val));
+                due_week.text(
+                    app.env.lang === 'ja'
+                        ? app.WEEK_NAMES_JA[date.getDay()]
+                        : app.WEEK_NAMES[date.getDay()]
+                );
+            } else {
+                due_week.text('');
+            }
         } else {
             due_wrap.addClass('error');
+            due_week.text('');
         }
     };
     due_input
@@ -2238,7 +2250,7 @@ app.setup.registerTaskWindow = function(form){
         }
         date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
         due_input.val(app.date.ymd(date));
-        due_wrap.removeClass('error');
+        due_check();
     });
 
     form.find('a.due-minus').click(function(e){
@@ -2251,6 +2263,7 @@ app.setup.registerTaskWindow = function(form){
         date.setTime(date.getTime() - (24 * 60 * 60 * 1000));
         due_input.val(app.date.ymd(date));
         due_wrap.removeClass('error');
+        due_check();
     });
 
     var setup = function(list, parentTask, assignMember){
@@ -2341,6 +2354,7 @@ app.setup.registerTaskWindow = function(form){
         name_input.val(task.name);
         if (task.due) {
             due_input.val(app.date.ymd(task.due_date));
+            due_check();
         }
         requester_select.val(task.requester);
         task_id_input.val(task.id);
