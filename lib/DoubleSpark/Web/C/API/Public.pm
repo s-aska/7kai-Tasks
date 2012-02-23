@@ -130,7 +130,7 @@ sub rss {
         my $title = sprintf '%s %s "%s"'
             , ($user->{name} // '')
             , decode_utf8($messages->{ $action->{action} . '-' . $lang })
-            , ($action->{task}->{name} // '');
+            , ($action->{task}->{name} // $action->{task}->{id});
 
         decode_entities($title);
         $title =~ s{&}{&amp;}gso;
