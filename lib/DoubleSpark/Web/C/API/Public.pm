@@ -128,9 +128,9 @@ sub rss {
 
         my $user = $usermap->{ $action->{code} };
         my $title = sprintf '%s %s "%s"'
-            , $user->{name}
+            , ($user->{name} // '')
             , decode_utf8($messages->{ $action->{action} . '-' . $lang })
-            , $action->{task}->{name};
+            , ($action->{task}->{name} // '');
 
         decode_entities($title);
         $title =~ s{&}{&amp;}gso;
