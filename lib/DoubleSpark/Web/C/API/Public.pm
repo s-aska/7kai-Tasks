@@ -120,6 +120,8 @@ sub rss {
             time   => $task->{created_on}
         };
 
+        $_->{task} = $task for @{ $task->{actions} };
+
         push @actions, @{ $task->{actions} };
     }
 
