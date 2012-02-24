@@ -2216,12 +2216,29 @@ app.setup.registerTaskWindow = function(form){
 
     var due_week = form.find('.week');
     var due_wrap = due_input.parent().parent();
-    var due_check = function(){
+    var due_check = function(e){
         var val = due_input.val();
-        if (!val || /^\d{4}-\d{1,2}-\d{1,2}$/.test(val)) {
+        var date;
+        if (val === 'today' || val === '今日') {
+            date = new Date();
+        } else if (val === 'tomorrow' || val === '明日') {
+            date = new Date();
+            date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
+        } else if (val === 'next week' || val === '来週') {
+            date = new Date();
+            date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000));
+        }
+        if (e)
+            console.log(e.type);
+        if (date && e && e.type === 'change') {
+            due_input.val(app.date.ymd(date));
+        }
+        if (!val || /^\d{4}-\d{1,2}-\d{1,2}$/.test(val) || date) {
             due_wrap.removeClass('error');
             if (val) {
-                var date = app.date.parse(String(val));
+                if (!date) {
+                    date = app.date.parse(String(val));
+                }
                 due_week.text(
                     app.env.lang === 'ja'
                         ? app.WEEK_NAMES_JA[date.getDay()]
@@ -2270,7 +2287,8 @@ app.setup.registerTaskWindow = function(form){
         form.find('.ui-listname').text(list.name);
         assign_list.empty();
         requester_select.empty();
-        
+        due_week.text('');
+
         var registrant = app.util.getRegistrant(list);
         if (list.members.length) {
             form.find('.team').show();
