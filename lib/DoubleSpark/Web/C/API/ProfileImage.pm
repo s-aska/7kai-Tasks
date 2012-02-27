@@ -45,4 +45,35 @@ sub twitter {
     );
 }
 
+sub gravatar {
+    my ($class, $c) = @_;
+
+    my $filename = md5_hex($c->{args}->{code});
+    my $path = File::Spec->catfile('/tmp/', 'gravatar-' . $filename);
+    if (-f $path) {
+        warnf('found %s', $filename);
+        return $c->create_response(
+            200,
+            [
+                'Content-Type' => 'image/jpeg',
+                'Content-Length' => (-s $path),
+            ],
+            IO::File->new($path)
+        );
+    }
+    my $url = 'https://www.gravatar.com/avatar/' . $filename;
+    my ($minor_version, $code, $msg, $headers, $body) = $furl->get($url);
+    my $fh = IO::File->new($path, '>');
+    print $fh $body;
+    close $fh;
+    return $c->create_response(
+        200,
+        [
+            'Content-Type' => 'image/jpeg',
+            'Content-Length' => (-s $path),
+        ],
+        IO::File->new($path)
+    );
+}
+
 1;

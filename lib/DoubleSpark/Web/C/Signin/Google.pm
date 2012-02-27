@@ -71,7 +71,7 @@ sub callback {
                 my $vident = shift;
                 my $code = $c->req->param('openid.ext1.value.email');
                 my ($screen_name, $domain) = split '@', $code;
-                my $icon = 'http://www.gravatar.com/avatar/' . md5_hex($code);
+                my $icon = '/api/1/profile/gravatar/' . $code;
                 my $google_account = $c->db->single('google_account', {
                     code => $code
                 });
@@ -81,7 +81,10 @@ sub callback {
 
                     # 引越し
                     if ($account && $account->account_id != $google_account->account_id) {
-                        $google_account->update({ account_id => $account->account_id });
+                        $google_account->update({
+                            account_id => $account->account_id,
+                            authenticated_on => \'now()'
+                        });
                         infof('move google_account %s aid:%s to aid:%s',
                             $code,
                             $google_account->account_id,
@@ -97,6 +100,9 @@ sub callback {
                     
                     # 通常サインイン
                     else {
+                        $google_account->update({
+                            authenticated_on => \'now()'
+                        });
                         infof('signin from google %s', $code);
                         $c->session->set('sign', {
                                 account_id => $google_account->account_id,

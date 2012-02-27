@@ -63,6 +63,7 @@ post '/api/1/question/unstar' => 'API::Question#unstar';
 post '/api/1/twitter/update_friends' => 'API::Twitter#update_friends';
 
 get '/api/1/profile_image/:screen_name' => 'API::ProfileImage#twitter';
+get '/api/1/profile/gravatar/:code' => 'API::ProfileImage#gravatar';
 
 get '/public/:public_code/html' => 'API::Public#html';
 get '/public/:public_code/ical' => 'API::Public#ical';

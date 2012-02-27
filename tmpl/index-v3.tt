@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">
 <head>
+<title>7kai Tasks</title>
 <meta charset="utf-8">
 <meta name="keywords" content="Task,Management,Twitter,Facebook,タスク管理,タスク共有">
+<meta name="description" content="The web-based task management software.">
 <meta property="fb:admins" content="272550092773416">
 <meta property="og:title" content="7kai Tasks">
 <meta property="og:type" content="website">
@@ -10,7 +12,6 @@
 <meta property="og:image" content="https://tasks.7kai.org/static/img/logo-128.png">
 <meta property="og:site_name" content="7kai Tasks">
 <meta property="og:description" content="The web-based task management software.">
-<title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap.css">
 <link rel="stylesheet" href="/static/css/signin.css" media="all">
 <script src="/static/js/jquery-1.7.1.min.js"></script>
@@ -23,6 +24,7 @@
 <script src="/static/js/app-base-signin.js"></script>
 </head>
 <body>
+<aside><a href="?lang=en">English</a> / <a href="?lang=ja">Japanese</a></aside>
 <header>
   <p
     data-setup="localize"
@@ -449,24 +451,6 @@
     </div>
   </div>
 </div>
-<!-- <div
-  class="modal"
-  style="width: 940px; margin-left: -470px; max-height: 600px;"
-  data-setup="showable"
-  data-showable='{"id":"screenshot","show":{"effect":"fade"},"hide":{"effect":"fade"}}'
->
-  <div class="modal-header">
-    <a
-      class="close"
-      data-setup="hide"
-      data-hide='{"id":"screenshot"}'
-    >×</a>
-    <h3>Screenshots</h3>
-  </div>
-  <div class="modal-body">
-    
-  </div>
-</div> -->
 <div id="fb-root"></div>
 <script>
 !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
