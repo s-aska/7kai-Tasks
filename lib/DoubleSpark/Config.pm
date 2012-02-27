@@ -43,7 +43,7 @@ sub new {
             callback_url => "$args->{base_url}/signin/dropbox/callback"
         },
         OpenID => {
-            return_to => "$args->{base_url}/signin/openid/callback",
+            return_to => "$args->{base_url}/signin/google/callback",
             realm => "$args->{base_url}/"
         },
         Skeleton => {

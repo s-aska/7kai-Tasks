@@ -17,6 +17,9 @@ get '/signout' => 'Root#signout';
 post '/signin/twitter/signin' => 'Signin::Twitter#signin';
 get '/signin/twitter/callback' => 'Signin::Twitter#callback';
 
+post '/signin/google/signin' => 'Signin::Google#signin';
+get '/signin/google/callback' => 'Signin::Google#callback';
+
 post '/signin/facebook/signin' => 'Signin::Facebook#signin';
 get '/signin/facebook/callback' => 'Signin::Facebook#callback';
 

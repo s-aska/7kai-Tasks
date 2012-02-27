@@ -37,11 +37,14 @@ sub me {
     my $email_accounts = $c->db->search('email_account', {
         account_id => $account->account_id
     });
+    my $google_accounts = $c->db->search('google_account', {
+        account_id => $account->account_id
+    });
     my @sub_accounts = map {
         $_ = $_->get_columns;
         $_->{data} = decode_json($_->{data}) if $_->{data};
         $_;
-    } ($tw_accounts->all, $fb_accounts->all, $email_accounts->all);
+    } ($tw_accounts->all, $fb_accounts->all, $email_accounts->all, $google_accounts->all);
     my @codes = map { $_->{code} } @sub_accounts;
 
     unless (@codes) {

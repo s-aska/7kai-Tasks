@@ -19,10 +19,14 @@ sub sub_accounts {
         my $email_accounts = $row->handle->search('email_account', {
             account_id => $row->account_id
         });
+        my $google_accounts = $row->handle->search('google_account', {
+            account_id => $row->account_id
+        });
         $row->{__sub_accounts} = [
             $tw_accounts->all,
             $fb_accounts->all,
-            $email_accounts->all
+            $email_accounts->all,
+            $google_accounts->all
         ];
     }
 

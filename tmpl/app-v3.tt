@@ -1954,6 +1954,10 @@
       data-text-fb_account_add-en="Success Add Facebook Account."
       data-text-fb_account_move-ja="Facebook Account を割り当て直しました。"
       data-text-fb_account_move-en="Success Move Facebook Account."
+      data-text-google_account_add-ja="Google Account を追加しました。"
+      data-text-google_account_add-en="Success Add Google Account."
+      data-text-google_account_move-ja="Google Account を割り当て直しました。"
+      data-text-google_account_move-en="Success Move Google Account."
     ></p>
   </div>
   <div class="modal-footer">

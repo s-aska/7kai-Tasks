@@ -52,6 +52,18 @@ CREATE TABLE email_account (
     , FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE
 ) ENGINE=InnoDB charset=utf8;
 
+CREATE TABLE google_account (
+    google_account_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
+    , account_id BIGINT UNSIGNED NOT NULL
+    , code VARCHAR(256) character set ascii NOT NULL UNIQUE COMMENT 'email address'
+    , name VARCHAR(64)
+    , data MEDIUMBLOB NOT NULL
+    , authenticated_on DATETIME NOT NULL
+    , created_on DATETIME NOT NULL
+    , updated_on DATETIME NOT NULL
+    , FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE
+) ENGINE=InnoDB charset=utf8;
+
 CREATE TABLE list (
     list_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
     , code VARCHAR(256) character set ascii NOT NULL COMMENT '*_account.code'

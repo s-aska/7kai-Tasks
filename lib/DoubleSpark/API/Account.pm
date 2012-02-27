@@ -90,7 +90,7 @@ sub delete {
     
     my $sub_account = $code=~/^tw-\d+$/ ? $c->db->single('tw_account', { code => $code })
                     : $code=~/^fb-\d+$/ ? $c->db->single('fb_account', { code => $code })
-                    : $c->db->single('email_account', { code => $code });
+                    : $c->db->single('google_account', { code => $code });
 
     return unless $sub_account;
     
