@@ -75,6 +75,11 @@ __PACKAGE__->add_trigger(
                     my ($self, $tagname, $attr, $text) = @_;
                     if (exists $attr->{'data-text-ja'} && $attr->{'data-setup'}=~/localize/) {
                         my $text = delete $attr->{'data-text-ja'};
+                        $attr->{'data-setup'} =
+                            join ',',
+                            grep { $_ ne 'localize' }
+                            split ',', $attr->{'data-setup'};
+                        delete $attr->{'data-setup'} unless $attr->{'data-setup'};
                         $output.= '<' . $tagname;
                         for my $key (keys %$attr) {
                             my $val = $attr->{ $key };
