@@ -441,7 +441,7 @@
         <div><button class="btn btn-large btn-primary">Connect with Facebook</button></div>
       </form>
       <form method="post" action="/signin/google/signin">
-        <div><button class="btn btn-large btn-primary">Connect with Google</button></div>
+        <div><button class="btn btn-large btn-primary"style="width: 190px;">Connect with Google</button></div>
       </form>
       <div class="alert alert-info">
         By signing up, you accept 7kai Tasks's <a href="/static/tos.html">terms</a> of use and <a href="/static/privacy.html">privacy policy</a>.
