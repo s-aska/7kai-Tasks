@@ -90,32 +90,12 @@ app.setup.ganttchartListsV3 = function(ul){
 
     var current_task;
     var current_filter = {};
-    var active_tags = {};
 
-    app.addListener('toggleTag', function(tag, active){
-        if (!ul.is(':visible')) {
-            return;
-        }
-        if (active) {
-            active_tags[tag] = true;
-        } else if (tag in active_tags) {
-            delete active_tags[tag];
-        }
+    app.addListener('toggleTag', function(tag){
         ul.children().each(function(i, element){
             var li = $(element);
             var id = li.data('id');
-            var list = app.data.list_map[id];
-            var method = 'show';
-            for (var tag in active_tags) {
-                if (tag in app.data.state.tags &&
-                    list.id in app.data.state.tags[tag]) {
-                    method = 'show';
-                    break;
-                } else {
-                    method = 'hide';
-                }
-            }
-            li[method]();
+            li.toggle(Boolean(id in app.data.state.tags[tag]));
         });
     });
 
@@ -137,7 +117,6 @@ app.setup.ganttchartListsV3 = function(ul){
 
     app.addListener('resetTag', function(){
         ul.children().show();
-        active_tags = {};
     });
 
     app.addListener('registerList', function(list){

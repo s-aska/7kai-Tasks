@@ -1025,11 +1025,20 @@ app.setup.tags = function(ul){
         var tag = ele.data('tag');
         if (tag) {
             ele.click(function(e){
-                ele[ ele.hasClass('active') ? 'removeClass' : 'addClass' ]('active');
-                app.fireEvent('toggleTag', tag, ele.hasClass('active'));
+                if (ele.hasClass('active')) {
+                    app.fireEvent('resetTag');
+                } else {
+                    app.fireEvent('toggleTag', tag);
+                }
                 return false;
             });
         }
+    });
+    app.addListener('toggleTag', function(tag){
+        ul.find('a[data-tag]').each(function(i, element){
+            var ele = $(element);
+            ele.toggleClass('active', tag === ele.data('tag'));
+        });
     });
     app.addListener('resetTag', function(){
         ul.find('a[data-tag]').removeClass('active');
@@ -1314,7 +1323,6 @@ app.setup.tasksheet = function(ul){
     var list_template = ul.html();
     var task_template = ul.find('> li > ul').html();
     ul.empty();
-    var active_tags = {};
     var current_filter = {};
     var current_task;
 
@@ -1338,36 +1346,16 @@ app.setup.tasksheet = function(ul){
         });
     };
 
-    app.addListener('toggleTag', function(tag, active){
-        if (!ul.is(':visible')) {
-            return;
-        }
-        if (active) {
-            active_tags[tag] = true;
-        } else if (tag in active_tags) {
-            delete active_tags[tag];
-        }
+    app.addListener('toggleTag', function(tag){
         ul.children().each(function(i, element){
             var li = $(element);
             var id = li.data('id');
-            var list = app.data.list_map[id];
-            var method = 'show';
-            for (var tag in active_tags) {
-                if (tag in app.data.state.tags &&
-                    list.id in app.data.state.tags[tag]) {
-                    method = 'show';
-                    break;
-                } else {
-                    method = 'hide';
-                }
-            }
-            li[method]();
+            li.toggle(Boolean(id in app.data.state.tags[tag]));
         });
     });
 
     app.addListener('resetTag', function(){
         ul.children().show();
-        active_tags = {};
     });
 
     app.addListener('registerList', function(list){
