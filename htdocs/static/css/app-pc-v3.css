@@ -74,7 +74,9 @@ body > .navbar ul li a.profile-name {
     position: relative;
     padding-left: 42px;
 }
-
+body > .navbar .container  {
+    width: 1060px;
+}
 /********** row, columns **********/
 body > .row {
     width: 1060px;
@@ -144,6 +146,7 @@ ul.lists > li > header > div {
 ul.lists > li > header div.name {
     padding-top: 3px;
     color: #222;
+    font-weight: bold;
 }
 ul.lists > li > header ul.members {
     float: right;
@@ -181,10 +184,10 @@ ul.tasks > li.child {
     padding-left: 20px;
 }
 ul.tasks > li:hover {
-    background-color: rgba(252, 252, 215, 0.6);
+    background-color: #fdfdfd;
 }
 ul.tasks > li.selected {
-    background-color: rgba(252, 252, 215, 0.8);
+    background-color: #ebebeb;
 }
 ul.tasks > li.salvage {
     background-color: #ffe0e0;

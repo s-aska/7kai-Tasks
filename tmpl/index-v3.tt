@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="/static/css/bootstrap.css">
 <link rel="stylesheet" href="/static/css/signin.css" media="all">
 <script src="/static/js/jquery-1.7.1.min.js"></script>
+<script src="/static/js/jquery.easing.1.3.js"></script>
 <script src="/static/js/jquery-ui-1.8.13.js"></script>
 <script src="/static/js/bootstrap-transition.js"></script>
 <script src="/static/js/bootstrap-carousel.js"></script>
@@ -33,18 +34,17 @@
     data-show='{"id":"signin"}'
   ><img src="/static/img/button-start.gif"></a></nav>
   <div class="container">
-    <div
-      class="row"
-      style="cursor: pointer"
-      data-setup="show"
-      data-show='{"id":"screenshot"}'
-    >
-      <div class="span4 offset2">
-        <div class="thumbnail"><img src="/static/img/tasks-home.png"></div>
+    <div id="myCarousel" class="carousel">
+      <div class="carousel-inner">
+        <div class="item active">
+          <img src="/static/img/tasks-home.png">
+        </div>
+        <div class="item">
+          <img src="/static/img/tasks-gantt.png">
+        </div>
       </div>
-      <div class="span4">
-        <div class="thumbnail"><img src="/static/img/tasks-gantt.png"></div>
-      </div>
+      <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+      <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
     </div>
   </div>
 </header>
@@ -446,7 +446,7 @@
     </div>
   </div>
 </div>
-<div
+<!-- <div
   class="modal"
   style="width: 940px; margin-left: -470px; max-height: 600px;"
   data-setup="showable"
@@ -461,20 +461,9 @@
     <h3>Screenshots</h3>
   </div>
   <div class="modal-body">
-    <div id="myCarousel" class="carousel">
-      <div class="carousel-inner">
-        <div class="item active">
-          <img src="/static/img/tasks-home.png">
-        </div>
-        <div class="item">
-          <img src="/static/img/tasks-gantt.png">
-        </div>
-      </div>
-      <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-      <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
-    </div>
+    
   </div>
-</div>
+</div> -->
 <div id="fb-root"></div>
 <script>
 !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");

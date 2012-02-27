@@ -9,13 +9,13 @@ app.addListener('setup', function(){
     } else {
         localStorage.removeItem('hash');
     }
-    setTimeout(function(){
-        $('header .container').animate({opacity: 1}, 3000);
-    }, 2000);
-    $('article ul li a img').click(function(){
-        var img = $(this);
-        var li = img.parents('li:first');
-        li.slideUp('slow');
+    // setTimeout(function(){
+    //     $('header .container').animate({opacity: 1}, 3000);
+    // }, 2000);
+    $('article ul li').click(function(){
+        $(this).slideUp({
+        	duration: 650, 
+        	easing: 'easeOutQuart'});
     });
 });
 
