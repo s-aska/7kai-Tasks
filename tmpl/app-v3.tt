@@ -409,6 +409,80 @@
                 </a>
               </li>
               <li
+                class="ui-submenu dropdown btn-group"
+                style="display: none"
+                data-setup="tab.content"
+                data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
+              >
+                <a
+                  class="btn dropdown-toggle x-small"
+                  data-setup="tooltip"
+                  data-text-ja="リストメニュー"
+                  data-text-en="List Menu"
+                ><i class="icon-list" style="margin-right: 5px;"></i><span class="caret"></span></a>
+                <ul class="ui-listmenu dropdown-menu" style="left: auto; right: 0;">
+                  <li>
+                    <a>
+                      <i class="icon-chevron-up"></i>
+                      <span>Up</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a>
+                      <i class="icon-chevron-down"></i>
+                      <span>Down</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a>
+                      <i class="icon-signal icon-gray"></i>
+                      <span
+                        data-setup="localize"
+                        data-text-ja="公開"
+                      >Public</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a>
+                      <i class="icon-pause icon-gray"></i>
+                      <span
+                        data-setup="localize"
+                        data-text-ja="保留"
+                      >Pending</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a>
+                      <i class="icon-edit"></i>
+                      <span
+                        data-setup="localize"
+                        data-text-ja="リスト編集"
+                      >Edit List</span>
+                    </a>
+                  </li>
+                  <!-- <li class="divider"></li>
+                  <li
+                    class="clearfix"
+                    data-setup="tooltip"
+                  >
+                    <a data-tag="primary">
+                      <i class="icon-tag icon-white"></i>
+                      <span>Red Tag</span>
+                    </a>
+                  </li> -->
+                  <li class="divider"></li>
+                  <li>
+                    <a>
+                      <i class="icon-remove-sign"></i>
+                      <span
+                        data-setup="localize"
+                        data-text-ja="リスト削除"
+                      >Delete List</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li
                 class="ui-clear"
                 style="display: none"
                 data-setup="tab.content"
