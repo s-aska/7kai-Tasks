@@ -1478,11 +1478,13 @@ app.setup.tasksheet = function(ul){
                 app.fireEvent('deleteListBegin', list);
             });
         }
-        li.find('.ui-submenu > a').click(function(){
-            $(this).parent().toggleClass('open');
+        var dropdown = li.find('.ui-submenu');
+        dropdown.find('> a').click(function(e){
+            dropdown.toggleClass('open');
+            return false;
         });
-        li.find('.ui-submenu > ul a').click(function(){
-            li.find('.ui-submenu').removeClass('open');
+        $('html').on('click', function(){
+            dropdown.removeClass('open');
         });
 
         if (list.members.length) {
