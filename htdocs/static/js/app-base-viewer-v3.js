@@ -2172,8 +2172,12 @@ app.setup.due = function(ele, task){
                 label = label + '/' + task.due_date.getFullYear();
             }
         }
+        // if (app.env.lang === 'ja') {
+        //     ele.text(label + ' (' + week + ')');
+        // } else {
+        // }
         ele.text(label);
-        ele.append($('<span/>').text('(' + week + ')'))
+        ele.append($('<span/>').text('(' + week + ')'));
         if (now.getTime() > task.due_date.getTime()) {
             ele.addClass('over');
         }
