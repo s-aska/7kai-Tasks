@@ -218,7 +218,10 @@ ul.tasks > li.pending div.name {
 }
 ul.tasks > li div.due {
     margin-right: 4px;
-    font-size: 11px;
+}
+ul.tasks > li div.due span {
+    padding-left: 4px;
+    font-size: 10px;
     font-family: monospace;
 }
 ul.tasks > li div.due,

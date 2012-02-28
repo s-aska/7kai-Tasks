@@ -2171,10 +2171,9 @@ app.setup.due = function(ele, task){
             } else {
                 label = label + '/' + task.due_date.getFullYear();
             }
-        } else {
-            label = label + ' (' + week + ')';
         }
         ele.text(label);
+        ele.append($('<span/>').text('(' + week + ')'))
         if (now.getTime() > task.due_date.getTime()) {
             ele.addClass('over');
         }
