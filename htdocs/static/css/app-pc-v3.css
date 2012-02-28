@@ -223,6 +223,7 @@ ul.tasks > li div.due span {
     padding-left: 4px;
     font-size: 10px;
     font-family: monospace;
+    line-height: 12px;
 }
 ul.tasks > li div.due,
 ul.tasks > li div.delete,
