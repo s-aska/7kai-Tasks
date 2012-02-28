@@ -69,6 +69,9 @@ sub me {
     my @lists;
     if (my $if_modified_since = $c->req->param('if_modified_since')) {
         my $if_modified_lists = $c->req->param('if_modified_lists') || '';
+        unless (%ids) {
+            return $c->res_404();
+        }
         my $count = $c->db->count('list', '*', {
             list_id => [keys %ids],
             actioned_on => { '>' => $if_modified_since } });
