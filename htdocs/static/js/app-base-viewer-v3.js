@@ -2160,6 +2160,9 @@ app.setup.pending = function(ele, task){
 app.setup.due = function(ele, task){
     if (!task) return;
     if (task.due) {
+        var week = app.env.lang === 'ja'
+            ? app.WEEK_NAMES_JA[task.due_date.getDay()]
+            : app.WEEK_NAMES[task.due_date.getDay()];
         var label = (task.due_date.getMonth() + 1) + '/' + task.due_date.getDate();
         var now = new Date();
         if (now.getFullYear() !== task.due_date.getFullYear()) {
@@ -2168,6 +2171,8 @@ app.setup.due = function(ele, task){
             } else {
                 label = label + '/' + task.due_date.getFullYear();
             }
+        } else {
+            label = label + ' (' + week + ')';
         }
         ele.text(label);
         if (now.getTime() > task.due_date.getTime()) {
@@ -2224,8 +2229,6 @@ app.setup.registerTaskWindow = function(form){
             date = new Date();
             date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000));
         }
-        if (e)
-            console.log(e.type);
         if (date && e && e.type === 'change') {
             due_input.val(app.date.ymd(date));
         }

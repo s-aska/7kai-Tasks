@@ -218,6 +218,8 @@ ul.tasks > li.pending div.name {
 }
 ul.tasks > li div.due {
     margin-right: 4px;
+    font-size: 11px;
+    font-family: monospace;
 }
 ul.tasks > li div.due,
 ul.tasks > li div.delete,
