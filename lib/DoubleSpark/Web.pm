@@ -63,7 +63,7 @@ __PACKAGE__->add_trigger(
         $res->header( 'X-Frame-Options' => 'SAMEORIGIN' );
         
         my $lang = $c->req->param('lang') || $c->req->header('Accept-Language') || 'en';
-        if ( $c->req->path eq '/' && $lang=~/^ja/i ) {
+        if ( $c->req->path eq '/' && (!$c->account) && $lang=~/^ja/i ) {
             use HTML::Parser;
             use Encode qw(decode_utf8 encode_utf8); 
             my $input = decode_utf8($res->body);
