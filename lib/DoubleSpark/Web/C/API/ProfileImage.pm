@@ -51,7 +51,6 @@ sub gravatar {
     my $filename = md5_hex($c->{args}->{code});
     my $path = File::Spec->catfile('/tmp/', 'gravatar-' . $filename);
     if (-f $path) {
-        warnf('found %s', $filename);
         return $c->create_response(
             200,
             [
