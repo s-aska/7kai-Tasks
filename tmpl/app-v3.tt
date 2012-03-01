@@ -335,7 +335,7 @@
   </div>
   <div
     class="columns"
-    style="width: 640px; margin-left: 0; background-color: transparent; padding-top: 5px;"
+    style="width: 640px; margin-left: 0; background-color: transparent;"
     data-setup="stretch"
   >
     <div

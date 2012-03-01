@@ -255,7 +255,7 @@ ul.tasks > li div.recent-comment .message {
     letter-spacing: 1px;
 }
 .ui-comments {
-    margin-top: 5px;
+    /*margin-top: 5px;*/
 }
 body > .row > .columns.ui-comments {
     background-color: transparent;
