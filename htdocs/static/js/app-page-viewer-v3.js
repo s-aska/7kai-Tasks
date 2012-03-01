@@ -431,6 +431,7 @@ app.setup.registerListWindow = function(form){
     });
 
     app.addListener('editList', function(list){
+        owner_select.val(list.owner);
         owner_field.hide();
         app.dom.reset(form);
         app.dom.show(form);

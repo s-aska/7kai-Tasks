@@ -410,7 +410,6 @@
               </li>
               <li
                 class="ui-submenu dropdown btn-group"
-                style="display: none"
                 data-setup="tab.content"
                 data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
               >

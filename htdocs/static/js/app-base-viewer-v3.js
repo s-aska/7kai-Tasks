@@ -1790,17 +1790,15 @@ app.setup.tasksheet = function(ul){
         }
         
         if (condition.closed) {
-            // app.fireEvent('selectTab', 'homemenu', 'closed');
-            ul.find('> li > header li.ui-normal, > li > header ul.members')
+            ul.find('> li > header li.ui-normal, > li > header ul.members, > li > header li.ui-submenu')
                 .fadeOut('fast', function(){
                     ul.find('> li > header li.ui-clear')
                         .fadeIn('fast');
                 });
         } else {
-            // app.fireEvent('selectTab', 'homemenu', 'task');
             ul.find('> li > header li.ui-clear')
                 .fadeOut('fast', function(){
-                    ul.find('> li > header li.ui-normal, > li > header ul.members')
+                    ul.find('> li > header li.ui-normal, > li > header ul.members, > li > header li.ui-submenu')
                         .fadeIn('fast');
                 });
         }
@@ -2026,12 +2024,12 @@ app.setup.task = function(ele, task){
         if (task.id === app.data.dragtask.parent_id) {
             return true;
         }
-        ele.addClass('active');
+        // ele.addClass('active');
         e.preventDefault();
         return false;
     });
     ele.get(0).addEventListener('dragleave', function(e){
-        ele.removeClass('active');
+        // ele.removeClass('active');
     });
     ele.get(0).addEventListener('drop', function(e){
         e.preventDefault();
