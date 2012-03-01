@@ -686,22 +686,23 @@
             >Comment</span>
           </button>
           <button
+            class="btn x-small"
+            data-feelings="[like]"
+          ><i class="icon-heart"></i></button>
+          <button
             class="btn x-small btn-success"
-            tabindex="0"
             data-setup="localize"
             data-text-ja="処理"
             data-plus="fix"
           >Fix</button>
           <button
             class="btn x-small btn-danger"
-            tabindex="0"
             data-setup="localize"
             data-text-ja="差戻"
             data-plus="revert"
           >Revert</button>
           <button
             class="btn x-small btn-primary"
-            tabindex="0"
             data-setup="localize"
             data-text-ja="完了"
             data-plus="close"

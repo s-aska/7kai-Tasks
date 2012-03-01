@@ -1057,6 +1057,7 @@ app.setup.rightColumn = function(ele){
     var closed_input     = ele.find('input[name=closed]');
     var button           = ele.find('button:first');
     var buttons          = ele.find('button:[data-plus]');
+    var feelings         = ele.find('button:[data-feelings]');
     var textarea         = ele.find('textarea');
     var list_name        = ele.find('.list_name');
     var task_name        = ele.find('.task_name');
@@ -1069,9 +1070,11 @@ app.setup.rightColumn = function(ele){
     ul.empty();
     button.attr('disabled', true);
     buttons.attr('disabled', true);
+    feelings.attr('disabled', false);
 
     var textarea_watch = function(){
         button.attr('disabled', !textarea.val().length);
+        feelings.attr('disabled', Boolean(textarea.val().length));
         counter.text(400 - textarea.val().length);
     };
     textarea
@@ -1121,6 +1124,12 @@ app.setup.rightColumn = function(ele){
             closed_input.val(1);
         }
     });
+    feelings.click(function(e){
+        var feelings = $(this).data('feelings');
+        if (feelings) {
+            textarea.val(feelings);
+        }
+    });
 
     var current_task;
     var render = function(task){
@@ -1135,6 +1144,7 @@ app.setup.rightColumn = function(ele){
         textarea.val('');
         textarea.attr('disabled', false);
         button.attr('disabled', true);
+        feelings.attr('disabled', false);
         counter.text(400);
         buttons.each(function(i, element){
             var ele = $(element);
@@ -1181,8 +1191,12 @@ app.setup.rightColumn = function(ele){
                 li.find('.message').remove();
                 li.find('.icon:last').remove();
             } else {
-                li.find('.message').html(
-                    app.util.autolink(comment.message).replace(/\r?\n/g, '<br />'));
+                if (comment.message === '[like]') {
+                    li.find('.message').html('<i class="icon-heart"></i>');
+                } else {
+                    li.find('.message').html(
+                        app.util.autolink(comment.message).replace(/\r?\n/g, '<br />'));
+                }
                 li.find('.icon:last').click(function(){
                     app.ajax({
                         type: 'POST',
