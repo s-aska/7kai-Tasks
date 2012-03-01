@@ -545,7 +545,11 @@ app.setup.popup = function(ele){
                 li.find('.list').text(task.list.name);
                 li.find('.action').text(action_name);
                 if ("message" in action) {
-                    li.find('.message').html(app.util.autolink(action.message));
+                    if (action.message === '[like]') {
+                        li.find('.message').html('<img src="icon-heart.png" class="feeling">');
+                    } else {
+                        li.find('.message').html(app.util.autolink(action.message));
+                    }
                     li.find('.message').append($('<br/>'));
                 } else {
                     li.find('.message').remove();

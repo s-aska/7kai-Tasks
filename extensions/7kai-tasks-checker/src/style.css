@@ -50,11 +50,16 @@ ul {
 #popup-page article li:hover {
     background-color: #fcea6c;
 }
-#popup-page article li img {
+#popup-page article li > img {
     display: block;
     position: absolute;
     width: 32px;
     height: 32px;
+}
+#popup-page article li img.feeling {
+    width: 12px;
+    height: 11px;
+    padding: 4px;
 }
 #popup-page article li div {
     margin-left: 36px;
