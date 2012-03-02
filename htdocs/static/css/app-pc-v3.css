@@ -246,6 +246,15 @@ ul.tasks > li div.recent-comment .icon {
 ul.tasks > li div.recent-comment .message {
     margin-left: 20px;
 }
+ul.tasks > li div.recent-comment .message i {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 1px;
+}
+ul.tasks > li div.recent-comment .message span {
+    display: inline-block;
+    vertical-align: top;
+}
 
 /********** comments **********/
 .ui-shortcutkeys th,
