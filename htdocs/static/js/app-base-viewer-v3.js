@@ -2204,7 +2204,11 @@ app.setup.recent = function(ele, task){
         ele.find('.icon').append(app.util.getIcon(task.recent.code, size));
         var date = app.date.relative(task.recent.time);
         if (task.recent.message) {
-            ele.find('.message span').text(task.recent.message + ' ' + date);
+            if (task.recent.message === '[like]') {
+                ele.find('.message span').html('<i class="icon-heart"></i> ' + date);
+            } else {
+                ele.find('.message span').text(task.recent.message + ' ' + date);
+            }
         } else {
             ele.find('.message span').text(
                 app.data.messages.data('text-'
@@ -2440,8 +2444,12 @@ app.setup.timeline = function(ul){
             li.find('.taskname').text(action.task.name);
             li.find('.name').text(app.util.getName(action.code));
             if (action.message) {
-                li.find('.message').html(
-                    app.util.autolink(action.message).replace(/\r?\n/g, '<br />'));
+                if (action.message === '[like]') {
+                    li.find('.message').html('<i class="icon-heart"></i>');
+                } else {
+                    li.find('.message').html(
+                        app.util.autolink(action.message).replace(/\r?\n/g, '<br />'));
+                }
             } else {
                 li.find('.message').remove();
             }
