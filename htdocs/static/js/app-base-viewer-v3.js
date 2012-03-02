@@ -87,7 +87,7 @@ app.addListener('registerTask', function(task, list){
     task.closed = Number(task.closed);
 
     // 直近の履歴・コメント
-    $.each(task.actions, function(i, action){
+    $.each(task.actions.concat().reverse(), function(i, action){
         if (!app.util.findMe([action.code])) {
             task.recent = action;
             return false;
