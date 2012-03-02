@@ -2205,13 +2205,13 @@ app.setup.recent = function(ele, task){
         var date = app.date.relative(task.recent.time);
         if (task.recent.message) {
             if (task.recent.message === '[like]') {
-                ele.find('.message i').css('icon-heart');
+                ele.find('.message i').attr('class', 'icon-heart');
                 ele.find('.message span').text(date);
             } else {
                 ele.find('.message span').text(task.recent.message + ' ' + date);
             }
         } else {
-            ele.find('.message i').css('icon-info-sign');
+            ele.find('.message i').attr('class', 'icon-info-sign');
             ele.find('.message span').text(
                 app.data.messages.data('text-'
                     + task.recent.action + '-' + app.env.lang)
