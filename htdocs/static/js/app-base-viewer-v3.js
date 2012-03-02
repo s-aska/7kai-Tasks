@@ -2205,7 +2205,7 @@ app.setup.recent = function(ele, task){
         var date = app.date.relative(task.recent.time);
         if (task.recent.message) {
             if (task.recent.message === '[like]') {
-                ele.find('.message span').html('<i class="icon-heart"></i> ' + date);
+                ele.find('.message').html('<i class="icon-heart"></i> ' + date);
             } else {
                 ele.find('.message span').text(task.recent.message + ' ' + date);
             }
