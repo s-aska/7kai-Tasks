@@ -32,9 +32,8 @@ div.alert {
 .icon-trash {
     width: 15px;
 }
-.icon-heart {
-    width: 13px;
-}
+.icon-heart,
+.icon-info-sign,
 .icon-chevron-up,
 .icon-chevron-down {
     width: 13px;
@@ -257,6 +256,7 @@ ul.tasks > li div.recent-comment .message i.icon-heart {
 ul.tasks > li div.recent-comment .message span {
     display: inline-block;
     vertical-align: top;
+    padding-left: 3px;
 }
 
 /********** comments **********/
