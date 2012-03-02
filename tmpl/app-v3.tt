@@ -630,7 +630,7 @@
               ></div>
               <div class="recent-comment" data-setup="recent">
                 <div class="icon"></div>
-                <div class="message"><i class="icon-comment"></i> <span></span></div>
+                <div class="message"><i class="icon-comment"></i><span></span></div>
               </div>
             </li>
           </ul>
