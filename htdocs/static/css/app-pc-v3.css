@@ -249,6 +249,9 @@ ul.tasks > li div.recent-comment .message {
 ul.tasks > li div.recent-comment .message i {
     display: inline-block;
     vertical-align: top;
+    margin-top: 2px;
+}
+ul.tasks > li div.recent-comment .message i.icon-heart {
     margin-top: 1px;
 }
 ul.tasks > li div.recent-comment .message span {
