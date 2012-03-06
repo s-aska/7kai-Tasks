@@ -395,6 +395,9 @@ ul.comments li span.name {
 .gantttasks > ul > li > div > .symbol-group {
     margin-bottom: 6px;
 }
+.gantttasks > ul > li > div > .name {
+    font-weight: bold;
+}
 .gantttasks > ul > li > div > ul {
     position: absolute;
     top: 6px;
