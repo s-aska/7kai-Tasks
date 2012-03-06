@@ -150,6 +150,9 @@ ul.lists > li > header div.name {
     color: #222;
     font-weight: bold;
 }
+ul.lists > li > header div.name i {
+    margin-left: 3px;
+}
 ul.lists > li > header ul.members {
     float: right;
     padding-left: 4px;
@@ -169,6 +172,9 @@ ul.lists > li > header ul.menu {
 ul.lists > li > header ul.menu > li {
     float: left;
     padding-left: 2px;
+}
+ul.lists > li > .ui-description {
+    padding: 0 0 6px 6px;
 }
 ul.lists > li > ul {
     overflow: auto;
@@ -477,6 +483,10 @@ body > .row > .columns > header {
 }
 
 /********** window **********/
+#register-list-window {
+    width: 760px;
+    margin-left: -380px;
+}
 #register-list-window .member {
     display: none;
 }
@@ -499,11 +509,15 @@ body > .row > .columns > header {
     float: right;
 }
 #register-list-window .description {
-    width: 220px;
+    /*width: 420px;*/
     height: 210px;
     margin-left: 20px;
     padding-left: 10px;
-    border-left: 1px solid gray;
+    /*border-left: 1px solid gray;*/
+}
+#register-list-window textarea {
+    width: 460px;
+    height: 180px;
 }
 
 /********** scrollbar **********/

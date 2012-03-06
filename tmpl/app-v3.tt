@@ -573,6 +573,7 @@
             >
             </ul>
           </header>
+          <div class="ui-description" style="display: none"></div>
           <ul
             class="unstyled tasks"
             data-setup="tab.content"
@@ -1336,8 +1337,6 @@
             <div class="icon"><i class="icon-remove"></i></div>
           </li>
         </ul>
-      </div>
-      <div class="left description">
         <ul>
           <li
             data-setup="localize"
@@ -1350,6 +1349,17 @@
             no auto close.
           </li>
         </ul>
+      </div>
+      <div class="left description">
+        <div class="clearfix">
+          <label for=""
+            data-setup="localize"
+            data-text-ja="概要 (オプション)"
+          >Description (Optional)</label>
+          <div class="input">
+            <textarea name="description"></textarea>
+          </div>
+        </div>
       </div>
     </div>
   </div>

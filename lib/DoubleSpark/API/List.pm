@@ -13,6 +13,7 @@ sub create {
 
     my $res = DoubleSpark::Validator->validate($c, $req,
         name => [qw/NOT_NULL/, [qw/LENGTH 1 20/]],
+        description => [[qw/LENGTH 1 2048/]],
         owner => [qw/NOT_NULL OWNER/],
         { members => [qw/members/] }, [qw/MEMBERS/],
         users => [qw/NOT_NULL/]
@@ -20,6 +21,7 @@ sub create {
     return unless $res;
 
     my $name = $req->param('name');
+    my $description = $req->param('description');
     my $owner = $req->param('owner');
     my @members = $req->param('members');
     my $users = decode_json(encode_utf8($req->param('users')));
@@ -29,6 +31,7 @@ sub create {
         code => $owner,
         data => {
             name => $name,
+            description => $description,
             owner => $owner,
             members => \@members,
             users => $users,
@@ -59,6 +62,7 @@ sub update {
     my $res = DoubleSpark::Validator->validate($c, $req,
         list_id => [qw/NOT_NULL LIST_ROLE_MEMBER/],
         name => [qw/NOT_NULL/, [qw/LENGTH 1 20/]],
+        description => [[qw/LENGTH 1 2048/]],
         { members => [qw/members/] }, [qw/MEMBERS/],
         users => [qw/NOT_NULL/],
     );
@@ -66,9 +70,10 @@ sub update {
 
     my $list = $c->stash->{list};
 
-    $list->data->{name}    = $req->param('name');
-    $list->data->{members} = [ $req->param('members') ];
-    $list->data->{users}   = decode_json(encode_utf8($req->param('users')));
+    $list->data->{name}        = $req->param('name');
+    $list->data->{description} = $req->param('description');
+    $list->data->{members}     = [ $req->param('members') ];
+    $list->data->{users}       = decode_json(encode_utf8($req->param('users')));
 
     # update database
     my $txn = $c->db->txn_scope;

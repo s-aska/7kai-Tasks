@@ -1500,6 +1500,13 @@ app.setup.tasksheet = function(ul){
         $('html').on('click', function(){
             dropdown.removeClass('open');
         });
+        if (list.description) {
+            li.find('.ui-description').html(app.util.autolink(list.description).replace(/\r?\n/g, '<br />'));
+            li.find('> header .name').click(function(e){
+                li.find('.ui-description').slideToggle();
+            });
+            li.find('> header .name').append($('<i class="icon-info-sign"/>'));
+        }
 
         if (list.members.length) {
             var members = [list.owner].concat(list.members);

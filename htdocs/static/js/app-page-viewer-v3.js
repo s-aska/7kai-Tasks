@@ -328,6 +328,7 @@ app.setup.registerListWindow = function(form){
 
     var id_input                = form.find('input[name=list_id]');
     var name_input              = form.find('input[name=name]');
+    var description_input       = form.find('textarea[name=description]');
     var owner_field             = form.find('div.owner-field');
     var owner_select            = form.find('select[name=owner]');
     var social_member_field     = form.find('div.twitter-member');
@@ -437,6 +438,7 @@ app.setup.registerListWindow = function(form){
         app.dom.show(form);
         id_input.val(list.id);
         name_input.val(list.name);
+        description_input.val(list.description);
         modeReset(app.util.getRegistrant(list));
         social_member_list.empty();
         for (var i = 0, max_i = list.members.length; i < max_i; i++) {
