@@ -315,7 +315,7 @@ app.setup.ganttchartListsV3 = function(ul){
         }
     });
     
-    app.addListener('openTask', function(task){
+    app.addListener('openTask', function(task, forceTop){
         if (!ul.is(':visible')) { return }
         ul.find('> li > ul > li').removeClass('selected');
         ul.find('.ui-edit, .ui-sub').attr('disabled', true);
@@ -323,7 +323,7 @@ app.setup.ganttchartListsV3 = function(ul){
             taskli_map[task.id].addClass('selected');
             taskli_map[task.id].parent().parent()
                 .find('.ui-edit, .ui-sub').attr('disabled', false);
-                app.dom.scrollTopFix(ul.parent(), taskli_map[task.id]);
+                app.dom.scrollTopFix(ul.parent(), taskli_map[task.id], forceTop);
         }
         current_task = task;
     });
@@ -368,7 +368,7 @@ app.setup.ganttchartListsV3 = function(ul){
             if (!(next_id in app.data.task_map)) {
                 return;
             }
-            app.fireEvent('openTask', app.data.task_map[next_id]);
+            app.fireEvent('openTask', app.data.task_map[next_id], skip);
         }
     });
     
@@ -399,7 +399,7 @@ app.setup.ganttchartListsV3 = function(ul){
             if (!(next_id in app.data.task_map)) {
                 return;
             }
-            app.fireEvent('openTask', app.data.task_map[next_id]);
+            app.fireEvent('openTask', app.data.task_map[next_id], skip);
         }
     });
 

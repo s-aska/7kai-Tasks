@@ -659,17 +659,15 @@ app.util.sortTask = function(tasks, column, reverse){
     return tasks;
 }
 
-app.dom.scrollTopFix = function(wrapper, target){
-    if (target.is(':first-child')) {
+app.dom.scrollTopFix = function(wrapper, target, forceTop){
+    if (target.is(':first-child') || forceTop) {
         target = target.parent().parent();
     }
     var top           = wrapper.scrollTop();
     var bottom        = top + wrapper.height();
     var target_top    = top + target.offset().top - wrapper.offset().top;
     var target_bottom = target_top + target.height();
-    if (target_top < top) {
-        wrapper.scrollTop(target_top);
-    } else if (target_bottom > bottom) {
+    if (target_top < top || target_bottom > bottom || forceTop) {
         wrapper.scrollTop(target_top);
     }
 }
@@ -1658,7 +1656,7 @@ app.setup.tasksheet = function(ul){
         app.data.taskli_map[task.id] = li;
     });
 
-    app.addListener('openTask', function(task){
+    app.addListener('openTask', function(task, forceTop){
         if (!ul.is(':visible')) { return }
 
         ul.find('> li > ul > li').removeClass('selected');
@@ -1667,7 +1665,7 @@ app.setup.tasksheet = function(ul){
             app.data.taskli_map[task.id].addClass('selected');
             app.data.taskli_map[task.id].parent().parent()
                 .find('> header .ui-edit, > header .ui-sub').attr('disabled', false);
-            app.dom.scrollTopFix(ul.parent(), app.data.taskli_map[task.id]);
+            app.dom.scrollTopFix(ul.parent(), app.data.taskli_map[task.id], forceTop);
         }
         current_task = task;
     });
@@ -1715,7 +1713,7 @@ app.setup.tasksheet = function(ul){
             if (!(next_id in app.data.task_map)) {
                 return;
             }
-            app.fireEvent('openTask', app.data.task_map[next_id]);
+            app.fireEvent('openTask', app.data.task_map[next_id], skip);
         }
     });
 
@@ -1749,7 +1747,7 @@ app.setup.tasksheet = function(ul){
             if (!(next_id in app.data.task_map)) {
                 return;
             }
-            app.fireEvent('openTask', app.data.task_map[next_id]);
+            app.fireEvent('openTask', app.data.task_map[next_id], skip);
         }
     });
     
