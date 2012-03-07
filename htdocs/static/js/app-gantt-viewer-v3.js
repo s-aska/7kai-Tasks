@@ -393,6 +393,12 @@ app.setup.ganttchartListsV3 = function(ul){
         }
         if (!next || !next.length) {
             next = ul.find('> li > ul > li:visible:last');
+            if (next && next.length && skip) {
+                var top = next.prevAll(':visible:last');
+                if (top) {
+                    next = top;
+                }
+            }
         }
         if (next && next.length) {
             var next_id = next.data('id');
@@ -438,10 +444,12 @@ app.setup.ganttchartListsV3 = function(ul){
         if (!ul.is(':visible')) {
             return;
         }
+        var hasVisible = {};
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
             var li = taskli_map[task_id];
             if (app.util.taskFilter(task, condition)) {
+                hasVisible[task.list.id] = true;
                 li.show();
                 if (!li.data('visible')) {
                     li.data('visible', true);
@@ -454,6 +462,14 @@ app.setup.ganttchartListsV3 = function(ul){
             }
         }
         current_filter = condition;
+        ul.children().each(function(){
+            var li = $(this);
+            if (li.data('id') in hasVisible) {
+                li.show();
+            } else {
+                li.hide();
+            }
+        });
     });
     
     app.addListener('initGanttchart', function(start){

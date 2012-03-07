@@ -3,9 +3,12 @@ html, body {
     overflow: hidden;
     background-color: #F7F7F6;
 }
-a, button, i, label {
+a, button, label {
     cursor: pointer;
 }
+/*.btn.disabled i, .btn[disabled] i {
+    cursor: default;
+}*/
 h4, h5 {
     line-height: 1;
     margin-bottom: 6px;
@@ -64,6 +67,12 @@ div.alert {
 }
 
 /********** navbar **********/
+body > .navbar .logo {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    margin-left: -16px;
+}
 body > .navbar ul li a.profile-name .profile-icon {
     position: absolute;
     top: 10px;

@@ -20,36 +20,51 @@
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-      <span class="brand">7kai Tasks</span>
+      <!-- <span class="brand">7kai Tasks</span> -->
+      <span class="logo"><img src="/static/img/logo-32.png"></span>
       <ul class="nav">
         <li class="active">
           <a
-            data-setup="localize,tab.menu"
+            data-setup="tab.menu"
             data-tab='{"group":"viewer","id":"task"}'
-            data-text-ja="ホーム"
-          >Home</a>
+          >
+            <i class="icon-home icon-white icon-gray"></i>&nbsp;
+            <span
+               data-setup="localize"
+               data-text-ja="ホーム"
+             >Home</span></a>
         </li>
         <li>
           <a
-            data-setup="localize,tab.menu"
+            data-setup="tab.menu"
             data-tab='{"group":"viewer","id":"gantt"}'
-            data-text-ja="ガントチャート"
-          >Gantt Chart</a>
+          >
+            <i class="icon-calendar icon-white icon-gray"></i>&nbsp;
+            <span
+              data-setup="localize"
+              data-text-ja="ガントチャート"
+            >Gantt Chart</span>
+          </a>
         </li>
         <li>
           <a
-            data-setup="localize,tab.menu"
+            data-setup="tab.menu"
             data-tab='{"group":"viewer","id":"timeline"}'
-            data-text-ja="ヒストリー"
-          >Changes</a>
+          >
+            <i class="icon-info-sign icon-white icon-gray"></i>&nbsp;
+            <span
+              data-setup="localize"
+              data-text-ja="ヒストリー"
+            >Changes</span>
+          </a>
         </li>
       </ul>
       <ul class="nav pull-right">
-        <li class="">
-          <a
-            href="/v2"
-          >Old UI</a>
-        </li>
+        <!-- <li class="">
+                  <a
+                    href="/v2"
+                  >Old UI</a>
+                </li> -->
         <li>
           <a
             href="/staff"
@@ -213,35 +228,15 @@
         data-click="filterTask"
         data-shortcut='{"code":84}'
         data-filter-condition='{"todo":1}'
-        data-text-ja="何かすべき(処理/保留/依頼/延期) ... [T]"
-        data-text-en="Processing or postponement. ... [T]"
+        data-text-ja="自分のタスク ... [T]"
+        data-text-en="My TODO ... [T]"
       >
+        <i class="icon-inbox"></i>
         <span
-          data-setup="localize"
-          data-text-ja="今日迄"
-        >Todo</span>
-        (<span
+          class="badge"
           data-setup="taskCounter"
           data-counter-condition='{"todo":1}'
-        >0</span>)
-      </a>
-      <a
-        class="btn x-small"
-        data-setup="click,shortcut,filterTask,tooltip"
-        data-click="filterTask"
-        data-shortcut='{"code":86}'
-        data-filter-condition='{"verify":1}'
-        data-text-ja="あなたの確認を待っています ... [V]"
-        data-text-en="Waiting for your confirmation. ... [V]"
-      >
-        <span
-          data-setup="localize"
-          data-text-ja="確認待ち"
-        >Verify</span>
-        (<span
-          data-setup="taskCounter"
-          data-counter-condition='{"verify":1}'
-        >0</span>)
+        >0</span>
       </a>
       <a
         class="btn x-small"
@@ -249,17 +244,35 @@
         data-click="filterTask"
         data-shortcut='{"code":82}'
         data-filter-condition='{"request":1}'
-        data-text-ja="せっかちなあなたに ... [R]"
-        data-text-en="Check the progress. ... [R]"
+        data-text-ja="リクエスト ... [R]"
+        data-text-en="Request ... [R]"
       >
+        <i class="icon-arrow-up"></i>
         <span
           data-setup="localize"
-          data-text-ja="依頼中"
-        >Request</span>
-        (<span
+          data-text-ja=""
+        ></span>
+        <span
+          class="badge"
           data-setup="taskCounter"
           data-counter-condition='{"request":1}'
-        >0</span>)
+        >0</span>
+      </a>
+      <a
+        class="btn x-small"
+        data-setup="click,shortcut,filterTask,tooltip"
+        data-click="filterTask"
+        data-shortcut='{"code":86}'
+        data-filter-condition='{"verify":1}'
+        data-text-ja="確認待ち ... [V]"
+        data-text-en="Waiting for your confirmation. ... [V]"
+      >
+        <i class="icon-arrow-down"></i>
+        <span
+          class="badge"
+          data-setup="taskCounter"
+          data-counter-condition='{"verify":1}'
+        >0</span>
       </a>
       <a
         class="btn x-small"
@@ -267,32 +280,32 @@
         data-click="filterTask"
         data-shortcut='{"code":83}'
         data-filter-condition='{"star":1}'
-        data-text-ja="気になるタスク ... [S]"
+        data-text-ja="スター ... [S]"
         data-text-en="Star ... [S]"
       >
+        <i class="icon-star"></i>
         <span
-          data-setup="localize"
-          data-text-ja="スター"
-        >Star</span>
-        (<span
+          class="badge"
           data-setup="starCounter"
-        >0</span>)
+        >0</span>
       </a>
       <a
         class="btn x-small"
         data-setup="shortcut,switchClosed,tooltip"
         data-shortcut='{"code":67}'
-        data-text-ja="クリアすると軽くなります ... [C]"
-        data-text-en="Please confirm and clear. ... [C]"
+        data-text-ja="完了済 ... [C]"
+        data-text-en="Closed: Please confirm and clear. ... [C]"
       >
+        <i class="icon-trash"></i>
         <span
           data-setup="localize"
-          data-text-ja="完了済"
+          data-text-ja=""
         >Closed</span>
-        (<span
+        <span
+          class="badge"
           data-setup="taskCounter"
           data-counter-condition='{"closed":1}'
-        >0</span>)
+        >0</span>
       </a>
     </div>
     <div
@@ -1058,35 +1071,15 @@
         data-click="filterTask"
         data-shortcut='{"code":84}'
         data-filter-condition='{"todo":1}'
-        data-text-ja="何かすべきです（処理/保留/移譲/延期）"
-        data-text-en="Processing or postponement."
+        data-text-ja="自分のタスク ... [T]"
+        data-text-en="My TODO ... [T]"
       >
+        <i class="icon-inbox"></i>
         <span
-          data-setup="localize"
-          data-text-ja="今日迄"
-        >Todo</span>
-        (<span
+          class="badge"
           data-setup="taskCounter"
           data-counter-condition='{"todo":1}'
-        >0</span>)
-      </a>
-      <a
-        class="btn x-small"
-        data-setup="click,shortcut,filterTask,tooltip"
-        data-click="filterTask"
-        data-shortcut='{"code":86}'
-        data-filter-condition='{"verify":1}'
-        data-text-ja="あなたの確認を待っています"
-        data-text-en="Waiting for your confirmation."
-      >
-        <span
-          data-setup="localize"
-          data-text-ja="確認待ち"
-        >Verify</span>
-        (<span
-          data-setup="taskCounter"
-          data-counter-condition='{"verify":1}'
-        >0</span>)
+        >0</span>
       </a>
       <a
         class="btn x-small"
@@ -1094,17 +1087,35 @@
         data-click="filterTask"
         data-shortcut='{"code":82}'
         data-filter-condition='{"request":1}'
-        data-text-ja="せっかちなあなたに"
-        data-text-en="Check the progress."
+        data-text-ja="リクエスト ... [R]"
+        data-text-en="Request ... [R]"
       >
+        <i class="icon-arrow-up"></i>
         <span
           data-setup="localize"
-          data-text-ja="依頼中"
-        >Request</span>
-        (<span
+          data-text-ja=""
+        ></span>
+        <span
+          class="badge"
           data-setup="taskCounter"
           data-counter-condition='{"request":1}'
-        >0</span>)
+        >0</span>
+      </a>
+      <a
+        class="btn x-small"
+        data-setup="click,shortcut,filterTask,tooltip"
+        data-click="filterTask"
+        data-shortcut='{"code":86}'
+        data-filter-condition='{"verify":1}'
+        data-text-ja="確認待ち ... [V]"
+        data-text-en="Waiting for your confirmation. ... [V]"
+      >
+        <i class="icon-arrow-down"></i>
+        <span
+          class="badge"
+          data-setup="taskCounter"
+          data-counter-condition='{"verify":1}'
+        >0</span>
       </a>
       <a
         class="btn x-small"
@@ -1112,34 +1123,32 @@
         data-click="filterTask"
         data-shortcut='{"code":83}'
         data-filter-condition='{"star":1}'
-        data-text-ja="気になるタスク"
-        data-text-en="Star"
+        data-text-ja="スター ... [S]"
+        data-text-en="Star ... [S]"
       >
+        <i class="icon-star"></i>
         <span
-          data-setup="localize"
-          data-text-ja="スター"
-        >Star</span>
-        (<span
+          class="badge"
           data-setup="starCounter"
-        >0</span>)
+        >0</span>
       </a>
       <a
         class="btn x-small"
-        data-setup="click,shortcut,filterTask,tooltip"
+        data-setup="shortcut,switchClosed,tooltip"
         data-shortcut='{"code":67}'
-        data-click="filterTask"
-        data-filter-condition='{"closed":1}'
-        data-text-ja="確認後クリアすると動きも軽くなります"
-        data-text-en="Please confirm and clear."
+        data-text-ja="完了済 ... [C]"
+        data-text-en="Closed: Please confirm and clear. ... [C]"
       >
+        <i class="icon-trash"></i>
         <span
           data-setup="localize"
-          data-text-ja="完了済"
+          data-text-ja=""
         >Closed</span>
-        (<span
+        <span
+          class="badge"
           data-setup="taskCounter"
           data-counter-condition='{"closed":1}'
-        >0</span>)
+        >0</span>
       </a>
     </div>
     <div
