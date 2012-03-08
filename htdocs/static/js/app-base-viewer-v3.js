@@ -2156,8 +2156,10 @@ app.setup.close = function(ele, task){
     if (task.closed) {
         ele.parent().addClass('closed');
         ele.find('i').removeClass('icon-remove').addClass('icon-plus');
+        ele.data('text-' + app.env.lang, app.dom.text(ele, 'closed'));
     } else {
         ele.find('i').removeClass('icon-plus').addClass('icon-remove');
+        ele.data('text-' + app.env.lang, app.dom.text(ele, 'unclosed'));
     }
     ele.click(function(e){
         e.stopPropagation();

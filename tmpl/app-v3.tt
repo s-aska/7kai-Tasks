@@ -630,8 +630,10 @@
               <div
                 class="icon delete"
                 data-setup="close,tooltip"
-                data-text-ja="完了 ... [Enter]"
-                data-text-en="Closed ... [Enter]"
+                data-text-unclosed-ja="完了 ... [Enter]"
+                data-text-unclosed-en="Closed ... [Enter]"
+                data-text-closed-ja="未完了に戻す ... [Enter]"
+                data-text-closed-en="Unclosed ... [Enter]"
               ><i class="icon-remove"></i></div>
               <div
                 class="icon pending"
