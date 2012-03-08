@@ -901,7 +901,7 @@ app.setup.messages = function(ele){
 }
 app.setup.profile = function(ele){
     var img = ele.find('img');
-    var span = ele.find('span');
+    var span = ele.find('span:first');
     app.addListener('receiveSign', function(sign){
         img.attr('src', sign.icon.replace(/^http:\/\/a/, 'https://si'));
         span.text(sign.name);
