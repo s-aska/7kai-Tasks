@@ -84,12 +84,14 @@ app.setup.ganttchartSheet = function(ele){
 }
 app.setup.ganttchartListsV3 = function(ul){
     var listli_map = {};
+    var taskli_map = app.data.gantt_taskli_map;
     var list_template = ul.html();
     var task_template = ul.find('> li > ul').html();
     ul.empty();
 
     var current_task;
     var current_filter = {};
+    var current_sort = {};
 
     app.addListener('toggleTag', function(tag){
         ul.children().each(function(i, element){
@@ -97,6 +99,11 @@ app.setup.ganttchartListsV3 = function(ul){
             var id = li.data('id');
             li.toggle(Boolean((tag in app.data.state.tags) && (id in app.data.state.tags[tag])));
         });
+        if (ul.is(':visible')
+            && current_task
+            && !taskli_map[current_task.id].is(':visible')) {
+            app.fireEvent('missingTask');
+        }
     });
 
     app.addListener('checkTag', function(list, tag, active){
@@ -168,9 +175,6 @@ app.setup.ganttchartListsV3 = function(ul){
     });
 
     // ---
-    
-    var taskli_map = app.data.gantt_taskli_map;
-    var current_sort = {};
     
     app.addListener('registerTask', function(task){
         var ul = listli_map[task.list.id].find('> ul:first');

@@ -64,12 +64,10 @@ app.addListener('openTask', function(task){
 app.addListener('openTaskInHome', function(task){
     app.fireEvent('selectTab', 'viewer', 'task');
     app.fireEvent('selectTab', 'homemenu', 'task');
-    if (task.closed) {
-        app.fireEvent('filterTask', { closed: 1 });
-    }
     app.fireEvent('openTask', task);
 });
 app.addListener('missingTask', function(){
+    w.location.hash = '';
 });
 app.addListener('registerTask', function(task, list){
     // リスト
@@ -340,7 +338,7 @@ app.util.getRegistrant = function(list){
 }
 app.util.taskFilter = function(task, condition){
     if (!condition) {
-        return true;
+        return !app.util.isCloseTask(task);
     }
     if (condition.none) {
         return false;
@@ -911,7 +909,9 @@ app.setup.switchClosed = function(ele){
     });
     app.addListener('openTaskInHome', function(task){
         if (Boolean(task.closed) !== Boolean(ele.hasClass('active'))) {
-            ele.click();
+            if (ele.is(':visible')) {
+                ele.click();
+            }
         }
     });
 }
@@ -1359,10 +1359,16 @@ app.setup.tasksheet = function(ul){
             var id = li.data('id');
             li.toggle(Boolean((tag in app.data.state.tags) && (id in app.data.state.tags[tag])));
         });
+        if (ul.is(':visible')
+            && current_task
+            && !app.data.taskli_map[current_task.id].is(':visible')) {
+            app.fireEvent('missingTask');
+        }
     });
 
     app.addListener('resetTag', function(){
         ul.children().show();
+        app.fireEvent('missingTask');
     });
 
     app.addListener('registerList', function(list){
