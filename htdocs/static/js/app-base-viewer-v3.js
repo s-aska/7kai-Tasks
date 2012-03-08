@@ -173,8 +173,10 @@ app.addListener('clickNotification', function(option){
 app.addListener('createTask', function(){
     app.dom.hide(app.dom.get('showable', 'welcome'));
 });
-app.addListener('filterTask', function(){
-    app.fireEvent('resetTag');
+app.addListener('filterTask', function(condition){
+    if (condition) {
+        app.fireEvent('resetTag');
+    }
 });
 
 // セットアップ
@@ -504,19 +506,6 @@ app.util.buildMe = function(option, data){
     });
 
     app.state.animation = true;
-
-    //
-    // var last_list_id = localStorage.getItem('last_list_id');
-    // else if (option.setup || option.reset) {
-    //     if (last_list_id && (last_list_id in app.data.list_map)) {
-    //         app.fireEvent('openList', app.data.list_map[last_list_id]);
-    //     } else if (data.lists.length) {
-    //         app.fireEvent('openList', data.lists[0]);
-    //     }
-    //     if (option.setup && !tasks) {
-    //         app.dom.show(app.dom.get('showable', 'welcome'));
-    //     }
-    // }
 
     if (option.setup && !tasks) {
         setTimeout(function(){
@@ -1011,11 +1000,11 @@ app.setup.filterTask = function(ele){
             ele.removeClass('active');
         }
     });
-    // app.addListener('openList', function(){
-    //     if (ele.is(':visible')) {
-    //         ele.parent().removeClass('active');
-    //     }
-    // });
+    app.addListener('toggleTag', function(){
+        if (ele.is(':visible')) {
+            ele.removeClass('active');
+        }
+    });
     app.addListener('clear', function(){
         ele.removeClass('active');
     });
@@ -1338,7 +1327,7 @@ app.setup.tasksheet = function(ul){
     var list_template = ul.html();
     var task_template = ul.find('> li > ul').html();
     ul.empty();
-    var current_filter = {};
+    var current_filter = null;
     var current_task;
 
     var updateSort = function(){
@@ -1362,6 +1351,9 @@ app.setup.tasksheet = function(ul){
     };
 
     app.addListener('toggleTag', function(tag){
+        if (current_filter) {
+            app.fireEvent('filterTask', null);
+        }
         ul.children().each(function(i, element){
             var li = $(element);
             var id = li.data('id');
@@ -1821,7 +1813,7 @@ app.setup.tasksheet = function(ul){
             }
         }
         
-        if (condition.closed) {
+        if (condition && condition.closed) {
             ul.find('> li > header li.ui-normal, > li > header ul.members, > li > header li.ui-submenu').hide();
             ul.find('> li > header li.ui-clear').show();
         } else {
@@ -2506,7 +2498,7 @@ app.click.createTask = function(ele){
 }
 app.click.filterTask = function(ele){
     if (ele.hasClass('active')) {
-        app.fireEvent('filterTask', {});
+        app.fireEvent('filterTask', null);
         ele.removeClass('active');
     } else {
         app.fireEvent('filterTask', ele.data('filter-condition'));
