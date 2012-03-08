@@ -154,8 +154,8 @@
       >
           <h3>Account</h3>
           <ul>
-            <li>Active Account ... <span class="active_accounts"></span> (1 week)</li>
-            <li>Total Account ... <span class="total_accounts"></span></li>
+            <li>Active Users ... <span class="weekly_active_accounts"></span> (weekly), <span class="monthly_active_accounts"></span> (monthly)</li>
+            <li>Total Users ... <span class="total_accounts"></span></li>
           </ul>
           <div class="tw_vs_fb"></div>
           <h3>List</h3>
