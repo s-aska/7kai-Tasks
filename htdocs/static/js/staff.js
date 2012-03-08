@@ -234,7 +234,8 @@ app.setup.statistics = function(ele){
         total_lists.text(stat.total_lists);
         $.plot(tw_vs_fb, [
             { label: "Twitter",  data: Number(stat.tw_accounts)},
-            { label: "Facebook", data: Number(stat.fb_accounts)}
+            { label: "Facebook", data: Number(stat.fb_accounts)},
+            { label: "Google",   data: Number(stat.google_accounts)}
         ], {
             series: {
     			pie: { 

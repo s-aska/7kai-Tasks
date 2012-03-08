@@ -11,6 +11,7 @@ sub stat {
 
     my $tw_accounts = $c->db->count('tw_account', '*');
     my $fb_accounts = $c->db->count('fb_account', '*');
+    my $google_accounts = $c->db->count('google_account', '*');
     my $total_lists = $c->db->count('list', '*');
     
     $c->render_json({
@@ -19,6 +20,7 @@ sub stat {
             active_accounts => $active_accounts,
             tw_accounts => $tw_accounts,
             fb_accounts => $fb_accounts,
+            google_accounts => $google_accounts,
             total_lists => $total_lists
         }
     });
