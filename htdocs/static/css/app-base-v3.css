@@ -34,6 +34,9 @@ span.icon {
 .active .icon-gray {
     opacity: 1;
 }
+a:hover .icon-gray {
+    opacity: 1;
+}
 .label.closed {
     background-color: #0064cd;
 }
