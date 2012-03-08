@@ -95,7 +95,7 @@ app.setup.ganttchartListsV3 = function(ul){
         ul.children().each(function(i, element){
             var li = $(element);
             var id = li.data('id');
-            li.toggle(Boolean(id in app.data.state.tags[tag]));
+            li.toggle(Boolean((tag in app.data.state.tags) && (id in app.data.state.tags[tag])));
         });
     });
 

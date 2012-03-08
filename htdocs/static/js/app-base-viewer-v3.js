@@ -173,6 +173,9 @@ app.addListener('clickNotification', function(option){
 app.addListener('createTask', function(){
     app.dom.hide(app.dom.get('showable', 'welcome'));
 });
+app.addListener('filterTask', function(){
+    app.fireEvent('resetTag');
+});
 
 // セットアップ
 app.addListener('ready', function(){
@@ -1362,7 +1365,7 @@ app.setup.tasksheet = function(ul){
         ul.children().each(function(i, element){
             var li = $(element);
             var id = li.data('id');
-            li.toggle(Boolean(id in app.data.state.tags[tag]));
+            li.toggle(Boolean((tag in app.data.state.tags) && (id in app.data.state.tags[tag])));
         });
     });
 
@@ -1819,17 +1822,11 @@ app.setup.tasksheet = function(ul){
         }
         
         if (condition.closed) {
-            ul.find('> li > header li.ui-normal, > li > header ul.members, > li > header li.ui-submenu')
-                .fadeOut('fast', function(){
-                    ul.find('> li > header li.ui-clear')
-                        .fadeIn('fast');
-                });
+            ul.find('> li > header li.ui-normal, > li > header ul.members, > li > header li.ui-submenu').hide();
+            ul.find('> li > header li.ui-clear').show();
         } else {
-            ul.find('> li > header li.ui-clear')
-                .fadeOut('fast', function(){
-                    ul.find('> li > header li.ui-normal, > li > header ul.members, > li > header li.ui-submenu')
-                        .fadeIn('fast');
-                });
+            ul.find('> li > header li.ui-clear').hide();
+            ul.find('> li > header li.ui-normal, > li > header ul.members, > li > header li.ui-submenu').show();
         }
 
         ul.children().each(function(){
