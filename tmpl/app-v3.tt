@@ -306,8 +306,8 @@
     <div
       class="btn-group ui-tags"
       data-setup="tab.content,tags,tooltip"
-      data-text-ja="選択した色のリストのみ表示"
-      data-text-en="Display the list of same colors."
+      data-text-ja="選択した色のリストのみ表示 ... [1-4]"
+      data-text-en="Display the list of same colors. ... [1-4]"
       data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
     >
       <a
@@ -1164,8 +1164,8 @@
     <div
       class="btn-group ui-tags"
       data-setup="tags,tooltip"
-      data-text-ja="選択した色のリストのみ表示"
-      data-text-en="Display the list of same colors."
+      data-text-ja="選択した色のリストのみ表示 ... [1-4]"
+      data-text-en="Display the list of same colors. ... [1-4]"
     >
       <a
         class="btn x-small btn-primary"
