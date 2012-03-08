@@ -312,18 +312,26 @@
     >
       <a
         class="btn x-small btn-primary"
+        data-setup="shortcut"
+        data-shortcut='{"code":49}'
         data-tag="primary"
       ><i class="icon-tag icon-white"></i></a>
       <a
         class="btn x-small btn-success"
+        data-setup="shortcut"
+        data-shortcut='{"code":50}'
         data-tag="success"
       ><i class="icon-tag icon-white"></i></a>
       <a
         class="btn x-small btn-warning"
+        data-setup="shortcut"
+        data-shortcut='{"code":51}'
         data-tag="warning"
       ><i class="icon-tag icon-white"></i></a>
       <a
         class="btn x-small btn-danger"
+        data-setup="shortcut"
+        data-shortcut='{"code":52}'
         data-tag="danger"
       ><i class="icon-tag icon-white"></i></a>
     </div>
@@ -887,6 +895,13 @@
               data-text-ja="メニュー切り替え"
             >Switch Menu.</td>
           </tr>
+          <tr>
+            <th>[1-4]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="タグ切り替え"
+            >Switch Color Tags.</td>
+          </tr>
         </table>
       </div>
     </div>
@@ -1154,18 +1169,26 @@
     >
       <a
         class="btn x-small btn-primary"
+        data-setup="shortcut"
+        data-shortcut='{"code":49}'
         data-tag="primary"
       ><i class="icon-tag icon-white"></i></a>
       <a
         class="btn x-small btn-success"
+        data-setup="shortcut"
+        data-shortcut='{"code":50}'
         data-tag="success"
       ><i class="icon-tag icon-white"></i></a>
       <a
         class="btn x-small btn-warning"
+        data-setup="shortcut"
+        data-shortcut='{"code":51}'
         data-tag="warning"
       ><i class="icon-tag icon-white"></i></a>
       <a
         class="btn x-small btn-danger"
+        data-setup="shortcut"
+        data-shortcut='{"code":52}'
         data-tag="danger"
       ><i class="icon-tag icon-white"></i></a>
     </div>
