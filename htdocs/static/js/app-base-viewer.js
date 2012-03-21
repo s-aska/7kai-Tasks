@@ -107,37 +107,6 @@ app.addListener('registerTask', function(task, list){
 app.addListener('filterTask', function(filter){
     app.data.current_filter = filter;
 });
-// app.addListener('registerFriends', function(friends, owner){
-//     for (var i = 0, max_i = friends.length; i < max_i; i++) {
-//         var friend = friends[i];
-//         var icon = friend.icon ? friend.icon.replace(/^http:\/\/a/, 'https://si')
-//                  : /^tw-[0-9]+$/.test(friend.code) ?
-//                      '/api/1/profile_image/'
-//                      + friend.screen_name
-//                  : /^fb-[0-9]+$/.test(friend.code) ?
-//                     'https://graph.facebook.com/'
-//                     + friend.code.substring(3)
-//                     + '/picture'
-//                  : '/static/img/address24.png';
-//         var value = friend.screen_name ? friend.screen_name + ' (' + friend.name + ')'
-//                   : friend.name;
-//         var label = '<img class="sq16" src="' + icon + '"><span>' + value + '</span>';
-//         app.data.users[friend.code] = {
-//             code: friend.code,
-//             name: friend.name,
-//             screen_name: friend.screen_name,
-//             icon: icon
-//         };
-//         if (owner) {
-//             app.data.assigns.push({
-//                 owner: owner,
-//                 code: friend.code,
-//                 value: value,
-//                 label: label
-//             });
-//         }
-//     }
-// });
 app.addListener('registerSubAccount', function(sub_account){
     var icon = ( sub_account.data && sub_account.data.icon ) ?
                  sub_account.data.icon.replace(/^http:\/\/a/, 'https://si')
@@ -241,7 +210,7 @@ app.util.getIconUrl = function(code, size){
     }
     var user = app.data.users[code];
     if (user) {
-        return user.icon;
+        return user.icon.replace(/^http:\/\/a/, 'https://si');
     }
     if (/^tw-[0-9]+$/.test(code)) {
         src = '/static/img/address.png';
