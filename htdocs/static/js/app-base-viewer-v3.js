@@ -231,7 +231,7 @@ app.util.getIconUrl = function(code, size){
     }
     var user = app.data.users[code];
     if (user) {
-        return user.icon;
+        return user.icon.replace(/^http:\/\/a/, 'https://si');
     }
     if (/^tw-[0-9]+$/.test(code)) {
         src = '/static/img/address.png';
