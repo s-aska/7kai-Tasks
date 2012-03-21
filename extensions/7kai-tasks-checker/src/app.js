@@ -197,32 +197,11 @@ app.api.fetch = function(option){
         app.data.state = data.account.state;
         app.data.sub_accounts = data.sub_accounts;
         app.data.if_modified_lists = data.list_ids;
+        app.data.users = data.users;
 
         if (!('mute' in app.data.state)) {
             app.data.state.mute = {};
         }
-
-        $.each(data.sub_accounts, function(i, sub_account){
-            if (/^tw-[0-9]+$/.test(sub_account.code)) {
-                if (!("friends" in sub_account.data)) {
-                    return;
-                }
-                $.each(sub_account.data.friends, function(iii, friend){
-                    app.data.users[friend.code] = {
-                        name: friend.screen_name + ' (' + friend.name + ')',
-                        icon: friend.icon
-                    };
-                });
-            } else if (/^fb-[0-9]+$/.test(sub_account.code)) {
-                $.each(sub_account.data.friends, function(iii, friend){
-                    app.data.users[friend.code] = {
-                        name: friend.name,
-                        icon: 'https://graph.facebook.com/'
-                            + friend.code.substring(3) + '/picture'
-                    };
-                });
-            }
-        });
 
         var actions = [];
         var count = 0;
