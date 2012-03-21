@@ -326,96 +326,12 @@ app.setup.leftColumn = function(ele){
 }
 app.setup.registerListWindow = function(form){
 
-    var id_input                = form.find('input[name=list_id]');
-    var name_input              = form.find('input[name=name]');
-    var description_input       = form.find('textarea[name=description]');
-    var owner_field             = form.find('div.owner-field');
-    var owner_select            = form.find('select[name=owner]');
-    var social_member_field     = form.find('div.twitter-member');
-    var social_member_list      = form.find('ul.twitter-members');
-    var social_member_input     = social_member_field.find('input');
-    var social_member_addon     = social_member_field.find('.add-on');
-    var social_member_label     = social_member_field.find('label');
-    var social_member_template  = social_member_list.html();
-    var option_map              = {};
-
-    var addMember = function(code){
-        if (social_member_list.find('input[value="' + code + '"]').length) {
-            return;
-        }
-	    var user = app.data.users[code];
-	    var li = $(social_member_template);
-	    li.find('img').attr('src', user.icon);
-	    li.find('.name').text(user.screen_name || user.name);
-	    li.find('input').attr('value', code);
-	    li.find('.icon').click(function(){ li.remove() });
-	    li.prependTo(social_member_list);
-    };
-
-    var modeReset = function(code){
-        if (/^tw-[0-9]+$/.test(code)) {
-            social_member_input.attr('placeholder', 'screen_name');
-            social_member_addon.text('@');
-            social_member_label.text(social_member_label.data('text-tw-' + app.env.lang));
-            social_member_field.show();
-        } else if (/^fb-[0-9]+$/.test(code)) {
-            social_member_input.attr('placeholder', 'username');
-            social_member_addon.text('f');
-            social_member_label.text(social_member_label.data('text-fb-' + app.env.lang));
-            social_member_field.show();
-        } else {
-            social_member_field.hide();
-        }
-    };
-
-    var autocomplete_filter = function(term){
-        var matcher = new RegExp( $.ui.autocomplete.escapeRegex(term), "i" );
-        var dup = {};
-        var code = owner_select.val();
-        var members = [code];
-        social_member_list.find('input').each(function(){
-            members.push($(this).val());
-        });
-        var sub_list = app.util.findMeList(members);
-        var sub_map = {};
-        for (var i = 0, max_i = sub_list.length; i < max_i; i++) {
-            sub_map[sub_list[i]] = 1;
-        }
-
-        return $.grep( app.data.assigns, function(value) {
-            if (value.code in dup) {
-                return false;
-            } else if (!(value.owner in sub_map)) {
-                return false;
-            } else if (matcher.test( value.value )) {
-                dup[value.code] = 1;
-                return true;
-            }
-			return false;
-		});
-    };
-
-    owner_select.change(function(){
-        social_member_list.empty();
-        modeReset(owner_select.val());
-    });
-    social_member_list.empty();
-    social_member_input.autocomplete({
-		zIndex: 1051,
-		source: function(request, response) {
-		    response(autocomplete_filter(request.term));
-		},
-		select: function(event, ui) {
-		    addMember(ui.item.code);
-        }
-	}).data('autocomplete')._renderItem = function(ul, item) {
-        return $(document.createElement('li'))
-            .data('item.autocomplete', item)
-            .append("<a>"+ item.label + "</a>")
-            .appendTo(ul);
-    };
-    social_member_input.bind('autocompleteclose',
-        function(){ social_member_input.val('') });
+    var id_input          = form.find('input[name=list_id]');
+    var name_input        = form.find('input[name=name]');
+    var description_input = form.find('textarea[name=description]');
+    var owner_field       = form.find('div.owner-field');
+    var owner_select      = form.find('select[name=owner]');
+    var option_map        = {};
 
     app.addListener('registerSubAccount', function(sub_account){
         if (option_map[sub_account.code]) {
@@ -439,18 +355,11 @@ app.setup.registerListWindow = function(form){
         id_input.val(list.id);
         name_input.val(list.name);
         description_input.val(list.description);
-        modeReset(app.util.getRegistrant(list));
-        social_member_list.empty();
-        for (var i = 0, max_i = list.members.length; i < max_i; i++) {
-            addMember(list.members[i]);
-        }
     });
 
     app.addListener('createList', function(){
         id_input.val('');
         owner_field.show();
-        modeReset(owner_select.val());
-        social_member_list.empty();
         app.dom.reset(form);
         app.dom.show(form);
     });
@@ -467,6 +376,140 @@ app.setup.deleteListWindow = function(form){
         app.dom.show(form);
     });
 }
+app.setup.memberListWindow = function(form){
+    var id_input = form.find('input[name=list_id]');
+    var ul = form.find('ul');
+    var template = ul.html();
+    form.find('input[name="invite_code"]').click(function(e){
+        e.preventDefault();
+        $(this).select();
+    });
+    form.find('.ui-invite').click(function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var id = form.data('id');
+        app.api.list.invite(id).done(function(data){
+            var url = location.protocol + '//'
+                + location.host
+                + '/join/'
+                + id
+                + '/'
+                + data.invite_code;
+            form.find('input[name="invite_code"]').val(url);
+            app.data.list_map[id].invite_code = data.invite_code;
+        });
+    });
+    form.find('.ui-disinvite').click(function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var id = form.data('id');
+        app.api.list.disinvite(id).done(function(){
+            form.find('input[name="invite_code"]').val('');
+            app.data.list_map[id].invite_code = null;
+        });
+    });
+    app.addListener('editListMember', function(list){
+        app.dom.reset(form);
+        form.data('id', list.id);
+        form.find('.ui-listname').text(list.name);
+        if (list.invite_code) {
+            var url = location.protocol + '//'
+                + location.host
+                + '/join/'
+                + list.id
+                + '/'
+                + list.invite_code;
+                form.find('input[name="invite_code"]').val(url);
+        }
+        ul.empty();
+        for (var i = 0, max_i = list.members.length; i < max_i; i++) {
+            var code = list.members[i];
+            if (!(code in app.data.users)) {
+                continue;
+            }
+            var user = app.data.users[code];
+            $(template)
+                .find('.member-icon').append(app.util.getIcon(code, 24)).end()
+                .find('.member-name').text(user.name).end()
+                .find('.icon-remove').data('code', code).click(function(e){
+                    var code = $(this).data('code');
+                    app.fireEvent('leaveListMember',
+                        list, code, app.data.users[code].name, app.util.getIcon(code, 24));
+                }).end()
+                .appendTo(ul);
+        }
+        app.dom.show(form);
+        id_input.val(list.id);
+    });
+    app.addListener('registerList', function(list){
+        if (!form.is(':visible')) {
+            return;
+        }
+        if (form.data('id') === list.id) {
+            app.fireEvent('editListMember', list);
+        }
+    });
+    app.addListener('receiveMe', function(){
+        if (!form.is(':visible')) {
+            return;
+        }
+        if (!(form.data('id') in app.data.list_map)) {
+            app.dom.hide(form);
+        }
+    });
+}
+app.setup.inviteListWindow = function(form){
+    var member_select = form.find('select[name="member_code"]');
+    var option_map = {};
+    form.find('.btn-primary').click(function(e){
+        var list_id = form.find('input[name="list_id"]').val();
+        var invite_code = form.find('input[name="invite_code"]').val();
+        var member_code = member_select.val();
+        app.api.list.join(list_id, invite_code, member_code).done(function(data){
+            form.hide();
+            app.fireEvent('reload');
+        });
+    });
+    app.addListener('registerSubAccount', function(sub_account){
+        if (option_map[sub_account.code]) {
+            option_map[sub_account.code].remove();
+        }
+        option_map[sub_account.code] =
+            $('<option/>')
+                .attr('value', sub_account.code)
+                .text(sub_account.name)
+                .appendTo(member_select);
+        if (app.data.sign.code === sub_account.code) {
+            option_map[sub_account.code].attr('selected', true);
+        }
+    });
+    app.addListener('receiveInvite', function(invite){
+        form.find('.ui-listname').text(invite.list_name);
+        form.find('input[name="list_id"]').val(invite.list_id);
+        form.find('input[name="invite_code"]').val(invite.invite_code);
+        form.show();
+    });
+}
+app.setup.leaveListWindow = function(form){
+    form.find('.btn-primary').click(function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var list_id = form.find('input[name="list_id"]').val();
+        var member_code = form.find('input[name="member_code"]').val();
+        app.api.list.leave(list_id, member_code).done(function(data){
+            app.fireEvent('reload');
+            form.hide();
+        });
+    });
+    app.addListener('leaveListMember', function(list, member_code, member_name, member_icon){
+        form.find('.ui-listname').text(list.name);
+        form.find('.ui-membername').text(member_name);
+        form.find('input[name="list_id"]').val(list.id);
+        form.find('input[name="member_code"]').val(member_code);
+        form.find('img').replaceWith(member_icon);
+        form.show();
+    });
+}
 app.click.createList = function(){
     app.fireEvent('createList');
 }
@@ -480,23 +523,7 @@ app.click.editList = function(){
 app.submit.registerList = function(form){
     var id = form.find('input[name="list_id"]').val();
     var url = id ? '/api/1/list/update' : '/api/1/list/create';
-    var users = [];
     var owner = form.find('[name="owner"]').val();
-    users.push({
-        code: owner,
-        name: app.util.getName(owner),
-        icon: app.util.getIconUrl(owner)
-    });
-    form.find('input[name="members"]').each(function(){
-        var ele = $(this);
-        var code = ele.val();
-        users.push({
-            code: code,
-            name: app.util.getName(code),
-            icon: app.util.getIconUrl(code)
-        });
-    });
-    form.find('input[name="users"]').val(JSON.stringify(users));
     app.ajax({
         type: 'POST',
         url: url,
@@ -511,7 +538,6 @@ app.submit.registerList = function(form){
             app.fireEvent('registerList', data.list);
             app.fireEvent('openList', data.list);
             app.dom.reset(form);
-            form.find('ul.members').empty();
             if (id) {
                 app.dom.show(app.dom.get('showable', 'update-list-twipsy'));
                 app.dom.hide(form);

@@ -71,7 +71,13 @@ sub as_hashref {
     my $data = $row->data;
     $data->{id} = $row->list_id;
     $data->{public_code} = $row->public_code;
+    $data->{invite_code} = $row->invite_code;
     $data->{actioned_on} = int($row->actioned_on);
+    $data->{members} = [
+        map { $_->code }
+            $row->handle->search('list_member', { list_id => $row->list_id })->all
+    ];
+    
     $data;
 }
 

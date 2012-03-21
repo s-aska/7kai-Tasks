@@ -14,17 +14,13 @@ sub create {
     my $res = DoubleSpark::Validator->validate($c, $req,
         name => [qw/NOT_NULL/, [qw/LENGTH 1 20/]],
         description => [[qw/LENGTH 1 2048/]],
-        owner => [qw/NOT_NULL OWNER/],
-        { members => [qw/members/] }, [qw/MEMBERS/],
-        users => [qw/NOT_NULL/]
+        owner => [qw/NOT_NULL OWNER/]
     );
     return unless $res;
 
     my $name = $req->param('name');
     my $description = $req->param('description');
     my $owner = $req->param('owner');
-    my @members = $req->param('members');
-    my $users = decode_json(encode_utf8($req->param('users')));
 
     my $txn = $c->db->txn_scope;
     my $list = $c->db->insert('list', {
@@ -33,21 +29,12 @@ sub create {
             name => $name,
             description => $description,
             owner => $owner,
-            members => \@members,
-            users => $users,
             tasks => []
         },
         actioned_on => int(Time::HiRes::time * 1000),
         created_on => \'now()',
         updated_on => \'now()'
     });
-    for my $member (@members) {
-        $c->db->insert('list_member', {
-            list_id => $list->list_id,
-            code => $member,
-            created_on => \'now()'
-        });
-    }
     $txn->commit;
     infof('[%s] create list', $c->sign_name);
     return {
@@ -62,57 +49,105 @@ sub update {
     my $res = DoubleSpark::Validator->validate($c, $req,
         list_id => [qw/NOT_NULL LIST_ROLE_MEMBER/],
         name => [qw/NOT_NULL/, [qw/LENGTH 1 20/]],
-        description => [[qw/LENGTH 1 2048/]],
-        { members => [qw/members/] }, [qw/MEMBERS/],
-        users => [qw/NOT_NULL/],
+        description => [[qw/LENGTH 1 2048/]]
     );
     return unless $res;
 
     my $list = $c->stash->{list};
-
     $list->data->{name}        = $req->param('name');
     $list->data->{description} = $req->param('description');
-    $list->data->{members}     = [ $req->param('members') ];
-    $list->data->{users}       = decode_json(encode_utf8($req->param('users')));
-
-    # update database
-    my $txn = $c->db->txn_scope;
     $list->update({ data => $list->data, actioned_on => int(Time::HiRes::time * 1000) });
-    my $members = {};
-    for my $member (@{ $list->data->{members} }) {
-        $members->{ $member }++;
-    }
-    my $list_member = $c->db->search('list_member', {
-        list_id => $list->list_id
-    });
-    for my $member ($list_member->all) {
-        unless (delete $members->{ $member->code }) {
-            debugf('[%s] unassign member %s from list %s',
-                $c->sign_name,
-                $member->code,
-                $list->data->{name});
-            $member->delete;
-        }
-    }
-    for my $code (keys %$members) {
-        debugf('[%s] assign member %s from list %s',
-            $c->sign_name,
-            $code,
-            $list->data->{name});
-        $c->db->insert('list_member', {
-            list_id => $list->list_id,
-            code => $code,
-            created_on => \'now()'
-        });
-    }
-    $txn->commit;
-
     infof("[%s] update list", $c->sign_name);
-
     return {
         success => 1,
         list => $list->as_hashref
     };
+}
+
+sub invite {
+    my ($class, $c, $req) = @_;
+
+    my $res = DoubleSpark::Validator->validate($c, $req,
+        list_id => [qw/NOT_NULL LIST_ROLE_MEMBER/],
+    );
+    return unless $res;
+
+    my $list = $c->stash->{list};
+    my $invite_code = random_regex('[a-zA-Z0-9]{16}');
+    $list->update({ invite_code => $invite_code });
+    infof('[%s] invite list', $c->sign_name);
+    return { success => 1, invite_code => $invite_code };
+}
+
+sub disinvite {
+    my ($class, $c, $req) = @_;
+
+    my $res = DoubleSpark::Validator->validate($c, $req,
+        list_id => [qw/NOT_NULL LIST_ROLE_MEMBER/],
+    );
+    return unless $res;
+
+    my $list = $c->stash->{list};
+    $list->update({ invite_code => undef });
+    infof('[%s] disinvite list', $c->sign_name);
+    return { success => 1 };
+}
+
+sub join {
+    my ($class, $c, $req) = @_;
+
+    my $res = DoubleSpark::Validator->validate($c, $req,
+        list_id     => [qw/NOT_NULL/],
+        invite_code => [qw/NOT_NULL/],
+        member_code => [qw/NOT_NULL OWNER/]
+    );
+    return unless $res;
+
+    my $list_id     = $req->param('list_id');
+    my $invite_code = $req->param('invite_code');
+    my $member_code = $req->param('member_code');
+
+    my $list = $c->db->single('list', {
+        list_id => , $list_id,
+        invite_code => $invite_code
+    });
+    return unless $list;
+
+    my $assign = $c->db->count('list_member', '*', {
+        list_id => $list->list_id,
+        code    => $member_code
+    });
+    return { success => 1 } if $assign;
+
+    $c->db->insert('list_member', {
+        list_id => $list->list_id,
+        code    => $member_code
+    });
+    push @{ $list->data->{members} }, $member_code;
+    $list->update({ data => $list->data, actioned_on => int(Time::HiRes::time * 1000) });
+    infof('[%s] join list', $c->sign_name);
+    return { success => 1 };
+}
+
+sub leave {
+    my ($class, $c, $req) = @_;
+
+    my $res = DoubleSpark::Validator->validate($c, $req,
+        list_id     => [qw/NOT_NULL LIST_ROLE_MEMBER/],
+        member_code => [qw/NOT_NULL/],
+    );
+    return unless $res;
+
+    my $list = $c->stash->{list};
+    my $member_code = $req->param('member_code');
+    $c->db->delete('list_member', {
+        list_id => $list->list_id,
+        code    => $member_code
+    });
+    @{ $list->data->{members} } = grep { $_ ne $member_code } @{ $list->data->{members} };
+    $list->update({ data => $list->data, actioned_on => int(Time::HiRes::time * 1000) });
+    infof('[%s] leave list', $c->sign_name);
+    return { success => 1 };
 }
 
 sub public {

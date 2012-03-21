@@ -25,6 +25,20 @@ sub v2 {
     }
 }
 
+sub join {
+    my ($class, $c) = @_;
+
+    return $c->res_404() unless $c->{args}->{list_id}=~/^[0-9]+$/;
+    return $c->res_404() unless $c->{args}->{invite_code}=~/^[a-zA-Z0-9]{16}$/;
+
+    $c->session->set('invite', {
+        list_id     => $c->{args}->{list_id},
+        invite_code => $c->{args}->{invite_code}
+    });
+
+    $c->redirect('/');
+}
+
 sub token {
     my ($class, $c) = @_;
 

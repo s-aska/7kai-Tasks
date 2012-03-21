@@ -16,6 +16,8 @@ app.addEvents('openNextList');
 app.addEvents('openPrevList');
 app.addEvents('createList');
 app.addEvents('editList');
+app.addEvents('editListMember');
+app.addEvents('leaveListMember');
 app.addEvents('deleteListBegin');
 app.addEvents('deleteList');
 app.addEvents('clearList');
@@ -49,6 +51,7 @@ app.addEvents('clickNotification');
 
 app.addEvents('receiveMe'); // receive me from api
 app.addEvents('receiveNotice');
+app.addEvents('receiveInvite');
 
 app.addListener('registerList', function(list){
     app.data.list_map[list.id] = list;
@@ -116,37 +119,6 @@ app.addListener('registerTask', function(task, list){
     //     app.data.current_task = task;
     // }
 });
-app.addListener('registerFriends', function(friends, owner){
-    for (var i = 0, max_i = friends.length; i < max_i; i++) {
-        var friend = friends[i];
-        var icon = friend.icon ? friend.icon.replace(/^http:\/\/a/, 'https://si')
-                 : /^tw-[0-9]+$/.test(friend.code) ?
-                     '/api/1/profile_image/'
-                     + friend.screen_name
-                 : /^fb-[0-9]+$/.test(friend.code) ?
-                    'https://graph.facebook.com/'
-                    + friend.code.substring(3)
-                    + '/picture'
-                 : '/static/img/address24.png';
-        var value = friend.screen_name ? friend.screen_name + ' (' + friend.name + ')'
-                  : friend.name;
-        var label = '<img class="sq16" src="' + icon + '"><span>' + value + '</span>';
-        app.data.users[friend.code] = {
-            code: friend.code,
-            name: friend.name,
-            screen_name: friend.screen_name,
-            icon: icon
-        };
-        if (owner) {
-            app.data.assigns.push({
-                owner: owner,
-                code: friend.code,
-                value: value,
-                label: label
-            });
-        }
-    }
-});
 app.addListener('registerSubAccount', function(sub_account){
     var icon = ( sub_account.data && sub_account.data.icon ) ?
                  sub_account.data.icon.replace(/^http:\/\/a/, 'https://si')
@@ -159,7 +131,6 @@ app.addListener('registerSubAccount', function(sub_account){
                 + '/picture'
              : '/static/img/address24.png';
     app.data.users[sub_account.code] = {
-        code: sub_account.code,
         name: sub_account.name,
         icon: icon
     };
@@ -431,12 +402,17 @@ app.util.buildMe = function(option, data){
     app.data.sign = data.sign;
     app.data.state = data.account.state;
     app.data.sub_accounts = data.sub_accounts;
+    app.data.users = data.users;
     app.data.if_modified_lists = data.list_ids;
 
     app.fireEvent('receiveSign', app.data.sign);
 
     if (data.notice) {
         app.fireEvent('notice', data.notice);
+    }
+
+    if (data.invite) {
+        app.fireEvent('receiveInvite', data.invite);
     }
 
     if (!('mute' in app.data.state)) {
@@ -449,40 +425,8 @@ app.util.buildMe = function(option, data){
         app.data.state.star = {};
     }
 
-    $.each(data.lists, function(i, list){
-        app.fireEvent('registerFriends', list.users);
-    });
-
-    // localStorageのfriendsリストを更新
     for (var i = 0, max_i = data.sub_accounts.length; i < max_i; i++) {
-        sub_account = data.sub_accounts[i];
-
-        app.fireEvent('registerSubAccount', sub_account);
-
-        // Twitter
-        if (/^tw-[0-9]+$/.test(sub_account.code)) {
-            if ("friends" in sub_account.data) {
-                app.fireEvent('registerFriends', sub_account.data.friends,
-                    sub_account.code);
-            }
-            if (option.setup
-                && data.sign.code === sub_account.code
-                && app.option.auto_sync_friends) {
-                if (! app.env.development) {
-                        app.api.twitter.friends(sub_account.code.substring(3), '-1', []);
-                }
-            }
-        }
-
-        // Facebook
-        else if (/^fb-[0-9]+$/.test(sub_account.code)) {
-            app.fireEvent('registerFriends', sub_account.data.friends, sub_account.code);
-        }
-
-        // E-mail
-        else {
-
-        }
+        app.fireEvent('registerSubAccount', data.sub_accounts[i]);
     }
 
     data.lists.sort(function(a, b){
@@ -838,6 +782,57 @@ app.api.twitter.friends = function(user_id, cursor, cache){
                 app.dom.show(app.dom.get('showable', 'notice-failed-sync-twitter'));
             });
         }
+    });
+}
+app.api.list.invite = function(list_id){
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/list/invite',
+        data: {
+            list_id: list_id
+        },
+        dataType: 'json',
+        salvage: false,
+        loading: false
+    });
+}
+app.api.list.disinvite = function(list_id){
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/list/disinvite',
+        data: {
+            list_id: list_id
+        },
+        dataType: 'json',
+        salvage: false,
+        loading: false
+    });
+}
+app.api.list.join = function(list_id, invite_code, member_code){
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/list/join',
+        data: {
+            list_id: list_id,
+            invite_code: invite_code,
+            member_code: member_code
+        },
+        dataType: 'json',
+        salvage: false,
+        loading: false
+    });
+}
+app.api.list.leave = function(list_id, member_code){
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/list/leave',
+        data: {
+            list_id: list_id,
+            member_code: member_code
+        },
+        dataType: 'json',
+        salvage: false,
+        loading: false
     });
 }
 
@@ -1474,6 +1469,9 @@ app.setup.tasksheet = function(ul){
         li.find('.ui-listmenu .icon-edit').parent().click(function(e){
             app.fireEvent('editList', list);
         });
+        li.find('.ui-listmenu .icon-user').parent().click(function(e){
+            app.fireEvent('editListMember', list);
+        });
         li.find('.ui-normal .ui-edit').click(function(e){
             if (current_task) {
                 app.fireEvent('editTask', current_task);
@@ -1500,7 +1498,7 @@ app.setup.tasksheet = function(ul){
             dropdown.removeClass('open');
         });
         if (list.description) {
-            li.find('.ui-description').html(app.util.autolink(list.description).replace(/\r?\n/g, '<br />'));
+            li.find('.ui-description').html(app.util.autolink(list.description, 64).replace(/\r?\n/g, '<br />'));
             li.find('> header .name')
                 .css('cursor', 'pointer')
                 .append($('<i class="icon-info-sign"/>'))
@@ -1513,7 +1511,9 @@ app.setup.tasksheet = function(ul){
             var members = [list.owner].concat(list.members);
             for (var i = 0, max_i = members.length; i < max_i; i++) {
                 var code = members[i];
-                var friend = app.data.users[code];
+                if (!(code in app.data.users)) {
+                    continue;
+                }
                 var icon = app.util.getIcon(code, 24);
                 icon.data('code', code);
                 icon.click(function(){
@@ -2229,7 +2229,10 @@ app.setup.recent = function(ele, task){
                 ele.find('.message i').attr('class', 'icon-heart');
                 ele.find('.message span').text(date);
             } else {
-                ele.find('.message span').text(task.recent.message + ' ' + date);
+                var message = task.recent.message.length > 48
+                    ? task.recent.message.substring(0, 48) + '...'
+                    : task.recent.message;
+                ele.find('.message span').text(message + ' ' + date);
             }
         } else {
             ele.find('.message i').attr('class', 'icon-info-sign');
@@ -2337,6 +2340,9 @@ app.setup.registerTaskWindow = function(form){
             for (var i = 0, max_i = assigns.length; i < max_i; i++) {
                 var assign = assigns[i];
                 var friend = app.data.users[assign];
+                if (!friend) {
+                    continue;
+                }
                 var li = $(assign_template);
                 if (friend && friend.icon) {
                     li.find('img').attr('src', friend.icon);
@@ -2547,8 +2553,9 @@ app.submit.registerTask = function(form){
     var requester = form.find('select[name="requester"]').val();
     var registrant = form.find('input[name="registrant"]').val();
     var name = form.find('input[name="name"]').val();
-    var due = form.find('input[name="due"]').datepicker("getDate");
+    var due = form.find('input[name="due"]').val();
     if (due) {
+        due = app.date.parse(due);
         due = app.date.mdy(due);
     }
     if (typeof assign !== 'object') {

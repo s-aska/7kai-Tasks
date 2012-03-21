@@ -37,18 +37,9 @@ sub callback {
         $fb->request_access_token($c->req->param('code'));
         my $access_token = $fb->access_token;
         my $user = $fb->fetch('me');
-        my $friends = $fb->fetch('me/friends');
         my $code = 'fb-' . $user->{id};
         my $name = $user->{name};
         my $icon = sprintf 'https://graph.facebook.com/%s/picture', $user->{id};
-
-        my @friends;
-        for (@{ $friends->{data} }) {
-            push @friends, {
-                code => 'fb-' . $_->{id},
-                name => $_->{name}
-            };
-        }
 
         my $fb_account = $c->db->single('fb_account', {
             code => $code
@@ -60,7 +51,7 @@ sub callback {
             # update
             $fb_account->update({
                 name             => $name,
-                data             => { friends => \@friends },
+                data             => {},
                 authenticated_on => \'now()'
             });
 
@@ -109,7 +100,7 @@ sub callback {
                 account_id       => $account->account_id,
                 code             => $code,
                 name             => $name,
-                data             => { friends => \@friends },
+                data             => {},
                 authenticated_on => \'now()',
                 created_on       => \'now()',
                 updated_on       => \'now()'

@@ -71,7 +71,7 @@ sub callback {
                 my $vident = shift;
                 my $code = $c->req->param('openid.ext1.value.email');
                 my ($screen_name, $domain) = split '@', $code;
-                my $icon = '/api/1/profile/gravatar/' . $code;
+                my $icon = 'https://secure.gravatar.com/avatar/' . md5_hex($code);
                 my $google_account = $c->db->single('google_account', {
                     code => $code
                 });
@@ -131,7 +131,7 @@ sub callback {
                         account_id       => $account->account_id,
                         code             => $code,
                         name             => $screen_name,
-                        data             => { icon => $icon },
+                        data             => {},
                         authenticated_on => \'now()',
                         created_on       => \'now()',
                         updated_on       => \'now()'

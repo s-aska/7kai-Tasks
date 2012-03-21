@@ -11,6 +11,7 @@ get '/v2' => 'Root#v2';
 get '/mock' => 'Root#mock';
 get '/staff' => 'Root#staff';
 get '/token' => 'Root#token';
+get '/join/:list_id/:invite_code' => 'Root#join';
 
 get '/signout' => 'Root#signout';
 
@@ -32,12 +33,16 @@ post '/api/1/account/update'  => 'API::Account#update';
 post '/api/1/account/delete'  => 'API::Account#delete';
 post '/api/1/account/salvage' => 'API::Account#salvage';
 
-post '/api/1/list/create' => 'API::List#create';
-post '/api/1/list/update' => 'API::List#update';
-post '/api/1/list/public' => 'API::List#public';
-post '/api/1/list/private' => 'API::List#private';
-post '/api/1/list/delete' => 'API::List#delete';
-post '/api/1/list/clear'  => 'API::List#clear';
+post '/api/1/list/create'    => 'API::List#create';
+post '/api/1/list/update'    => 'API::List#update';
+post '/api/1/list/invite'    => 'API::List#invite';
+post '/api/1/list/disinvite' => 'API::List#disinvite';
+post '/api/1/list/join'      => 'API::List#join';
+post '/api/1/list/leave'     => 'API::List#leave';
+post '/api/1/list/public'    => 'API::List#public';
+post '/api/1/list/private'   => 'API::List#private';
+post '/api/1/list/delete'    => 'API::List#delete';
+post '/api/1/list/clear'     => 'API::List#clear';
 
 post '/api/1/task/create' => 'API::Task#create';
 post '/api/1/task/update' => 'API::Task#update';

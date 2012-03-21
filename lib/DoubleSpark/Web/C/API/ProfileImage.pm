@@ -49,6 +49,9 @@ sub gravatar {
     my ($class, $c) = @_;
 
     my $filename = md5_hex($c->{args}->{code});
+    my $url = 'https://secure.gravatar.com/avatar/' . $filename;
+    return $c->redirect($url);
+
     my $path = File::Spec->catfile('/tmp/', 'gravatar-' . $filename);
     if (-f $path) {
         return $c->create_response(
@@ -60,7 +63,6 @@ sub gravatar {
             IO::File->new($path)
         );
     }
-    my $url = 'https://www.gravatar.com/avatar/' . $filename;
     my ($minor_version, $code, $msg, $headers, $body) = $furl->get($url);
     my $fh = IO::File->new($path, '>');
     print $fh $body;

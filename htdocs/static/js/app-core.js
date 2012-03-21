@@ -19,10 +19,10 @@ var app = ns.app = {
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     WEEK_NAMES: [
-        'Sun','Mon','Tue','Wed','Thu','Fri','Sat'
+        'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
     ],
     WEEK_NAMES_JA: [
-        '日','月','火','水','木','金','土'
+        '日', '月', '火', '水', '木', '金', '土'
     ],
     
     // Environment
@@ -193,7 +193,7 @@ app.dom.slideUp = function(ele){
 }
 
 // Utility
-app.util.autolink = function(text){
+app.util.autolink = function(text, truncate){
     return text
         .replace(/&/g, "&amp;")
         .replace(/"/g, "&quot;")
@@ -203,7 +203,11 @@ app.util.autolink = function(text){
         var a = d.createElement('a');
         a.href = url;
         a.target = '_blank';
-        a.appendChild(d.createTextNode(url));
+        if (truncate && url.length > truncate) {
+            a.appendChild(d.createTextNode(url.substring(0, truncate) + '...'));
+        } else {
+            a.appendChild(d.createTextNode(url));
+        }
         var div = d.createElement('div');
         div.appendChild(a);
         return div.innerHTML;

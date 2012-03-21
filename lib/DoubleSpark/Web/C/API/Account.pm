@@ -1,6 +1,7 @@
 package DoubleSpark::Web::C::API::Account;
 use strict;
 use warnings;
+use Digest::MD5 qw(md5_hex);
 use DoubleSpark::API::Account;
 use DoubleSpark::API::Comment;
 use DoubleSpark::API::List;
@@ -34,9 +35,6 @@ sub me {
     my $fb_accounts = $c->db->search('fb_account', {
         account_id => $account->account_id
     });
-    my $email_accounts = $c->db->search('email_account', {
-        account_id => $account->account_id
-    });
     my $google_accounts = $c->db->search('google_account', {
         account_id => $account->account_id
     });
@@ -44,7 +42,7 @@ sub me {
         $_ = $_->get_columns;
         $_->{data} = decode_json($_->{data}) if $_->{data};
         $_;
-    } ($tw_accounts->all, $fb_accounts->all, $email_accounts->all, $google_accounts->all);
+    } ($tw_accounts->all, $fb_accounts->all, $google_accounts->all);
     my @codes = map { $_->{code} } @sub_accounts;
 
     unless (@codes) {
@@ -85,19 +83,58 @@ sub me {
         @lists = map { $_->as_hashref }
             $c->db->search('list', { list_id => [keys %ids] })->all;
     }
+    my $users = {};
+    for my $list (@lists) {
+        for my $code (@{ $list->{members} }, $list->{owner}) {
+            next if exists $users->{ $code };
+            my $table = $code=~/^tw-/ ? 'tw_account'
+                      : $code=~/^fb-/ ? 'fb_account'
+                      : 'google_account';
+            my $sub_account = $c->db->single($table, { code => $code });
+            if ($sub_account) {
+                my $icon = $code=~/^tw-/ ? $sub_account->data->{icon}
+                         : $code=~/^fb-(.*)/ ? "https://graph.facebook.com/$1/picture"
+                         : 'https://secure.gravatar.com/avatar/' . md5_hex($code);
+                $users->{ $code } = {
+                    name => $sub_account->name,
+                    icon => $icon
+                };
+            }
+        }
+    }
 
     my $notice = $c->session->remove('notice');
+    my $invite = $c->session->remove('invite');
+    if ($invite) {
+        if (exists $ids{ $invite->{list_id} }) {
+            undef $invite;
+            # $c->session->remove('invite');
+        } else {
+            my $list = $c->db->single('list', {
+                list_id     => $invite->{list_id},
+                invite_code => $invite->{invite_code}
+            });
+            if ($list) {
+                $invite->{list_name} = $list->data->{name};
+            } else {
+                undef $invite;
+                # $c->session->remove('invite');
+            }
+        }
+    }
 
     $c->render_json({
         success      => 1,
         sign         => $c->sign,
         token        => $token,
         notice       => $notice,
+        invite       => $invite,
         account      => $account->data,
         modified_on  => $account->modified_on,
         sub_accounts => \@sub_accounts,
         lists        => \@lists,
-        list_ids     => $list_ids
+        list_ids     => $list_ids,
+        users        => $users
     });
 }
 

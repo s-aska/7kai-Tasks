@@ -44,6 +44,7 @@ $.extend(app, {
     api: {
         account: {},
         task: {},
+        list: {},
         twitter: {}
     },
     sortable: {}
@@ -346,6 +347,11 @@ app.dom.set = function(type, id, ele){
     }
     app.dom.cache[type][id] = ele;
 }
+app.dom.disableSelection = function(ele){
+    ele.bind($.support.selectstart ? 'selectstart' : 'mousedown', function(e){
+        e.preventDefault();
+    });
+};
 
 app.setup.localize = function(ele){
     ele.text(ele.data('text-' + app.env.lang));

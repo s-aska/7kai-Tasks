@@ -672,7 +672,7 @@ app.setup.nextWeek = function(ele){
                 app.data.gantt.start.getMonth(),
                 app.data.gantt.start.getDate() + 7));
     });
-    ele.disableSelection();
+    app.dom.disableSelection(ele);
 }
 app.setup.prevWeek = function(ele){
     ele.click(function(e){
@@ -683,7 +683,7 @@ app.setup.prevWeek = function(ele){
                 app.data.gantt.start.getMonth(),
                 app.data.gantt.start.getDate() - 7));
     });
-    ele.disableSelection();
+    app.dom.disableSelection(ele);
 }
 
 })(this, window, document, jQuery);

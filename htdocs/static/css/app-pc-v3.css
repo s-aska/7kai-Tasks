@@ -528,6 +528,17 @@ body > .row > .columns > header {
     width: 460px;
     height: 180px;
 }
+#member-list-window li:hover {
+    background-color: #fefed6;
+}
+#member-list-window .member-name {
+    padding-top: 4px;
+    padding-left: 6px;
+}
+#member-list-window .member-remove {
+    padding-top: 4px;
+    padding-right: 6px;
+}
 
 /********** scrollbar **********/
 ul::-webkit-scrollbar,

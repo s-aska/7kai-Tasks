@@ -3,12 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>7kai Tasks</title>
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="/static/css/bootstrap.css">
 <link rel="stylesheet" href="/static/css/app-base-v3.css" media="all">
 <link rel="stylesheet" href="/static/css/app-pc-v3.css" media="all">
 <script src="/static/js/jquery-1.7.1.min.js"></script>
-<script src="/static/js/jquery-ui-1.8.13.js"></script>
+<script src="/static/js/jquery-ui-1.8.18.custom.min.js"></script>
 <script src="/static/js/h5utils.js"></script>
 <script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>
@@ -468,6 +467,15 @@
                   </li>
                   <li>
                     <a>
+                      <i class="icon-user"></i>
+                      <span
+                        data-setup="localize"
+                        data-text-ja="メンバー管理"
+                      >Members</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a>
                       <i class="icon-edit"></i>
                       <span
                         data-setup="localize"
@@ -475,16 +483,6 @@
                       >Edit List</span>
                     </a>
                   </li>
-                  <!-- <li class="divider"></li>
-                  <li
-                    class="clearfix"
-                    data-setup="tooltip"
-                  >
-                    <a data-tag="primary">
-                      <i class="icon-tag icon-white"></i>
-                      <span>Red Tag</span>
-                    </a>
-                  </li> -->
                   <li class="divider"></li>
                   <li>
                     <a>
@@ -541,6 +539,12 @@
                   data-text-ja="保留"
                   data-text-en="Pending"
                 ><i class="icon-pause" style="opacity: 1;"></i></a>
+                <a
+                  class="btn x-small"
+                  data-setup="tooltip"
+                  data-text-ja="メンバー管理"
+                  data-text-en="Members"
+                ><i class="icon-user"></i></a>
                 <a
                   class="btn x-small"
                   data-setup="tooltip"
@@ -1336,48 +1340,6 @@
             <select name="owner"></select>
           </div>
         </div>
-        <div class="clearfix member twitter-member">
-          <label for=""
-            data-setup="localize"
-            data-text-tw-ja="メンバー (Twitter)"
-            data-text-fb-ja="メンバー (Facebook)"
-            data-text-tw-en="Member (Twitter)"
-            data-text-fb-en="Member (Facebook)"
-            data-text-ja="メンバー (Twitter)"
-          >Member (Twitter)</label>
-          <div class="input owner">
-            <div class="input-prepend" style="height: 28px">
-              <span class="add-on">@</span>
-              <input
-                class="span3"
-                style="width: 182px;"
-                type="text"
-                name="member"
-                placeholder="screen_name"
-              >
-            </div>
-          </div>
-        </div>
-        <ul class="unstyled members twitter-members">
-          <li class="clearfix">
-            <div><img width="16" height="16"></div>
-            <div class="name"></div>
-            <div><input type="hidden" name="members"></div>
-            <div class="icon"><i class="icon-remove"></i></div>
-          </li>
-        </ul>
-        <ul>
-          <li
-            data-setup="localize"
-            data-text-ja="メンバーに何も送信されません。">
-            no notice.
-          </li>
-          <li
-            data-setup="localize"
-            data-text-ja="フォームは自動で閉じません。">
-            no auto close.
-          </li>
-        </ul>
       </div>
       <div class="left description">
         <div class="clearfix">
@@ -1403,6 +1365,202 @@
       data-setup="localize,hide"
       data-text-ja="閉じる"
       data-hide='{"id":"register-list-window"}'
+    >Close</button>
+  </div>
+</form>
+<form
+  id="member-list-window"
+  class="modal form-stacked"
+  data-setup="showable,ui,memberListWindow,escclose"
+  data-ui="draggable"
+  data-showable='{
+    "id":"member-list-window",
+    "show":{"effect":"fade","speed":"fast"},
+    "hide":{"effect":"fade","speed":"fast"}}'
+>
+  <div class="modal-header">
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"member-list-window"}'
+    >×</a>
+    <h3
+      data-setup="localize"
+      data-text-ja="メンバー管理"
+    >Member</h3>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="left">
+        <div style="margin-bottom: 10px">
+          <a
+            class="btn btn-primary ui-invite"
+            data-setup="localize"
+            data-text-ja="招待URL生成"
+          >Invite On</a>
+          <a
+            class="btn ui-disinvite"
+            data-setup="localize"
+            data-text-ja="招待URL破棄"
+          >Invite Off</a>
+        </div>
+        <div class="clearfix">
+          <label
+            for=""
+            data-setup="localize"
+            data-text-ja="招待URL（リストへの参加を案内されます）"
+          >Invite URL</label>
+          <div class="input">
+            <input class="span6" type="text" name="invite_code" value="">
+          </div>
+        </div>
+        <p>
+          <span class="ui-listname"></span>
+          <span data-setup="localize" data-text-ja="のメンバー">'s member</span>
+        </p>
+        <ul class="unstyled span3">
+          <li class="clearfix">
+            <div class="pull-left member-icon sq24"></div>
+            <div class="pull-left member-name"></div>
+            <div class="pull-right member-remove"><a><i class="icon-remove"></i></a></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn secondary"
+      data-setup="localize,hide"
+      data-text-ja="閉じる"
+      data-hide='{"id":"member-list-window"}'
+    >Close</button>
+  </div>
+</form>
+<form
+  id="invite-list-window"
+  class="modal form-stacked"
+  data-setup="showable,ui,inviteListWindow,escclose"
+  data-ui="draggable"
+  data-showable='{
+    "id":"invite-list-window",
+    "show":{"effect":"fade","speed":"fast"},
+    "hide":{"effect":"fade","speed":"fast"}}'
+>
+  <input type="hidden" name="list_id" value="">
+  <input type="hidden" name="invite_code" value="">
+  <div class="modal-header">
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"invite-list-window"}'
+    >×</a>
+    <h3
+      data-setup="localize"
+      data-text-ja="リストに招待されています、参加しますか？"
+    >You are invited.</h3>
+  </div>
+  <div class="modal-body">
+    <div class="clearfix">
+      <label for=""
+        data-setup="localize"
+        data-text-ja="リスト"
+      >List</label>
+      <div class="input">
+        <strong class="ui-listname"></strong>
+      </div>
+    </div>
+    <div class="clearfix">
+      <label for=""
+        data-setup="localize"
+        data-text-ja="アカウント"
+      >Account</label>
+      <div class="input">
+        <select name="member_code"></select>
+      </div>
+    </div>
+    <div>
+      <a
+        class="btn btn-primary"
+        data-setup="localize"
+        data-text-ja="参加する"
+      >Join</a>
+      <a
+        class="btn"
+        data-setup="localize,hide"
+        data-hide='{"id":"invite-list-window"}'
+        data-text-ja="拒否する"
+      >Reject</a>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn secondary"
+      data-setup="localize,hide"
+      data-text-ja="閉じる"
+      data-hide='{"id":"invite-list-window"}'
+    >Close</button>
+  </div>
+</form>
+<form
+  id="leave-list-window"
+  class="modal form-stacked"
+  data-setup="showable,ui,leaveListWindow,escclose"
+  data-ui="draggable"
+  data-showable='{
+    "id":"leave-list-window",
+    "show":{"effect":"fade","speed":"fast"},
+    "hide":{"effect":"fade","speed":"fast"}}'
+>
+  <input type="hidden" name="list_id" value="">
+  <input type="hidden" name="member_code" value="">
+  <div class="modal-header">
+    <a
+      class="close"
+      data-setup="hide"
+      data-hide='{"id":"leave-list-window"}'
+    >×</a>
+    <h3
+      data-setup="localize"
+      data-text-ja="リストから除外"
+    >Leave from list</h3>
+  </div>
+  <div class="modal-body">
+    <p
+      data-setup="localize"
+      data-text-ja="本当にリストから除外しますか？"
+    >Do you really want to leave the list?</p>
+    <div class="clearfix">
+      <label for=""
+        data-setup="localize"
+        data-text-ja="リスト"
+      >List</label>
+      <div class="input">
+        <strong class="ui-listname"></strong>
+      </div>
+    </div>
+    <div class="clearfix">
+      <label for=""
+        data-setup="localize"
+        data-text-ja="メンバー"
+      >Member</label>
+      <div class="input clearfix">
+        <div class="pull-left sq24"><img></div>
+        <div class="pull-left ui-membername" style="padding: 4px 0 0 6px"></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-primary"
+      data-setup="localize"
+      data-text-ja="除外"
+    >Leave</button>
+    <button
+      class="btn secondary"
+      data-setup="localize,hide"
+      data-text-ja="閉じる"
+      data-hide='{"id":"leave-list-window"}'
     >Close</button>
   </div>
 </form>
@@ -1681,14 +1839,14 @@
           class="btn"
           data-setup="click"
           data-click="addTwitter"
-        >Connect with Twitter</a> <!-- ( <a href="https://twitter.com/?lang=en&logged_out=1#!/download" target="_blank">Please sign out before.</a> ) -->
+        >Connect with Twitter</a>
       </li>
       <li>
         <a
           class="btn"
           data-setup="click"
           data-click="addFacebook"
-        >Connect with Facebook</a> <!-- ( <a href="https://www.facebook.com/" target="_blank">Please sign out before.</a> ) -->
+        >Connect with Facebook</a>
       </li>
     </ul>
     
@@ -1997,6 +2155,8 @@
       data-text-google_account_add-en="Success Add Google Account."
       data-text-google_account_move-ja="Google Account を割り当て直しました。"
       data-text-google_account_move-en="Success Move Google Account."
+      data-text-list_join-ja="リストに参加しました。"
+      data-text-list_join-en="Success Join List."
     ></p>
   </div>
   <div class="modal-footer">
