@@ -2229,8 +2229,8 @@ app.setup.recent = function(ele, task){
                 ele.find('.message i').attr('class', 'icon-heart');
                 ele.find('.message span').text(date);
             } else {
-                var message = task.recent.message.length > 48
-                    ? task.recent.message.substring(0, 48) + '...'
+                var message = task.recent.message.length > 42
+                    ? task.recent.message.substring(0, 42) + '...'
                     : task.recent.message;
                 ele.find('.message span').text(message + ' ' + date);
             }
