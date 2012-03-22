@@ -92,6 +92,9 @@ sub me {
                       : 'google_account';
             my $sub_account = $c->db->single($table, { code => $code });
             if ($sub_account) {
+                if ($sub_account->data->{icon}) {
+                    $sub_account->data->{icon}=~s|http://a|https://si|;
+                }
                 my $icon = $code=~/^tw-/ ? $sub_account->data->{icon}
                          : $code=~/^fb-(.*)/ ? "https://graph.facebook.com/$1/picture"
                          : 'https://secure.gravatar.com/avatar/' . md5_hex($code);
