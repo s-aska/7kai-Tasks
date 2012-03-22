@@ -90,7 +90,6 @@ app.setup.ganttchartListsV3 = function(ul){
     ul.empty();
 
     var current_task;
-    var current_filter = {};
     var current_sort = {};
 
     app.addListener('toggleTag', function(tag){
@@ -260,12 +259,12 @@ app.setup.ganttchartListsV3 = function(ul){
                 li_before.after(li);
             }
             li_before.remove();
-            if (app.util.taskFilter(task, current_filter)) {
+            if (app.util.taskFilter(task, app.data.current_filter)) {
                 li.data('visible', true);
                 app.dom.slideDown(li);
                 app.util.findChildTasks(task, function(child){
                     if (child.id && taskli_map[child.id]) {
-                        if (!app.util.taskFilter(child, current_filter)) {
+                        if (!app.util.taskFilter(child, app.data.current_filter)) {
                             return;
                         }
                         if (!taskli_map[child.id].data('visible')) {
@@ -279,7 +278,7 @@ app.setup.ganttchartListsV3 = function(ul){
                 app.dom.slideUp(li);
                 app.util.findChildTasks(task, function(child){
                     if (child.id && taskli_map[child.id]) {
-                        if (app.util.taskFilter(child, current_filter)) {
+                        if (app.util.taskFilter(child, app.data.current_filter)) {
                             return;
                         }
                         if (taskli_map[child.id].data('visible')) {
@@ -312,7 +311,7 @@ app.setup.ganttchartListsV3 = function(ul){
             } else {
                 li.prependTo(ul);
             }
-            if (app.util.taskFilter(task, current_filter)) {
+            if (app.util.taskFilter(task, app.data.current_filter)) {
                 li.data('visible', true);
                 app.dom.slideDown(li);
             }
@@ -465,7 +464,6 @@ app.setup.ganttchartListsV3 = function(ul){
                 }
             }
         }
-        current_filter = condition;
         ul.children().each(function(){
             var li = $(this);
             if (li.data('id') in hasVisible) {
@@ -550,7 +548,13 @@ app.setup.ganttchartListsV3 = function(ul){
             i.addClass('icon-gray');
         }
     });
-    
+
+    app.addListener('selectTab', function(group, id){
+        if (group === 'viewer' && id === 'gantt') {
+            app.fireEvent('filterTask', app.data.current_filter);
+        }
+    });
+
     $(d).keydown(function(e){
         if (document.activeElement.tagName !== 'BODY') {
             return;

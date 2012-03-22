@@ -6,6 +6,8 @@ var app = ns.app;
 app.data.listli_map = {};
 app.data.taskli_map = {};
 app.data.listtr_map = {};
+app.data.current_tag = null;
+app.data.current_filter = null;
 
 app.addEvents('registerSubAccount');
 app.addEvents('registerFriends');
@@ -142,11 +144,19 @@ app.addListener('clickNotification', function(option){
 app.addListener('createTask', function(){
     app.dom.hide(app.dom.get('showable', 'welcome'));
 });
-app.addListener('filterTask', function(condition){
-    if (condition) {
-        app.fireEvent('resetTag');
-    }
+app.addListener('filterTask', function(filter){
+    app.data.current_filter = filter;
 });
+app.addListener('toggleTag', function(tag){
+    app.data.current_tag = tag;
+    app.fireEvent('resetCounter');
+    app.fireEvent('filterTask', app.data.current_filter);
+});
+app.addListener('resetTag', function(){
+    app.data.current_tag = null;
+    app.fireEvent('resetCounter');
+    app.fireEvent('filterTask', app.data.current_filter);
+});app.data.current_filter
 
 // セットアップ
 app.addListener('ready', function(){
@@ -308,6 +318,12 @@ app.util.getRegistrant = function(list){
     }
 }
 app.util.taskFilter = function(task, condition){
+    if (app.data.current_tag) {
+        if (!((app.data.current_tag in app.data.state.tags)
+            && (task.list.id in app.data.state.tags[app.data.current_tag]))) {
+            return false;
+        }
+    }
     if (!condition) {
         return !app.util.isCloseTask(task);
     }
@@ -323,11 +339,6 @@ app.util.taskFilter = function(task, condition){
             return false;
         }
     }
-    // if (condition.list_id) {
-    //     if (condition.list_id !== task.list.id) {
-    //         return false;
-    //     }
-    // }
     if (condition.todo) {
         if (task.list.id in app.data.state.mute) {
             return false;
@@ -890,8 +901,8 @@ app.setup.profile = function(ele){
     });
 }
 app.setup.switchClosed = function(ele){
-    app.addListener('filterTask', function(){
-        ele.removeClass('active');
+    app.addListener('filterTask', function(condition){
+        ele.toggleClass('active', Boolean(condition && condition.closed));
     });
     ele.click(function(){
         var val = ele.hasClass('active') ? 0 : 1;
@@ -984,21 +995,34 @@ app.setup.starCounter = function(ele){
         count+= checked ? 1 : -1;
         ele.text(count);
     });
+    app.addListener('resetCounter', function(list){
+        count = 0;
+        for (var task_id in app.data.task_map) {
+            if (app.util.taskFilter(app.data.task_map[task_id], {star: 1})) {
+                count++;
+            }
+        }
+        ele.text(count);
+    });
     app.addListener('clear', function(){
         count = 0;
         ele.text(count);
     });
 }
 app.setup.filterTask = function(ele){
+    var orig_condition = ele.data('filter-condition');
     app.addListener('filterTask', function(condition){
-        if (ele.is(':visible')) {
+        if (!condition) {
             ele.removeClass('active');
+            return;
         }
-    });
-    app.addListener('toggleTag', function(){
-        if (ele.is(':visible')) {
-            ele.removeClass('active');
+        for (var key in orig_condition) {
+            if (orig_condition[key] !== condition[key]) {
+                ele.removeClass('active');
+                return;
+            }
         }
+        ele.addClass('active');
     });
     app.addListener('clear', function(){
         ele.removeClass('active');
@@ -1322,7 +1346,6 @@ app.setup.tasksheet = function(ul){
     var list_template = ul.html();
     var task_template = ul.find('> li > ul').html();
     ul.empty();
-    var current_filter = null;
     var current_task;
 
     var updateSort = function(){
@@ -1346,9 +1369,6 @@ app.setup.tasksheet = function(ul){
     };
 
     app.addListener('toggleTag', function(tag){
-        if (current_filter) {
-            app.fireEvent('filterTask', null);
-        }
         ul.children().each(function(i, element){
             var li = $(element);
             var id = li.data('id');
@@ -1584,14 +1604,14 @@ app.setup.tasksheet = function(ul){
             }
             li_before.remove();
             app.data.taskli_map[task.id] = li;
-            if (app.util.taskFilter(task, current_filter)) {
+            if (app.util.taskFilter(task, app.data.current_filter)) {
                 if (!li.data('visible')) {
                     li.data('visible', true);
                     app.dom.slideDown(li);
                     app.util.findChildTasks(task, function(child){
                         if (child.id && app.data.taskli_map[child.id]) {
                             var child_li = app.data.taskli_map[child.id];
-                            if (!app.util.taskFilter(child, current_filter)) {
+                            if (!app.util.taskFilter(child, app.data.current_filter)) {
                                 return ;
                             }
                             if (!child_li.data('visible')) {
@@ -1611,7 +1631,7 @@ app.setup.tasksheet = function(ul){
                     app.dom.slideUp(li);
                     app.util.findChildTasks(task, function(child){
                         if (child.id && app.data.taskli_map[child.id]) {
-                            if (app.util.taskFilter(child, current_filter)) {
+                            if (app.util.taskFilter(child, app.data.current_filter)) {
                                 return ;
                             }
                             if (app.data.taskli_map[child.id].data('visible')) {
@@ -1645,9 +1665,9 @@ app.setup.tasksheet = function(ul){
             } else {
                 li.prependTo(ul);
             }
-            if ((!current_filter && !task.closed) ||
-                (current_filter &&
-                 app.util.taskFilter(task, current_filter))) {
+            if ((!app.data.current_filter && !task.closed) ||
+                (app.data.current_filter &&
+                 app.util.taskFilter(task, app.data.current_filter))) {
                 li.data('visible', true);
                 app.dom.slideDown(li);
             } else {
@@ -1793,7 +1813,6 @@ app.setup.tasksheet = function(ul){
         if (!ul.is(':visible')) {
             return;
         }
-        current_filter = condition;
         var hasVisible = {};
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
@@ -1907,6 +1926,12 @@ app.setup.tasksheet = function(ul){
             i.removeClass('icon-gray');
         } else {
             i.addClass('icon-gray');
+        }
+    });
+
+    app.addListener('selectTab', function(group, id){
+        if (group === 'viewer' && id === 'task') {
+            app.fireEvent('filterTask', app.data.current_filter);
         }
     });
 
