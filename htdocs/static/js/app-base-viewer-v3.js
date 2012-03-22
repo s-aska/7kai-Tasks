@@ -2355,7 +2355,7 @@ app.setup.registerTaskWindow = function(form){
                 li.find('input[type="checkbox"]')
                     .focus(function(){$(this).parent().addClass('focused')})
                     .blur(function(){$(this).parent().removeClass('focused')})
-                    .attr('checked', friend.code === assignMember);
+                    .attr('checked', assign === assignMember);
                 li.appendTo(assign_list);
 
                 $('<option/>')
