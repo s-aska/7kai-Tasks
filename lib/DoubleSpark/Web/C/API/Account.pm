@@ -106,6 +106,8 @@ sub me {
         }
     }
 
+    $c->sign->{icon}=~s|http://a|https://si|;
+
     my $notice = $c->session->remove('notice');
     my $invite = $c->session->remove('invite');
     if ($invite) {
