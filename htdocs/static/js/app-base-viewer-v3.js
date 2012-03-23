@@ -123,7 +123,7 @@ app.addListener('registerTask', function(task, list){
 });
 app.addListener('registerSubAccount', function(sub_account){
     var icon = ( sub_account.data && sub_account.data.icon ) ?
-                 sub_account.data.icon.replace(/^http:\/\/a/, 'https://si')
+                 sub_account.data.icon
              : /^tw-[0-9]+$/.test(sub_account.code) ?
                  '/api/1/profile_image/'
                  + sub_account.name
@@ -156,7 +156,7 @@ app.addListener('resetTag', function(){
     app.data.current_tag = null;
     app.fireEvent('resetCounter');
     app.fireEvent('filterTask', app.data.current_filter);
-});app.data.current_filter
+});
 
 // セットアップ
 app.addListener('ready', function(){
@@ -241,7 +241,7 @@ app.util.getIconUrl = function(code, size){
     }
     var user = app.data.users[code];
     if (user) {
-        return user.icon.replace(/^http:\/\/a/, 'https://si');
+        return user.icon;
     }
     if (/^tw-[0-9]+$/.test(code)) {
         src = '/static/img/address.png';
@@ -467,7 +467,7 @@ app.util.buildMe = function(option, data){
     }
 
     if (option.setup || option.reset) {
-        app.fireEvent('sortTask', 'updated_on', true);
+        app.util.sortTaskView('due_epoch', false);
     }
 
     if (option.task_id in app.data.task_map) {
@@ -542,14 +542,22 @@ app.util.sortTask = function(tasks, column, reverse){
     } else if (column === 'person') {
         compareAttribute = function(a, b){
             if (a.person === b.person) {
-                return (Number(a['updated_on']) || 0) - (Number(b['updated_on']) || 0);
+                if (reverse) {
+                    return (Number(a.updated_on) || 0) - (Number(b.updated_on) || 0);
+                } else {
+                    return (Number(b.updated_on) || 0) - (Number(a.updated_on) || 0);
+                }
             }
             return a.person.localeCompare(b.person);
         };
     } else {
         compareAttribute = function(a, b){
             if (a[column] === b[column]) {
-                return (Number(a['updated_on']) || 0) - (Number(b['updated_on']) || 0);
+                if (reverse) {
+                    return (Number(a.updated_on) || 0) - (Number(b.updated_on) || 0);
+                } else {
+                    return (Number(b.updated_on) || 0) - (Number(a.updated_on) || 0);
+                }
             }
             return (Number(a[column]) || 0) - (Number(b[column]) || 0);
         };
@@ -603,6 +611,27 @@ app.util.sortTask = function(tasks, column, reverse){
     }
     return tasks;
 }
+app.util.sortTaskView = function(column, reverse){
+    var tasks = [],
+        resort = false;
+    reverse = Boolean(reverse);
+    for (var task_id in app.data.task_map) {
+        tasks.push(app.data.task_map[task_id]);
+    }
+    if (!column) {
+        column = app.data.current_sort.column;
+        reverse = app.data.current_sort.reverse;
+        resort = true;
+    }
+    if (!resort
+        && app.data.current_sort.column === column
+        && app.data.current_sort.reverse === reverse) {
+        reverse = reverse ? false : true;
+    }
+    app.data.current_sort.column = column;
+    app.data.current_sort.reverse = reverse;
+    app.fireEvent('sortTask', app.util.sortTask(tasks, column, reverse), column, reverse);
+};
 
 app.dom.scrollTopFix = function(wrapper, target, forceTop){
     if (target.is(':first-child') || forceTop) {
@@ -896,7 +925,7 @@ app.setup.profile = function(ele){
     var img = ele.find('img');
     var span = ele.find('span:first');
     app.addListener('receiveSign', function(sign){
-        img.attr('src', sign.icon.replace(/^http:\/\/a/, 'https://si'));
+        img.attr('src', sign.icon);
         span.text(sign.name);
     });
 }
@@ -1026,6 +1055,17 @@ app.setup.filterTask = function(ele){
     });
     app.addListener('clear', function(){
         ele.removeClass('active');
+    });
+}
+app.setup.filterLabel = function(ele){
+    var orig_class = ele.attr('class');
+    app.addListener('toggleTag', function(tag){
+        ele.attr('class', orig_class + ' btn-' + tag);
+        ele.find('i').addClass('icon-white');
+    });
+    app.addListener('resetTag', function(){
+        ele.attr('class', orig_class);
+        ele.find('i').removeClass('icon-white');
     });
 }
 app.setup.tags = function(ul){
@@ -1534,14 +1574,14 @@ app.setup.tasksheet = function(ul){
                 if (!(code in app.data.users)) {
                     continue;
                 }
-                var icon = app.util.getIcon(code, 24);
+                var icon = app.util.getIcon(code, 26);
                 icon.data('code', code);
                 icon.click(function(){
                     app.fireEvent('createTask', list, $(this).data('code'));
                 });
                 $('<li/>')
                     .append(icon)
-                    .addClass('member sq24')
+                    .addClass('member')
                     .appendTo(li.find('ul.members'));
             }
         }
@@ -1778,23 +1818,7 @@ app.setup.tasksheet = function(ul){
         }
     });
     
-    app.addListener('sortTask', function(column, reverse){
-        var tasks = [],
-            resort = false;
-        for (var task_id in app.data.task_map) {
-            tasks.push(app.data.task_map[task_id]);
-        }
-        if (!column) {
-            column = app.data.current_sort.column;
-            reverse = app.data.current_sort.reverse;
-            resort = true;
-        }
-        if (!resort
-            && app.data.current_sort.column === column
-            && app.data.current_sort.reverse === reverse) {
-            reverse = reverse ? false : true;
-        }
-        app.util.sortTask(tasks, column, reverse);
+    app.addListener('sortTask', function(tasks, column, reverse){
         for (var i = 0, max_i = tasks.length; i < max_i; i++) {
             var li = app.data.taskli_map[tasks[i].id];
             var parents = app.util.findParentTasks(tasks[i]);
@@ -1805,8 +1829,6 @@ app.setup.tasksheet = function(ul){
             }
             app.data.listli_map[tasks[i].list.id].find('> ul').append(li);
         }
-        app.data.current_sort.column = column;
-        app.data.current_sort.reverse = reverse;
     });
     
     app.addListener('filterTask', function(condition){
@@ -2246,9 +2268,11 @@ app.setup.due = function(ele, task){
 app.setup.recent = function(ele, task){
     if (!task) return;
     if (task.recent) {
-        var size = ele.find('.icon').data('human-size') || 16;
-        ele.find('.icon').append(app.util.getIcon(task.recent.code, size));
-        var date = app.date.relative(task.recent.time);
+        // var size = ele.find('.icon').data('human-size') || 16;
+        // ele.find('.icon').append(app.util.getIcon(task.recent.code, size));
+        // ele.find('.icon');
+        // var date = app.date.relative(task.recent.time);
+        var date = '';
         if (task.recent.message) {
             if (task.recent.message === '[like]') {
                 ele.find('.message i').attr('class', 'icon-heart');

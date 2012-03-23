@@ -90,7 +90,6 @@ app.setup.ganttchartListsV3 = function(ul){
     ul.empty();
 
     var current_task;
-    var current_sort = {};
 
     app.addListener('toggleTag', function(tag){
         ul.children().each(function(i, element){
@@ -412,23 +411,7 @@ app.setup.ganttchartListsV3 = function(ul){
         }
     });
 
-    app.addListener('sortTask', function(column, reverse){
-        var tasks = [],
-            resort = false;
-        for (var task_id in app.data.task_map) {
-            tasks.push(app.data.task_map[task_id]);
-        }
-        if (!column) {
-            column = current_sort.column;
-            reverse = current_sort.reverse;
-            resort = true;
-        }
-        if (!resort
-            && current_sort.column === column
-            && current_sort.reverse === reverse) {
-            reverse = reverse ? false : true;
-        }
-        app.util.sortTask(tasks, column, reverse);
+    app.addListener('sortTask', function(tasks, column, reverse){
         for (var i = 0, max_i = tasks.length; i < max_i; i++) {
             var ul = listli_map[tasks[i].list.id].find('> ul:first');
             ul.append(taskli_map[tasks[i].id]);
@@ -439,8 +422,6 @@ app.setup.ganttchartListsV3 = function(ul){
                 taskli_map[tasks[i].id].css('paddingLeft', '0px');
             }
         }
-        current_sort.column = column;
-        current_sort.reverse = reverse;
     });
 
     app.addListener('filterTask', function(condition){

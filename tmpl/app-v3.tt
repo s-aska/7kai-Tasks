@@ -171,33 +171,29 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="click,tooltip"
-        data-click="sortTask"
+        data-setup="sortTask,tooltip"
         data-sort-column="name"
         data-text-ja="タスク名"
         data-text-en="Name"
       ><i class="icon-font"></i></a>
       <a
-        class="btn x-small active"
-        data-setup="click,tooltip"
-        data-click="sortTask"
+        class="btn x-small"
+        data-setup="sortTask,tooltip"
         data-sort-column="updated_on"
         data-sort-reverse="true"
         data-text-ja="更新日時"
         data-text-en="Updated"
       ><i class="icon-time"></i></a>
       <a
-        class="btn x-small"
-        data-setup="click,tooltip"
-        data-click="sortTask"
+        class="btn x-small active"
+        data-setup="sortTask,tooltip"
         data-sort-column="due_epoch"
         data-text-ja="期日"
         data-text-en="Due"
       ><i class="icon-calendar"></i></a>
       <a
         class="btn x-small"
-        data-setup="click,tooltip"
-        data-click="sortTask"
+        data-setup="sortTask,tooltip"
         data-sort-column="person"
         data-text-ja="ターン (未処理: 担当者, 処理済: 依頼者)"
         data-text-en="Whose turn is it"
@@ -210,7 +206,7 @@
     >
       <a
         class="btn x-small disabled btn-icon"
-        data-setup="tooltip"
+        data-setup="tooltip,filterLabel"
         data-text-ja="絞り込み"
         data-text-en="Filter"
       >
@@ -1038,33 +1034,29 @@
       </a>
       <a
         class="btn x-small"
-        data-setup="click,tooltip"
-        data-click="sortTask"
+        data-setup="sortTask,tooltip"
         data-sort-column="name"
         data-text-ja="タスク名"
         data-text-en="Name"
       ><i class="icon-font"></i></a>
       <a
-        class="btn x-small active"
-        data-setup="click,tooltip"
-        data-click="sortTask"
+        class="btn x-small"
+        data-setup="sortTask,tooltip"
         data-sort-column="updated_on"
         data-sort-reverse="true"
         data-text-ja="更新日時"
         data-text-en="Updated"
       ><i class="icon-time"></i></a>
       <a
-        class="btn x-small"
-        data-setup="click,tooltip"
-        data-click="sortTask"
+        class="btn x-small active"
+        data-setup="sortTask,tooltip"
         data-sort-column="due_epoch"
         data-text-ja="期日"
         data-text-en="Due"
       ><i class="icon-calendar"></i></a>
       <a
         class="btn x-small"
-        data-setup="click,tooltip"
-        data-click="sortTask"
+        data-setup="sortTask,tooltip"
         data-sort-column="person"
         data-text-ja="ターン (未処理: 担当者, 処理済: 依頼者)"
         data-text-en="Whose turn is it"
@@ -1075,7 +1067,7 @@
     >
       <a
         class="btn x-small disabled btn-icon"
-        data-setup="tooltip"
+        data-setup="tooltip,filterLabel"
         data-text-ja="絞り込み"
         data-text-en="Filter"
       >

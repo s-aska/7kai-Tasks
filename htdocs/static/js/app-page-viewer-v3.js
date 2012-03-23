@@ -594,10 +594,17 @@ app.sortable.list = function(ele){
 // ----------------------------------------------------------------------
 // タスク管理
 // ----------------------------------------------------------------------
-app.click.sortTask = function(ele){
-    ele.parent().children().removeClass('active');
-    ele.addClass('active');
-    app.fireEvent('sortTask', ele.data('sort-column'), ele.data('sort-reverse'));
+app.setup.sortTask = function(ele){
+    ele.click(function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        app.util.sortTaskView(ele.data('sort-column'), ele.data('sort-reverse'));
+    });
+    app.addListener('sortTask', function(tasks, column, reverse){
+        if (column) {
+            ele.toggleClass('active', column === ele.data('sort-column'));
+        }
+    });
 }
 
 // ----------------------------------------------------------------------
