@@ -1408,12 +1408,20 @@ app.setup.tasksheet = function(ul){
         });
     };
 
-    app.addListener('toggleTag', function(tag){
-        ul.children().each(function(i, element){
-            var li = $(element);
-            var id = li.data('id');
+    var listli_toggle = function(li){
+        var id = li.data('id');
+        var tag = app.data.current_tag;
+        if (app.data.current_filter) {
+            li.toggle(Boolean(li.data('has-visible-tasks')));
+        } else if (tag) {
             li.toggle(Boolean((tag in app.data.state.tags) && (id in app.data.state.tags[tag])));
-        });
+        } else {
+            li.show();
+        }
+    };
+
+    app.addListener('toggleTag', function(tag){
+        ul.children().each(function(i, element){ listli_toggle($(element)) });
         if (ul.is(':visible')
             && current_task
             && !app.data.taskli_map[current_task.id].is(':visible')) {
@@ -1422,7 +1430,7 @@ app.setup.tasksheet = function(ul){
     });
 
     app.addListener('resetTag', function(){
-        ul.children().show();
+        ul.children().each(function(i, element){ listli_toggle($(element)) });
         app.fireEvent('missingTask');
     });
 
@@ -1870,11 +1878,8 @@ app.setup.tasksheet = function(ul){
 
         ul.children().each(function(){
             var li = $(this);
-            if (li.data('id') in hasVisible) {
-                li.show();
-            } else {
-                li.hide();
-            }
+            li.data('has-visible-tasks', Boolean(li.data('id') in hasVisible));
+            listli_toggle(li);
         });
     });
     

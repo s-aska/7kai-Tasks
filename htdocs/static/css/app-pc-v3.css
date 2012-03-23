@@ -169,7 +169,7 @@ ul.lists > li > header ul.members {
 }
 ul.lists > li > header ul.members > li {
     float: left;
-    padding-right: 4px;
+    margin-right: 4px;
     cursor: pointer;
     width: 26px;
     height: 26px;
