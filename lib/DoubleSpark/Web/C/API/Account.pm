@@ -41,6 +41,7 @@ sub me {
     my @sub_accounts = map {
         $_ = $_->get_columns;
         $_->{data} = decode_json($_->{data}) if $_->{data};
+        $_->{data}->{icon}=~s|http://a|https://si| if $_->{data}->{icon};
         $_;
     } ($tw_accounts->all, $fb_accounts->all, $google_accounts->all);
     my @codes = map { $_->{code} } @sub_accounts;
