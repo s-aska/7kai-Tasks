@@ -319,8 +319,8 @@ app.util.getRegistrant = function(list){
 }
 app.util.taskFilter = function(task, condition){
     if (app.data.current_tag) {
-        if (!((app.data.current_tag in app.data.state.tags)
-            && (task.list.id in app.data.state.tags[app.data.current_tag]))) {
+        if (!((task.list.id in app.data.state.tags)
+            && (app.data.current_tag === app.data.state.tags[task.list.id]))) {
             return false;
         }
     }
@@ -1414,7 +1414,7 @@ app.setup.tasksheet = function(ul){
         if (app.data.current_filter) {
             li.toggle(Boolean(li.data('has-visible-tasks')));
         } else if (tag) {
-            li.toggle(Boolean((tag in app.data.state.tags) && (id in app.data.state.tags[tag])));
+            li.toggle(Boolean((id in app.data.state.tags) && (tag === app.data.state.tags[id])));
         } else {
             li.show();
         }
@@ -1483,29 +1483,45 @@ app.setup.tasksheet = function(ul){
                 }
             });
         });
-        li.find('.symbol').addClass('symbol-clear');
+        if (list.id in app.data.state.tags) {
+            li.attr('data-tag', app.data.state.tags[list.id]);
+        }
         li.find('.ui-tags a').each(function(i, element){
             var ele = $(element);
             var tag = ele.data('tag');
             if (tag) {
-                if (tag in app.data.state.tags &&
-                    list.id in app.data.state.tags[tag]) {
+                if ((list.id in app.data.state.tags) &&
+                    (tag === app.data.state.tags[list.id])) {
                     ele.addClass('active');
-                    li.find('.symbol-' + tag).removeClass('symbol-clear');
+                    li.attr('data-tag', tag);
                 }
                 ele.click(function(e){
+                    var ns = 'state.tags';
+                    var method = 'set';
+                    var key = list.id;
+                    var val = tag;
+                    if (ele.hasClass('active')) {
+                        ns = 'state';
+                        method = 'off';
+                        key = 'tags';
+                        val = list.id;
+                    }
                     app.api.account.update({
-                        ns: 'state.tags',
-                        method: (ele.hasClass('active') ? 'off' : 'on'),
-                        key: tag,
-                        val: list.id
+                        ns: ns,
+                        method: method,
+                        key: key,
+                        val: val
                     })
                     .done(function(data){
                         if (data.success === 1) {
                             app.data.state.tags = data.account.state.tags;
-                            ele.toggleClass('active');
-                            li.find('.symbol-' + tag)
-                                .toggleClass('symbol-clear', !ele.hasClass('active'));
+                            ele.parent().children().removeClass('active');
+                            if (method === 'set') {
+                                ele.addClass('active');
+                                li.attr('data-tag', tag);
+                            } else {
+                                li.removeAttr('data-tag');
+                            }
                             app.fireEvent('checkTag', list, tag, ele.hasClass('active'));
                         } else {
                             // 現在 ステータスコード 200 の例外ケースは無い

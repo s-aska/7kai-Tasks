@@ -539,10 +539,10 @@ app.submit.registerList = function(form){
             app.fireEvent('openList', data.list);
             app.dom.reset(form);
             if (id) {
-                app.dom.show(app.dom.get('showable', 'update-list-twipsy'));
+                // app.dom.show(app.dom.get('showable', 'update-list-twipsy'));
                 app.dom.hide(form);
             } else {
-                app.dom.show(app.dom.get('showable', 'create-list-twipsy'));
+                // app.dom.show(app.dom.get('showable', 'create-list-twipsy'));
             }
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い

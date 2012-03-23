@@ -97,7 +97,7 @@ app.setup.ganttchartListsV3 = function(ul){
         if (app.data.current_filter) {
             li.toggle(Boolean(li.data('has-visible-tasks')));
         } else if (tag) {
-            li.toggle(Boolean((tag in app.data.state.tags) && (id in app.data.state.tags[tag])));
+            li.toggle(Boolean((id in app.data.state.tags) && (tag === app.data.state.tags[id])));
         } else {
             li.show();
         }
@@ -116,18 +116,15 @@ app.setup.ganttchartListsV3 = function(ul){
 
     app.addListener('checkTag', function(list, tag, active){
         var li = listli_map[list.id];
-        li.find('> div .symbol-' + tag).toggleClass('symbol-clear', !active);
-        var method = 'show';
-        for (var tag in active_tags) {
-            if (tag in app.data.state.tags &&
-                list.id in app.data.state.tags[tag]) {
-                method = 'show';
-                break;
-            } else {
-                method = 'hide';
-            }
+        if (active) {
+            li.attr('data-tag', tag);
+        } else {
+            li.removeAttr('data-tag');
         }
-        li[method]();
+        li.toggle(Boolean(
+            (list.id in app.data.state.tags) &&
+            (app.data.current_tag === app.data.state.tags[list.id])
+        ));
     });
 
     app.addListener('resetTag', function(){
@@ -141,18 +138,9 @@ app.setup.ganttchartListsV3 = function(ul){
         li.find('> ul').empty();
         app.dom.setup(li);
         
-        li.find('> div .symbol').addClass('symbol-clear');
-        $.each([
-            'primary',
-            'success',
-            'warning',
-            'danger'
-        ], function(i, tag){
-            if (tag in app.data.state.tags &&
-                list.id in app.data.state.tags[tag]) {
-                li.find('> div .symbol-' + tag).removeClass('symbol-clear');
-            }
-        });
+        if (list.id in app.data.state.tags) {
+            li.attr('data-tag', app.data.state.tags[list.id]);
+        }
         
         li.find('.ui-edit').click(function(e){
             app.fireEvent('editTask', current_task);

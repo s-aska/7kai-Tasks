@@ -379,12 +379,7 @@
         data-setup="tasksheet"
       >
         <li class="list">
-          <div class="symbol-group clearfix">
-            <div class="symbol symbol-primary"></div>
-            <div class="symbol symbol-success"></div>
-            <div class="symbol symbol-warning"></div>
-            <div class="symbol symbol-danger"></div>
-          </div>
+          <div class="symbol"></div>
           <header class="clearfix">
             <div style="float: left;">
               <div class="name">7kai Tasks</div>
@@ -1227,12 +1222,7 @@
         >
           <li class="list">
             <div>
-              <div class="symbol-group clearfix">
-                <div class="symbol symbol-primary"></div>
-                <div class="symbol symbol-success"></div>
-                <div class="symbol symbol-warning"></div>
-                <div class="symbol symbol-danger"></div>
-              </div>
+              <div class="symbol"></div>
               <span class="name"></span>
               <ul class="unstyled clearfix">
                 <li

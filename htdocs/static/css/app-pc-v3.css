@@ -109,31 +109,22 @@ body > .row > .btn-toolbar {
 }
 
 /********** tasksheet and Gantt chart **********/
-.symbol-group {
+.symbol {
     height: 2px;
     line-height: 2px;
     background-color: rgba(0, 0, 0, 0.15);
 }
-.symbol {
-    float: left;
-    width: 59px;
-    height: 2px;
-    line-height: 2px;
-}
-.symbol-primary {
+li[data-tag="primary"] .symbol {
     background-color: #006DCC;
 }
-.symbol-success {
+li[data-tag="success"] .symbol {
     background-color: #5BB75B;
 }
-.symbol-warning {
+li[data-tag="warning"] .symbol {
     background-color: #FAA732;
 }
-.symbol-danger {
+li[data-tag="danger"] .symbol {
     background-color: #DA4F49;
-}
-.symbol-clear {
-    background: none;
 }
 
 /********** tasksheet **********/
@@ -421,7 +412,11 @@ ul.comments li span.name {
     margin-bottom: 6px;
 }
 .gantttasks > ul > li > div > .name {
+    display: inline-block;
     font-weight: bold;
+    max-width: 146px;
+    overflow-x: hidden;
+    padding-bottom: 5px;
 }
 .gantttasks > ul > li > div > ul {
     position: absolute;
