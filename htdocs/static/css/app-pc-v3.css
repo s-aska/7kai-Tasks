@@ -133,14 +133,14 @@ div.lists-wrap {
     padding-right: 5px;
 }
 ul.lists > li {
-    min-height: 34px;
+    min-height: 32px;
     padding: 0;
 }
 ul.lists > li > .symbol-group {
     margin-bottom: 1px;
 }
 ul.lists > li > header {
-    padding: 2px 0 3px 0;
+    padding: 2px 0 2px 0;
 }
 ul.lists > li > header > div {
     float: left;
@@ -416,6 +416,7 @@ ul.comments li span.name {
     font-weight: bold;
     max-width: 146px;
     overflow-x: hidden;
+    padding-top: 5px;
     padding-bottom: 5px;
 }
 .gantttasks > ul > li > div > ul {
