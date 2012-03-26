@@ -65,6 +65,7 @@ app.addListener('ready', function(){
     if (location.search.indexOf('lang=en') !== -1) {
         app.env.lang = 'en';
     }
+    app.dom.disableSelection($('a'));
     app.dom.setup();
     $(w).resize(app.func.debounce(function(e){
         app.fireEvent('resize', e);

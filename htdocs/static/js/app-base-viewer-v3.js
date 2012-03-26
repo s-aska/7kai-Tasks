@@ -1093,11 +1093,6 @@ app.setup.tags = function(ul){
         ul.find('a[data-tag]').removeClass('active');
     });
 }
-app.setup.resetTag = function(ele){
-    ele.click(function(){
-        app.fireEvent('resetTag');
-    });
-}
 app.setup.rightColumn = function(ele){
     var list_id_input    = ele.find('input[name=list_id]');
     var task_id_input    = ele.find('input[name=task_id]');
@@ -1767,6 +1762,14 @@ app.setup.tasksheet = function(ul){
                     }
                 }
             }
+            app.fireEvent('filterTask', app.data.current_filter);
+        }
+        if (group === 'homemenu') {
+            if (id === 'task') {
+                ul.children().each(function(i, element){ listli_toggle($(element)) });
+            } else {
+                ul.children().show();
+            }
         }
     });
 
@@ -1969,12 +1972,6 @@ app.setup.tasksheet = function(ul){
             i.removeClass('icon-gray');
         } else {
             i.addClass('icon-gray');
-        }
-    });
-
-    app.addListener('selectTab', function(group, id){
-        if (group === 'viewer' && id === 'task') {
-            app.fireEvent('filterTask', app.data.current_filter);
         }
     });
 
