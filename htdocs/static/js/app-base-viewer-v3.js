@@ -775,55 +775,6 @@ app.api.task.move = function(src_list_id, task_id, dst_list_id){
         }
     });
 }
-app.api.twitter.friends = function(user_id, cursor, cache){
-    var timer = setTimeout(function(){
-        app.dom.show(app.dom.get('showable', 'notice-failed-sync-twitter'));
-    }, 5000);
-    app.ajax({
-        url: 'https://api.twitter.com/1/statuses/friends.json',
-        data: {
-            cursor: cursor,
-            user_id: user_id
-        },
-        dataType: 'jsonp'
-    })
-    .done(function(data){
-        clearTimeout(timer);
-        for (var i = 0, max_i = data.users.length; i < max_i; i++) {
-            cache.push({
-                name: data.users[i].name,
-                screen_name: data.users[i].screen_name,
-                code: 'tw-' + data.users[i].id_str,
-                icon: data.users[i].profile_image_url
-            });
-        }
-
-        // next
-        if (data.next_cursor) {
-            app.api.twitter.friends(user_id, data.next_cursor_str, cache);
-        }
-
-        // last
-        else {
-            app.fireEvent('registerFriends', cache, 'tw-' + user_id);
-            app.ajax({
-                url: '/api/1/twitter/update_friends',
-                type: 'post',
-                data: {
-                    friends: JSON.stringify(cache)
-                },
-                dataType: 'json'
-            })
-            .done(function(data){
-                // FIXME:
-                app.dom.show(app.dom.get('showable', 'notice-succeeded-sync-twitter'));
-            })
-            .fail(function(){
-                app.dom.show(app.dom.get('showable', 'notice-failed-sync-twitter'));
-            });
-        }
-    });
-}
 app.api.list.invite = function(list_id){
     return app.ajax({
         type: 'post',
