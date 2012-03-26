@@ -222,6 +222,11 @@ ul.tasks > li > div.delete {
 ul.tasks > li div.human {
     height: 16px;
 }
+ul.tasks > li div.human img {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
 ul.tasks > li div.human span {
     display: inline-block;
 }
@@ -307,6 +312,11 @@ ul.comments li {
 }
 ul.comments li:last-child {
     margin-bottom: 0;
+}
+ul.comments li img {
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
 }
 ul.comments li .icon-cross {
     cursor: pointer;
@@ -429,6 +439,11 @@ ul.comments li span.name {
     padding-top: 2px;
     padding-bottom: 2px;
     border-top: 1px solid rgba(0, 0, 0, 0.075);
+}
+.gantttasks > ul > li > ul > li img {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
 }
 .gantttasks > ul > li > ul > li.closed {
     text-decoration: line-through;
