@@ -140,7 +140,7 @@ ul.lists > li > .symbol-group {
     margin-bottom: 1px;
 }
 ul.lists > li > header {
-    padding: 2px 0 2px 0;
+    padding: 3px 0;
 }
 ul.lists > li > header > div {
     float: left;
