@@ -109,7 +109,7 @@ sub callback {
                                 account_id => $google_account->account_id,
                                 code       => $code,
                                 name       => $account->data->{name},
-                                icon       => $account->data->{name}
+                                icon       => $account->data->{icon}
                         });
                     }
                 } else {
