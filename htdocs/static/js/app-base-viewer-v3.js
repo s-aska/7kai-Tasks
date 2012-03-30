@@ -92,7 +92,6 @@ app.addListener('registerTask', function(task, list){
     // 直近の履歴・コメント
     $.each(task.actions.concat().reverse(), function(i, action){
         if (!app.util.findMe([action.account_id])) {
-            console.log(action);
             task.recent = action;
             return false;
         }
