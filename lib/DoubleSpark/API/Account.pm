@@ -10,8 +10,11 @@ use Time::HiRes;
 sub create {
     my ($class, $c, $code, $name, $icon) = @_;
 
+    my $data = $c->config->{Skeleton}->{Account};
+    $data->{name} = $name;
+    $data->{icon} = $icon;
     my $account = $c->db->insert('account', {
-        data       => $c->config->{Skeleton}->{Account},
+        data       => $data,
         created_on => \'now()',
         updated_on => \'now()'
     });
