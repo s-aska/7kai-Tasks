@@ -1647,7 +1647,6 @@ app.setup.tasksheet = function(ul){
     app.addListener('openTask', function(task, forceTop){
         if (!ul.is(':visible')) { return }
 
-        app.fireEvent('selectTab', 'homemenu', 'task');
         ul.find('> li > ul > li').removeClass('selected');
         ul.find('> li > header .ui-edit, > li > header .ui-sub').attr('disabled', true);
         if (task.id in app.data.taskli_map) {
@@ -1661,6 +1660,7 @@ app.setup.tasksheet = function(ul){
 
     app.addListener('selectTab', function(group, id){
         if (group === 'viewer' && id === 'task') {
+            app.fireEvent('selectTab', 'homemenu', 'task');
             var hash = w.location.hash;
             if (hash) {
                 var str = hash.match(/^#(\d+)-(\d+:\d+)$/);
