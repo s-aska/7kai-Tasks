@@ -442,8 +442,11 @@ app.setup.memberListWindow = function(form){
                 .find('.member-name').text(user.name).end()
                 .find('.icon-remove').data('account_id', account_id).click(function(e){
                     var account_id = $(this).data('account_id');
-                    app.fireEvent('leaveListMember',
-                        list, app.data.users[account_id].name, app.util.getIcon(account_id, 24));
+                    app.fireEvent('leaveListMember'
+                        , list
+                        , account_id
+                        , app.data.users[account_id].name
+                        , app.util.getIcon(account_id, 24));
                 }).end()
                 .appendTo(ul);
         }
@@ -489,15 +492,17 @@ app.setup.leaveListWindow = function(form){
         e.preventDefault();
         e.stopPropagation();
         var list_id = form.find('input[name="list_id"]').val();
-        app.api.list.leave(list_id).done(function(data){
+        var account_id = form.find('input[name="account_id"]').val();
+        app.api.list.leave(list_id, account_id).done(function(data){
             app.fireEvent('reload');
             form.hide();
         });
     });
-    app.addListener('leaveListMember', function(list, member_name, member_icon){
+    app.addListener('leaveListMember', function(list, account_id, member_name, member_icon){
         form.find('.ui-listname').text(list.name);
         form.find('.ui-membername').text(member_name);
         form.find('input[name="list_id"]').val(list.id);
+        form.find('input[name="account_id"]').val(account_id);
         form.find('img').replaceWith(member_icon);
         form.show();
     });

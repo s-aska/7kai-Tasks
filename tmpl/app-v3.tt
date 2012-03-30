@@ -1468,7 +1468,7 @@
     "hide":{"effect":"fade","speed":"fast"}}'
 >
   <input type="hidden" name="list_id" value="">
-  <input type="hidden" name="member_code" value="">
+  <input type="hidden" name="account_id" value="">
   <div class="modal-header">
     <a
       class="close"

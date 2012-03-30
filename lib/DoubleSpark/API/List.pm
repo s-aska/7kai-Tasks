@@ -127,14 +127,15 @@ sub leave {
     my ($class, $c, $req) = @_;
 
     my $res = DoubleSpark::Validator->validate($c, $req,
-        list_id     => [qw/NOT_NULL LIST_ROLE_MEMBER/]
+        list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
+        account_id => [qw/NOT_NULL/]
     );
     return unless $res;
 
     my $list = $c->stash->{list};
     $c->db->delete('list_account', {
         list_id    => $list->list_id,
-        account_id => $c->sign_id
+        account_id => $req->param('account_id')
     });
     $list->update({ actioned_on => int(Time::HiRes::time * 1000) });
     infof('[%s] leave list', $c->sign_name);

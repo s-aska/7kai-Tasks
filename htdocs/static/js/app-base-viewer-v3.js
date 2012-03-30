@@ -779,12 +779,13 @@ app.api.list.join = function(list_id, invite_code){
         loading: false
     });
 }
-app.api.list.leave = function(list_id){
+app.api.list.leave = function(list_id, account_id){
     return app.ajax({
         type: 'post',
         url: '/api/1/list/leave',
         data: {
-            list_id: list_id
+            list_id: list_id,
+            account_id: account_id
         },
         dataType: 'json',
         salvage: false,
