@@ -273,7 +273,9 @@ app.dom.show = function(target){
     if (effect === 'none') {
         target.show();
     }
-    return target.show(effect, option, speed, callback);
+    target.show(effect, option, speed, callback);
+    target.trigger('app.dom.show');
+    return target;
 }
 app.dom.hide = function(target){
     if (!target) {

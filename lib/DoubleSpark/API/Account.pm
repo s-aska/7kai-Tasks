@@ -9,26 +9,17 @@ use Time::HiRes;
 # Webから直接叩かれたら死ぬ
 sub create {
     my ($class, $c, $code, $name, $icon) = @_;
-    
+
     my $account = $c->db->insert('account', {
         data       => $c->config->{Skeleton}->{Account},
         created_on => \'now()',
         updated_on => \'now()'
     });
     $c->db->insert('list', {
-        code       => $code,
+        account_id => $account->account_id,
         data       => {
             name     => "${name}'s list",
             original => 1,
-            owner    => $code,
-            members  => [],
-            users    => [
-                {
-                    icon => $icon,
-                    code => $code,
-                    name => $name
-                }
-            ],
             tasks    => []
         },
         actioned_on => int(Time::HiRes::time * 1000),
@@ -40,7 +31,7 @@ sub create {
 
 sub update {
     my ($class, $c, $req) = @_;
-    
+
     my $account = $c->account;
     my $method  = $req->param('method') || 'set';
     my $type    = $req->param('type') || 'string';
@@ -53,11 +44,13 @@ sub update {
     }
 
     my $data = $account->data;
-    for (split /\./, $ns) {
-        unless (exists $data->{$_}) {
-            $data->{$_} = {};
+    if ($ns) {
+        for (split /\./, $ns) {
+            unless (exists $data->{$_}) {
+                $data->{$_} = {};
+            }
+            $data = $data->{$_};
         }
-        $data = $data->{$_};
     }
     if ($method eq 'set') {
         $data->{$key} = $val=~/^\d+$/ ? int($val) : $val;
@@ -80,27 +73,37 @@ sub update {
 
 sub delete {
     my ($class, $c, $req) = @_;
-    
+
     my $res = DoubleSpark::Validator->validate($c, $req,
         code => [qw/NOT_NULL OWNER/]
     );
     return unless $res;
-    
+
     my $code = $req->param('code');
-    
+
     my $sub_account = $code=~/^tw-\d+$/ ? $c->db->single('tw_account', { code => $code })
                     : $code=~/^fb-\d+$/ ? $c->db->single('fb_account', { code => $code })
                     : $c->db->single('google_account', { code => $code });
 
     return unless $sub_account;
-    
-    for ($c->db->search('list', { code => $code })->all) {
-        infof("[%s] delete list %s", $c->sign_name, $_->data->{name});
-        $_->delete;
-    }
+
+    my $account_id = $sub_account->account_id;
+
     infof("[%s] delete sub_account %s", $c->sign_name, $code);
     $sub_account->delete;
-    
+
+    my $has_sub = $c->db->count('tw_account', '*', { account_id => $account_id });
+    unless ($has_sub) {
+        $has_sub = $c->db->count('fb_account', '*', { account_id => $account_id });
+    }
+    unless ($has_sub) {
+        $has_sub = $c->db->count('google_account', '*', { account_id => $account_id });
+    }
+    unless ($has_sub) {
+        infof("[%s] delete account %s", $c->sign_name, $account_id);
+        $c->db->delete('account', { account_id => $account_id });
+    }
+
     return {
         success => 1
     };

@@ -7,20 +7,18 @@ use Time::HiRes;
 
 sub create {
     my ($class, $c, $req) = @_;
-    
+
     my $res = DoubleSpark::Validator->validate($c, $req,
         list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
-        name      => [qw/NOT_NULL/, [qw/LENGTH 1 50/]],
+        name       => [qw/NOT_NULL/, [qw/LENGTH 1 50/]],
         requester  => [qw/MEMBER/],
-        registrant => [qw/NOT_NULL OWNER/],
         due        => [qw/DATE_LOOSE/],
         { assign => [qw/assign/] }, [qw/MEMBERS/],
     );
     return unless $res;
 
     my $name       = $req->param('name');
-    my $requester  = $req->param('requester') || $req->param('registrant');
-    my $registrant = $req->param('registrant');
+    my $requester  = $req->param('requester') || $c->sign_id;
     my @assign     = $req->param('assign');
     my $due        = $c->stash->{date_loose};
     my $list       = $c->stash->{list};
@@ -38,7 +36,7 @@ sub create {
         id => $task_id,
         parent_id => $parent_id,
         requester => $requester,
-        registrant => $registrant,
+        registrant => $c->sign_id,
         assign => \@assign,
         name => $name,
         due => $due,
@@ -60,13 +58,12 @@ sub create {
 
 sub update {
     my ($class, $c, $req) = @_;
-    
+
     my $res = DoubleSpark::Validator->validate($c, $req,
         list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
         task_id    => [qw/NOT_NULL/],
         name       => [[qw/LENGTH 1 50/]],
         requester  => [qw/MEMBER/],
-        registrant => [qw/NOT_NULL OWNER/],
         due        => [qw/DATE_LOOSE/],
         { assign => [qw/assign/] }, [qw/MEMBERS/],
     );
@@ -90,9 +87,8 @@ sub update {
         }
 
         my $action;
-        my $registrant = $req->param('registrant');
-        my $status     = $req->param('status');
-        my $closed     = $req->param('closed');
+        my $status = $req->param('status');
+        my $closed = $req->param('closed');
         my $status_action_map = {
             0 => 'reopen-task',
             1 => 'start-task',
@@ -119,9 +115,9 @@ sub update {
         }
         if ($action) {
             push @{$task->{actions}}, {
-                code   => $registrant,
-                action => $action,
-                time   => $time
+                account_id => $c->sign_id,
+                action     => $action,
+                time       => $time
             };
             $task->{updated_on} = $time;
         }
@@ -143,7 +139,7 @@ sub update {
 
 sub move {
     my ($class, $c, $req) = @_;
-    
+
     my $res = DoubleSpark::Validator->validate($c, $req,
         src_list_id => [qw/NOT_NULL LIST_ROLE_MEMBER/],
         dst_list_id => [qw/NOT_NULL LIST_ROLE_MEMBER/],

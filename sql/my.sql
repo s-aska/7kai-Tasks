@@ -85,6 +85,15 @@ CREATE TABLE list_member (
 ) ENGINE=InnoDB charset=utf8;
 CREATE INDEX list_member_code ON list_member(code);
 
+CREATE TABLE list_account (
+    list_account_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
+    , list_id BIGINT UNSIGNED NOT NULL
+    , account_id BIGINT UNSIGNED NOT NULL
+    , created_on DATETIME NOT NULL
+    , FOREIGN KEY (list_id) REFERENCES list(list_id) ON DELETE CASCADE
+    , FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE
+) ENGINE=InnoDB charset=utf8;
+
 CREATE TABLE request (
     request_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
     , code VARCHAR(256) character set ascii NOT NULL COMMENT '*_account.code'

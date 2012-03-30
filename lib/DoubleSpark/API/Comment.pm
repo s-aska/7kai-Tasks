@@ -10,10 +10,9 @@ sub create {
 
     # status closed message
     my $res = DoubleSpark::Validator->validate($c, $req,
-        list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
-        task_id    => [qw/NOT_NULL/],
-        message    => ['NOT_NULL', [qw/LENGTH 1 800/]],
-        registrant => [qw/NOT_NULL OWNER/]
+        list_id => [qw/NOT_NULL LIST_ROLE_MEMBER/],
+        task_id => [qw/NOT_NULL/],
+        message => ['NOT_NULL', [qw/LENGTH 1 800/]]
     );
     return unless $res;
 
@@ -21,7 +20,6 @@ sub create {
     my $list       = $c->stash->{list};
     my $task_id    = $req->param('task_id');
     my $message    = $req->param('message');
-    my $registrant = $req->param('registrant');
     my $time       = int(Time::HiRes::time * 1000);
     for my $task (@{ $list->data->{tasks} }) {
         next if $task->{id} ne $task_id;
@@ -46,11 +44,11 @@ sub create {
         # create comment
         my $comment_id = ++$task->{last_comment_id};
         push @{ $task->{actions} }, {
-            id      => $comment_id,
-            code    => $registrant,
-            message => $message,
-            time    => $time,
-            action  => $action
+            id         => $comment_id,
+            account_id => $c->sign_id,
+            message    => $message,
+            time       => $time,
+            action     => $action
         };
         $task->{updated_on} = $time;
 

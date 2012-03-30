@@ -29,6 +29,7 @@ sub me {
     }
 
     # サブアカウント取得
+    my @sub_accounts;
     my $tw_accounts = $c->db->search('tw_account', {
         account_id => $account->account_id
     });
@@ -38,15 +39,27 @@ sub me {
     my $google_accounts = $c->db->search('google_account', {
         account_id => $account->account_id
     });
-    my @sub_accounts = map {
-        $_ = $_->get_columns;
-        $_->{data} = decode_json($_->{data}) if $_->{data};
-        $_->{data}->{icon}=~s|http://a|https://si| if $_->{data}->{icon};
-        $_;
-    } ($tw_accounts->all, $fb_accounts->all, $google_accounts->all);
-    my @codes = map { $_->{code} } @sub_accounts;
+    for ($tw_accounts->all) {
+        my $sub_account = $_->get_columns;
+        $sub_account->{data} = decode_json($sub_account->{data}) if $sub_account->{data};
+        $sub_account->{data}->{icon}=~s|http://a|https://si| if $sub_account->{data}->{icon};
+        push @sub_accounts, $sub_account;
+    }
+    for ($fb_accounts->all) {
+        my $sub_account = $_->get_columns;
+        $sub_account->{data} = decode_json($sub_account->{data}) if $sub_account->{data};
+        my ($user_id) = $sub_account->{code}=~/^fb-(\d+)/;
+        $sub_account->{data}->{icon} = sprintf 'https://graph.facebook.com/%s/picture', $user_id;
+        push @sub_accounts, $sub_account;
+    }
+    for ($google_accounts->all) {
+        my $sub_account = $_->get_columns;
+        $sub_account->{data} = decode_json($sub_account->{data}) if $sub_account->{data};
+        $sub_account->{data}->{icon} = 'https://secure.gravatar.com/avatar/' . md5_hex($sub_account->{code});
+        push @sub_accounts, $sub_account;
+    }
 
-    unless (@codes) {
+    unless (@sub_accounts) {
         # sub account nothing...
         critf('missing sub accounts aid:%s', $account->account_id);
         $c->session->expire;
@@ -55,10 +68,10 @@ sub me {
 
     # リスト取得
     my $my_lists = $c->db->search('list', {
-        code => \@codes
+        account_id => $account->account_id
     });
-    my $list_members = $c->db->search('list_member', {
-        code => \@codes
+    my $list_members = $c->db->search('list_account', {
+        account_id => $account->account_id
     });
     my %ids;
     for ($my_lists->all, $list_members->all) {
@@ -86,22 +99,16 @@ sub me {
     }
     my $users = {};
     for my $list (@lists) {
-        for my $code (@{ $list->{members} }, $list->{owner}) {
-            next if exists $users->{ $code };
-            my $table = $code=~/^tw-/ ? 'tw_account'
-                      : $code=~/^fb-/ ? 'fb_account'
-                      : 'google_account';
-            my $sub_account = $c->db->single($table, { code => $code });
-            if ($sub_account) {
-                if ($sub_account->data->{icon}) {
-                    $sub_account->data->{icon}=~s|http://a|https://si|;
-                }
-                my $icon = $code=~/^tw-/ ? $sub_account->data->{icon}
-                         : $code=~/^fb-(.*)/ ? "https://graph.facebook.com/$1/picture"
-                         : 'https://secure.gravatar.com/avatar/' . md5_hex($code);
-                $users->{ $code } = {
-                    name => $sub_account->name,
-                    icon => $icon
+        my @members = map {
+            $_->account_id
+        } $c->db->search('list_account', { list_id => $list->{id} })->all;
+        for my $account_id (@members, $list->{owner}) {
+            next if exists $users->{ $account_id };
+            my $account = $c->db->single('account', { account_id => $account_id });
+            if ($account) {
+                $users->{ $account_id } = {
+                    name => $account->data->{name},
+                    icon => $account->data->{icon}
                 };
             }
         }
@@ -148,7 +155,7 @@ sub salvage {
     my ($class, $c) = @_;
 
     my $account = $c->account;
-    
+
     my $routes = {
         'account.update' => 'DoubleSpark::API::Account#update',
         'task.create'    => 'DoubleSpark::API::Task#create',
@@ -156,7 +163,7 @@ sub salvage {
         'comment.create' => 'DoubleSpark::API::Comment#create',
         'comment.delete' => 'DoubleSpark::API::Comment#delete'
     };
-    
+
     my $cache = {};
     my $lists = {};
     my $tasks = {};
@@ -206,7 +213,39 @@ sub salvage {
             warnf('[%s] salvage skip %s', $c->sign_name, $match);
         }
     }
-    
+
+    $c->render_json({
+        success => 1
+    });
+}
+
+sub update_profile {
+    my ($class, $c) = @_;
+
+    my $res = DoubleSpark::Validator->validate($c, $c->req,
+        name => ['NOT_NULL', [qw/LENGTH 1 20/]],
+        icon => ['NOT_NULL']
+    );
+    return $c->res_403() unless $res;
+
+    my $account = $c->account;
+    return $c->res_403() unless $account;
+
+    $account->data->{name} = $c->req->param('name');
+    $account->data->{icon} = $c->req->param('icon');
+    $account->update({
+        data => $account->data,
+        modified_on => int(Time::HiRes::time * 1000),
+        updated_on => \'now()'
+    });
+
+    $c->session->set('sign', {
+        account_id => $account->account_id,
+        code       => $c->sign_code,
+        name       => $account->data->{name},
+        icon       => $account->data->{icon}
+    });
+
     $c->render_json({
         success => 1
     });
@@ -216,24 +255,24 @@ sub update {
     my ($class, $c) = @_;
 
     my $res = DoubleSpark::API::Account->update($c, $c->req);
-    
+
     return $c->res_403() unless $res;
-    
+
     $c->render_json($res);
 }
 
 sub delete {
     my ($class, $c) = @_;
-    
+
     my $res = DoubleSpark::API::Account->delete($c, $c->req);
-    
+
     return $c->res_403() unless $res;
-    
+
     if ($c->req->param('code') eq $c->sign_code) {
         $c->session->remove('sign');
         $res->{signout}++;
     }
-    
+
     $c->render_json($res);
 }
 

@@ -35,9 +35,13 @@ app.setup.getTheChrome = function(ele){
 }
 app.setup.settingsWindow = function(ele){
     var li_cache = {};
+    var iconli_cache = {};
     var ul = ele.find('ul.accounts');
     var template = ul.html();
     ul.empty();
+    var icon_ul = ele.find('ul.ui-icons');
+    var icon_template = icon_ul.html();
+    icon_ul.empty();
     app.addListener('registerSubAccount', function(sub_account){
         var li = $(template);
         li.find('img').attr('src', app.util.getIconUrl(sub_account.code));
@@ -47,24 +51,49 @@ app.setup.settingsWindow = function(ele){
         });
         app.dom.setup(li);
         if (sub_account.code in li_cache) {
-            li_cache[sub_account.code].after(li);
-            li_cache[sub_account.code].remove();
+            li_cache[sub_account.code].replaceWith(li);
         } else {
             li.appendTo(ul);
         }
         li_cache[sub_account.code] = li;
+        
+        var iconli = $(icon_template);
+        iconli.find('img').attr('src', app.util.getIconUrl(sub_account.code));
+        iconli.find('span').text(sub_account.name);
+        iconli.find('input').val(sub_account.data.icon);
+        if (sub_account.code in iconli_cache) {
+            iconli_cache[sub_account.code].replaceWith(iconli);
+        } else {
+            iconli.appendTo(icon_ul);
+        }
+        iconli_cache[sub_account.code] = iconli;
     });
     app.addListener('clear', function(){
         ul.empty();
         ele.hide();
         li_cache = {};
     });
+    ele.on('app.dom.show', function(){
+      ele.find('input[name="name"]').val(app.data.sign.name);
+      ele.find('input[name="icon"]').val([app.data.sign.icon]);
+    });
+}
+app.submit.saveSettings = function(form){
+    var name = form.find('input[name="name"]').val();
+    var icon = form.find('input[name="icon"]:checked').val();
+    app.api.account.update_profile({
+        name: name,
+        icon: icon
+    }).done(function(){
+        form.hide();
+        app.fireEvent('reload');
+    });
 }
 app.setup.removeAccountWindow = function(form){
     app.addListener('removeAccountConfirm', function(sub_account){
         app.dom.show(form);
         form.find('input[name="code"]').val(sub_account.code);
-        form.find('img').attr('src', app.util.getIconUrl(sub_account.code));
+        form.find('img').attr('src', sub_account.data.icon);
         form.find('.name').text(sub_account.name);
     });
     app.addListener('clear', function(){
@@ -177,14 +206,14 @@ app.setup.leftColumn = function(ele){
         member_ul.empty();
         var members = [list.owner].concat(list.members);
         for (var i = 0, max_i = members.length; i < max_i; i++) {
-            var code = members[i];
-            var friend = app.data.users[code];
+            var account_id = members[i];
+            var friend = app.data.users[account_id];
             var name = friend ? (friend.screen_name || friend.name) : code;
             if (i === 0) {
                 name = name + ' (owner)';
             }
             $('<li/>')
-                .append(app.util.getIcon(code, 24))
+                .append(app.util.getIcon(account_id, 24))
                 .append($('<span/>').text(name))
                 .appendTo(member_ul);
         }
@@ -329,28 +358,10 @@ app.setup.registerListWindow = function(form){
     var id_input          = form.find('input[name=list_id]');
     var name_input        = form.find('input[name=name]');
     var description_input = form.find('textarea[name=description]');
-    var owner_field       = form.find('div.owner-field');
-    var owner_select      = form.find('select[name=owner]');
     var option_map        = {};
-
-    app.addListener('registerSubAccount', function(sub_account){
-        if (option_map[sub_account.code]) {
-            option_map[sub_account.code].remove();
-        }
-        option_map[sub_account.code] =
-            $('<option/>')
-                .attr('value', sub_account.code)
-                .text(sub_account.name)
-                .appendTo(owner_select);
-        if (app.data.sign.code === sub_account.code) {
-            option_map[sub_account.code].attr('selected', true);
-        }
-    });
 
     app.addListener('editList', function(list){
         app.dom.reset(form);
-        owner_select.val(list.owner);
-        owner_field.hide();
         app.dom.show(form);
         id_input.val(list.id);
         name_input.val(list.name);
@@ -359,14 +370,12 @@ app.setup.registerListWindow = function(form){
 
     app.addListener('createList', function(){
         id_input.val('');
-        owner_field.show();
         app.dom.reset(form);
         app.dom.show(form);
     });
 
     app.addListener('clear', function(){
         option_map = {};
-        owner_select.empty();
     });
 }
 app.setup.deleteListWindow = function(form){
@@ -423,18 +432,18 @@ app.setup.memberListWindow = function(form){
         }
         ul.empty();
         for (var i = 0, max_i = list.members.length; i < max_i; i++) {
-            var code = list.members[i];
-            if (!(code in app.data.users)) {
+            var account_id = list.members[i];
+            if (!(account_id in app.data.users)) {
                 continue;
             }
-            var user = app.data.users[code];
+            var user = app.data.users[account_id];
             $(template)
-                .find('.member-icon').append(app.util.getIcon(code, 24)).end()
+                .find('.member-icon').append(app.util.getIcon(account_id, 24)).end()
                 .find('.member-name').text(user.name).end()
-                .find('.icon-remove').data('code', code).click(function(e){
-                    var code = $(this).data('code');
+                .find('.icon-remove').data('account_id', account_id).click(function(e){
+                    var account_id = $(this).data('account_id');
                     app.fireEvent('leaveListMember',
-                        list, code, app.data.users[code].name, app.util.getIcon(code, 24));
+                        list, app.data.users[account_id].name, app.util.getIcon(account_id, 24));
                 }).end()
                 .appendTo(ul);
         }
@@ -459,29 +468,14 @@ app.setup.memberListWindow = function(form){
     });
 }
 app.setup.inviteListWindow = function(form){
-    var member_select = form.find('select[name="member_code"]');
     var option_map = {};
     form.find('.btn-primary').click(function(e){
         var list_id = form.find('input[name="list_id"]').val();
         var invite_code = form.find('input[name="invite_code"]').val();
-        var member_code = member_select.val();
-        app.api.list.join(list_id, invite_code, member_code).done(function(data){
+        app.api.list.join(list_id, invite_code).done(function(data){
             form.hide();
             app.fireEvent('reload');
         });
-    });
-    app.addListener('registerSubAccount', function(sub_account){
-        if (option_map[sub_account.code]) {
-            option_map[sub_account.code].remove();
-        }
-        option_map[sub_account.code] =
-            $('<option/>')
-                .attr('value', sub_account.code)
-                .text(sub_account.name)
-                .appendTo(member_select);
-        if (app.data.sign.code === sub_account.code) {
-            option_map[sub_account.code].attr('selected', true);
-        }
     });
     app.addListener('receiveInvite', function(invite){
         form.find('.ui-listname').text(invite.list_name);
@@ -495,17 +489,15 @@ app.setup.leaveListWindow = function(form){
         e.preventDefault();
         e.stopPropagation();
         var list_id = form.find('input[name="list_id"]').val();
-        var member_code = form.find('input[name="member_code"]').val();
-        app.api.list.leave(list_id, member_code).done(function(data){
+        app.api.list.leave(list_id).done(function(data){
             app.fireEvent('reload');
             form.hide();
         });
     });
-    app.addListener('leaveListMember', function(list, member_code, member_name, member_icon){
+    app.addListener('leaveListMember', function(list, member_name, member_icon){
         form.find('.ui-listname').text(list.name);
         form.find('.ui-membername').text(member_name);
         form.find('input[name="list_id"]').val(list.id);
-        form.find('input[name="member_code"]').val(member_code);
         form.find('img').replaceWith(member_icon);
         form.show();
     });

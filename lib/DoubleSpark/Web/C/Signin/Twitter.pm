@@ -82,17 +82,18 @@ sub callback {
                 $c->session->set('sign', {
                         account_id => $account->account_id,
                         code       => $code,
-                        name       => $screen_name,
-                        icon       => $icon
+                        name       => $account->data->{name},
+                        icon       => $account->data->{icon}
                 });
                 $c->session->set('notice', 'tw_account_move');
             } else {
                 infof('signin from twitter %s', $screen_name);
+                $account ||= $c->db->single('account', { account_id => $tw_account->account_id });
                 $c->session->set('sign', {
                         account_id => $tw_account->account_id,
                         code       => $code,
-                        name       => $screen_name,
-                        icon       => $icon
+                        name       => $account->data->{name},
+                        icon       => $account->data->{icon}
                 });
             }
         }
@@ -127,8 +128,8 @@ sub callback {
             $c->session->set('sign', {
                 account_id => $account->account_id,
                 code       => $code,
-                name       => $screen_name,
-                icon       => $icon
+                name       => $account->data->{name},
+                icon       => $account->data->{icon}
             });
         }
     };if ($@) {

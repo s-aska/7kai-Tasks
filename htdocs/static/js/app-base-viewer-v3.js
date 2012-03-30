@@ -91,7 +91,8 @@ app.addListener('registerTask', function(task, list){
 
     // 直近の履歴・コメント
     $.each(task.actions.concat().reverse(), function(i, action){
-        if (!app.util.findMe([action.code])) {
+        if (!app.util.findMe([action.account_id])) {
+            console.log(action);
             task.recent = action;
             return false;
         }
@@ -187,7 +188,6 @@ app.addListener('clear', function(){
     app.data.assigns = [];
 });
 app.addListener('reload', function(){
-    // app.api.account.me({ reset: true });
     app.api.account.me({
         data: {
             if_modified_since: app.data.if_modified_since,
@@ -234,88 +234,46 @@ app.addListener('receiveSign', function(){
     }, 300000);
 });
 
-app.util.getIconUrl = function(code, size){
-    var src;
+app.util.getIconUrl = function(account_id, size){
     if (!navigator.onLine) {
         return '/static/img/address.png';
     }
-    var user = app.data.users[code];
+    var user = app.data.users[account_id];
     if (user) {
         return user.icon;
     }
-    if (/^tw-[0-9]+$/.test(code)) {
-        src = '/static/img/address.png';
-    }
-    else if (/^fb-[0-9]+$/.test(code)) {
-        src = 'https://graph.facebook.com/' + code.substring(3) + '/picture';
-    }
-    else {
-        src = size === 16 ? '/static/img/address.png' : '/static/img/address24.png';
-    }
-    return src;
+    return size === 16 ? '/static/img/address.png' : '/static/img/address24.png';
 }
-app.util.getIcon = function(code, size){
-    var src = app.util.getIconUrl(code, size);
+app.util.getIcon = function(account_id, size){
+    var src = app.util.getIconUrl(account_id, size);
     if (!src) {
         src = '/static/img/address.png';
     }
     return $('<img/>').attr('src', src).addClass('sq' + size);
 }
-app.util.getName = function(code){
-    var user = app.data.users[code];
+app.util.getName = function(account_id){
+    var user = app.data.users[account_id];
     if (user) {
-        return user.screen_name || user.name;
+        return user.name;
     } else {
-        return code;
+        return account_id;
     }
 }
-app.util.findMe = function(codes){
-    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
-        var sub_account = app.data.sub_accounts[i];
-        for (var ii = 0, max_ii = codes.length; ii < max_ii; ii++) {
-            if (sub_account.code === codes[ii]) {
-                return sub_account.code;
-            }
+app.util.findMe = function(account_ids){
+    for (var i = 0, max_i = account_ids.length; i < max_i; i++) {
+        if (Number(app.data.sign.account_id) === Number(account_ids[i])) {
+            return app.data.sign.account_id;
         }
     }
     return false;
 }
-app.util.findMeList = function(codes){
-    var me_list = [];
-    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
-        var sub_account = app.data.sub_accounts[i];
-        for (var ii = 0, max_ii = codes.length; ii < max_ii; ii++) {
-            if (sub_account.code === codes[ii]) {
-                me_list.push(sub_account.code);
-            }
-        }
-    }
-    return me_list;
-}
-app.util.findOthers = function(codes){
-    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
-        var sub_account = app.data.sub_accounts[i];
-        for (var ii = 0, max_ii = codes.length; ii < max_ii; ii++) {
-            if (sub_account.code !== codes[ii]) {
-                return codes[ii];
-            }
+app.util.findOthers = function(account_ids){
+    for (var i = 0, max_i = account_ids.length; i < max_i; i++) {
+        if (app.data.sign.account_id !== account_ids[i]) {
+            return account_ids[i];
         }
     }
     return false;
-}
-app.util.getRegistrant = function(list){
-    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
-        var sub_account = app.data.sub_accounts[i];
-        if (sub_account.code === list.owner) {
-            return sub_account.code;
-        }
-        for (var ii = 0, max_ii = list.members.length; ii < max_ii; ii++) {
-            var member = list.members[ii];
-            if (sub_account.code === member) {
-                return sub_account.code;
-            }
-        }
-    }
 }
 app.util.taskFilter = function(task, condition){
     if (app.data.current_tag) {
@@ -683,6 +641,16 @@ app.api.account.update = function(params){
         }
     });
 }
+app.api.account.update_profile = function(params){
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/account/update_profile',
+        data: params,
+        dataType: 'json',
+        salvage: false,
+        loading: false
+    });
+}
 app.api.task.update = function(params){
     var list = app.data.list_map[params.list_id];
     if (!list) {
@@ -709,7 +677,7 @@ app.api.task.update = function(params){
     if (action) {
         var time = (new Date()).getTime();
         app.data.task_map[params.task_id].actions.push({
-            code: params.registrant,
+            account_id: app.data.sign.account_id,
             action: action,
             time: time
         });
@@ -799,27 +767,25 @@ app.api.list.disinvite = function(list_id){
         loading: false
     });
 }
-app.api.list.join = function(list_id, invite_code, member_code){
+app.api.list.join = function(list_id, invite_code){
     return app.ajax({
         type: 'post',
         url: '/api/1/list/join',
         data: {
             list_id: list_id,
-            invite_code: invite_code,
-            member_code: member_code
+            invite_code: invite_code
         },
         dataType: 'json',
         salvage: false,
         loading: false
     });
 }
-app.api.list.leave = function(list_id, member_code){
+app.api.list.leave = function(list_id){
     return app.ajax({
         type: 'post',
         url: '/api/1/list/leave',
         data: {
-            list_id: list_id,
-            member_code: member_code
+            list_id: list_id
         },
         dataType: 'json',
         salvage: false,
@@ -1047,7 +1013,6 @@ app.setup.tags = function(ul){
 app.setup.rightColumn = function(ele){
     var list_id_input    = ele.find('input[name=list_id]');
     var task_id_input    = ele.find('input[name=task_id]');
-    var registrant_input = ele.find('input[name=registrant]');
     var status_input     = ele.find('input[name=status]');
     var closed_input     = ele.find('input[name=closed]');
     var button           = ele.find('button:first');
@@ -1131,7 +1096,6 @@ app.setup.rightColumn = function(ele){
         current_task = task;
         list_id_input.val(task.list.id);
         task_id_input.val(task.id);
-        registrant_input.val(app.util.getRegistrant(task.list));
         status_input.val('');
         closed_input.val('');
         list_name.text(task.list.name);
@@ -1163,8 +1127,8 @@ app.setup.rightColumn = function(ele){
         li.prependTo(ul);
         $.each(task.actions, function(i, comment){
             var li = $(template);
-            li.find('.icon:first').append(app.util.getIcon(comment.code, 32));
-            li.find('.name').text(app.util.getName(comment.code));
+            li.find('.icon:first').append(app.util.getIcon(comment.account_id, 32));
+            li.find('.name').text(app.util.getName(comment.account_id));
             if (comment.salvage) {
                 li.addClass('salvage');
                 li.find('.icon:last').remove();
@@ -1394,16 +1358,10 @@ app.setup.tasksheet = function(ul){
                 return true;
             }
             e.preventDefault();
-            // li.addClass('active');
             return false;
-        });
-        li.get(0).addEventListener('dragleave', function(e){
-            // li.removeClass('active');
         });
         li.get(0).addEventListener('drop', function(e){
             e.stopPropagation();
-            // ul.children().removeClass('active');
-            // ul.slideUp('fast');
             app.api.task.move(app.data.dragtask.list.id, app.data.dragtask.id, list.id);
         }, false);
 
@@ -1540,14 +1498,14 @@ app.setup.tasksheet = function(ul){
         if (list.members.length) {
             var members = [list.owner].concat(list.members);
             for (var i = 0, max_i = members.length; i < max_i; i++) {
-                var code = members[i];
-                if (!(code in app.data.users)) {
+                var account_id = members[i];
+                if (!(account_id in app.data.users)) {
                     continue;
                 }
-                var icon = app.util.getIcon(code, 26);
-                icon.data('code', code);
+                var icon = app.util.getIcon(account_id, 26);
+                icon.data('account_id', account_id);
                 icon.click(function(){
-                    app.fireEvent('createTask', list, $(this).data('code'));
+                    app.fireEvent('createTask', list, $(this).data('account_id'));
                 });
                 $('<li/>')
                     .append(icon)
@@ -1690,6 +1648,7 @@ app.setup.tasksheet = function(ul){
     app.addListener('openTask', function(task, forceTop){
         if (!ul.is(':visible')) { return }
 
+        app.fireEvent('selectTab', 'homemenu', 'task');
         ul.find('> li > ul > li').removeClass('selected');
         ul.find('> li > header .ui-edit, > li > header .ui-sub').attr('disabled', true);
         if (task.id in app.data.taskli_map) {
@@ -1887,10 +1846,6 @@ app.setup.tasksheet = function(ul){
     });
     
     app.addListener('missingTask', function(){
-        // if (current_task &&
-        //     current_task.id in app.data.taskli_map) {
-        //     app.data.taskli_map[current_task.id].removeClass('selected');
-        // }
         ul.find('> li > ul > li').removeClass('selected');
         ul.find('> li > header .ui-edit, > li > header .ui-sub').attr('disabled', true);
         current_task = null;
@@ -1969,7 +1924,6 @@ app.setup.tasksheet = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 due: due
             });
         } else if (e.keyCode === 39 || e.keyCode === 76) { // Right / L
@@ -1985,7 +1939,6 @@ app.setup.tasksheet = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 due: due
             });
         } else if (e.keyCode === 32) { // Space
@@ -1994,7 +1947,6 @@ app.setup.tasksheet = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 status: status
             });
         } else if (e.keyCode === 13) { // Enter
@@ -2003,7 +1955,6 @@ app.setup.tasksheet = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 closed: closed
             });
         } else if (e.keyCode === 59 || e.keyCode === 186) { // :;*
@@ -2028,7 +1979,6 @@ app.setup.tasksheet = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 pending: pending
             });
         } else if (e.keyCode === 69) { // E
@@ -2073,12 +2023,8 @@ app.setup.task = function(ele, task){
         if (task.id === app.data.dragtask.parent_id) {
             return true;
         }
-        // ele.addClass('active');
         e.preventDefault();
         return false;
-    });
-    ele.get(0).addEventListener('dragleave', function(e){
-        // ele.removeClass('active');
     });
     ele.get(0).addEventListener('drop', function(e){
         e.preventDefault();
@@ -2119,7 +2065,6 @@ app.setup.status = function(ele, task){
         app.api.task.update({
             list_id: task.list.id,
             task_id: task.id,
-            registrant: app.util.getRegistrant(task.list),
             status: status
         });
     });
@@ -2182,7 +2127,6 @@ app.setup.close = function(ele, task){
         app.api.task.update({
             list_id: task.list.id,
             task_id: task.id,
-            registrant: app.util.getRegistrant(task.list),
             closed: (task.closed ? 0 : 1)
         });
     });
@@ -2201,7 +2145,6 @@ app.setup.pending = function(ele, task){
         app.api.task.update({
             list_id: task.list.id,
             task_id: task.id,
-            registrant: app.util.getRegistrant(task.list),
             pending: (task.pending ? 0 : 1)
         });
     });
@@ -2221,10 +2164,6 @@ app.setup.due = function(ele, task){
                 label = label + '/' + task.due_date.getFullYear();
             }
         }
-        // if (app.env.lang === 'ja') {
-        //     ele.text(label + ' (' + week + ')');
-        // } else {
-        // }
         ele.text(label);
         ele.append($('<span/>').text('(' + week + ')'));
         if (now.getTime() > task.due_date.getTime()) {
@@ -2237,10 +2176,6 @@ app.setup.due = function(ele, task){
 app.setup.recent = function(ele, task){
     if (!task) return;
     if (task.recent) {
-        // var size = ele.find('.icon').data('human-size') || 16;
-        // ele.find('.icon').append(app.util.getIcon(task.recent.code, size));
-        // ele.find('.icon');
-        // var date = app.date.relative(task.recent.time);
         var date = '';
         if (task.recent.message) {
             if (task.recent.message === '[like]') {
@@ -2253,11 +2188,12 @@ app.setup.recent = function(ele, task){
                 ele.find('.message span').text(message + ' ' + date);
             }
         } else {
-            ele.find('.message i').attr('class', 'icon-info-sign');
-            ele.find('.message span').text(
-                app.data.messages.data('text-'
-                    + task.recent.action + '-' + app.env.lang)
-                + ' ' + date);
+            // ele.find('.message i').attr('class', 'icon-info-sign');
+            // ele.find('.message span').text(
+            //     app.data.messages.data('text-'
+            //         + task.recent.action + '-' + app.env.lang)
+            //     + ' ' + date);
+            ele.hide();
         }
     } else {
         ele.hide();
@@ -2273,7 +2209,6 @@ app.setup.registerTaskWindow = function(form){
     var name_input = form.find('input[name=name]');
     var due_input = form.find('input[name=due]');
     var requester_select = form.find('select[name=requester]');
-    var registrant_input = form.find('input[name=registrant]');
     var task_id_input = form.find('input[name=task_id]');
     var list_id_input = form.find('input[name=list_id]');
     var parent_id_input = form.find('input[name=parent_id]');
@@ -2351,7 +2286,6 @@ app.setup.registerTaskWindow = function(form){
         requester_select.empty();
         due_week.text('');
 
-        var registrant = app.util.getRegistrant(list);
         if (list.members.length) {
             form.find('.team').show();
             var assigns = [list.owner].concat(list.members);
@@ -2382,12 +2316,11 @@ app.setup.registerTaskWindow = function(form){
                     .appendTo(requester_select);
             }
             // 依頼者のデフォルトは自分
-            requester_select.val(registrant);
+            requester_select.val(app.data.sign.account_id);
         } else {
             form.find('.team').hide();
         }
         
-        registrant_input.val(registrant);
         task_id_input.val('');
         list_id_input.val(list.id);
         if (parentTask) {
@@ -2414,25 +2347,12 @@ app.setup.registerTaskWindow = function(form){
 
     app.addListener('createSubTask', function(parentTask){
         app.dom.reset(form);
-        // if (!app.data.current_list) {
-        //     alert('missing current_list');
-        //     return;
-        // }
-        // if (parentTask.parent_id) {
-        //     app.fireEvent('alert', 'task-nest-limit');
-        //     return;
-        // }
         setup(parentTask.list, parentTask);
         app.dom.show(form);
     });
 
     app.addListener('editTask', function(task){
         app.dom.reset(form);
-        // if (!app.data.current_list) {
-        //     alert('missing current_list');
-        //     return;
-        // }
-        // console.log(task.list);
         setup(task.list, app.data.task_map[task.parent_id]);
         name_input.val(task.name);
         if (task.due) {
@@ -2466,13 +2386,13 @@ app.setup.timeline = function(ul){
                     actions.push({
                         task: task,
                         action: 'create-task',
-                        code: task.registrant,
+                        account_id: task.registrant,
                         time: task.created_on
                     });
                 }
                 $.each(task.actions, function(iii, action){
                     action.task = task;
-                    if (Boolean(app.util.findMe([action.code])) === is_me) {
+                    if (Boolean(app.util.findMe([action.account_id])) === is_me) {
                         actions.push(action);
                     }
                 });
@@ -2486,10 +2406,10 @@ app.setup.timeline = function(ul){
         }
         $.each(actions, function(i, action){
             var li = $(template);
-            li.find('.icon').append(app.util.getIcon(action.code, 32));
+            li.find('.icon').append(app.util.getIcon(action.account_id, 32));
             li.find('.listname').text(action.task.list.name);
             li.find('.taskname').text(action.task.name);
-            li.find('.name').text(app.util.getName(action.code));
+            li.find('.name').text(app.util.getName(action.account_id));
             if (action.message) {
                 if (action.message === '[like]') {
                     li.find('.message').html('<i class="icon-heart"></i>');
@@ -2569,7 +2489,6 @@ app.submit.registerTask = function(form){
     var assign = form.find('input[name="assign"]:checked')
                      .map(function(){return $(this).val()}).get();
     var requester = form.find('select[name="requester"]').val();
-    var registrant = form.find('input[name="registrant"]').val();
     var name = form.find('input[name="name"]').val();
     var due = form.find('input[name="due"]').val();
     if (due) {
@@ -2609,6 +2528,7 @@ app.submit.registerTask = function(form){
                     - twipsy.parent().offset().top
                     + 'px');
                 app.dom.show(twipsy);
+                form.find('select[name="requester"]').val(app.data.sign.account_id);
             }
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い
@@ -2625,7 +2545,7 @@ app.submit.registerTask = function(form){
             var task = {
                 id: (task_id || (list.id + ':' + time)),
                 requester: requester,
-                registrant: registrant,
+                registrant: app.data.sign.account_id,
                 assign: assign,
                 name: name,
                 due: due,
@@ -2650,7 +2570,6 @@ app.submit.registerTask = function(form){
 app.submit.registerComment = function(form){
     var task_id = form.find('input[name=task_id]').val();
     var list_id = form.find('input[name=list_id]').val();
-    var registrant = form.find('input[name=registrant]').val();
     var list = app.data.list_map[list_id];
     if (!list) {
         alert('unknown list ' + list_id);
@@ -2699,7 +2618,7 @@ app.submit.registerComment = function(form){
             if (task) {
                 task.actions.push({
                     action: 'comment',
-                    code: registrant,
+                    account_id: app.data.sign.account_id,
                     message: message,
                     time: (new Date()).getTime(),
                     salvage: true

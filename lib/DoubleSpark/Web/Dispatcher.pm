@@ -15,23 +15,24 @@ get '/join/:list_id/:invite_code' => 'Root#join';
 
 get '/signout' => 'Root#signout';
 
-post '/signin/twitter/signin' => 'Signin::Twitter#signin';
+post '/signin/twitter/signin'  => 'Signin::Twitter#signin';
 get '/signin/twitter/callback' => 'Signin::Twitter#callback';
 
-post '/signin/google/signin' => 'Signin::Google#signin';
+post '/signin/google/signin'  => 'Signin::Google#signin';
 get '/signin/google/callback' => 'Signin::Google#callback';
 
-post '/signin/facebook/signin' => 'Signin::Facebook#signin';
+post '/signin/facebook/signin'  => 'Signin::Facebook#signin';
 get '/signin/facebook/callback' => 'Signin::Facebook#callback';
 
 post '/signin/email/signup' => 'Signin::Email#signup';
 post '/signin/email/verify' => 'Signin::Email#verify';
 post '/signin/email/signin' => 'Signin::Email#signin';
 
-get '/api/1/account/me'       => 'API::Account#me';
-post '/api/1/account/update'  => 'API::Account#update';
-post '/api/1/account/delete'  => 'API::Account#delete';
-post '/api/1/account/salvage' => 'API::Account#salvage';
+get '/api/1/account/me'              => 'API::Account#me';
+post '/api/1/account/update'         => 'API::Account#update';
+post '/api/1/account/update_profile' => 'API::Account#update_profile';
+post '/api/1/account/delete'         => 'API::Account#delete';
+post '/api/1/account/salvage'        => 'API::Account#salvage';
 
 post '/api/1/list/create'    => 'API::List#create';
 post '/api/1/list/update'    => 'API::List#update';

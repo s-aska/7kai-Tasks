@@ -172,6 +172,12 @@ sub sign_code {
     $sign ? $sign->{code} : undef;
 }
 
+sub sign_id {
+    my $c = shift;
+    my $sign = $c->sign;
+    $sign ? $sign->{account_id} : undef;
+}
+
 sub account {
     my $c = shift;
     $c->sign unless $c->{account};

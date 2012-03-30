@@ -219,7 +219,6 @@ app.setup.ganttchartListsV3 = function(ul){
                 app.api.task.update({
                     list_id: task.list.id,
                     task_id: task.id,
-                    registrant: app.util.getRegistrant(task.list),
                     due: due
                 });
             } else {
@@ -581,7 +580,6 @@ app.setup.ganttchartListsV3 = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 due: due
             });
         } else if (e.keyCode === 39 || e.keyCode === 76) { // Right / L
@@ -596,7 +594,6 @@ app.setup.ganttchartListsV3 = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 due: due
             });
         } else if (e.keyCode === 32) { // Space
@@ -604,7 +601,6 @@ app.setup.ganttchartListsV3 = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 status: status
             });
         } else if (e.keyCode === 59 || e.keyCode === 186) { // :;*
@@ -627,7 +623,6 @@ app.setup.ganttchartListsV3 = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 pending: pending
             });
         } else if (e.keyCode === 69) { // E
@@ -637,7 +632,6 @@ app.setup.ganttchartListsV3 = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 closed: closed
             });
         }

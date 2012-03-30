@@ -34,7 +34,7 @@ sub create {
     my $anonymous  = $c->req->param('anonymous');
 
     $c->db->insert('request', {
-        code       => $c->sign_code,
+        account_id => $c->sign_id,
         name       => $anonymous ? 'anonymous' : $c->sign_name,
         request    => $request,
         lang       => 'ja',
@@ -85,7 +85,7 @@ sub star {
         request_id => $request_id
     });
     
-    $request->data->{star}->{ $c->sign_code }++;
+    $request->data->{star}->{ $c->sign_id }++;
     $request->update({ data => $request->data });
     
     $c->render_json({ success => 1 });
@@ -99,7 +99,7 @@ sub unstar {
         request_id => $request_id
     });
     
-    delete $request->data->{star}->{ $c->sign_code };
+    delete $request->data->{star}->{ $c->sign_id };
     $request->update({ data => $request->data });
     
     $c->render_json({ success => 1 });

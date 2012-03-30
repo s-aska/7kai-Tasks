@@ -8,7 +8,7 @@ use Digest::MD5 qw(md5_hex);
 
 sub signin {
     my ($self, $c) = @_;
-    
+
     my $config = $c->config;
     my $error;
     $error = 'please set return_to' unless $config->{OpenID}->{return_to};
@@ -50,11 +50,11 @@ sub signin {
 
 sub callback {
     my ($self, $c) = @_;
-    
+
     my $request = $c->req->parameters->mixed;
-    
+
     my $account = $c->account;
-    
+
     Net::OpenID::Consumer::Lite->handle_server_response(
         $request => (
             not_openid => sub {
@@ -92,12 +92,12 @@ sub callback {
                         $c->session->set('sign', {
                                 account_id => $account->account_id,
                                 code       => $code,
-                                name       => $screen_name,
-                                icon       => $icon
+                                name       => $account->data->{name},
+                                icon       => $account->data->{icon}
                         });
                         $c->session->set('notice', 'google_account_move');
                     }
-                    
+
                     # 通常サインイン
                     else {
                         $google_account->update({
@@ -107,12 +107,12 @@ sub callback {
                         $c->session->set('sign', {
                                 account_id => $google_account->account_id,
                                 code       => $code,
-                                name       => $screen_name,
-                                icon       => $icon
+                                name       => $account->data->{name},
+                                icon       => $account->data->{name}
                         });
                     }
                 } else {
-                    
+
                     # 追加
                     if ($account) {
                         infof('add google_account aid:%s code:%s', $account->account_id, $code);
@@ -140,8 +140,8 @@ sub callback {
                     $c->session->set('sign', {
                         account_id => $account->account_id,
                         code       => $code,
-                        name       => $screen_name,
-                        icon       => $icon
+                        name       => $account->data->{name},
+                        icon       => $account->data->{icon}
                     });
                 }
                 $c->session->regenerate_session_id(1);

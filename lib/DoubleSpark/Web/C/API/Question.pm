@@ -7,7 +7,7 @@ use Time::HiRes;
 
 sub list {
     my ($class, $c) = @_;
-    
+
     my @questions;
     for my $row ($c->db->search('question', {}, { order_by => 'updated_on desc' })->all) {
         my $question = $row->get_columns;
@@ -15,7 +15,7 @@ sub list {
         delete $question->{code};
         push @questions, $question;
     }
-    
+
     $c->render_json({
         success => 1,
         questions => \@questions
@@ -34,11 +34,11 @@ sub create {
     my $anonymous = $c->req->param('anonymous');
 
     $c->db->insert('question', {
-        code       => $c->sign_code,
-        question    => $question,
+        account_id => $c->sign_id,
+        question   => $question,
         lang       => 'ja',
         is_public  => 0,
-        data        => {
+        data       => {
             star => {}
         },
         created_on => \'now()',
@@ -52,14 +52,14 @@ sub create {
 
 sub update {
     my ($class, $c) = @_;
-    
+
     return $c->res_403() unless $c->is_owner;
 
     my $question_id = $c->req->param('question_id');
     my $question    = $c->req->param('question')  || '';
     my $answer      = $c->req->param('answer')    || '';
     my $is_public   = $c->req->param('is_public') || 0;
-    
+
     $c->db->update('question', {
         question    => $question,
         answer      => $answer,
@@ -68,47 +68,47 @@ sub update {
     }, {
         question_id => $question_id
     });
-    
+
     $c->render_json({ success => 1 });
 }
 
 sub star {
     my ($class, $c) = @_;
-    
+
     my $question_id = $c->req->param('question_id');
     my $question = $c->db->single('question', {
         question_id => $question_id
     });
     return $c->res_404() unless $question;
-    
-    $question->data->{star}->{ $c->sign_code }++;
+
+    $question->data->{star}->{ $c->sign_id }++;
     $question->update({ data => $question->data });
-    
+
     $c->render_json({ success => 1 });
 }
 
 sub unstar {
     my ($class, $c) = @_;
-    
+
     my $question_id = $c->req->param('question_id');
     my $question = $c->db->single('question', {
         question_id => $question_id
     });
     return $c->res_404() unless $question;
-    
-    delete $question->data->{star}->{ $c->sign_code };
+
+    delete $question->data->{star}->{ $c->sign_id };
     $question->update({ data => $question->data });
-    
+
     $c->render_json({ success => 1 });
 }
 
 sub delete {
     my ($class, $c) = @_;
-    
+
     # self or developer
-    
-    
-    
+
+
+
 }
 
 1;

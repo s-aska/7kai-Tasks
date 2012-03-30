@@ -66,16 +66,16 @@ sub callback {
                 $c->session->set('sign', {
                         account_id => $account->account_id,
                         code       => $code,
-                        name       => $name,
-                        icon       => $icon
+                        name       => $account->data->{name},
+                        icon       => $account->data->{icon}
                 });
             } else {
                 infof('signin from facebook %s', $name);
                 $c->session->set('sign', {
                         account_id => $fb_account->account_id,
                         code       => $code,
-                        name       => $name,
-                        icon       => $icon
+                        name       => $account->data->{name},
+                        icon       => $account->data->{icon}
                 });
             }
         }
@@ -109,8 +109,8 @@ sub callback {
             $c->session->set('sign', {
                 account_id => $account->account_id,
                 code       => $code,
-                name       => $name,
-                icon       => $icon
+                name       => $account->data->{name},
+                icon       => $account->data->{icon}
             });
         }
     };if ($@) {

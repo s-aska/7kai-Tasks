@@ -26,18 +26,15 @@ rule OWNER => sub {
 rule MEMBERS => sub {
     my $c = Amon2->context();
     if (my $account = $c->account) {
-        for my $member (@{ $_ }) {
-            if ($member=~m|^tw-\d+$|) {
-                debugf('[%s] valid members %s', $c->sign_name, $member);
-            }
-            elsif ($member=~m|^fb-\d+$|) {
-                debugf('[%s] valid members %s', $c->sign_name, $member);
-            }
-            elsif (Email::Valid::Loose->address($member)) {
-                debugf('[%s] valid members %s', $c->sign_name, $member);
-            }
-            else {
-                warnf('[%s] invalid members %s', $c->sign_name, $member);
+        my $list = $c->stash->{list};
+        unless ($list) {
+            warnf('[-] missign list');
+            return;
+        }
+        for my $account_id (@{ $_ }) {
+            next if $list->account_id eq $account_id;
+            unless ($c->db->count('list_account', '*', { account_id => $account_id })) {
+                warnf('[%s] invalid members %s', $c->sign_name, $account_id);
                 return;
             }
         }
@@ -50,17 +47,14 @@ rule MEMBERS => sub {
 
 rule MEMBER => sub {
     my $c = Amon2->context();
-    if ($_=~m|^tw-\d+$|) {
-        debugf('[%s] valid member %s', $c->sign_name, $_);
+    my $list = $c->stash->{list};
+    unless ($list) {
+        warnf('[-] missign list');
+        return;
     }
-    elsif ($_=~m|^fb-\d+$|) {
-        debugf('[%s] valid member %s', $c->sign_name, $_);
-    }
-    elsif (Email::Valid::Loose->address($_)) {
-        debugf('[%s] valid member %s', $c->sign_name, $_);
-    }
-    else {
-        warnf('[%s] invalid member %s', $c->sign_name, $_);
+    return 1 if $list->account_id eq $_;
+    unless ($c->db->count('list_account', '*', { account_id => $_ })) {
+        warnf('[%s] invalid members %s', $c->sign_name, $_);
         return;
     }
     return 1;

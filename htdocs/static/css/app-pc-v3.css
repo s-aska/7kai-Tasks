@@ -568,6 +568,27 @@ body > .row > .columns > header {
     padding-top: 4px;
     padding-right: 6px;
 }
+#settings-window .ui-icons li {
+    margin-bottom: 10px;
+}
+#settings-window .ui-icons input {
+    display: block;
+    float: left;
+    margin-top: 6px;
+}
+#settings-window .ui-icons img {
+    display: block;
+    float: left;
+    width: 24px;
+    height: 24px;
+    margin-left: 10px;
+}
+#settings-window .ui-icons span {
+    display: block;
+    float: left;
+    margin-left: 10px;
+    padding-top: 4px;
+}
 
 /********** scrollbar **********/
 ul::-webkit-scrollbar,

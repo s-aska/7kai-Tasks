@@ -678,7 +678,6 @@
       >
         <input type="hidden" name="list_id" value="">
         <input type="hidden" name="task_id" value="">
-        <input type="hidden" name="registrant" value="">
         <input type="hidden" name="status" value="">
         <input type="hidden" name="closed" value="">
         <textarea
@@ -1305,15 +1304,6 @@
             <input type="text" name="name" value="" required maxlength="20" data-autofocus="true">
           </div>
         </div>
-        <div class="clearfix owner-field">
-          <label for=""
-            data-setup="localize"
-            data-text-ja="オーナー"
-          >Owner</label>
-          <div class="input owner">
-            <select name="owner"></select>
-          </div>
-        </div>
       </div>
       <div class="left description">
         <div class="clearfix">
@@ -1442,15 +1432,6 @@
       >List</label>
       <div class="input">
         <strong class="ui-listname"></strong>
-      </div>
-    </div>
-    <div class="clearfix">
-      <label for=""
-        data-setup="localize"
-        data-text-ja="アカウント"
-      >Account</label>
-      <div class="input">
-        <select name="member_code"></select>
       </div>
     </div>
     <div>
@@ -1673,7 +1654,6 @@
         <input type="hidden" name="list_id" value="">
         <input type="hidden" name="task_id" value="">
         <input type="hidden" name="parent_id" value="">
-        <input type="hidden" name="registrant" value="">
         <div class="clearfix">
           <label for=""
             data-setup="localize"
@@ -1782,9 +1762,11 @@
     >Close</button>
   </div>
 </form>
-<div
+<form
+  id="settings-window"
   class="modal"
-  data-setup="showable,ui,escclose,settingsWindow"
+  data-setup="showable,ui,escclose,settingsWindow,submit"
+  data-submit="saveSettings"
   data-ui="draggable"
   data-showable='{
     "id":"settings-window",
@@ -1803,42 +1785,85 @@
     >Settings</h3>
   </div>
   <div class="modal-body">
-    <h3
-    data-setup="localize"
-    data-text-ja="アカウント追加"
-    >Add Account</h3>
-    <ul class="unstyled">
-      <li style="margin-bottom: 10px;">
+    <ul class="nav nav-tabs">
+      <li class="active">
         <a
-          class="btn"
-          data-setup="click"
-          data-click="addTwitter"
-        >Connect with Twitter</a>
+          data-setup="localize,tab.menu"
+          data-text-ja="表示名 / アイコン"
+          data-tab='{"id":"basic","group":"settings"}'
+        >Display Name / Icon</a>
       </li>
       <li>
         <a
-          class="btn"
-          data-setup="click"
-          data-click="addFacebook"
-        >Connect with Facebook</a>
+          data-setup="localize,tab.menu"
+          data-text-ja="アカウント追加 / 削除"
+          data-tab='{"id":"account","group":"settings"}'
+        >Account Add / Remove</a>
       </li>
     </ul>
-    
-    <h3
+    <div
+      data-setup="tab.content"
+      data-tab='{"id":"basic","group":"settings"}'
+    >
+      <label
+        data-setup="localize"
+        data-text-ja="表示名 (1-20文字)"
+      >Display Name (1-20 characters)</label>
+      <input type="text" name="name" value="">
+      <label
+        data-setup="localize"
+        data-text-ja="アイコン"
+      >Icon</label>
+      <ul class="unstyled ui-icons">
+        <li class="clearfix"><label><input type="radio" name="icon" value=""><img><span></span></label></li>
+      </ul>
+      <button
+        class="btn btn-primary"
+        data-setup="localize"
+        data-text-ja="保存"
+      >Save</button>
+    </div>
+    <div
+      style="display: none"
+      data-setup="tab.content"
+      data-tab='{"id":"account","group":"settings"}'
+    >
+      <h3
       data-setup="localize"
-      data-text-ja="アカウント削除"
-    >Delete Account</h3>
-    <ul class="unstyled accounts">
-      <li style="margin-bottom: 10px;">
-        <img class="sq24" style="vertical-align: middle;">
-        <span class="name"></span>
-        <button
-          class="btn btn-danger"
-          data-setup="localize"
-          data-text-ja="削除"
-        >Delete</button>
-      </li>
-    </ul>
+      data-text-ja="アカウント追加"
+      >Add Account</h3>
+      <ul class="unstyled">
+        <li style="margin-bottom: 10px;">
+          <a
+            class="btn"
+            data-setup="click"
+            data-click="addTwitter"
+          >Connect with Twitter</a>
+        </li>
+        <li>
+          <a
+            class="btn"
+            data-setup="click"
+            data-click="addFacebook"
+          >Connect with Facebook</a>
+        </li>
+      </ul>
+      <h3
+        data-setup="localize"
+        data-text-ja="アカウント削除"
+      >Delete Account</h3>
+      <ul class="unstyled accounts">
+        <li style="margin-bottom: 10px;">
+          <img class="sq24" style="vertical-align: middle;">
+          <span class="name"></span>
+          <button
+            class="btn btn-danger"
+            data-setup="localize"
+            data-text-ja="削除"
+          >Delete</button>
+        </li>
+      </ul>
+    </div>
   </div>
   <div class="modal-footer">
     <button
@@ -1848,7 +1873,7 @@
       data-hide='{"id":"settings-window"}'
     >Close</button>
   </div>
-</div>
+</form>
 <form
   class="modal form-stacked"
   data-setup="showable,ui,submit,escclose,removeAccountWindow"
@@ -1871,18 +1896,6 @@
     >Delete Account</h3>
   </div>
   <div class="modal-body">
-    <div class="alert-message warning">
-      <p>
-        <strong
-          data-setup="localize"
-          data-text-ja="警告"
-        >Warning</strong>
-        <span
-          data-setup="localize"
-          data-text-ja="このアカウントがオーナーのリストも全て削除されます。"
-        >The list is owned by this account will be deleted.</span>
-      </p>
-    </div>
     <p
       data-setup="localize"
       data-text-ja="本当にこのアカウントを削除しますか？"
