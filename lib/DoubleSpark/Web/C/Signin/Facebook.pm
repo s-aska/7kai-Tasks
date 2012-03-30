@@ -71,6 +71,7 @@ sub callback {
                 });
             } else {
                 infof('signin from facebook %s', $name);
+                $account ||= $c->db->single('account', { account_id => $fb_account->account_id });
                 $c->session->set('sign', {
                         account_id => $fb_account->account_id,
                         code       => $code,

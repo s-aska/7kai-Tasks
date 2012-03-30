@@ -104,6 +104,7 @@ sub callback {
                             authenticated_on => \'now()'
                         });
                         infof('signin from google %s', $code);
+                        $account ||= $c->db->single('account', { account_id => $google_account->account_id });
                         $c->session->set('sign', {
                                 account_id => $google_account->account_id,
                                 code       => $code,
