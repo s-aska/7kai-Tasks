@@ -109,7 +109,7 @@ app.addListener('filterTask', function(filter){
 });
 app.addListener('registerSubAccount', function(sub_account){
     var icon = ( sub_account.data && sub_account.data.icon ) ?
-                 sub_account.data.icon.replace(/^http:\/\/a/, 'https://si')
+                 sub_account.data.icon
              : /^tw-[0-9]+$/.test(sub_account.code) ?
                  '/api/1/profile_image/'
                  + sub_account.name
@@ -119,7 +119,6 @@ app.addListener('registerSubAccount', function(sub_account){
                 + '/picture'
              : '/static/img/address24.png';
     app.data.users[sub_account.code] = {
-        code: sub_account.code,
         name: sub_account.name,
         icon: icon
     };
@@ -203,88 +202,46 @@ $(w).bind('hashchange', function(){
     }
 });
 
-app.util.getIconUrl = function(code, size){
-    var src;
+app.util.getIconUrl = function(account_id, size){
     if (!navigator.onLine) {
         return '/static/img/address.png';
     }
-    var user = app.data.users[code];
+    var user = app.data.users[account_id];
     if (user) {
-        return user.icon.replace(/^http:\/\/a/, 'https://si');
+        return user.icon;
     }
-    if (/^tw-[0-9]+$/.test(code)) {
-        src = '/static/img/address.png';
-    }
-    else if (/^fb-[0-9]+$/.test(code)) {
-        src = 'https://graph.facebook.com/' + code.substring(3) + '/picture';
-    }
-    else {
-        src = size === 16 ? '/static/img/address.png' : '/static/img/address24.png';
-    }
-    return src;
+    return size === 16 ? '/static/img/address.png' : '/static/img/address24.png';
 }
-app.util.getIcon = function(code, size){
-    var src = app.util.getIconUrl(code, size);
+app.util.getIcon = function(account_id, size){
+    var src = app.util.getIconUrl(account_id, size);
     if (!src) {
         src = '/static/img/address.png';
     }
     return $('<img/>').attr('src', src).addClass('sq' + size);
 }
-app.util.getName = function(code){
-    var user = app.data.users[code];
+app.util.getName = function(account_id){
+    var user = app.data.users[account_id];
     if (user) {
-        return user.screen_name || user.name;
+        return user.name;
     } else {
-        return code;
+        return account_id;
     }
 }
-app.util.findMe = function(codes){
-    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
-        var sub_account = app.data.sub_accounts[i];
-        for (var ii = 0, max_ii = codes.length; ii < max_ii; ii++) {
-            if (sub_account.code === codes[ii]) {
-                return sub_account.code;
-            }
+app.util.findMe = function(account_ids){
+    for (var i = 0, max_i = account_ids.length; i < max_i; i++) {
+        if (Number(app.data.sign.account_id) === Number(account_ids[i])) {
+            return app.data.sign.account_id;
         }
     }
     return false;
 }
-app.util.findMeList = function(codes){
-    var me_list = [];
-    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
-        var sub_account = app.data.sub_accounts[i];
-        for (var ii = 0, max_ii = codes.length; ii < max_ii; ii++) {
-            if (sub_account.code === codes[ii]) {
-                me_list.push(sub_account.code);
-            }
-        }
-    }
-    return me_list;
-}
-app.util.findOthers = function(codes){
-    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
-        var sub_account = app.data.sub_accounts[i];
-        for (var ii = 0, max_ii = codes.length; ii < max_ii; ii++) {
-            if (sub_account.code !== codes[ii]) {
-                return codes[ii];
-            }
+app.util.findOthers = function(account_ids){
+    for (var i = 0, max_i = account_ids.length; i < max_i; i++) {
+        if (app.data.sign.account_id !== account_ids[i]) {
+            return account_ids[i];
         }
     }
     return false;
-}
-app.util.getRegistrant = function(list){
-    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
-        var sub_account = app.data.sub_accounts[i];
-        if (sub_account.code === list.owner) {
-            return sub_account.code;
-        }
-        for (var ii = 0, max_ii = list.members.length; ii < max_ii; ii++) {
-            var member = list.members[ii];
-            if (sub_account.code === member) {
-                return sub_account.code;
-            }
-        }
-    }
 }
 app.util.taskFilter = function(task, condition){
     if (condition.closed) {
@@ -660,55 +617,6 @@ app.api.task.move = function(src_list_id, task_id, dst_list_id){
         }
     });
 }
-app.api.twitter.friends = function(user_id, cursor, cache){
-    var timer = setTimeout(function(){
-        app.dom.show(app.dom.get('showable', 'notice-failed-sync-twitter'));
-    }, 5000);
-    app.ajax({
-        url: 'https://api.twitter.com/1/statuses/friends.json',
-        data: {
-            cursor: cursor,
-            user_id: user_id
-        },
-        dataType: 'jsonp'
-    })
-    .done(function(data){
-        clearTimeout(timer);
-        for (var i = 0, max_i = data.users.length; i < max_i; i++) {
-            cache.push({
-                name: data.users[i].name,
-                screen_name: data.users[i].screen_name,
-                code: 'tw-' + data.users[i].id_str,
-                icon: data.users[i].profile_image_url
-            });
-        }
-
-        // next
-        if (data.next_cursor) {
-            app.api.twitter.friends(user_id, data.next_cursor_str, cache);
-        }
-
-        // last
-        else {
-            app.fireEvent('registerFriends', cache, 'tw-' + user_id);
-            app.ajax({
-                url: '/api/1/twitter/update_friends',
-                type: 'post',
-                data: {
-                    friends: JSON.stringify(cache)
-                },
-                dataType: 'json'
-            })
-            .done(function(data){
-                // FIXME:
-                app.dom.show(app.dom.get('showable', 'notice-succeeded-sync-twitter'));
-            })
-            .fail(function(){
-                app.dom.show(app.dom.get('showable', 'notice-failed-sync-twitter'));
-            });
-        }
-    });
-}
 
 app.setup.messages = function(ele){
     app.data.messages = ele;
@@ -827,7 +735,6 @@ app.setup.filterTask = function(ele){
 app.setup.rightColumn = function(ele){
     var list_id_input    = ele.find('input[name=list_id]');
     var task_id_input    = ele.find('input[name=task_id]');
-    var registrant_input = ele.find('input[name=registrant]');
     var status_input     = ele.find('input[name=status]');
     var closed_input     = ele.find('input[name=closed]');
     var button           = ele.find('button:first');
@@ -893,7 +800,6 @@ app.setup.rightColumn = function(ele){
     app.addListener('openTask', function(task){
         list_id_input.val(task.list.id);
         task_id_input.val(task.id);
-        registrant_input.val(app.util.getRegistrant(task.list));
         status_input.val('');
         closed_input.val('');
         list_name.text(task.list.name);
@@ -923,8 +829,8 @@ app.setup.rightColumn = function(ele){
         li.prependTo(ul);
         $.each(task.actions, function(i, comment){
             var li = $(template);
-            li.find('.icon:first').append(app.util.getIcon(comment.code, 32));
-            li.find('.name').text(app.util.getName(comment.code));
+            li.find('.icon:first').append(app.util.getIcon(comment.account_id, 32));
+            li.find('.name').text(app.util.getName(comment.account_id));
             if (comment.salvage) {
                 li.addClass('salvage');
                 li.find('.icon:last').remove();
@@ -1124,7 +1030,6 @@ app.setup.tasks = function(ul){
         app.api.task.update({
             list_id: app.data.dragtask.list.id,
             task_id: app.data.dragtask.id,
-            registrant: app.util.getRegistrant(app.data.dragtask.list),
             parent_id: ''
         });
     }, false);
@@ -1441,7 +1346,6 @@ app.setup.tasks = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 due: due
             });
         } else if (e.keyCode === 39) { // Right
@@ -1457,7 +1361,6 @@ app.setup.tasks = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 due: due
             });
         } else if (e.keyCode === 32) { // Space
@@ -1466,7 +1369,6 @@ app.setup.tasks = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 status: status
             });
         } else if (e.keyCode === 13) { // Enter
@@ -1475,7 +1377,6 @@ app.setup.tasks = function(ul){
             app.api.task.update({
                 list_id: task.list.id,
                 task_id: task.id,
-                registrant: app.util.getRegistrant(task.list),
                 closed: closed
             });
         } else if (e.keyCode === 69) { // E
@@ -1534,7 +1435,6 @@ app.setup.task = function(ele, task){
         app.api.task.update({
             list_id: app.data.dragtask.list.id,
             task_id: app.data.dragtask.id,
-            registrant: app.util.getRegistrant(app.data.dragtask.list),
             parent_id: task.id
         });
     }, false);
@@ -1563,7 +1463,6 @@ app.setup.status = function(ele, task){
         app.api.task.update({
             list_id: task.list.id,
             task_id: task.id,
-            registrant: app.util.getRegistrant(task.list),
             status: status
         });
     });
@@ -1625,7 +1524,6 @@ app.setup.close = function(ele, task){
         app.api.task.update({
             list_id: task.list.id,
             task_id: task.id,
-            registrant: app.util.getRegistrant(task.list),
             closed: (task.closed ? 0 : 1)
         });
     });
@@ -1678,7 +1576,6 @@ app.setup.registerTaskWindow = function(form){
     var name_input = form.find('input[name=name]');
     var due_input = form.find('input[name=due]');
     var requester_select = form.find('select[name=requester]');
-    var registrant_input = form.find('input[name=registrant]');
     var task_id_input = form.find('input[name=task_id]');
     var list_id_input = form.find('input[name=list_id]');
     var parent_id_input = form.find('input[name=parent_id]');
@@ -1703,7 +1600,6 @@ app.setup.registerTaskWindow = function(form){
         assign_list.empty();
         requester_select.empty();
         
-        var registrant = app.util.getRegistrant(list);
         if (list.members.length) {
             form.find('.team').show();
             var assigns = [list.owner].concat(list.members);
@@ -1730,12 +1626,11 @@ app.setup.registerTaskWindow = function(form){
                     .appendTo(requester_select);
             }
             // 依頼者のデフォルトは自分
-            requester_select.val(registrant);
+            requester_select.val(app.data.sign.account_id);
         } else {
             form.find('.team').hide();
         }
         
-        registrant_input.val(registrant);
         task_id_input.val('');
         list_id_input.val(list.id);
         if (parentTask) {
@@ -1812,7 +1707,7 @@ app.setup.timeline = function(ul){
                     actions.push({
                         task: task,
                         action: 'create-task',
-                        code: task.registrant,
+                        account_id: task.registrant,
                         time: task.created_on
                     });
                 }
@@ -1924,7 +1819,6 @@ app.submit.registerTask = function(form){
     var assign = form.find('input[name="assign"]:checked')
                      .map(function(){return $(this).val()}).get();
     var requester = form.find('select[name="requester"]').val();
-    var registrant = form.find('input[name="registrant"]').val();
     var name = form.find('input[name="name"]').val();
     var due = form.find('input[name="due"]').datepicker("getDate");
     if (due) {
@@ -1972,7 +1866,6 @@ app.submit.registerTask = function(form){
             var task = {
                 id: (task_id || (list.id + ':' + time)),
                 requester: requester,
-                registrant: registrant,
                 assign: assign,
                 name: name,
                 due: due,
@@ -1997,7 +1890,6 @@ app.submit.registerTask = function(form){
 app.submit.registerComment = function(form){
     var task_id = form.find('input[name=task_id]').val();
     var list_id = form.find('input[name=list_id]').val();
-    var registrant = form.find('input[name=registrant]').val();
     var list = app.data.list_map[list_id];
     if (!list) {
         alert('unknown list ' + list_id);
@@ -2036,7 +1928,7 @@ app.submit.registerComment = function(form){
             if (task) {
                 task.actions.push({
                     action: 'comment',
-                    code: registrant,
+                    account_id: app.data.sign.account_id,
                     message: message,
                     time: (new Date()).getTime(),
                     salvage: true

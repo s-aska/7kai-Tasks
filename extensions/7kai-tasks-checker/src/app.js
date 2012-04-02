@@ -221,9 +221,9 @@ app.api.fetch = function(option){
                 if (app.util.isCount(task)) {
                     count++;
                 }
-                task.action = 'create-task';
-                task.code   = task.registrant;
-                task.time   = task.created_on;
+                task.action     = 'create-task';
+                task.account_id = task.registrant;
+                task.time       = task.created_on;
                 if (app.util.isNoticeTask(task)) {
                     actions.push(task);
                 }
@@ -253,7 +253,7 @@ app.api.fetch = function(option){
             var recent = notifications[0];
             var key = 'text-' + recent.action + '-' + app.option.lang;
             var action_name = app.data.text.data(key);
-            var friend = app.data.users[recent.code];
+            var friend = app.data.users[recent.account_id];
             if (!app.option.notification_off) {
                 app.data.notify = {
                     action: recent,
@@ -337,7 +337,7 @@ app.util.isNoticeTask = function(task){
     return false;
 }
 app.util.isNoticeAction = function(action){
-    if (app.util.findMe([action.code])) {
+    if (app.util.findMe([action.account_id])) {
         return false;
     }
     var task = action.task;
@@ -352,24 +352,18 @@ app.util.isNoticeAction = function(action){
     }
     return false;
 }
-app.util.findMe = function(codes){
-    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
-        var sub_account = app.data.sub_accounts[i];
-        for (var ii = 0, max_ii = codes.length; ii < max_ii; ii++) {
-            if (sub_account.code === codes[ii]) {
-                return sub_account.code;
-            }
+app.util.findMe = function(account_ids){
+    for (var i = 0, max_i = account_ids.length; i < max_i; i++) {
+        if (Number(app.data.sign.account_id) === Number(account_ids[i])) {
+            return app.data.sign.account_id;
         }
     }
     return false;
 }
-app.util.findOthers = function(codes){
-    for (var i = 0, max_i = app.data.sub_accounts.length; i < max_i; i++) {
-        var sub_account = app.data.sub_accounts[i];
-        for (var ii = 0, max_ii = codes.length; ii < max_ii; ii++) {
-            if (sub_account.code !== codes[ii]) {
-                return codes[ii];
-            }
+app.util.findOthers = function(account_ids){
+    for (var i = 0, max_i = account_ids.length; i < max_i; i++) {
+        if (app.data.sign.account_id !== account_ids[i]) {
+            return account_ids[i];
         }
     }
     return false;
@@ -513,7 +507,7 @@ app.setup.popup = function(ele){
                     return false;
                 }
                 var li = $(template);
-                var friend = app.data.users[action.code];
+                var friend = app.data.users[action.account_id];
                 var key = 'text-' + action.action + '-' + app.option.lang;
                 var action_name = app.data.text.data(key);
                 var task = action.task ? action.task : action;

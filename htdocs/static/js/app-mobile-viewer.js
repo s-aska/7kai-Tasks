@@ -83,8 +83,7 @@ app.setup.requester = function(ul){
         if (task) {
             ul.find('input[name=requester]').val([task.requester]);
         } else {
-            var registrant = app.util.getRegistrant(list);
-            ul.find('input[name=requester]').val([registrant]);
+            ul.find('input[name=requester]').val([app.data.sign.account_id]);
         }
     };
     app.addListener('createTask', setup);
