@@ -175,7 +175,6 @@ app.addListener('ready', function(){
         app.api.task.update({
             list_id: app.data.dragtask.list.id,
             task_id: app.data.dragtask.id,
-            registrant: app.util.getRegistrant(app.data.dragtask.list),
             parent_id: ''
         });
     }, false);
