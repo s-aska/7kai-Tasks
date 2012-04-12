@@ -104,13 +104,13 @@ app.addListener('registerTask', function(task, list){
 
     // 責任者
     if (task.status === 2) {
-        task.person = task.requester;
+        task.person = String(task.requester);
     }
     else if (task.assign.length) {
-        task.person = task.assign.join(',');
+        task.person = String(task.assign.join(','));
     }
     else {
-        task.person = task.requester;
+        task.person = String(task.requester);
     }
 
     $.extend(app.data.task_map[task.id], task);
@@ -2036,7 +2036,6 @@ app.setup.task = function(ele, task){
         app.api.task.update({
             list_id: app.data.dragtask.list.id,
             task_id: app.data.dragtask.id,
-            registrant: app.util.getRegistrant(app.data.dragtask.list),
             parent_id: task.id
         });
     }, false);
