@@ -696,7 +696,7 @@ app.api.task.update = function(params){
         if (data.success === 1) {
             $.extend(app.data.task_map[params.task_id], data.task);
             if ("parent_id" in params) {
-                app.fireEvent('sortTask');
+                app.util.sortTaskView();
             }
             // app.data.task_map[params.task_id].updated_on = data.task.updated_on;
             // app.fireEvent('registerTask', data.task, list); // update updated_on
