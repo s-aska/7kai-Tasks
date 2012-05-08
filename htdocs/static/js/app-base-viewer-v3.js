@@ -1320,7 +1320,7 @@ app.setup.tasksheet = function(ul){
     var listli_toggle = function(li){
         var id = li.data('id');
         var tag = app.data.current_tag;
-        if (app.data.current_filter) {
+        if (app.data.current_filter && (!("closed" in app.data.current_filter))) {
             li.toggle(Boolean(li.data('has-visible-tasks')));
         } else if (tag) {
             li.toggle(Boolean((id in app.data.state.tags) && (tag === app.data.state.tags[id])));

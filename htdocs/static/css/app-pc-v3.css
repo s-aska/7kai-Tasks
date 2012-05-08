@@ -189,7 +189,7 @@ ul.lists > li > .ui-description {
 ul.lists > li > ul {
     overflow: auto;
 }
-ul.lists > li > ul > li.closed {
+ul.lists > li > ul > li.closed .name {
     text-decoration: line-through;
 }
 ul.tasks > li {
@@ -445,7 +445,7 @@ ul.comments li span.name {
     -moz-border-radius: 3px;
     border-radius: 3px;
 }
-.gantttasks > ul > li > ul > li.closed {
+.gantttasks > ul > li > ul > li.closed .name {
     text-decoration: line-through;
 }
 .gantttasks > ul > li > ul > li:hover {
