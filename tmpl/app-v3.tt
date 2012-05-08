@@ -58,6 +58,20 @@
         </li>
       </ul>
       <ul class="nav pull-right">
+        <li id="get-the-extensions">
+          <a
+            href="https://chrome.google.com/webstore/detail/dolhpjcchfcnkcanamhgcgbnmcogdank"
+            target="_blank"
+            data-setup="getTheExtensions"
+          >Get the Extensions</a>
+        </li>
+        <li>
+          <a
+            href="http://www.google.co.jp/chrome"
+            target="_blank"
+            data-setup="getTheChrome"
+          >Get the Google Chrome</a>
+        </li>
         <li>
           <a
             href="/staff"
