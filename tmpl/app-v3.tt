@@ -391,6 +391,7 @@
         <li class="list">
           <div class="symbol"></div>
           <header class="clearfix">
+            <div class="icon-folder-open" style="float: left; margin: 4px 6px 4px 0px;"></div>
             <div style="float: left;">
               <div class="name">7kai Tasks</div>
             </div>

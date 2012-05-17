@@ -1364,6 +1364,19 @@ app.setup.tasksheet = function(ul){
             app.api.task.move(app.data.dragtask.list.id, app.data.dragtask.id, list.id);
         }, false);
 
+        li.find('.icon-folder-open').click(function(){
+            var folder = $(this);
+            if (folder.data('closed')) {
+                folder.data('closed', false);
+                folder.removeClass('icon-folder-close').addClass('icon-folder-open');
+                li.find('> ul.tasks').slideDown('fast');
+            } else {
+                folder.data('closed', true);
+                folder.removeClass('icon-folder-open').addClass('icon-folder-close');
+                li.find('> ul.tasks').slideUp('fast');
+            }
+        });
+
         var mute = li.find('.ui-listmenu .icon-pause').parent();
         if (list.id in app.data.state.mute) {
             mute.addClass('active');
