@@ -1369,11 +1369,14 @@ app.setup.tasksheet = function(ul){
             if (folder.data('closed')) {
                 folder.data('closed', false);
                 folder.removeClass('icon-folder-close').addClass('icon-folder-open');
+                li.removeClass('task-collapse');
                 li.find('> ul.tasks').slideDown('fast');
             } else {
                 folder.data('closed', true);
                 folder.removeClass('icon-folder-open').addClass('icon-folder-close');
-                li.find('> ul.tasks').slideUp('fast');
+                li.find('> ul.tasks').slideUp('fast', function(){
+                    li.addClass('task-collapse');
+                });
             }
         });
 
@@ -1530,6 +1533,11 @@ app.setup.tasksheet = function(ul){
             li.find('> ul.tasks').append(
                 app.data.listli_map[list.id].find('> ul.tasks').children());
             li.css('display', app.data.listli_map[list.id].css('display'));
+            if (app.data.listli_map[list.id].find('.icon-folder-close').length) {
+                li.find('.icon-folder-open').data('closed', true);
+                li.find('.icon-folder-open').removeClass('icon-folder-open').addClass('icon-folder-close');
+                li.addClass('task-collapse');
+            }
             app.data.listli_map[list.id].after(li);
             app.data.listli_map[list.id].remove();
         } else {
