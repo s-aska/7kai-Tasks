@@ -192,6 +192,9 @@ ul.lists > li > ul {
 ul.lists > li > ul > li.closed .name {
     text-decoration: line-through;
 }
+ul.lists > li.task-collapse header {
+    opacity: 0.5;
+}
 ul.lists > li.task-collapse > ul.tasks {
     display: none !important;
 }
