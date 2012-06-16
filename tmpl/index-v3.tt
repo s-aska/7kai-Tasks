@@ -110,9 +110,6 @@
         <a><img src="/static/img/button-cross.gif"></a>
       </div>
       <div class="row">
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-gantt.png">
-        </div>
         <div class="span6">
           <h2
             data-setup="localize"
@@ -144,6 +141,9 @@
           >
             It is caused by a bad tool that a date is vague.
           </p>
+        </div>
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-gantt.png">
         </div>
       </div>
     </li>
@@ -192,9 +192,6 @@
         <a><img src="/static/img/button-cross.gif"></a>
       </div>
       <div class="row">
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-filter.png">
-        </div>
         <div class="span6">
           <h2
             data-setup="localize"
@@ -206,6 +203,9 @@
           >
             When Verify was 1, somebody fixed your request.
           </p>
+        </div>
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-filter.png">
         </div>
       </div>
     </li>
@@ -257,15 +257,15 @@
         <a><img src="/static/img/button-cross.gif"></a>
       </div>
       <div class="row">
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-format.png">
-        </div>
         <div class="span6">
           <h2
             data-setup="localize"
             data-text-ja="RSSをはじめ多くの公開形式に対応しています。"
           >Supports many public formats.</h2>
           <p>RSS, iCal, HTML, JSON, JSONP.</p>
+        </div>
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-format.png">
         </div>
       </div>
     </li>
@@ -304,9 +304,6 @@
         <a><img src="/static/img/button-cross.gif"></a>
       </div>
       <div class="row">
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-key.png">
-        </div>
         <div class="span6">
           <h2
             data-setup="localize"
@@ -316,6 +313,9 @@
             data-setup="localize"
             data-text-ja="キーボドーアイコンをクリックするか、[?]または[/]キーを押して下さい。"
           >click keyboard icon or press [?] or [/] key.</p>
+        </div>
+        <div class="span6 thumbnail">
+          <img src="/static/img/tasks-concept-key.png">
         </div>
       </div>
     </li>

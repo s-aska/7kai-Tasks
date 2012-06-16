@@ -66,24 +66,15 @@ CREATE TABLE google_account (
 
 CREATE TABLE list (
     list_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
-    , code VARCHAR(256) character set ascii NOT NULL COMMENT '*_account.code'
+    , account_id BIGINT UNSIGNED NOT NULL
     , data MEDIUMBLOB NOT NULL
     , public_code VARCHAR(16) character set ascii
     , invite_code VARCHAR(16) character set ascii
     , actioned_on BIGINT UNSIGNED NOT NULL
     , created_on DATETIME NOT NULL
     , updated_on DATETIME NOT NULL
+    , FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE
 ) ENGINE=InnoDB charset=utf8;
-CREATE INDEX list_code ON list(code);
-
-CREATE TABLE list_member (
-    list_member_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
-    , list_id BIGINT UNSIGNED NOT NULL
-    , code VARCHAR(256) character set ascii NOT NULL COMMENT '*_account.code'
-    , created_on DATETIME NOT NULL
-    , FOREIGN KEY (list_id) REFERENCES list(list_id) ON DELETE CASCADE
-) ENGINE=InnoDB charset=utf8;
-CREATE INDEX list_member_code ON list_member(code);
 
 CREATE TABLE list_account (
     list_account_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
@@ -96,7 +87,7 @@ CREATE TABLE list_account (
 
 CREATE TABLE request (
     request_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
-    , code VARCHAR(256) character set ascii NOT NULL COMMENT '*_account.code'
+    , account_id BIGINT UNSIGNED NOT NULL
     , name VARCHAR(256) character set ascii NOT NULL COMMENT 'screen_name'
     , lang VARCHAR(2) character set ascii NOT NULL
     , request TEXT NOT NULL
@@ -111,7 +102,7 @@ CREATE TABLE request (
 
 CREATE TABLE question (
     question_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
-    , code VARCHAR(256) character set ascii NOT NULL COMMENT '*_account.code'
+    , account_id BIGINT UNSIGNED NOT NULL
     , lang VARCHAR(2) character set ascii NOT NULL
     , question TEXT NOT NULL
     , answer TEXT NOT NULL
