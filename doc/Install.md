@@ -9,7 +9,7 @@
     mysql> create database doublespark default charset utf8;
     mysql -u root doublespark < sql/my.sql
 
-## Install CPAN Modules
+## Install cpanm
     cd ~/bin
     curl -LO http://xrl.us/cpanm
     chmod +x cpanm
@@ -20,6 +20,15 @@
 
 ## Run
     plackup -r --port 7000
+
+## Setting URL
+    vi config/development.pl
+
+    # Sample
+    use DoubleSpark::Config;
+    DoubleSpark::Config->new({
+        base_url => 'http://127.0.0.1:7000'
+    });
 
 ## USE Google Sign In
 Nothing is necessary
