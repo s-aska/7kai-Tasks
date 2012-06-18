@@ -18,8 +18,11 @@
     cd 7kai-Tasks
     cpanm --installdeps .
 
-## Run
+## Run (development)
     plackup -r --port 7000
+
+## Run (deployment)
+    plackup -E deployment --port 7000
 
 ## Setting URL
     vi config/development.pl
