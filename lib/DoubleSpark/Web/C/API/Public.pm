@@ -22,7 +22,21 @@ sub json {
 
     return $c->res_404() unless $list;
 
-    $c->render_json($list->as_hashref);
+    my $json = $list->as_hashref;
+    $json->{users} = {};
+    for my $account_id (@{ $json->{members} }, $json->{owner}) {
+        next unless $account_id;
+        next if exists $json->{users}->{ $account_id };
+        my $account = $c->db->single('account', { account_id => $account_id });
+        if ($account) {
+            $json->{users}->{ $account_id } = {
+                name => $account->data->{name},
+                icon => $account->data->{icon}
+            };
+        }
+    }
+
+    $c->render_json($json);
 }
 
 sub jsonp {
@@ -32,10 +46,24 @@ sub jsonp {
 
     return $c->res_404() unless $list;
 
+    my $json = $list->as_hashref;
+    $json->{users} = {};
+    for my $account_id (@{ $json->{members} }, $json->{owner}) {
+        next unless $account_id;
+        next if exists $json->{users}->{ $account_id };
+        my $account = $c->db->single('account', { account_id => $account_id });
+        if ($account) {
+            $json->{users}->{ $account_id } = {
+                name => $account->data->{name},
+                icon => $account->data->{icon}
+            };
+        }
+    }
+
     my $callback = $c->req->param('callback') || '';
     $callback=~s|[^0-9a-zA-Z_]||g;
     $callback = 'callback' unless length $callback;
-    my $content = encode_utf8($callback) . '(' . encode_json($list->as_hashref) . ');';
+    my $content = encode_utf8($callback) . '(' . encode_json($json) . ');';
     my $encoding = $c->encoding();
     $encoding = lc($encoding->mime_name) if ref $encoding;
     $c->create_response(

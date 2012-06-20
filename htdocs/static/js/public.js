@@ -205,11 +205,6 @@ app.setup.tasks = function(tbody){
     tbody.empty();
     app.addListener('registerList', function(list){
         var users = list.users;
-        var usermap = {};
-        for (var i = 0, max_i = users.length; i < max_i; i++) {
-            usermap[users[i].code] = users[i];
-        }
-        
         var tasks = list.tasks;
         for (var i = 0, max_i = tasks.length; i < max_i; i++) {
             var task = tasks[i];
@@ -249,12 +244,13 @@ app.setup.tasks = function(tbody){
                 ul.empty();
                 var sort = '';
                 for (var ii = 0, max_ii = task.assign.length; ii < max_ii; ii++) {
-                    var user = usermap[task.assign[ii]];
+                    var account_id = task.assign[ii];
+                    var user = users[account_id];
                     var li = $(li_template);
                     li.find('img').attr('src', user.icon);
                     li.find('span').text(user.name);
                     li.appendTo(ul);
-                    sort = sort + user.code.replace(/^(tw|fb)-/, '');
+                    sort = sort + account_id + '-';
                 }
                 tr.find('.assign').data('sort', sort);
             } else {
