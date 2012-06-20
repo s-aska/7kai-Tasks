@@ -6,7 +6,6 @@ use Data::ICal::Entry::Event;
 use DoubleSpark::API::List;
 use Encode qw/encode_utf8 decode_utf8/;
 use HTML::Entities;
-use JSON qw/encode_json/;
 use XML::RSS;
 
 sub html {
@@ -16,7 +15,7 @@ sub html {
 }
 
 sub json {
-    my ($class, $c) = @_;
+    my ($class, $c, $jsonp) = @_;
 
     my $list = $c->db->single('list', { public_code => $c->{args}->{public_code} });
 
@@ -35,6 +34,8 @@ sub json {
             };
         }
     }
+
+    return $c->render_jsonp($c->req->param('callback') || '', $json) if $jsonp;
 
     $c->render_json($json);
 }
@@ -42,38 +43,7 @@ sub json {
 sub jsonp {
     my ($class, $c) = @_;
 
-    my $list = $c->db->single('list', { public_code => $c->{args}->{public_code} });
-
-    return $c->res_404() unless $list;
-
-    my $json = $list->as_hashref;
-    $json->{users} = {};
-    for my $account_id (@{ $json->{members} }, $json->{owner}) {
-        next unless $account_id;
-        next if exists $json->{users}->{ $account_id };
-        my $account = $c->db->single('account', { account_id => $account_id });
-        if ($account) {
-            $json->{users}->{ $account_id } = {
-                name => $account->data->{name},
-                icon => $account->data->{icon}
-            };
-        }
-    }
-
-    my $callback = $c->req->param('callback') || '';
-    $callback=~s|[^0-9a-zA-Z_]||g;
-    $callback = 'callback' unless length $callback;
-    my $content = encode_utf8($callback) . '(' . encode_json($json) . ');';
-    my $encoding = $c->encoding();
-    $encoding = lc($encoding->mime_name) if ref $encoding;
-    $c->create_response(
-        200,
-        [
-            'Content-Type' => "text/javascript; charset=$encoding",
-            'Content-Length' => length($content),
-        ],
-        [$content]
-    );
+    $class->json($c, 1);
 }
 
 sub rss {

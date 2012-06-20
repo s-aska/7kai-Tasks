@@ -1,6 +1,9 @@
 body {
     padding-top: 60px;
 }
+h2 {
+    margin-bottom: 20px;
+}
 #loading {
     display: none;
     position: absolute;
@@ -29,4 +32,11 @@ body {
     height: 16px;
     vertical-align: middle;
     margin-right: 4px;
+}
+.name {
+    word-wrap: break-word;
+}
+table.open tr.closed,
+table.closed tr.open {
+    display: none;
 }

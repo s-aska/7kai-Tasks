@@ -85,6 +85,25 @@ app.date.parse = function(str){
         return new Date(degits[2], degits[0] - 1, degits[1]);
     }
 }
+app.date.ymd = function(date){
+    var now = new Date();
+    var label = (date.getMonth() + 1) + '/' + date.getDate();
+    if (now.getFullYear() !== date.getFullYear()) {
+        if (app.env.lang === 'ja') {
+            label = date.getFullYear() + '/' + label;
+        } else {
+            label = label + '/' + date.getFullYear();
+        }
+    }
+    return label;
+}
+app.date.ymdhm = function(date){
+    return app.date.ymd(date)
+        + ' '
+        + ('0'+date.getHours()).slice(-2)
+        + ':'
+        + ('0'+date.getMinutes()).slice(-2);
+}
 app.dom.text = function(ele, key){
     if (key) {
         return ele.data('text-' + key + '-' + app.env.lang);
@@ -201,6 +220,8 @@ app.setup.listname = function(ele){
     });
 }
 app.setup.tasks = function(tbody){
+    var table = tbody.parent();
+    var closed = table.hasClass('closed') ? true : false;
     var template = tbody.html();
     tbody.empty();
     app.addListener('registerList', function(list){
@@ -208,20 +229,15 @@ app.setup.tasks = function(tbody){
         var tasks = list.tasks;
         for (var i = 0, max_i = tasks.length; i < max_i; i++) {
             var task = tasks[i];
-            if (task.closed) continue;
             var tr = $(template);
             tr.find('.name').text(task.name);
+            if (Boolean(task.closed) !== closed) {
+                continue;
+            }
+            var now = new Date();
             if (task.due) {
                 var date = app.date.parse(task.due);
-                var label = (date.getMonth() + 1) + '/' + date.getDate();
-                var now = new Date();
-                if (now.getFullYear() !== date.getFullYear()) {
-                    if (app.env.lang === 'ja') {
-                        label = date.getFullYear() + '/' + label;
-                    } else {
-                        label = label + '/' + date.getFullYear();
-                    }
-                }
+                var label = app.date.ymd(date);
                 tr.find('.due')
                     .text(label)
                     .data('sort', date.getTime().toString());
@@ -230,12 +246,39 @@ app.setup.tasks = function(tbody){
                     .text('-')
                     .data('sort', '0');
             }
-            var progress = task.status === 0 ? 'open'
+            
+            var created = new Date(task.created_on);
+            tr.find('.created')
+                .text(app.date.ymdhm(created))
+                .data('sort', created.getTime().toString());
+            
+            var fixed = null;
+            if (task.status === 2) {
+                for (var ii = 0, max_ii = task.actions.length; ii < max_ii; ii++) {
+                    var action = task.actions[ii];
+                    if (action.action === 'fix-task') {
+                        fixed = new Date(action.time);
+                    }
+                }
+            }
+            
+            if (fixed) {
+                tr.find('.fixed')
+                    .text(app.date.ymdhm(fixed))
+                    .data('sort', fixed.getTime().toString());
+            } else {
+                tr.find('.fixed')
+                    .text('-')
+                    .data('sort', '0');
+            }
+            
+            var progress = task.closed       ? 'closed'
+                         : task.status === 0 ? 'open'
                          : task.status === 1 ? 'progress'
                          : task.status === 2 ? 'fixed' : 'open';
-            tr.find('.progress')
+            tr.find('.status')
                 .text(
-                    app.dom.text(tr.find('.progress'), progress)
+                    app.dom.text(tr.find('.status'), progress)
                 )
                 .data('sort', task.status.toString());
             if (task.assign && task.assign.length) {
@@ -275,6 +318,12 @@ app.run = function(){
     })
     .done(function(data){
         app.fireEvent('registerList', data);
+    });
+    var table = $('table');
+    var li = $('.nav-tabs li');
+    $('.nav-tabs a').click(function(){
+        table.toggle();
+        li.toggleClass('active');
     });
 }
 

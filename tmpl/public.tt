@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>7kai Tasks</title>
-<link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
+<link rel="stylesheet" href="/static/css/bootstrap.css">
 <link rel="stylesheet" href="/static/css/public.css" media="all">
 <script src="/static/js/jquery-1.7.1.min.js"></script>
 <script src="/static/js/jquery.tablesorter.min.js"></script>
@@ -12,8 +12,8 @@
 <script src="/static/js/public.js"></script>
 </head>
 <body>
-<div class="topbar">
-  <div class="fill">
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
     <div class="container">
       <a class="brand" href="/">7kai Tasks</a>
     </div>
@@ -21,7 +21,13 @@
 </div>
 <div class="container">
   <h2 data-setup="listname">aska's list</h2>
-  <table class="zebra-striped">
+  
+  <ul class="nav nav-tabs">
+    <li class="active"><a>Open</a></li>
+    <li><a>Closed</a></li>
+  </ul>
+
+  <table class="table table-bordered table-striped">
     <thead>
       <tr>
         <th
@@ -43,23 +49,98 @@
           class="header"
           data-setup="localize"
           data-text-ja="期日"
+           nowrap="nowrap"
         >due</th>
+        <th
+          class="header"
+          data-setup="localize"
+          data-text-ja="作成日時"
+        >created</th>
+        <th
+          class="header"
+          data-setup="localize"
+          data-text-ja="処理日時"
+        >fixed</th>
       </tr>
     </thead>
     <tbody data-setup="tasks">
       <tr>
         <td
-          class="progress"
+          class="status"
+          data-text-closed-ja="完了"
+          data-text-closed-en="Closed"
           data-text-open-ja="未着手"
           data-text-open-en="Open"
           data-text-progress-ja="処理中"
           data-text-progress-ja="In Progress"
           data-text-fixed-ja="処理済"
           data-text-fixed-en="Fixed"
+          nowrap="nowrap"
         >stop</td>
-        <td class="assign"><ul class="unstyled"><li><img><span>su_aska</span></li></ul></td>
+        <td class="assign" nowrap="nowrap"><ul class="unstyled"><li><img><span>su_aska</span></li></ul></td>
         <td class="name">task</td>
         <td class="due">10/25</td>
+        <td class="created" nowrap="nowrap">10/25</td>
+        <td class="fixed" nowrap="nowrap">10/25</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="table table-bordered table-striped closed" style="display:none">
+    <thead>
+      <tr>
+        <th
+          class="header"
+          data-setup="localize"
+          data-text-ja="進捗"
+        >progress</th>
+        <th
+          class="header"
+          data-setup="localize"
+          data-text-ja="担当者"
+        >assign</th>
+        <th
+          class="header"
+          data-setup="localize"
+          data-text-ja="タスク名"
+        >name</th>
+        <th
+          class="header"
+          data-setup="localize"
+          data-text-ja="期日"
+           nowrap="nowrap"
+        >due</th>
+        <th
+          class="header"
+          data-setup="localize"
+          data-text-ja="作成日時"
+        >created</th>
+        <th
+          class="header"
+          data-setup="localize"
+          data-text-ja="処理日時"
+        >fixed</th>
+      </tr>
+    </thead>
+    <tbody data-setup="tasks">
+      <tr>
+        <td
+          class="status"
+          data-text-closed-ja="完了"
+          data-text-closed-en="Closed"
+          data-text-open-ja="未着手"
+          data-text-open-en="Open"
+          data-text-progress-ja="処理中"
+          data-text-progress-ja="In Progress"
+          data-text-fixed-ja="処理済"
+          data-text-fixed-en="Fixed"
+          nowrap="nowrap"
+        >stop</td>
+        <td class="assign" nowrap="nowrap"><ul class="unstyled"><li><img><span>su_aska</span></li></ul></td>
+        <td class="name">task</td>
+        <td class="due">10/25</td>
+        <td class="created" nowrap="nowrap">10/25</td>
+        <td class="fixed" nowrap="nowrap">10/25</td>
       </tr>
     </tbody>
   </table>

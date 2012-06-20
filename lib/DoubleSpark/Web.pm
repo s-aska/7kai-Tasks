@@ -3,10 +3,11 @@ use strict;
 use warnings;
 use parent qw/DoubleSpark Amon2::Web/;
 use File::Spec;
-# use FormValidator::Lite;
 use DoubleSpark::Validator;
 use DoubleSpark::Validator::Query;
+use Encode qw/encode_utf8 decode_utf8/;
 use Log::Minimal;
+use JSON qw/encode_json/;
 
 # load all controller classes
 use Module::Find ();
@@ -232,6 +233,24 @@ sub res_403 {
         403,
         [
             'Content-Type' => 'text/plain',
+            'Content-Length' => length($content),
+        ],
+        [$content]
+    );
+}
+
+sub render_jsonp {
+    my ($c, $callback, $json) = @_;
+
+    $callback=~s|[^0-9a-zA-Z_]||g;
+    $callback = 'callback' unless length $callback;
+    my $content = encode_utf8($callback) . '(' . encode_json($json) . ');';
+    my $encoding = $c->encoding();
+    $encoding = lc($encoding->mime_name) if ref $encoding;
+    $c->create_response(
+        200,
+        [
+            'Content-Type' => "text/javascript; charset=$encoding",
             'Content-Length' => length($content),
         ],
         [$content]
