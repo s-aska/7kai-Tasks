@@ -164,7 +164,7 @@ sub rss {
             description => $action->{message} || '',
             dc => {
                 creator => $user->{name},
-                date    => $toDate->($list->actioned_on)
+                date    => $toDate->($action->{time})
             }
         );
 
