@@ -51,6 +51,8 @@ sub jsonp {
 sub rss {
     my ($class, $c) = @_;
 
+    my $base_url = $c->config->{base_url};
+
     my $lang = ($c->req->param('lang') || '') eq 'ja' ? 'ja' : 'en';
 
     my $list = $c->db->single('list', { public_code => $c->{args}->{public_code} });
@@ -60,7 +62,7 @@ sub rss {
     my $toDate = sub {
         my $epoch = shift;
         my $dt = DateTime->from_epoch( epoch => int($epoch / 1000) );
-        return $dt->strftime('%Y-%m-%dT%H:%M:%S');
+        return $dt->set_time_zone('Asia/Tokyo')->strftime('%Y-%m-%dT%H:%M:%S+09:00');
     };
 
     my $rss = XML::RSS->new(version => '1.0');
@@ -70,7 +72,7 @@ sub rss {
     );
     $rss->channel(
         title       => $list->data->{name} . ' ' . '(7kai Tasks)',
-        link        => 'https://tasks.7ka.org/',
+        link        => $base_url . '/#' . $list->list_id,
         description => '',
         dc => {
             date       => $toDate->($list->actioned_on),
@@ -82,10 +84,10 @@ sub rss {
         }
     );
 
-    my $usermap;
-    for my $user (@{ $list->data->{users} }) {
-        $usermap->{$user->{code}} = $user;
-    }
+    my $usermap = {};
+    # for my $user (@{ $list->data->{users} }) {
+    #     $usermap->{$user->{code}} = $user;
+    # }
 
     my $messages = {
         'create-task-ja'    => 'さんがタスクを作成',
@@ -114,10 +116,10 @@ sub rss {
     for my $task (@{ $list->data->{tasks} }) {
 
         push @actions, {
-            task   => $task,
-            action => 'create-task',
-            code   => $task->{registrant},
-            time   => $task->{created_on}
+            task       => $task,
+            action     => 'create-task',
+            account_id => $task->{registrant},
+            time       => $task->{created_on}
         };
 
         $_->{task} = $task for @{ $task->{actions} };
@@ -127,8 +129,16 @@ sub rss {
 
     my $count = 0;
     for my $action (@actions) {
-
-        my $user = $usermap->{ $action->{code} };
+        my $account_id = $action->{account_id};
+        unless ($usermap->{ $account_id }) {
+            my $account = $c->db->single('account', { account_id => $account_id });
+            if ($account) {
+                $usermap->{ $account_id } = {
+                    name => $account->data->{name}
+                };
+            }
+        }
+        my $user = $usermap->{ $account_id } || { name => $account_id };
         my $title = sprintf '%s %s "%s"'
             , ($user->{name} // '')
             , decode_utf8($messages->{ $action->{action} . '-' . $lang })
@@ -149,7 +159,7 @@ sub rss {
         }
 
         $rss->add_item(
-            link        => 'https://tasks.7kai.org/',
+            link        => $base_url . '/#' . $list->list_id . '-' . $action->{task}->{id},
             title       => $title,
             description => $action->{message} || '',
             dc => {
