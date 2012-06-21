@@ -5,6 +5,9 @@ use warnings;
 sub stat {
     my ($class, $c) = @_;
 
+    my $daily_active_accounts = $c->db->count('account', '*' => {
+        authenticated_on => { '>' => \'addtime(now(), \'-1 0:0:0\')' }
+    });
     my $weekly_active_accounts = $c->db->count('account', '*' => {
         authenticated_on => { '>' => \'addtime(now(), \'-7 0:0:0\')' }
     });
@@ -20,6 +23,7 @@ sub stat {
     $c->render_json({
         success => 1,
         stat => {
+            daily_active_accounts => $daily_active_accounts,
             weekly_active_accounts => $weekly_active_accounts,
             monthly_active_accounts => $monthly_active_accounts,
             tw_accounts => $tw_accounts,

@@ -224,12 +224,14 @@ app.setup.registerQuestionWindow = function(form){
     });
 }
 app.setup.statistics = function(ele){
+    var daily_active_accounts = ele.find('.daily_active_accounts');
     var weekly_active_accounts = ele.find('.weekly_active_accounts');
     var monthly_active_accounts = ele.find('.monthly_active_accounts');
     var total_accounts = ele.find('.total_accounts');
     var total_lists = ele.find('.total_lists');
     var tw_vs_fb = ele.find('.tw_vs_fb');
     app.addListener('receiveStatistics', function(stat){
+        daily_active_accounts.text(stat.daily_active_accounts);
         weekly_active_accounts.text(stat.weekly_active_accounts);
         monthly_active_accounts.text(stat.monthly_active_accounts);
         total_accounts.text(Number(stat.tw_accounts) + Number(stat.fb_accounts));
