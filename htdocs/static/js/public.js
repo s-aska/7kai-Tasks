@@ -234,6 +234,21 @@ app.setup.tasks = function(tbody){
             if (Boolean(task.closed) !== closed) {
                 continue;
             }
+            var comment = null
+            for (var ii = 0, max_ii = task.actions.length; ii < max_ii; ii++) {
+                var action = task.actions[ii];
+                if (action.action === 'comment') {
+                    comment = action;
+                }
+            }
+            if (comment) {
+                var user = users[comment.account_id];
+                if (user) {
+                    tr.find('.name').append($('<hr style="margin:5px 0">'));
+                    tr.find('.name').append($('<img width="16" height="16" style="vertical-align:top;margin-right:5px"/>').attr('src', user.icon));
+                    tr.find('.name').append($('<span/>').text(comment.message));
+                }
+            }
             var now = new Date();
             if (task.due) {
                 var date = app.date.parse(task.due);
