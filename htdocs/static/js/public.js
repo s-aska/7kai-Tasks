@@ -237,7 +237,7 @@ app.setup.tasks = function(tbody){
             var comment = null
             for (var ii = 0, max_ii = task.actions.length; ii < max_ii; ii++) {
                 var action = task.actions[ii];
-                if (action.action === 'comment') {
+                if (action.message) {
                     comment = action;
                 }
             }
