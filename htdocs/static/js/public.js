@@ -244,7 +244,7 @@ app.setup.tasks = function(tbody){
             if (comment) {
                 var user = users[comment.account_id];
                 if (user) {
-                    tr.find('.name').append($('<hr style="margin:5px 0">'));
+                    tr.find('.name').append($('<hr style="margin:5px 0 10px 0">'));
                     tr.find('.name').append($('<img width="16" height="16" style="vertical-align:top;margin-right:5px"/>').attr('src', user.icon));
                     tr.find('.name').append($('<span/>').text(comment.message));
                 }
