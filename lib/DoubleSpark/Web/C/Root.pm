@@ -61,4 +61,10 @@ sub staff {
     $c->render('staff.tt');
 }
 
+sub manual {
+    my ($class, $c) = @_;
+
+    $c->render('manual.tt');
+}
+
 1;

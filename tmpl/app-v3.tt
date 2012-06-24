@@ -74,11 +74,11 @@
         </li>
         <li>
           <a
-            href="/staff"
+            href="/manual"
             target="_blank"
             data-setup="localize"
-            data-text-ja="スタッフルーム"
-          >Staff Room</a>
+            data-text-ja="マニュアル"
+          >Manual</a>
         </li>
         <li
           class="menu dropdown"
@@ -108,17 +108,23 @@
                 data-show='{"id":"settings-window"}'
               >Settings</a>
             </li>
-            <li>
+            <!-- <li>
               <a
                 data-setup="show"
                 data-show='{"id":"help-window"}'
               >Help</a>
-            </li>
+            </li> -->
             <li>
               <a
                 href="https://www.facebook.com/pages/7kai-Tasks/189391624444427"
                 target="_blank"
               >Support</a>
+            </li>
+            <li>
+              <a
+                href="/staff"
+                target="_blank"
+              >Staff Room</a>
             </li>
             <li class="divider"></li>
             <li><a href="/signout">Sign Out</a></li>
@@ -237,7 +243,7 @@
       >
         <i class="icon-inbox"></i>
         <span
-          class="badge"
+          class="ui-badge"
           data-setup="taskCounter"
           data-counter-condition='{"todo":1}'
         >0</span>
@@ -257,7 +263,7 @@
           data-text-ja=""
         ></span>
         <span
-          class="badge"
+          class="ui-badge"
           data-setup="taskCounter"
           data-counter-condition='{"request":1}'
         >0</span>
@@ -273,7 +279,7 @@
       >
         <i class="icon-arrow-down"></i>
         <span
-          class="badge"
+          class="ui-badge"
           data-setup="taskCounter"
           data-counter-condition='{"verify":1}'
         >0</span>
@@ -289,7 +295,7 @@
       >
         <i class="icon-star"></i>
         <span
-          class="badge"
+          class="ui-badge"
           data-setup="starCounter"
         >0</span>
       </a>
@@ -302,7 +308,7 @@
       >
         <i class="icon-trash"></i>
         <span
-          class="badge"
+          class="ui-badge"
           data-setup="taskCounter"
           data-counter-condition='{"closed":1}'
         >0</span>
@@ -1089,7 +1095,7 @@
       >
         <i class="icon-inbox"></i>
         <span
-          class="badge"
+          class="ui-badge"
           data-setup="taskCounter"
           data-counter-condition='{"todo":1}'
         >0</span>
@@ -1109,7 +1115,7 @@
           data-text-ja=""
         ></span>
         <span
-          class="badge"
+          class="ui-badge"
           data-setup="taskCounter"
           data-counter-condition='{"request":1}'
         >0</span>
@@ -1125,7 +1131,7 @@
       >
         <i class="icon-arrow-down"></i>
         <span
-          class="badge"
+          class="ui-badge"
           data-setup="taskCounter"
           data-counter-condition='{"verify":1}'
         >0</span>
@@ -1141,7 +1147,7 @@
       >
         <i class="icon-star"></i>
         <span
-          class="badge"
+          class="ui-badge"
           data-setup="starCounter"
         >0</span>
       </a>
@@ -1154,7 +1160,7 @@
       >
         <i class="icon-trash"></i>
         <span
-          class="badge"
+          class="ui-badge"
           data-setup="taskCounter"
           data-counter-condition='{"closed":1}'
         >0</span>
@@ -1813,7 +1819,7 @@
           data-setup="localize,tab.menu"
           data-text-ja="アカウント追加 / 削除"
           data-tab='{"id":"account","group":"settings"}'
-        >Account Add / Remove</a>
+        >Account Add / Delete</a>
       </li>
     </ul>
     <div

@@ -1,4 +1,4 @@
-aside {
+.language-select {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -21,56 +21,33 @@ header h1 {
     text-shadow: 0px 1px 0px gray;
     letter-spacing: 0.05em;
 }
-header nav img {
-   -moz-transition: all 0.5s;
-   -webkit-transition: all 0.5s;
-   -ms-transition: all 0.5s;
-   -o-transition: all 0.5s;
-   transition: all 0.5s;
-}
-header nav img:hover {
-   opacity: 0.8;
-   -moz-opacity: 0.8; /* Firefox */
-   filter: alpha(opacity=80); /* IE6/7 */
-   -ms-filter: "alpha(opacity=80)"; /* IE8 */
-}
-header .container {
-    margin-top: 40px;
-}
 article {
-    width: 1010px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: 50px;
 }
 article > ul {
     border-top: 2px solid black;
+    border-bottom: 2px solid black;
 }
 article > ul > li {
     background: url(/static/img/list-mark.png) no-repeat 6px 10px;
     border-bottom: 1px solid #C6C6C6;
     overflow: hidden;
 }
-article > ul > li > div > span {
-    font-size: 18px;
-}
 article > ul > li:hover {
 	background-color: #f7f7f7;
 }
-
+article > ul > li:last-child {
+	border-bottom: none;
+}
 article > ul > li > div {
-    padding: 0 0 16px 50px;
+    padding: 16px 0 16px 50px;
 }
-article > ul > li > div:first-child {
-    padding-top: 16px;
-}
-article > ul > li > div:first-child a {
+article > ul > li > div a {
     float: right;
-    padding-top: 4px;
     padding-right: 10px;
 }
-article > ul > li div.row h2 {
+article > ul > li > div > span {
     font-size: 18px;
-    margin-bottom: 10px;
 }
 th {
     width: 40%;
@@ -88,23 +65,37 @@ footer a {
     display: inline-block;
     margin-right: 6px;
 }
-
-.table {
-    margin-bottom: 0;
+.span4 h2 {
+	margin: 10px 0;
+}
+.document {
+    
+}
+.document h1 {
+    
+}
+.document h2 {
+}
+.document h3 {
+    margin: 20px 0 10px;
+}
+.document h4 {
+    margin: 20px 0 10px;
+}
+.document .thumbnail {
+    margin-bottom: 20px;
+}
+.document .permalink {
+    position: relative;
+}
+.document .permalink a {
+    position: absolute;
+    top: -60px;
+    right: 0;
+    padding-top: 60px;
 }
 .modal {
     display: none;
-}
-.thumbnail{
-	background:#FFF;
-}
-
-.thumbnail p {
-    padding: 10px 10px 0 10px;
-    line-height: 14px;
-}
-.carousel-control {
-    top: 50%;
 }
 .clearfix {
     zoom: 1;

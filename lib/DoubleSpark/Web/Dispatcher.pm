@@ -12,6 +12,7 @@ get '/mock' => 'Root#mock';
 get '/staff' => 'Root#staff';
 get '/token' => 'Root#token';
 get '/join/:list_id/:invite_code' => 'Root#join';
+get '/manual' => 'Root#manual';
 
 get '/signout' => 'Root#signout';
 

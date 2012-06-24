@@ -3,8 +3,8 @@
 <head>
 <title>7kai Tasks</title>
 <meta charset="utf-8">
-<meta name="keywords" content="Task,Management,Twitter,Facebook,タスク管理,タスク共有">
-<meta name="description" content="The web-based task management software.">
+<meta id="keywords" content="Task,Management,Twitter,Facebook,タスク管理,タスク共有">
+<meta id="description" content="The web-based task management software.">
 <meta property="fb:admins" content="272550092773416">
 <meta property="og:title" content="7kai Tasks">
 <meta property="og:type" content="website">
@@ -17,47 +17,32 @@
 <script src="/static/js/jquery-1.7.1.min.js"></script>
 <script src="/static/js/jquery.easing.1.3.js"></script>
 <script src="/static/js/jquery-ui-1.8.13.js"></script>
-<script src="/static/js/bootstrap-transition.js"></script>
-<script src="/static/js/bootstrap-carousel.js"></script>
 <script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>
 <script src="/static/js/app-base-signin.js"></script>
 </head>
 <body>
-<aside><a href="?lang=en">English</a> / <a href="?lang=ja">Japanese</a></aside>
+<aside class="language-select"><a href="?lang=en">English</a> / <a href="?lang=ja">Japanese</a></aside>
 <header>
   <p
     data-setup="localize"
-    data-text-ja="もう忘れない、絶対に。"
+    data-text-ja="立ち向かう覚悟のある者だけが可視化を許される"
   >Never forget anything again.</p>
   <h1>7kai Tasks</h1>
   <nav><a
     data-setup="show"
     data-show='{"id":"signin"}'
   ><img src="/static/img/button-start.gif"></a></nav>
-  <div class="container">
-    <div id="myCarousel" class="carousel">
-      <div class="carousel-inner">
-        <div class="item active">
-          <img src="/static/img/tasks-home.png">
-        </div>
-        <div class="item">
-          <img src="/static/img/tasks-gantt.png">
-        </div>
-      </div>
-      <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-      <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
-    </div>
-  </div>
 </header>
-<article>
+
+<article class="container">
   <ul class="unstyled">
     <li>
       <div>
         <span
           data-setup="localize"
-          data-text-ja="7kai TasksはWebベースのタスク管理ツールです"
-        >The web-based task management software.</span>
+          data-text-ja="タスクを整理し、やるべきことに集中"
+        >Rearranging and concentration.</span>
         <a><img src="/static/img/button-cross.gif"></a>
       </div>
     </li>
@@ -65,325 +50,126 @@
       <div>
         <span
           data-setup="localize"
-          data-text-ja="TwitterやFacebookのフレンドとコラボレーション"
-        >Collaborations with your friend of Twitter and Facebook.</span>
+          data-text-ja="チームにも対応、メールやチャットでの依頼をスマートリプレース"
+        >Replace an email and IM.</span>
         <a><img src="/static/img/button-cross.gif"></a>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2
-            data-setup="localize"
-            data-text-ja="電話やメールの場合..."
-          >Telephone / IM / E-mail ...</h2>
-          <ul>
-            <li
-              data-setup="localize"
-              data-text-ja="すぐに忘れられてしまいます。"
-            >Everybody forgets it immediately.</li>
-            <li
-              data-setup="localize"
-              data-text-ja="催促や、依頼内容の確認が大変です。"
-            >Reminder is necessary.</li>
-          </ul>
-          <h2
-            data-setup="localize"
-            data-text-ja="7kai Tasksの場合..."
-          >7kai Tasks.</h2>
-          <ul>
-            <li
-              data-setup="localize"
-              data-text-ja="あなたは「7kai Tasksを見て」と伝えるだけです。"
-            >You only said `please watch 7kai Tasks`.</li>
-          </ul>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-social.png">
-        </div>
       </div>
     </li>
     <li>
       <div>
         <span
           data-setup="localize"
-          data-text-ja="ガントチャートによる簡単なリスケジュール"
-        >Easily a rescheduling by the Gantt chart.</span>
-        <a><img src="/static/img/button-cross.gif"></a>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2
-            data-setup="localize"
-            data-text-ja="面倒臭い事は放置されがちです"
-          >The troublesome thing does not continue.</h2>
-          <p
-            data-setup="localize"
-            data-text-ja="操作を簡単にしました。"
-          >
-            I simplified it.
-          </p>
-          <h2
-            data-setup="localize"
-            data-text-ja="カーソルキー又はクリックで期日指定"
-          >Use the cursor control keys or click cell.</h2>
-          <p>
-            <span
-              data-setup="localize"
-              data-text-ja="タスク選択"
-            >Selection task</span> ... [Top] / [Down].<br>
-            <span
-              data-setup="localize"
-              data-text-ja="期日変更"
-            >Setting due dates</span> ... [Left] / [Right].
-          </p>
-          <p
-            data-setup="localize"
-            data-text-ja="期日が正しく管理できないのは間違ったツールを使っていたからです。"
-          >
-            It is caused by a bad tool that a date is vague.
-          </p>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-gantt.png">
-        </div>
-      </div>
-    </li>
-    <li>
-      <div>
-        <span
-          data-setup="localize"
-          data-text-ja="シチュエーション毎に必要なリストだけを表示"
-        >Display only an available list depending on the situation.</span>
-        <a><img src="/static/img/button-cross.gif"></a>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2
-            data-setup="localize"
-            data-text-ja="色で分類可能なリスト"
-          >Classify lists with a color.</h2>
-          <p
-            data-setup="localize"
-            data-text-ja="仕事とプライベート、またはすぐ手に付けられないタスクを分類しましょう。"
-          >Work and a private or importance ...etc</p>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-tag2.png">
-        </div>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2
-            data-setup="localize"
-            data-text-ja="タスク管理メニューから絞り込めます。"
-          >Can be used as a filter.</h2>
-          <p></p>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-tag.png">
-        </div>
-      </div>
-    </li>
-    <li>
-      <div>
-        <span
-          data-setup="localize"
-          data-text-ja="カウンターを見るだけで把握。"
-        >Obvious from the counter.</span>
-        <a><img src="/static/img/button-cross.gif"></a>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2
-            data-setup="localize"
-            data-text-ja="カウンター付きクイックフィルター。"
-          >Quick Filter with a counter.</h2>
-          <p
-            data-setup="localize"
-            data-text-ja="例えば確認待ちが1の場合、あなたの依頼を達成された事が一目瞭然です。"
-          >
-            When Verify was 1, somebody fixed your request.
-          </p>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-filter.png">
-        </div>
-      </div>
-    </li>
-    <li>
-      <div>
-        <span
-          data-setup="localize"
-          data-text-ja="今日できない事は保留"
-        >If you cannot do it, please make pending.</span>
-        <a><img src="/static/img/button-cross.gif"></a>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2
-            data-setup="localize"
-            data-text-ja="保留タスク"
-          >Pending Task.</h2>
-          <p
-            data-setup="localize"
-            data-text-ja="「今日迄」から今日出来無い事を除きましょう、あとは頑張るだけです。期日を考える手間すら省くことが出来ます。"
-          >If a list and the task that are not active are pending, you can concentrate on your playing.</p>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-flexible.png">
-        </div>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2
-            data-setup="localize"
-            data-text-ja="保留リスト"
-          >Pending List.</h2>
-          <p
-            data-setup="localize"
-            data-text-ja="要望やアイデアは保留のリストに入れておくと良いです。"
-          >It is an idea to make a list to collect pending task.</p>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-pending-list.png">
-        </div>
-      </div>
-    </li>
-    <li>
-      <div>
-        <span
-          data-setup="localize"
-          data-text-ja="RSS Readerで購読"
-        >Subscribe in RSS Reader.</span>
-        <a><img src="/static/img/button-cross.gif"></a>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2
-            data-setup="localize"
-            data-text-ja="RSSをはじめ多くの公開形式に対応しています。"
-          >Supports many public formats.</h2>
-          <p>RSS, iCal, HTML, JSON, JSONP.</p>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-format.png">
-        </div>
-      </div>
-    </li>
-    <li>
-      <div>
-        <span
-          data-setup="localize"
-          data-text-ja="ブラウザ拡張でタスクチェック"
-        >Check in Browser Extensions.</span>
-        <a><img src="/static/img/button-cross.gif"></a>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2>Chrome Extensions.</h2>
-          <p
-            data-setup="localize"
-            data-text-ja="バッジに今日迄のタスクがカウントされます。"
-          >Even if you do not open the page, extensions displayed number of todo.</p>
-          <p><strong
-            data-setup="localize"
-            data-text-ja="あなたはもう忘れないでしょう。"
-          >Never forget anything again.</strong></p>
-          <p><a href="https://chrome.google.com/webstore/detail/dolhpjcchfcnkcanamhgcgbnmcogdank" target="_blank">7kai Tasks Checker (Chrome Web Store)</a></p>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-ext.png">
-        </div>
-      </div>
-    </li>
-    <li>
-      <div>
-        <span
-          data-setup="localize"
-          data-text-ja="ショートカットを覚えるとより快適になります"
-        >Once you learn a few shortcut keys and get comfortable.</span>
-        <a><img src="/static/img/button-cross.gif"></a>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2
-            data-setup="localize"
-            data-text-ja="ショートカット一覧の表示"
-          >Display the Shortcut Keys.</h2>
-          <p
-            data-setup="localize"
-            data-text-ja="キーボドーアイコンをクリックするか、[?]または[/]キーを押して下さい。"
-          >click keyboard icon or press [?] or [/] key.</p>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-key.png">
-        </div>
-      </div>
-    </li>
-    <li>
-      <div>
-        <span
-          data-setup="localize"
-          data-text-ja="ドラッグアンドドロップでリスト移動や階層管理"
-        >Easily a move and hierarchy setting by the Drag and Drop.</span>
-        <a><img src="/static/img/button-cross.gif"></a>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2
-            data-setup="localize"
-            data-text-ja="タスクの下に移動"
-          >Move to under the task.</h2>
-          <p
-            data-setup="localize"
-            data-text-ja="対象タスクにドロップ"
-          >Drop to a Task.</p>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-nest.png">
-        </div>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2
-            data-setup="localize"
-            data-text-ja="ルートに移動"
-          >Move to the root.</h2>
-          <p
-            data-setup="localize"
-            data-text-ja="余白にドロップ"
-          >Drop to a Space.</p>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-nest2.png">
-        </div>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h2
-            data-setup="localize"
-            data-text-ja="リストに移動"
-          >Move to the list.</h2>
-          <p
-            data-setup="localize"
-            data-text-ja="対象リストにドロップ"
-          >Drop to a list.</p>
-        </div>
-        <div class="span6 thumbnail">
-          <img src="/static/img/tasks-concept-dd-list.png">
-        </div>
-      </div>
-    </li>
-    <li>
-      <div>
-        <span
-          data-setup="localize"
-          data-text-ja="さあ、あたらしいタスク管理を体験しましょう。"
-        >Enjoy comfortable life! :)</span>
+          data-text-ja="ブラウザ拡張も導入すれば、その日の残タスクが一目瞭然"
+        >Install Browser Extentions.</span>
         <a><img src="/static/img/button-cross.gif"></a>
       </div>
     </li>
   </ul>
 </article>
+
+<div class="container">
+  <div class="row" style="margin-bottom:20px">
+    <div class="span4">
+      <div class=""><img src="/static/img/top-start-tasks.png"></div>
+      <h2
+        data-setup="localize"
+        data-text-ja="速く"
+      >Quick</h2>
+      <p
+        data-setup="localize"
+        data-text-ja="登録しなけりゃ始まらない。"
+      >Let's register a lot.</p>
+      <p><strong
+          data-setup="localize"
+          data-text-ja="タイトルを入力してエンター"
+        >Input and [Enter].</strong></p>
+    </div>
+    <div class="span4">
+      <div class=""><img src="/static/img/top-coffee.png"></div>
+      <h2
+        data-setup="localize"
+        data-text-ja="軽快で"
+      >One hand</h2>
+      <p
+        data-setup="localize"
+        data-text-ja="コーヒーブレイクと共に情報整理。"
+      >With coffee break.</p>
+      <p>
+        <strong
+          data-setup="localize"
+          data-text-ja="ダブルクリック"
+        >Double click</strong>
+        <span
+          data-setup="localize"
+          data-text-ja="でタスク編集、期日はガントチャートで調整。"
+        > ... Edit task.</span></p>
+    </div>
+    <div class="span4">
+      <div class=""><img src="/static/img/top-rush.png"></div>
+      <h2
+        data-setup="localize"
+        data-text-ja="時に激しく"
+      >Rush</h2>
+      <p
+        data-setup="localize"
+        data-text-ja="その日やる事にスターを付け一気に消化。"
+      >Give a star and end it in a day.</p>
+    </div>
+  </div>
+  <div class="row" style="margin-bottom:60px">
+    <div class="span4">
+      <div class=""><img src="/static/img/top-option.png"></div>
+      <h2
+        data-setup="localize"
+        data-text-ja="多彩で"
+      >More operation</h2>
+      <p
+        data-setup="localize"
+        data-text-ja="捌き切れないタスクは延期・保留・委任・破棄。"
+      >Manage pending and postponement and assign.</p>
+      <p
+        data-setup="localize"
+        data-text-ja="差し戻しで相手にタスクを返す時はなるべくコメントを付けましょう。"
+      >Attach comment to send it back.</p>
+    </div>
+    <div class="span4">
+      <div class=""><img src="/static/img/top-filter.png"></div>
+      <h2
+        data-setup="localize"
+        data-text-ja="豊富で"
+      >Grasp</h2>
+      <p
+        data-setup="localize"
+        data-text-ja="４つのソート、５つのフィルター、リストの色分け、ヒストリーで状況把握。"
+      >Use four sorts, five filters, four tags.</p>
+    </div>
+    <div class="span4">
+      <div class=""><img src="/static/img/top-killall.png"></div>
+      <h2
+        data-setup="localize"
+        data-text-ja="すぐわかる"
+      >Extermination</h2>
+      <p
+        data-setup="localize"
+        data-text-ja="朝やることを確認。"
+      >Make a plan in the morning.</p>
+      <p
+        data-setup="localize"
+        data-text-ja="終わらなかったら延期や破棄(完了)し溜めない。"
+      >Postpone or cancel the task that was not over.</p>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;margin-bottom:60px">
+  <a
+    style="font-size:3em"
+    href="manual"
+    data-setup="localize"
+    data-text-ja="マニュアルが出来ました"
+  >Manual and more information</a>
+</div>
+
 <footer class="footer">
   <div class="container">
     <div class="row">
@@ -398,7 +184,7 @@
       <div class="span2">
         <h4>Support</h4>
         <ul>
-          <li><a href="https://twitter.com/#!/su_aska" target="_blank">Author</a></li>
+          <li><a href="https://www.facebook.com/s.aska.org" target="_blank">Author</a></li>
           <li><a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank">Facebook Page</a></li>
         </ul>
       </div>

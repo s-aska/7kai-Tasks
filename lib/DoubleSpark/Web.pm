@@ -62,52 +62,6 @@ __PACKAGE__->add_trigger(
         my ( $c, $res ) = @_;
         $res->header( 'X-Content-Type-Options' => 'nosniff' );
         $res->header( 'X-Frame-Options' => 'SAMEORIGIN' );
-        
-        my $lang = $c->req->param('lang') || $c->req->header('Accept-Language') || 'en';
-        if ( $c->req->path eq '/' && (!$c->account) && $lang=~/^ja/i ) {
-            use HTML::Parser;
-            use Encode qw(decode_utf8 encode_utf8); 
-            my $input = decode_utf8($res->body);
-            my $output;
-            my $inner;
-            my $p = HTML::Parser->new(
-                api_version => 3,
-                start_h   => [ sub {
-                    my ($self, $tagname, $attr, $text) = @_;
-                    if (exists $attr->{'data-text-ja'} && $attr->{'data-setup'}=~/localize/) {
-                        my $text = delete $attr->{'data-text-ja'};
-                        $attr->{'data-setup'} =
-                            join ',',
-                            grep { $_ ne 'localize' }
-                            split ',', $attr->{'data-setup'};
-                        delete $attr->{'data-setup'} unless $attr->{'data-setup'};
-                        $output.= '<' . $tagname;
-                        for my $key (keys %$attr) {
-                            my $val = $attr->{ $key };
-                            $output.= ' ' . $key . '="' . $val . '"';
-                        }
-                        $output.= '>' . $text;
-                        $inner++;
-                    } else {
-                        $output.= $text;
-                    }
-                }, "self, tagname, attr, text" ],
-                text_h => [
-                    sub {
-                        my $text = shift;
-                        if ($inner) {
-                            undef $inner;
-                            return;
-                        }
-                        $output.= $text;
-                    }, 'dtext'
-                ],
-                default_h => [ sub { $output.= shift }, 'text' ],
-            );
-            $p->parse($input);
-            $res->body(encode_utf8($output));
-            $res->header( 'Content-Length' => length($res->body) );
-        }
     },
 );
 
@@ -123,6 +77,7 @@ __PACKAGE__->add_trigger(
         return if $c->req->path eq '/token';
         return if $c->req->path =~m|^/api/1/proxy/|;
         return if $c->req->path =~m|^/public/|;
+        return if $c->req->path eq '/manual';
 
         unless ($c->sign) {
 #            warnf('unsigned api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);

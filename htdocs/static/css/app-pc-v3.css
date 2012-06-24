@@ -32,6 +32,9 @@ div.alert {
 .btn.x-small.btn-icon {
     padding: 3px 7px 3px;
 }
+.icon {
+	background-position: 0 0;
+}
 .icon-trash {
     width: 15px;
 }

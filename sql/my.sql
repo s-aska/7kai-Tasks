@@ -1,10 +1,8 @@
-DROP DATABASE doublespark;
+# DROP DATABASE doublespark;
+# CREATE DATABASE doublespark default character SET utf8;
+# USE doublespark;
 
 BEGIN;
-
-CREATE DATABASE doublespark default character SET utf8;
-
-USE doublespark;
 
 CREATE TABLE account (
     account_id BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT
