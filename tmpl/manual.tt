@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">
+<head>
+<title>7kai Tasks</title>
+<meta charset="utf-8">
+<meta id="keywords" content="Task,Management,Twitter,Facebook,タスク管理,タスク共有">
+<meta id="description" content="The web-based task management software.">
+<meta property="fb:admins" content="272550092773416">
+<meta property="og:title" content="7kai Tasks">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tasks.7kai.org/">
+<meta property="og:image" content="https://tasks.7kai.org/static/img/logo-128.png">
+<meta property="og:site_name" content="7kai Tasks">
+<meta property="og:description" content="The web-based task management software.">
+<link rel="stylesheet" href="/static/css/bootstrap.css">
+<link rel="stylesheet" href="/static/css/signin.css" media="all">
+<script src="/static/js/jquery-1.7.1.min.js"></script>
+<script src="/static/js/jquery.easing.1.3.js"></script>
+<script src="/static/js/jquery-ui-1.8.13.js"></script>
+<script src="/static/js/app-core.js"></script>
+<script src="/static/js/app-base.js"></script>
+<script src="/static/js/app-base-signin.js"></script>
+</head>
+<body style="padding-top:60px">
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="/">7kai Tasks</a>
+      <ul class="nav">
+        <li
+          class="menu dropdown"
+          data-setup="menu"
+        >
+          <a href="#screen" class="dropdown-toggle">
+            <span
+              data-setup="localize"
+              data-text-ja="画面説明"
+            >Screen</span>&nbsp;
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" style="display: none; ">
+            <li>
+              <a
+                href="#screen"
+                data-setup="localize"
+                data-text-ja="ホーム - タスク管理"
+              >Home - Task Menu</a>
+            </li>
+            <li>
+              <a
+                href="#closed-task"
+                data-setup="localize"
+                data-text-ja="ホーム - 完了タスク管理"
+              >Home - Closed Task Menu</a>
+            </li>
+            <li>
+              <a
+                href="#list"
+                data-setup="localize"
+                data-text-ja="ホーム - リスト管理"
+              >Home - List Menu</a>
+            </li>
+            <li>
+              <a
+                href="#gantt"
+                data-setup="localize"
+                data-text-ja="ガントチャート"
+              >Gantt Chart</a>
+            </li>
+            <li>
+              <a
+                href="#changes"
+                data-setup="localize"
+                data-text-ja="ヒストリー"
+              >Changes</a>
+            </li>
+            <li>
+              <a
+                href="#account"
+                data-setup="localize"
+                data-text-ja="アカウント設定"
+              >Account Setting</a>
+            </li>
+          </ul>
+        </li>
+        <li><a
+            href="#shortcut-keys"
+            data-setup="localize"
+            data-text-ja="ショートカットキー"
+          >Shortcut Keys</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <section class="document">
+
+    <div class="permalink"><a href="#screen" name="screen">permalink</a></div>
+
+    <h2
+      data-setup="localize"
+      data-text-ja="1. 画面説明"
+    >1. Screen</h2>
+
+    <h3
+      data-setup="localize"
+      data-text-ja="1-1. ホーム - タスクメニュー ( タスク管理 )"
+    >1-1. Home - Task Menu ( Management of the task )</h3>
+
+    <div class="thumbnail"><img src="/static/img/manual-task.png"></div>
+
+    <ol>
+      <li
+        data-setup="localize"
+        data-text-ja="リスト追加ボタン"
+      >List Add Button</li>
+      <li
+        data-setup="localize"
+        data-text-ja="タスクメニューとリストメニューの切り替え"
+      >Task Menu / List Menu Switch</li>
+      <li
+        data-setup="localize"
+        data-text-ja="ソートボタングループ、左から「タイトル」「更新日時」「期日」「担当者」"
+      >Sort ... Title / Updated / Due / Assign</li>
+      <li>
+        <span
+          data-setup="localize"
+          data-text-ja="フィルターボタングループ"
+        >Filter</span>
+        <ul>
+          <li
+            data-setup="localize"
+            data-text-ja="今日やること ... 処理又は確認する必要がある"
+          >Todo ... You should do processing or confirmation.</li>
+          <li
+            data-setup="localize"
+            data-text-ja="依頼中 ... あなたが誰かに頼んだ"
+          >Request ... You requested it to somebody.</li>
+          <li
+            data-setup="localize"
+            data-text-ja="確認待ち ... あなたの確認を待っている"
+          >Confirmation ... It is waiting your confirmation.</li>
+          <li
+            data-setup="localize"
+            data-text-ja="スター ... あなたが星を付けた"
+          >Star ... You marked it.</li>
+          <li>
+            <span
+              data-setup="localize"
+              data-text-ja="完了済 ... 完了されたタスク"
+            >Closed ... Closed task,</span>
+            <strong
+              data-setup="localize"
+              data-text-ja="ごみ箱を空にするまで残る"
+            >It stay until I empty a trash box.</strong>
+          </li>
+        </ul>
+      </li>
+      <li
+        data-setup="localize"
+        data-text-ja="タグボタングループ、同じ色のリストだけ表示します。予めリストメニューでタグ指定が必要"
+      >Tag Button Group ... Display only the list of same colors. Tag designation is necessary for a list menu beforehand.</li>
+      <li
+        data-setup="localize"
+        data-text-ja="ショートカットキーの一覧を表示"
+      >Shortcut Keys Button ... Display the shortcut keys</li>
+      <li
+        data-setup="localize"
+        data-text-ja="リストの開閉"
+      >Folder Icon ... Expand and collapse</li>
+      <li
+        data-setup="localize"
+        data-text-ja="タスクボタングループ、左から「タスク登録」「タスク編集」「サブタスク登録」"
+      >Task Button Group ... New Task, Edit Task, New Sub Task</li>
+      <li
+        data-setup="localize"
+        data-text-ja="履歴・コメント"
+      >Actions and Comments</li>
+      <li
+        data-setup="localize"
+        data-text-ja="リストメニュー"
+      >List Menu</li>
+      <li><span
+          data-setup="localize"
+          data-text-ja="タスク"
+        >Task</span>
+        <ul>
+          <li
+            data-setup="localize"
+            data-text-ja="ハンドルアイコン ... ドラッグアンドドロップでリスト移動や階層管理"
+          >Handle ... Easily a move and hierarchy setting by the Drag and Drop.</li>
+          <li
+            data-setup="localize"
+            data-text-ja="チェックアイコン ... 進捗状態、「未着手」「処理中」「処理済」の順にローテーション"
+          >Check ... Progress, Rotation. ( Open &gt; In Progress &gt; Fixed )</li>
+          <li
+            data-setup="localize"
+            data-text-ja="スター ... オン・オフをスイッチ、オン時ブラウザ通知の対象タスクとなる"
+          >Star ... Toggle Switch ( In the case of on, a browser notification is effective )</li>
+          <li
+            data-setup="localize"
+            data-text-ja="担当者 ... 依頼者(処理済みのみ表示) < 担当者 < 依頼者"
+          >Assign ... Requester ( display it only when it is fixed ) &lt; Assign &lt; Requester</li>
+          <li
+            data-setup="localize"
+            data-text-ja="期日"
+          >Due day</li>
+          <li
+            data-setup="localize"
+            data-text-ja="停止アイコン ... 保留、「今日やること」及びブラウザ拡張のバッジカウント対象にならない"
+          >Stop ... Pending, do not count it in Todo and Badge of Browser Extensions. </li>
+          <li
+            data-setup="localize"
+            data-text-ja="クロスアイコン ... タスクを完了"
+          >Cross ... Closed the task.</li>
+        </ul>
+      </li>
+      <li
+        data-setup="localize"
+        data-text-ja="コメントボタン、関連するURLや差し戻し時の指摘を書きます"
+      >Comment Buttons ... The heart resembles a like button.</li>
+      <li
+        data-setup="localize"
+        data-text-ja="コメントは400文字迄"
+      >Comment Count ... 400 characters are limits</li>
+    </ol>
+
+    <hr>
+
+    <div class="permalink"><a href="#closed-task" name="closed-task">permalink</a></div>
+
+    <h3
+      data-setup="localize"
+      data-text-ja="1-2. ホーム - タスクメニュー ( 完了タスク管理 )"
+    >1-2. Home - Task Menu ( Management of the closed task )</h3>
+
+    <div class="thumbnail"><img src="/static/img/manual-closed-task.png"></div>
+
+    <ol>
+      <li
+        data-setup="localize"
+        data-text-ja="完了タスク表示切替"
+      >Switch of the closed task and open task.</li>
+      <li
+        data-setup="localize"
+        data-text-ja="完了タスクをクリア"
+      >Dust box ... Clear closed task.</li>
+      <li
+        data-setup="localize"
+        data-text-ja="完了から戻す"
+      >Plus ... Return to the open.</li>
+    </ol>
+
+    <hr>
+
+    <div class="permalink"><a href="#list" name="list">permalink</a></div>
+
+    <h3
+      data-setup="localize"
+      data-text-ja="1-3. ホーム - リストメニュー ( リスト管理 )"
+    >1-3. Home - List Menu ( Management of the list )</h3>
+
+    <div class="thumbnail"><img src="/static/img/manual-list.png"></div>
+
+    <ol>
+      <li>
+        <span
+            data-setup="localize"
+            data-text-ja="リストメニュー"
+          >List Menu</span>
+          <ul>
+            <li
+              data-setup="localize"
+              data-text-ja="上へ"
+            >Up</li>
+            <li
+              data-setup="localize"
+              data-text-ja="下へ"
+            >Down</li>
+            <li
+              data-setup="localize"
+              data-text-ja="公開、「JSON」「JSONP」「RSS」「iCal」「HTML」に対応"
+            >Public, Supports many formats. ( RSS, iCal, HTML, JSON, JSONP )</li>
+            <li
+              data-setup="localize"
+              data-text-ja="保留"
+            >Pending</li>
+            <li
+              data-setup="localize"
+              data-text-ja="メンバー管理"
+            >Managed Members</li>
+            <li
+              data-setup="localize"
+              data-text-ja="編集 ... 名前と詳細が編集可能"
+            >Edit ... Editing of the name and the description.</li>
+            <li
+              data-setup="localize"
+              data-text-ja="削除 (オーナーのみ可)"
+            >Delete ( owner only )</li>
+          </ul>
+      </li>
+      <li
+        data-setup="localize"
+        data-text-ja="色でリストの表示切替が出来るようになります"
+      >Classify lists with a color.</li>
+    </ol>
+
+    <hr>
+
+    <div class="permalink"><a href="#gantt" name="gantt">permalink</a></div>
+
+    <h3
+      data-setup="localize"
+      data-text-ja="1-4. ガントチャート"
+    >1-4. Gantt Chart</h3>
+
+    <div class="thumbnail"><img src="/static/img/manual-gantt.png"></div>
+
+    <ol>
+      <li
+        data-setup="localize"
+        data-text-ja="表示期間を変更"
+      >Change a displayed period.</li>
+      <li
+        data-setup="localize"
+        data-text-ja="クリックで期日を指定"
+      >A due date is appointed by a click.</li>
+    </ol>
+
+    <hr>
+
+    <div class="permalink"><a href="#changes" name="changes">permalink</a></div>
+
+    <h3
+      data-setup="localize"
+      data-text-ja="1-5. ヒストリー"
+    >1-5. Changes</h3>
+
+    <div class="thumbnail"><img src="/static/img/manual-changes.png"></div>
+
+    <ol>
+      <li
+        data-setup="localize"
+        data-text-ja="メンバーの操作履歴が表示されます、自分が依頼者又は担当者、又はスターを付けたタスクのみ対象です。"
+      >Actions and comments of the task to be related to you. (Your request or You are in assign or Marked star)</li>
+      <li
+        data-setup="localize"
+        data-text-ja="あなたの操作履歴が表示されます。"
+      >Your actions.</li>
+    </ol>
+
+    <hr>
+
+    <div class="permalink"><a href="#account" name="account">permalink</a></div>
+
+    <h3
+      data-setup="localize"
+      data-text-ja="1-6. アカウント設定"
+    >1-6. Account Setting</h3>
+
+    <h4
+      data-setup="localize"
+      data-text-ja="表示名・アイコン設定"
+    >Display Name / Icon</h4>
+
+    <span class="thumbnail"><img src="/static/img/manual-account.png"></span>
+
+    <ol>
+      <li
+        data-setup="localize"
+        data-text-ja="表示名を変更できます。"
+      >Change an display name.</li>
+      <li
+        data-setup="localize"
+        data-text-ja="アカウントが複数ある場合、アイコンを選択できます。"
+      >If there are multi accounts, You can appoint an icon.</li>
+    </ol>
+
+    <h4
+      data-setup="localize"
+      data-text-ja="アカウント追加・削除"
+    >Account Addition / Delete</h4>
+
+    <span class="thumbnail"><img src="/static/img/manual-account2.png"></span>
+
+    <ol>
+      <li
+        data-setup="localize"
+        data-text-ja="アカウント追加"
+      >Addition of the account.</li>
+      <li
+        data-setup="localize"
+        data-text-ja="アカウント削除"
+      >Delete of the account.</li>
+    </ol>
+
+    <hr>
+
+    <div class="permalink"><a href="#shortcut-keys" name="shortcut-keys">permalink</a></div>
+
+    <h2
+      style="margin-bottom:20px"
+      data-setup="localize"
+      data-text-ja="2. ショートカットキー"
+    >2. Shortcut Keys</h2>
+
+    <div class="row">
+      <div class="span6">
+        <table class="table table-striped table-bordered">
+          <tr>
+            <th>[? or /]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="ショートカットヘルプ表示"
+            >Show Shortcut Help.</td>
+          </tr>
+          <tr>
+            <th>[N]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="新しいタスクを作成"
+            >New Task.</td>
+          </tr>
+          <tr>
+            <th>[Shift-N]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="新しいサブタスクを作成"
+            >New Sub Task.</td>
+          </tr>
+          <tr>
+            <th>[ESC]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="ダイアログを閉じる"
+            >Close Some Dialog.</td>
+          </tr>
+          <tr>
+            <th>[J or Down]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="次のタスクを選択"
+            >Select Next Task.</td>
+          </tr>
+          <tr>
+            <th>[K or Up]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="前のタスクを選択"
+            >Select Previous Task.</td>
+          </tr>
+          <tr>
+            <th>[H or Right] / [L or Left]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="期日を１日延長 / 短縮"
+            >Due +/- 1 day.</td>
+          </tr>
+          <tr>
+            <th>[Space]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="タスクの状態を進める"
+            >Progress Status a Task.</td>
+          </tr>
+          <tr>
+            <th>[Enter]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="タスクを閉じる"
+            >Closed a Task.</td>
+          </tr>
+          <tr>
+            <th>[P]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="タスクを保留"
+            >Pending a Task.</td>
+          </tr>
+          <tr>
+            <th>[*] or [;] or [:]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="スターを付ける"
+            >Check star a Task.</td>
+          </tr>
+          <tr>
+            <th>[E]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="タスクを編集"
+            >Edit a Selected Task.</td>
+          </tr>
+        </table>
+      </div>
+      <div class="span6">
+        <table class="table table-striped table-bordered">
+          <tr>
+            <th>[T]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="[今日迄]で絞り込み"
+            >Open Today.</td>
+          </tr>
+          <tr>
+            <th>[V]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="[確認待ち]で絞り込み"
+            >Open Verify.</td>
+          </tr>
+          <tr>
+            <th>[R]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="[依頼中]で絞り込み"
+            >Open Request.</td>
+          </tr>
+          <tr>
+            <th>[S]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="[スター]で絞り込み"
+            >Open Star.</td>
+          </tr>
+          <tr>
+            <th>[C]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="[完了済み]で絞り込み"
+            >Open Closed.</td>
+          </tr>
+          <tr>
+            <th>[Shift-C]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="完了済みをクリア"
+            >Clear Closed Tasks in List.</td>
+          </tr>
+          <tr>
+            <th>[Shift-(Right / Left)]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="メニュー切り替え"
+            >Switch Menu.</td>
+          </tr>
+          <tr>
+            <th>[1-4]</th>
+            <td
+              data-setup="localize"
+              data-text-ja="タグ切り替え"
+            >Switch Color Tags.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="span2">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="/static/tos.html">Terms</a></li>
+          <li><a href="/static/privacy.html">Privacy</a></li>
+          <li><a href="https://github.com/s-aska/7kai-Tasks" target="_blank">Github</a></li>
+        </ul>
+      </div>
+      <div class="span2">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="https://www.facebook.com/s.aska.org" target="_blank">Author</a></li>
+          <li><a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank">Facebook Page</a></li>
+        </ul>
+      </div>
+    </div>
+    <address>&copy; Shinichiro Aska</address>
+  </div>
+</footer>
+</body>
+</html>
