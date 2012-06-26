@@ -287,6 +287,8 @@ app.setup.ganttchartListsV3 = function(ul){
             var paddingLeft = parseInt(li_before.css('paddingLeft'), 10);
             if (paddingLeft) {
                 li.css('paddingLeft', paddingLeft + 'px');
+            } else {
+                li.css('paddingLeft', '0px');
             }
 
             // 置き換え
