@@ -1264,7 +1264,7 @@ app.setup.publicListWindow = function(ele){
                     + list.public_code + '/' + input.attr('name'));
             }
         });
-        
+
     });
     app.addListener('privateList', function(list){
         ele.find('input').val('');
@@ -1391,7 +1391,7 @@ app.setup.tasksheet = function(ul){
         }, false);
 
         var folder = li.find('.icon-folder-open');
-        if (list.id in app.data.state.collapse) {
+        if ("collapse" in app.data.state && list.id in app.data.state.collapse) {
             folder
                 .data('closed', true)
                 .removeClass('icon-folder-open')
@@ -1404,10 +1404,8 @@ app.setup.tasksheet = function(ul){
         folder.click(function(){
             var folder = $(this);
             if (folder.data('closed')) {
-                folder.data('closed', false);
                 app.fireEvent('collapseList', list, false);
             } else {
-                folder.data('closed', true);
                 app.fireEvent('collapseList', list, true);
             }
         });
@@ -1581,13 +1579,15 @@ app.setup.tasksheet = function(ul){
     app.addListener('collapseList', function(list, collapse){
         var li = app.data.listli_map[list.id];
         if (li) {
-            var folder = li.find('.icon-folder-open');
+            var folder = li.find('.icon-folder-open, .icon-folder-close');
             if (collapse) {
+                folder.data('closed', true);
                 folder.removeClass('icon-folder-open').addClass('icon-folder-close');
                 li.find('> ul.tasks').slideUp('fast', function(){
                     li.addClass('task-collapse');
                 });
             } else {
+                folder.data('closed', false);
                 folder.removeClass('icon-folder-close').addClass('icon-folder-open');
                 li.removeClass('task-collapse');
                 li.find('> ul.tasks').slideDown('fast');
@@ -1823,7 +1823,7 @@ app.setup.tasksheet = function(ul){
             app.fireEvent('openTask', app.data.task_map[next_id], skip);
         }
     });
-    
+
     app.addListener('sortTask', function(tasks, column, reverse){
         for (var i = 0, max_i = tasks.length; i < max_i; i++) {
             var li = app.data.taskli_map[tasks[i].id];
@@ -1836,7 +1836,7 @@ app.setup.tasksheet = function(ul){
             app.data.listli_map[tasks[i].list.id].find('> ul').append(li);
         }
     });
-    
+
     app.addListener('filterTask', function(condition){
         if (!ul.is(':visible')) {
             return;
@@ -1865,7 +1865,7 @@ app.setup.tasksheet = function(ul){
                 }
             }
         }
-        
+
         if (condition && condition.closed) {
             ul.find('> li > header li.ui-normal, > li > header ul.members, > li > header li.ui-submenu').hide();
             ul.find('> li > header li.ui-clear').show();
@@ -1880,7 +1880,7 @@ app.setup.tasksheet = function(ul){
             listli_toggle(li);
         });
     });
-    
+
     app.addListener('clearList', function(list){
         var is_remove = function(task){
             if (list.id !== task.list.id) {
@@ -1913,7 +1913,7 @@ app.setup.tasksheet = function(ul){
             }
         }
     });
-    
+
     app.addListener('missingTask', function(){
         ul.find('> li > ul > li').removeClass('selected');
         ul.find('> li > header .ui-edit, > li > header .ui-sub').attr('disabled', true);
@@ -1939,7 +1939,7 @@ app.setup.tasksheet = function(ul){
         }
         app.fireEvent('openPrevTask', true);
     });
-    
+
     app.addListener('checkStar', function(on, task){
         var li = app.data.taskli_map[task.id];
         var i = li.find('.icon-star');
@@ -2388,7 +2388,7 @@ app.setup.registerTaskWindow = function(form){
         } else {
             form.find('.team').hide();
         }
-        
+
         task_id_input.val('');
         list_id_input.val(list.id);
         if (parentTask) {

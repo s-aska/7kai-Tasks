@@ -428,9 +428,6 @@ ul.comments li span.name {
 .gantttasks > ul > li.task-collapse {
     opacity: 0.5;
 }
-.gantttasks > ul > li.task-collapse .humanContainer {
-	display: none;
-}
 .gantttasks > ul > li > div {
     min-height: 36px;
 }

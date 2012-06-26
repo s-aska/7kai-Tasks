@@ -34,7 +34,7 @@ app.setup.ganttchartSheet = function(ele){
                   : $('<h1/>').html('&nbsp;')
         return $('<div class="month"></div>').append(label);
     };
-    
+
     app.addListener('initGanttchart', function(start){
         ele.html(blank);
         day_array = [];
@@ -64,10 +64,10 @@ app.setup.ganttchartSheet = function(ele){
         }
         ele.append($(blank));
     });
-    
+
     app.fireEvent('initGanttchart',
         new Date(now.getFullYear(), now.getMonth(), now.getDate()));
-    
+
     app.addListener('selectDay', function(e){
         for (var i = 0, max_i = day_array.length; i < max_i; i++) {
             var day = day_array[i];
@@ -137,12 +137,12 @@ app.setup.ganttchartListsV3 = function(ul){
         li.find('> div .name').text(list.name);
         li.find('> ul').empty();
         app.dom.setup(li);
-        
+
         if (list.id in app.data.state.tags) {
             li.attr('data-tag', app.data.state.tags[list.id]);
         }
         var folder = li.find('.icon-folder-open');
-        if (list.id in app.data.state.collapse) {
+        if ("collapse" in app.data.state && list.id in app.data.state.collapse) {
             folder
                 .data('closed', true)
                 .removeClass('icon-folder-open')
@@ -155,10 +155,8 @@ app.setup.ganttchartListsV3 = function(ul){
         folder.click(function(){
             var folder = $(this);
             if (folder.data('closed')) {
-                folder.data('closed', false);
                 app.fireEvent('collapseList', list, false);
             } else {
-                folder.data('closed', true);
                 app.fireEvent('collapseList', list, true);
             }
         });
@@ -168,7 +166,7 @@ app.setup.ganttchartListsV3 = function(ul){
         li.find('.ui-sub').click(function(e){
             app.fireEvent('createSubTask', current_task);
         });
-        
+
         if (list.id in listli_map) {
             li.find('> ul').append(listli_map[list.id].find('> ul').children());
             li.css('display', listli_map[list.id].css('display'));
@@ -185,13 +183,15 @@ app.setup.ganttchartListsV3 = function(ul){
         if (li) {
             var folder = li.find('.icon-folder-open, .icon-folder-close');
             if (collapse) {
+                folder.data('closed', true);
                 folder.removeClass('icon-folder-open').addClass('icon-folder-close');
                 li.addClass('task-collapse');
-                li.find('> ul.tasks').slideUp('fast');
+                li.find('> ul.tasks').hide();
             } else {
+                folder.data('closed', false);
                 folder.removeClass('icon-folder-close').addClass('icon-folder-open');
                 li.removeClass('task-collapse');
-                li.find('> ul.tasks').slideDown('fast');
+                li.find('> ul.tasks').show();
             }
         }
     });
@@ -207,7 +207,7 @@ app.setup.ganttchartListsV3 = function(ul){
     });
 
     // ---
-    
+
     app.addListener('registerTask', function(task){
         var ul = listli_map[task.list.id].find('> ul:first');
         var li = $(task_template);
@@ -227,7 +227,7 @@ app.setup.ganttchartListsV3 = function(ul){
             if (days > app.data.gantt.max_days) {
                 li.find('.due').css('left', ((app.data.gantt.max_days + 1) * 23) + 'px');
             } else if (days > -1) {
-                li.find('.due').css('left', ((days + 1) * 23) + 'px'); 
+                li.find('.due').css('left', ((days + 1) * 23) + 'px');
             }
         }
         li.mousemove(function(e){
@@ -349,7 +349,7 @@ app.setup.ganttchartListsV3 = function(ul){
             }
         }
     });
-    
+
     app.addListener('openTask', function(task, forceTop){
         if (!ul.is(':visible')) { return }
         ul.find('> li > ul > li').removeClass('selected');
@@ -406,7 +406,7 @@ app.setup.ganttchartListsV3 = function(ul){
             app.fireEvent('openTask', app.data.task_map[next_id], skip);
         }
     });
-    
+
     app.addListener('openPrevTask', function(skip){
         var next;
         if (current_task) {
@@ -484,7 +484,7 @@ app.setup.ganttchartListsV3 = function(ul){
             listli_toggle(li);
         });
     });
-    
+
     app.addListener('initGanttchart', function(start){
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
@@ -494,9 +494,9 @@ app.setup.ganttchartListsV3 = function(ul){
                 if (days > app.data.gantt.max_days) {
                     li.find('.due').css('left', ((app.data.gantt.max_days + 1) * 23) + 'px');
                 } else if (days > -1) {
-                    li.find('.due').css('left', ((days + 1) * 23) + 'px'); 
+                    li.find('.due').css('left', ((days + 1) * 23) + 'px');
                 } else {
-                    li.find('.due').css('left', '0px'); 
+                    li.find('.due').css('left', '0px');
                 }
             }
         }
