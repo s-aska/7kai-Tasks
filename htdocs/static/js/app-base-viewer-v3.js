@@ -1355,6 +1355,30 @@ app.setup.tasksheet = function(ul){
         }
     };
 
+    var collapseList = function(li, collapse, effect){
+        var folder = li.find('.icon-folder-open, .icon-folder-close');
+        if (collapse) {
+            folder.data('closed', true);
+            folder.removeClass('icon-folder-open').addClass('icon-folder-close');
+            if (effect) {
+                li.find('> ul.tasks').slideUp('fast', function(){ li.addClass('task-collapse') });
+            } else {
+                li.find('> ul.tasks').hide();
+                li.addClass('task-collapse');
+            }
+            
+        } else {
+            folder.data('closed', false);
+            folder.removeClass('icon-folder-close').addClass('icon-folder-open');
+            li.removeClass('task-collapse');
+            if (effect) {
+                li.find('> ul.tasks').slideDown('fast');
+            } else {
+                li.find('> ul.tasks').show();
+            }
+        }
+    };
+
     app.addListener('toggleTag', function(tag){
         ul.children().each(function(i, element){ listli_toggle($(element)) });
         if (ul.is(':visible')
@@ -1392,14 +1416,7 @@ app.setup.tasksheet = function(ul){
 
         var folder = li.find('.icon-folder-open');
         if ("collapse" in app.data.state && list.id in app.data.state.collapse) {
-            folder
-                .data('closed', true)
-                .removeClass('icon-folder-open')
-                .addClass('icon-folder-close');
-            li
-                .addClass('task-collapse')
-                .find('> ul.tasks')
-                    .hide();
+            collapseList(li, true, false);
         }
         folder.click(function(){
             var folder = $(this);
@@ -1579,19 +1596,7 @@ app.setup.tasksheet = function(ul){
     app.addListener('collapseList', function(list, collapse){
         var li = app.data.listli_map[list.id];
         if (li) {
-            var folder = li.find('.icon-folder-open, .icon-folder-close');
-            if (collapse) {
-                folder.data('closed', true);
-                folder.removeClass('icon-folder-open').addClass('icon-folder-close');
-                li.find('> ul.tasks').slideUp('fast', function(){
-                    li.addClass('task-collapse');
-                });
-            } else {
-                folder.data('closed', false);
-                folder.removeClass('icon-folder-close').addClass('icon-folder-open');
-                li.removeClass('task-collapse');
-                li.find('> ul.tasks').slideDown('fast');
-            }
+            collapseList(li, collapse, true);
         }
     });
 

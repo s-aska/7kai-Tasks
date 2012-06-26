@@ -484,6 +484,13 @@ ul.comments li span.name {
     left: 240px;
     width: 780px;
 }
+.gantttasks > ul > li > ul > li div.human img,
+.gantttasks > ul > li > ul > li div.human span {
+	opacity: 0.2;
+}
+.gantttasks > ul > li > ul > li div.human img:first-child {
+	opacity: 1;
+}
 .gantttasks > ul > li > ul > li div.due {
     position: absolute;
     top: 1px;
