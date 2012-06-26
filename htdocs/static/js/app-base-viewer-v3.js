@@ -26,6 +26,7 @@ app.addEvents('clearList');
 app.addEvents('publicListBegin');
 app.addEvents('publicList');
 app.addEvents('privateList');
+app.addEvents('collapseList');
 
 app.addEvents('registerTask'); // サーバーから取得又は登録フォームから登録した場合発火
 app.addEvents('openTask');
@@ -62,6 +63,31 @@ app.addListener('deleteList', function(list){
     delete app.data.list_map[list.id];
 });
 app.addListener('clearList', function(list){
+});
+app.addListener('collapseList', function(list, collapse){
+    var ns = 'state.collapse';
+    var method = 'set';
+    var key = list.id;
+    var val = 1;
+    if (!collapse) {
+        ns = 'state';
+        method = 'off';
+        key = 'collapse';
+        val = list.id;
+    }
+    app.api.account.update({
+        ns: ns,
+        method: method,
+        key: key,
+        val: val
+    })
+    .done(function(data){
+        if (data.success === 1) {
+            app.data.state.collapse = data.account.state.collapse;
+        } else {
+            // 現在 ステータスコード 200 の例外ケースは無い
+        }
+    });
 });
 app.addListener('openTask', function(task){
     w.location.hash = task.list.id + '-' + task.id;
@@ -1364,19 +1390,25 @@ app.setup.tasksheet = function(ul){
             app.api.task.move(app.data.dragtask.list.id, app.data.dragtask.id, list.id);
         }, false);
 
-        li.find('.icon-folder-open').click(function(){
+        var folder = li.find('.icon-folder-open');
+        if (list.id in app.data.state.collapse) {
+            folder
+                .data('closed', true)
+                .removeClass('icon-folder-open')
+                .addClass('icon-folder-close');
+            li
+                .addClass('task-collapse')
+                .find('> ul.tasks')
+                    .hide();
+        }
+        folder.click(function(){
             var folder = $(this);
             if (folder.data('closed')) {
                 folder.data('closed', false);
-                folder.removeClass('icon-folder-close').addClass('icon-folder-open');
-                li.removeClass('task-collapse');
-                li.find('> ul.tasks').slideDown('fast');
+                app.fireEvent('collapseList', list, false);
             } else {
                 folder.data('closed', true);
-                folder.removeClass('icon-folder-open').addClass('icon-folder-close');
-                li.find('> ul.tasks').slideUp('fast', function(){
-                    li.addClass('task-collapse');
-                });
+                app.fireEvent('collapseList', list, true);
             }
         });
 
@@ -1544,6 +1576,23 @@ app.setup.tasksheet = function(ul){
             li.prependTo(ul);
         }
         app.data.listli_map[list.id] = li;
+    });
+
+    app.addListener('collapseList', function(list, collapse){
+        var li = app.data.listli_map[list.id];
+        if (li) {
+            var folder = li.find('.icon-folder-open');
+            if (collapse) {
+                folder.removeClass('icon-folder-open').addClass('icon-folder-close');
+                li.find('> ul.tasks').slideUp('fast', function(){
+                    li.addClass('task-collapse');
+                });
+            } else {
+                folder.removeClass('icon-folder-close').addClass('icon-folder-open');
+                li.removeClass('task-collapse');
+                li.find('> ul.tasks').slideDown('fast');
+            }
+        }
     });
 
     app.addListener('deleteList', function(list){

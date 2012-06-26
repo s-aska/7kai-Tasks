@@ -141,7 +141,27 @@ app.setup.ganttchartListsV3 = function(ul){
         if (list.id in app.data.state.tags) {
             li.attr('data-tag', app.data.state.tags[list.id]);
         }
-        
+        var folder = li.find('.icon-folder-open');
+        if (list.id in app.data.state.collapse) {
+            folder
+                .data('closed', true)
+                .removeClass('icon-folder-open')
+                .addClass('icon-folder-close');
+            li
+                .addClass('task-collapse')
+                .find('> ul.tasks')
+                    .hide();
+        }
+        folder.click(function(){
+            var folder = $(this);
+            if (folder.data('closed')) {
+                folder.data('closed', false);
+                app.fireEvent('collapseList', list, false);
+            } else {
+                folder.data('closed', true);
+                app.fireEvent('collapseList', list, true);
+            }
+        });
         li.find('.ui-edit').click(function(e){
             app.fireEvent('editTask', current_task);
         });
@@ -158,6 +178,22 @@ app.setup.ganttchartListsV3 = function(ul){
             li.prependTo(ul);
         }
         listli_map[list.id] = li;
+    });
+
+    app.addListener('collapseList', function(list, collapse){
+        var li = listli_map[list.id];
+        if (li) {
+            var folder = li.find('.icon-folder-open, .icon-folder-close');
+            if (collapse) {
+                folder.removeClass('icon-folder-open').addClass('icon-folder-close');
+                li.addClass('task-collapse');
+                li.find('> ul.tasks').slideUp('fast');
+            } else {
+                folder.removeClass('icon-folder-close').addClass('icon-folder-open');
+                li.removeClass('task-collapse');
+                li.find('> ul.tasks').slideDown('fast');
+            }
+        }
     });
 
     app.addListener('deleteList', function(list){

@@ -1235,6 +1235,7 @@
           <li class="list">
             <div>
               <div class="symbol"></div>
+              <div class="icon-folder-open" style="float: left; margin: 6px 6px 4px 0px;"></div>
               <span class="name"></span>
               <ul class="unstyled clearfix">
                 <li
@@ -1259,7 +1260,7 @@
                 </li>
               </ul>
             </div>
-            <ul class="unstyled">
+            <ul class="tasks unstyled">
               <li class="clearfix">
                 <div
                   class="left icon icon-tasks-off" 
