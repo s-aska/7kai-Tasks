@@ -231,19 +231,25 @@ ul.tasks > li > div.delete {
 }
 ul.tasks > li div.human {
     height: 16px;
+    line-height: 16px;
 }
 ul.tasks > li div.human img {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+    display: block;
+    float: left;
 }
 ul.tasks > li div.human span {
-    display: inline-block;
+    display: block;
+    float: left;
 }
 ul.tasks > li div.name {
     margin-left: 4px;
     color: #666;
     word-wrap: break-word;
+    line-height: 14px;
+    padding-top: 1px;
 }
 ul.tasks > li.pending div.name {
     color: rgba(0, 0, 0, 0.3);
