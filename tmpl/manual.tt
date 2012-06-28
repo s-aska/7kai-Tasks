@@ -87,7 +87,12 @@
             href="#shortcut-keys"
             data-setup="localize"
             data-text-ja="ショートカットキー"
-          >Shortcut Keys</a></li>
+          >Shortcut Keys</a>
+        </li>
+        <li><a
+            href="#qa"
+          >Q &amp; A</a>
+        </li>
       </ul>
     </div>
   </div>
@@ -554,6 +559,108 @@
         </table>
       </div>
     </div>
+
+    <hr>
+
+    <div class="permalink"><a href="#qa" name="qa">permalink</a></div>
+
+    <h2
+      style="margin-bottom:20px"
+    >3. Q &amp; A</h2>
+
+    <ul class="unstyled qa">
+      <li>
+        <blockquote
+          data-setup="localize"
+          data-text-ja="権限は細かく設定できないの？"
+        >
+          Can this not set the permissions finely?
+        </blockquote>
+        <p
+          data-setup="localize"
+          data-text-ja="信頼できるメンバーならして欲しく無い事を言えば済む。"
+        >
+          There is not it now.<br>
+          You inform it, "do not change it" for a member.<br>
+          If it is a reliable member, no problem.
+        </p>
+      </li>
+      <li>
+        <blockquote
+          data-setup="localize"
+          data-text-ja="自分の環境で動かせますか？"
+        >
+          Can I move this in one's environment?
+        </blockquote>
+        <p>
+          <span
+            data-setup="localize"
+            data-text-ja="こちらを参照下さい。"
+          >Please look at this page. </span>
+          <a href="https://github.com/s-aska/7kai-Tasks/blob/master/doc/Install.md">Install.md</a>
+        </p>
+      </li>
+      <li>
+        <blockquote
+          data-setup="localize"
+          data-text-ja="ファイルや画像を添付できますか？"
+        >
+          Are there plans to add file/images to task as well as links ?
+        </blockquote>
+        <p
+          data-setup="localize"
+          data-text-ja="Dropboxやその他のサービスをご利用下さい、コメント欄にURLを入力すると自動リンクになります。"
+        >
+          I cannot contribute it on account of the capacity of the storage.<br>
+          Please utilize Dropbox and other services.
+        </p>
+      </li>
+      <li>
+        <blockquote
+          data-setup="localize"
+          data-text-ja="スターは何に使いますか？"
+        >
+          What does the star use it for?
+        </blockquote>
+        <p
+          data-setup="localize"
+          data-text-ja="その日に果たすと誓ったタスクやブラウザ通知が欲しいタスクに付けます。"
+        >
+          1. An oath to do on that day.<br>
+          2. The task that the notice of the change wants.
+        </p>
+      </li>
+      <li>
+        <blockquote
+          data-setup="localize"
+          data-text-ja="リストから退会するには？"
+        >
+          How to unsubscribe list?
+        </blockquote>
+        <p
+          data-setup="localize"
+          data-text-ja="リストのメンバー管理から自分自身を削除します。"
+        >
+          To remove itself from the member management of the list.
+        </p>
+      </li>
+      <li>
+        <blockquote
+          data-setup="localize"
+          data-text-ja="タスクを見失いました。？"
+        >
+          I lost the task.
+        </blockquote>
+        <p
+          data-setup="localize"
+          data-text-ja="フィルターやタグで絞り込んでいませんか？ブラウザをリロードしてみて下さい。それでもダメならまた登録して下さい。"
+        >
+          Do not narrow filters and tags?<br>
+          Please try to reload the browser.<br>
+          Please register if all else fails also.
+        </p>
+      </li>
+    </ul>
   </section>
 </div>
 <footer class="footer">
