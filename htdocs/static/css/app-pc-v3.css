@@ -499,7 +499,6 @@ ul.comments li span.name {
 }
 .gantttasks > ul > li > ul > li div.due {
     position: absolute;
-    top: -1px;
     cursor: pointer;
 }
 
