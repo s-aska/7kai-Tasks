@@ -647,7 +647,7 @@
       <li>
         <blockquote
           data-setup="localize"
-          data-text-ja="タスクを見失いました。？"
+          data-text-ja="タスクを見失いました。"
         >
           I lost the task.
         </blockquote>
