@@ -94,6 +94,9 @@ footer a {
     right: 0;
     padding-top: 60px;
 }
+.document ul.qa li {
+    margin-bottom: 40px;
+}
 .modal {
     display: none;
 }
