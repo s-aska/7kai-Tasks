@@ -44,7 +44,7 @@ Nothing is necessary
     echo -n "YOUR-FACEBOOK-APP-KEY" > config/fb.key
     echo -n "YOUR-FACEBOOK-APP-SECRET" > config/fb.secret
 
-## Configuration Sample
+## Sample configuration for hosting
 
 ### Nginx
 
