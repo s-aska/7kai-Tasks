@@ -701,6 +701,7 @@
         <input type="hidden" name="task_id" value="">
         <input type="hidden" name="status" value="">
         <input type="hidden" name="closed" value="">
+        <div class="task_name"></div>
         <textarea
           name="message"
           style="width: 390px; height: 56px; margin-bottom: 10px; font-size: 1.1em;"></textarea>

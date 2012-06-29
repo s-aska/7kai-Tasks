@@ -317,6 +317,11 @@ body > .row > .columns.ui-comments {
     color: #666;
     font-size: 16px;
 }
+.ui-comments .task_name {
+    font-weight: bold;
+    padding: 7px 0 9px 0;
+    font-size: 15px;
+}
 ul.comments {
     overflow-y: auto;
     overflow-x: hidden;
