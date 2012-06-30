@@ -77,12 +77,12 @@
       >Quick</h2>
       <p
         data-setup="localize"
-        data-text-ja="登録しなけりゃ始まらない。"
+        data-text-ja="連続登録に対応したタスク登録画面。"
       >Let's register a lot.</p>
-      <p><strong
-          data-setup="localize"
-          data-text-ja="タイトルを入力してエンター"
-        >Input and [Enter].</strong></p>
+      <p
+        data-setup="localize"
+        data-text-ja="タイトル入力即エンター。"
+      >Input and [Enter].</p>
     </div>
     <div class="span4">
       <div class=""><img src="/static/img/top-coffee.png"></div>
@@ -92,17 +92,16 @@
       >One hand</h2>
       <p
         data-setup="localize"
-        data-text-ja="コーヒーブレイクと共に情報整理。"
-      >With coffee break.</p>
-      <p>
-        <strong
-          data-setup="localize"
-          data-text-ja="ダブルクリック"
-        >Double click</strong>
-        <span
-          data-setup="localize"
-          data-text-ja="でタスク編集、期日はガントチャートで調整。"
-        > ... Edit task.</span></p>
+        data-text-ja="ワンクリックで状態変更。"
+      >State change with a single click.</p>
+      <p
+        data-setup="localize"
+        data-text-ja="ダブルクリックですぐ編集。"
+      >Double-click to edit.</p>
+      <p
+        data-setup="localize"
+        data-text-ja="ガントチャートで気軽にリスケ。"
+      >Rescheduling by Gantt chart.</p>
     </div>
     <div class="span4">
       <div class=""><img src="/static/img/top-rush.png"></div>
@@ -129,8 +128,8 @@
       >Manage pending and postponement and assign.</p>
       <p
         data-setup="localize"
-        data-text-ja="差し戻しで相手にタスクを返す時はなるべくコメントを付けましょう。"
-      >Attach comment to send it back.</p>
+        data-text-ja="終わらないタスクを溜め込まない。"
+      >Postpone or cancel the task that was not over.</p>
     </div>
     <div class="span4">
       <div class=""><img src="/static/img/top-filter.png"></div>
@@ -140,8 +139,16 @@
       >Grasp</h2>
       <p
         data-setup="localize"
-        data-text-ja="４つのソート、５つのフィルター、リストの色分け、ヒストリーで状況把握。"
-      >Use four sorts, five filters, four tags.</p>
+        data-text-ja="４つのソート。"
+      >Four sorts.</p>
+      <p
+        data-setup="localize"
+        data-text-ja="５つのフィルター。"
+      >Five filters.</p>
+      <p
+        data-setup="localize"
+        data-text-ja="色で分類可能なリスト。"
+      >Classify lists with a color.</p>
     </div>
     <div class="span4">
       <div class=""><img src="/static/img/top-killall.png"></div>
@@ -151,12 +158,12 @@
       >Extermination</h2>
       <p
         data-setup="localize"
-        data-text-ja="朝やることを確認。"
-      >Make a plan in the morning.</p>
+        data-text-ja="ブラウザ通知で即キャッチ。"
+      >Immediately catch by Browser Notification.</p>
       <p
         data-setup="localize"
-        data-text-ja="終わらなかったら延期や破棄(完了)し溜めない。"
-      >Postpone or cancel the task that was not over.</p>
+        data-text-ja="ヒストリーで後追いも楽々。"
+      >Check to follow later by Changes.</p>
     </div>
   </div>
 </div>
