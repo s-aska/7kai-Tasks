@@ -117,25 +117,10 @@
   </div>
   <div class="row" style="margin-bottom:60px">
     <div class="span4">
-      <div class=""><img src="/static/img/top-option.png"></div>
-      <h2
-        data-setup="localize"
-        data-text-ja="多彩で"
-      >More operation</h2>
-      <p
-        data-setup="localize"
-        data-text-ja="捌き切れないタスクは延期・保留・委任・破棄。"
-      >Manage pending and postponement and assign.</p>
-      <p
-        data-setup="localize"
-        data-text-ja="終わらないタスクを溜め込まない。"
-      >Postpone or cancel the task that was not over.</p>
-    </div>
-    <div class="span4">
       <div class=""><img src="/static/img/top-filter.png"></div>
       <h2
         data-setup="localize"
-        data-text-ja="豊富で"
+        data-text-ja="華麗で"
       >Grasp</h2>
       <p
         data-setup="localize"
@@ -151,11 +136,26 @@
       >Classify lists with a color.</p>
     </div>
     <div class="span4">
+      <div class=""><img src="/static/img/top-collaboration.png"></div>
+      <h2
+        data-setup="localize"
+        data-text-ja="コラボレーションも"
+      >Collaboration</h2>
+      <p
+        data-setup="localize"
+        data-text-ja="登録、処理、差し戻し、完了の流れに対応。"
+      >Support the flow.</p>
+    </div>
+    <div class="span4">
       <div class=""><img src="/static/img/top-killall.png"></div>
       <h2
         data-setup="localize"
         data-text-ja="すぐわかる"
       >Extermination</h2>
+      <p
+        data-setup="localize"
+        data-text-ja="自分が関わるタスクの進捗がすぐわかる。"
+      >Seen immediately the tasks progress.</p>
       <p
         data-setup="localize"
         data-text-ja="ブラウザ通知で即キャッチ。"
