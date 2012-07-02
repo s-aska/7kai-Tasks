@@ -735,7 +735,7 @@
           <button
             class="btn x-small btn-primary"
             data-setup="localize"
-            data-text-ja="クローズ"
+            data-text-ja="完了"
             data-plus="close"
           >Close</button>
           <div class="ui-counter">400</div>

@@ -88,8 +88,8 @@
       <div class=""><img src="/static/img/top-coffee.png"></div>
       <h2
         data-setup="localize"
-        data-text-ja="軽快で"
-      >One hand</h2>
+        data-text-ja="気軽で"
+      >One hand operations</h2>
       <p
         data-setup="localize"
         data-text-ja="ワンクリックで状態変更。"
