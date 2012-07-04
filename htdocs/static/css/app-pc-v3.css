@@ -201,6 +201,9 @@ ul.lists > li > header ul.members .count {
     -ms-user-select: none;
     user-select: none;
 }
+ul.lists > li > header ul.members .count:empty {
+    display: none;
+}
 ul.lists > li > header ul.menu {
     float: right;
     padding-right: 0;
