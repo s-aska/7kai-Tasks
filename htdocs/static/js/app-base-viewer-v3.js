@@ -337,20 +337,20 @@ app.util.taskFilter = function(task, condition){
         if (task.pending) {
             return false;
         }
-        if (task.due_epoch && task.due_epoch > (new Date()).getTime()) {
-            return false;
-        }
         if (task.status === 2) {
-            if (condition.turn !== task.requester) {
+            if (Number(condition.turn) !== Number(task.requester)) {
                 return false;
             }
         } else {
+            if (task.due_epoch && task.due_epoch > (new Date()).getTime()) {
+                return false;
+            }
             if (task.assign.length) {
                 if (!app.util.findAccount(condition.turn, task.assign)) {
                     return false;
                 }
             } else {
-                if (condition.turn !== task.requester) {
+                if (Number(condition.turn) !== Number(task.requester)) {
                     return false;
                 }
             }
