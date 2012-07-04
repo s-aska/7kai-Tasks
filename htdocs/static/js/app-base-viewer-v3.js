@@ -1728,7 +1728,9 @@ app.setup.tasksheet = function(ul){
             app.data.taskli_map[task.id].addClass('selected');
             app.data.taskli_map[task.id].parent().parent()
                 .find('> header .ui-edit, > header .ui-sub').attr('disabled', false);
-            app.dom.scrollTopFix(ul.parent(), app.data.taskli_map[task.id], forceTop);
+            if (forceTop !== -1) {
+                app.dom.scrollTopFix(ul.parent(), app.data.taskli_map[task.id], forceTop);
+            }
         }
         current_task = task;
     });
@@ -2115,7 +2117,7 @@ app.setup.task = function(ele, task){
     }, false);
     ele.click(function(e){
         e.stopPropagation();
-        app.fireEvent('openTask', task);
+        app.fireEvent('openTask', task, -1);
     });
     ele.dblclick(function(e){
         e.stopPropagation();
