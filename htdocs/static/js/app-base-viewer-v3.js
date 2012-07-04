@@ -42,6 +42,7 @@ app.addEvents('editTask');      // 登録フォーム表示(編集モード)
 app.addEvents('clearTask');
 app.addEvents('sortTask');
 app.addEvents('filterTask');
+app.addEvents('memberTask');
 app.addEvents('toggleTag');
 app.addEvents('resetTag');
 
@@ -1022,9 +1023,9 @@ app.setup.filterTask = function(ele){
             ele.removeClass('active');
             return;
         }
-        if (condition.list_id && condition.list_id !== orig_condition.list_id) {
-            return;
-        }
+        // if (condition.list_id && condition.list_id !== orig_condition.list_id) {
+        //     return;
+        // }
         for (var key in orig_condition) {
             if (orig_condition[key] !== condition[key]) {
                 ele.removeClass('active');
@@ -1270,6 +1271,50 @@ app.setup.rightColumn = function(ele){
         list_name.text('-');
         task_name.text('-');
         counter.text(400);
+    });
+}
+app.setup.memberCounter = function(ele){
+    var count = 0;
+    var condition = ele.data('counter-condition');
+    app.addListener('registerTask', function(task){
+        if (app.util.hasChildTask(task)) {
+            count = 0;
+            for (var task_id in app.data.task_map) {
+                if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
+                    count++;
+                }
+            }
+            ele.text(count || '');
+        } else {
+            var before = (task.before && app.util.taskFilter(task.before, condition)) ? 1 : 0;
+            var after = app.util.taskFilter(task, condition) ? 1 : 0;
+            var add = after - before;
+            if (add) {
+                count+= add;
+                ele.text(count || '');
+            }
+        }
+    });
+    app.addListener('checkMute', function(){
+        count = 0;
+        for (var task_id in app.data.task_map) {
+            if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
+                count++;
+            }
+        }
+        ele.text(count || '');
+    });
+    app.addListener('resetCounter', function(list){
+        count = 0;
+        for (var task_id in app.data.task_map) {
+            if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
+                count++;
+            }
+        }
+        ele.text(count || '');
+    });
+    app.addListener('clear', function(){
+        ele.text('');
     });
 }
 
@@ -1607,26 +1652,26 @@ app.setup.tasksheet = function(ul){
                 icon.data('account_id', account_id);
                 var count = $('<div class="count"/>');
                 count.data('counter-condition', condition);
-                app.setup.taskCounter(count);
+                app.setup.memberCounter(count);
                 var li2 = $('<li/>')
                     .append(icon)
-                    // .append(count)
-                    // .data('filter-condition', condition)
-                    // .click(function(e){
-                    //     e.preventDefault();
-                    //     var li2 = $(this);
-                    //     if (li2.hasClass('active')) {
-                    //         app.fireEvent('filterTask', { turn: null, list_id: list.id }, true);
-                    //         li2.removeClass('active');
-                    //     } else {
-                    //         app.fireEvent('filterTask', li2.data('filter-condition'), true);
-                    //         li2.addClass('active');
-                    //     }
-                    //     li2.parent().toggleClass('active-filter', li2.hasClass('active'));
-                    // })
+                    .append(count)
+                    .data('filter-condition', condition)
+                    .click(function(e){
+                        e.preventDefault();
+                        var li2 = $(this);
+                        var reset = li2.hasClass('active');
+                        li2.parent().children().removeClass('active');
+                        if (reset) {
+                            app.fireEvent('filterTask', app.data.current_filter);
+                        } else {
+                            app.fireEvent('memberTask', li2.data('filter-condition'));
+                            li2.addClass('active');
+                        }
+                        li2.parent().toggleClass('active-filter', li2.hasClass('active'));
+                    })
                     .addClass('member')
                     .appendTo(li.find('ul.members'));
-                // app.setup.filterTask(li2);
             }
         }
 
@@ -1898,10 +1943,40 @@ app.setup.tasksheet = function(ul){
         }
     });
 
+    app.addListener('memberTask', function(condition){
+        for (var task_id in app.data.task_map) {
+            var task = app.data.task_map[task_id];
+            var li = app.data.taskli_map[task_id];
+            if (condition.list_id !== task.list.id) {
+                continue;
+            }
+            if (app.util.taskFilter(task, condition)) {
+                li.show();
+                if (!li.data('visible')) {
+                    li.data('visible', true);
+                    if (!task.parent_id) {
+                        li.css('paddingLeft', '4px');
+                    }
+                }
+            } else {
+                if (li.data('visible')) {
+                    li.data('visible', false);
+                    li.hide();
+                }
+                if (current_task &&
+                    current_task.id === task.id) {
+                    app.fireEvent('missingTask');
+                }
+            }
+        }
+    });
+
     app.addListener('filterTask', function(condition){
         if (!ul.is(':visible')) {
             return;
         }
+        ul.find('> li > header ul.members > li.active').removeClass('active');
+        ul.find('> li > header ul.members.active-filter').removeClass('active-filter');
         var hasVisible = {};
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
@@ -1933,9 +2008,6 @@ app.setup.tasksheet = function(ul){
         } else {
             ul.find('> li > header li.ui-clear').hide();
             ul.find('> li > header li.ui-normal, > li > header ul.members, > li > header li.ui-submenu').show();
-        }
-        if (condition && condition.list_id) {
-            return;
         }
         ul.children().each(function(){
             var li = $(this);
