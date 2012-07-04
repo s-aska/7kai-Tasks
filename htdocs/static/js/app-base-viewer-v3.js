@@ -334,17 +334,17 @@ app.util.taskFilter = function(task, condition){
         if (task.list.id !== condition.list_id) {
             return false;
         }
-        if (task.pending) {
-            return false;
-        }
+        // if (task.pending) {
+        //     return false;
+        // }
         if (task.status === 2) {
             if (Number(condition.turn) !== Number(task.requester)) {
                 return false;
             }
         } else {
-            if (task.due_epoch && task.due_epoch > (new Date()).getTime()) {
-                return false;
-            }
+            // if (task.due_epoch && task.due_epoch > (new Date()).getTime()) {
+            //     return false;
+            // }
             if (task.assign.length) {
                 if (!app.util.findAccount(condition.turn, task.assign)) {
                     return false;
@@ -1273,50 +1273,50 @@ app.setup.rightColumn = function(ele){
         counter.text(400);
     });
 }
-app.setup.memberCounter = function(ele){
-    var count = 0;
-    var condition = ele.data('counter-condition');
-    app.addListener('registerTask', function(task){
-        if (app.util.hasChildTask(task)) {
-            count = 0;
-            for (var task_id in app.data.task_map) {
-                if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
-                    count++;
-                }
-            }
-            ele.text(count || '');
-        } else {
-            var before = (task.before && app.util.taskFilter(task.before, condition)) ? 1 : 0;
-            var after = app.util.taskFilter(task, condition) ? 1 : 0;
-            var add = after - before;
-            if (add) {
-                count+= add;
-                ele.text(count || '');
-            }
-        }
-    });
-    app.addListener('checkMute', function(){
-        count = 0;
-        for (var task_id in app.data.task_map) {
-            if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
-                count++;
-            }
-        }
-        ele.text(count || '');
-    });
-    app.addListener('resetCounter', function(list){
-        count = 0;
-        for (var task_id in app.data.task_map) {
-            if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
-                count++;
-            }
-        }
-        ele.text(count || '');
-    });
-    app.addListener('clear', function(){
-        ele.text('');
-    });
-}
+// app.setup.memberCounter = function(ele){
+//     var count = 0;
+//     var condition = ele.data('counter-condition');
+//     app.addListener('registerTask', function(task){
+//         if (app.util.hasChildTask(task)) {
+//             count = 0;
+//             for (var task_id in app.data.task_map) {
+//                 if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
+//                     count++;
+//                 }
+//             }
+//             ele.text(count || '');
+//         } else {
+//             var before = (task.before && app.util.taskFilter(task.before, condition)) ? 1 : 0;
+//             var after = app.util.taskFilter(task, condition) ? 1 : 0;
+//             var add = after - before;
+//             if (add) {
+//                 count+= add;
+//                 ele.text(count || '');
+//             }
+//         }
+//     });
+//     app.addListener('checkMute', function(){
+//         count = 0;
+//         for (var task_id in app.data.task_map) {
+//             if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
+//                 count++;
+//             }
+//         }
+//         ele.text(count || '');
+//     });
+//     app.addListener('resetCounter', function(list){
+//         count = 0;
+//         for (var task_id in app.data.task_map) {
+//             if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
+//                 count++;
+//             }
+//         }
+//         ele.text(count || '');
+//     });
+//     app.addListener('clear', function(){
+//         ele.text('');
+//     });
+// }
 
 app.setup.publicListWindow = function(ele){
     ele.find('input').each(function(){
@@ -1650,12 +1650,12 @@ app.setup.tasksheet = function(ul){
                 var condition = { turn: account_id, list_id: list.id };
                 var icon = app.util.getIcon(account_id, 26);
                 icon.data('account_id', account_id);
-                var count = $('<div class="count"/>');
-                count.data('counter-condition', condition);
-                app.setup.memberCounter(count);
+                // var count = $('<div class="count"/>');
+                // count.data('counter-condition', condition);
+                // app.setup.memberCounter(count);
                 var li2 = $('<li/>')
                     .append(icon)
-                    .append(count)
+                    // .append(count)
                     .data('filter-condition', condition)
                     .click(function(e){
                         e.preventDefault();
