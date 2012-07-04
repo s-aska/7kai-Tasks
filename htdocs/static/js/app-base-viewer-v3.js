@@ -170,7 +170,8 @@ app.addListener('clickNotification', function(option){
 app.addListener('createTask', function(){
     app.dom.hide(app.dom.get('showable', 'welcome'));
 });
-app.addListener('filterTask', function(filter){
+app.addListener('filterTask', function(filter, no_save){
+    if (no_save) return ;
     app.data.current_filter = filter;
 });
 app.addListener('toggleTag', function(tag){
@@ -1616,10 +1617,10 @@ app.setup.tasksheet = function(ul){
                         e.preventDefault();
                         var li2 = $(this);
                         if (li2.hasClass('active')) {
-                            app.fireEvent('filterTask', { turn: null, list_id: list.id });
+                            app.fireEvent('filterTask', { turn: null, list_id: list.id }, true);
                             li2.removeClass('active');
                         } else {
-                            app.fireEvent('filterTask', li2.data('filter-condition'));
+                            app.fireEvent('filterTask', li2.data('filter-condition'), true);
                             li2.addClass('active');
                         }
                         li2.parent().toggleClass('active-filter', li2.hasClass('active'));
