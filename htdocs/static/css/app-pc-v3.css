@@ -164,10 +164,17 @@ ul.lists > li > header ul.members {
 }
 ul.lists > li > header ul.members > li {
     float: left;
+    position: relative;
     margin-right: 4px;
     cursor: pointer;
     width: 26px;
     height: 26px;
+}
+ul.lists > li > header ul.members.active-filter > li {
+    opacity: 0.5;
+}
+ul.lists > li > header ul.members > li.active {
+    opacity: 1;
 }
 ul.lists > li > header ul.members a {
     padding: 5px 5px 2px 5px;
@@ -178,6 +185,21 @@ ul.lists > li > header ul.members img {
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
+}
+ul.lists > li > header ul.members .count {
+    position: absolute;
+    top: 14px;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    font-size: 10px;
+    line-height: 10px;
+    padding: 1px 2px;
+    border-radius: 3px;
+    color: #333;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 ul.lists > li > header ul.menu {
     float: right;

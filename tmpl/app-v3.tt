@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="/static/css/app-base-v3.css" media="all">
 <link rel="stylesheet" href="/static/css/app-pc-v3.css" media="all">
 <script src="/static/js/jquery-1.7.1.min.js"></script>
-<script src="/static/js/jquery-ui-1.8.18.custom.min.js"></script>
+<script src="/static/js/jquery-ui-1.8.21.custom.min.js"></script>
 <script src="/static/js/h5utils.js"></script>
 <script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>
@@ -594,7 +594,7 @@
             </ul>
             <ul
               class="unstyled clearfix members"
-              data-setup="tab.content,tooltip"
+              data-setup="tab.content"
               data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
               data-text-ja="担当者指名"
               data-text-en="New Task with Assign"

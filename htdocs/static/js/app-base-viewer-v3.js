@@ -291,6 +291,14 @@ app.util.findMe = function(account_ids){
     }
     return false;
 }
+app.util.findAccount = function(account_id, account_ids){
+    for (var i = 0, max_i = account_ids.length; i < max_i; i++) {
+        if (Number(account_id) === Number(account_ids[i])) {
+            return account_id;
+        }
+    }
+    return false;
+}
 app.util.findOthers = function(account_ids){
     for (var i = 0, max_i = account_ids.length; i < max_i; i++) {
         if (app.data.sign.account_id !== account_ids[i]) {
@@ -320,6 +328,33 @@ app.util.taskFilter = function(task, condition){
         if (app.util.isCloseTask(task)) {
             return false;
         }
+    }
+    if (condition.turn) {
+        if (task.list.id !== condition.list_id) {
+            return false;
+        }
+        if (task.pending) {
+            return false;
+        }
+        if (task.due_epoch && task.due_epoch > (new Date()).getTime()) {
+            return false;
+        }
+        if (task.status === 2) {
+            if (condition.turn !== task.requester) {
+                return false;
+            }
+        } else {
+            if (task.assign.length) {
+                if (!app.util.findAccount(condition.turn, task.assign)) {
+                    return false;
+                }
+            } else {
+                if (condition.turn !== task.requester) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     if (condition.todo) {
         if (task.list.id in app.data.state.mute) {
@@ -987,6 +1022,9 @@ app.setup.filterTask = function(ele){
             ele.removeClass('active');
             return;
         }
+        if (condition.list_id && condition.list_id !== orig_condition.list_id) {
+            return;
+        }
         for (var key in orig_condition) {
             if (orig_condition[key] !== condition[key]) {
                 ele.removeClass('active');
@@ -1564,15 +1602,31 @@ app.setup.tasksheet = function(ul){
                 if (!(account_id in app.data.users)) {
                     continue;
                 }
+                var condition = { turn: account_id, list_id: list.id };
                 var icon = app.util.getIcon(account_id, 26);
                 icon.data('account_id', account_id);
-                icon.click(function(){
-                    app.fireEvent('createTask', list, $(this).data('account_id'));
-                });
-                $('<li/>')
+                var count = $('<div class="count"/>');
+                count.data('counter-condition', condition);
+                app.setup.taskCounter(count);
+                var li2 = $('<li/>')
                     .append(icon)
+                    .append(count)
+                    .data('filter-condition', condition)
+                    .click(function(e){
+                        e.preventDefault();
+                        var li2 = $(this);
+                        if (li2.hasClass('active')) {
+                            app.fireEvent('filterTask', { turn: null, list_id: list.id });
+                            li2.removeClass('active');
+                        } else {
+                            app.fireEvent('filterTask', li2.data('filter-condition'));
+                            li2.addClass('active');
+                        }
+                        li2.parent().toggleClass('active-filter', li2.hasClass('active'));
+                    })
                     .addClass('member')
                     .appendTo(li.find('ul.members'));
+                app.setup.filterTask(li2);
             }
         }
 
@@ -1851,6 +1905,9 @@ app.setup.tasksheet = function(ul){
         var hasVisible = {};
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
+            if (condition && condition.list_id && condition.list_id !== task.list.id) {
+                continue;
+            }
             var li = app.data.taskli_map[task_id];
             if (app.util.taskFilter(task, condition)) {
                 hasVisible[task.list.id] = true;
@@ -1880,7 +1937,9 @@ app.setup.tasksheet = function(ul){
             ul.find('> li > header li.ui-clear').hide();
             ul.find('> li > header li.ui-normal, > li > header ul.members, > li > header li.ui-submenu').show();
         }
-
+        if (condition && condition.list_id) {
+            return;
+        }
         ul.children().each(function(){
             var li = $(this);
             li.data('has-visible-tasks', Boolean(li.data('id') in hasVisible));
