@@ -170,8 +170,7 @@ app.addListener('clickNotification', function(option){
 app.addListener('createTask', function(){
     app.dom.hide(app.dom.get('showable', 'welcome'));
 });
-app.addListener('filterTask', function(filter, no_save){
-    if (no_save) return ;
+app.addListener('filterTask', function(filter){
     app.data.current_filter = filter;
 });
 app.addListener('toggleTag', function(tag){
@@ -1611,23 +1610,23 @@ app.setup.tasksheet = function(ul){
                 app.setup.taskCounter(count);
                 var li2 = $('<li/>')
                     .append(icon)
-                    .append(count)
-                    .data('filter-condition', condition)
-                    .click(function(e){
-                        e.preventDefault();
-                        var li2 = $(this);
-                        if (li2.hasClass('active')) {
-                            app.fireEvent('filterTask', { turn: null, list_id: list.id }, true);
-                            li2.removeClass('active');
-                        } else {
-                            app.fireEvent('filterTask', li2.data('filter-condition'), true);
-                            li2.addClass('active');
-                        }
-                        li2.parent().toggleClass('active-filter', li2.hasClass('active'));
-                    })
+                    // .append(count)
+                    // .data('filter-condition', condition)
+                    // .click(function(e){
+                    //     e.preventDefault();
+                    //     var li2 = $(this);
+                    //     if (li2.hasClass('active')) {
+                    //         app.fireEvent('filterTask', { turn: null, list_id: list.id }, true);
+                    //         li2.removeClass('active');
+                    //     } else {
+                    //         app.fireEvent('filterTask', li2.data('filter-condition'), true);
+                    //         li2.addClass('active');
+                    //     }
+                    //     li2.parent().toggleClass('active-filter', li2.hasClass('active'));
+                    // })
                     .addClass('member')
                     .appendTo(li.find('ul.members'));
-                app.setup.filterTask(li2);
+                // app.setup.filterTask(li2);
             }
         }
 
@@ -1906,9 +1905,6 @@ app.setup.tasksheet = function(ul){
         var hasVisible = {};
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
-            if (condition && condition.list_id && condition.list_id !== task.list.id) {
-                continue;
-            }
             var li = app.data.taskli_map[task_id];
             if (app.util.taskFilter(task, condition)) {
                 hasVisible[task.list.id] = true;
