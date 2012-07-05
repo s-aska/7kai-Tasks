@@ -476,6 +476,8 @@ app.util.buildMe = function(option, data){
         });
     });
 
+    app.fireEvent('filterTask', app.data.current_filter);
+
     app.state.animation = true;
 
     if (option.setup && !tasks) {
@@ -1656,6 +1658,7 @@ app.setup.tasksheet = function(ul){
                 var li2 = $('<li/>')
                     .append(icon)
                     // .append(count)
+                    .data('id', account_id)
                     .data('filter-condition', condition)
                     .click(function(e){
                         e.preventDefault();
@@ -1670,6 +1673,10 @@ app.setup.tasksheet = function(ul){
                         }
                         li2.parent().toggleClass('active-filter', li2.hasClass('active'));
                     })
+                    // .dblclick(function(e){
+                    //     e.preventDefault();
+                    //     app.fireEvent('createTask', list, $(this).data('id'));
+                    // })
                     .addClass('member')
                     .appendTo(li.find('ul.members'));
             }
