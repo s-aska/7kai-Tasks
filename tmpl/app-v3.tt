@@ -367,7 +367,7 @@
   >
     <div
       class="popover bottom in"
-      style="display: none; top: 35px; left: 418px; z-index: 9999;"
+      style="display: none; top: 30px; left: 369px; z-index: 9999;"
       data-setup="showable"
       data-showable='{
         "id":"welcome",
