@@ -784,63 +784,63 @@
             >Show Shortcut Help.</td>
           </tr>
           <tr>
-            <th>[N]</th>
+            <th>[n]</th>
             <td
               data-setup="localize"
               data-text-ja="新しいタスクを作成"
             >New Task.</td>
           </tr>
           <tr>
-            <th>[Shift-N]</th>
+            <th>[shift-n]</th>
             <td
               data-setup="localize"
               data-text-ja="新しいサブタスクを作成"
             >New Sub Task.</td>
           </tr>
           <tr>
-            <th>[ESC]</th>
+            <th>[esc]</th>
             <td
               data-setup="localize"
               data-text-ja="ダイアログを閉じる"
             >Close Some Dialog.</td>
           </tr>
           <tr>
-            <th>[J or Down]</th>
+            <th>[j or down]</th>
             <td
               data-setup="localize"
               data-text-ja="次のタスクを選択"
             >Select Next Task.</td>
           </tr>
           <tr>
-            <th>[K or Up]</th>
+            <th>[k or up]</th>
             <td
               data-setup="localize"
               data-text-ja="前のタスクを選択"
             >Select Previous Task.</td>
           </tr>
           <tr>
-            <th>[H or Right] / [L or Left]</th>
+            <th>[h or right] / [l or left]</th>
             <td
               data-setup="localize"
               data-text-ja="期日を１日延長 / 短縮"
             >Due +/- 1 day.</td>
           </tr>
           <tr>
-            <th>[Space]</th>
+            <th>[space]</th>
             <td
               data-setup="localize"
               data-text-ja="タスクの状態を進める"
             >Progress Status a Task.</td>
           </tr>
           <tr>
-            <th>[Enter]</th>
+            <th>[enter]</th>
             <td
               data-setup="localize"
               data-text-ja="タスクを閉じる"
             >Closed a Task.</td>
           </tr>
           <tr>
-            <th>[P]</th>
+            <th>[p]</th>
             <td
               data-setup="localize"
               data-text-ja="タスクを保留"
@@ -854,56 +854,56 @@
             >Check star a Task.</td>
           </tr>
           <tr>
-            <th>[E]</th>
+            <th>[e]</th>
             <td
               data-setup="localize"
               data-text-ja="タスクを編集"
             >Edit a Selected Task.</td>
           </tr>
           <tr>
-            <th>[T]</th>
+            <th>[t]</th>
             <td
               data-setup="localize"
               data-text-ja="[今日迄]で絞り込み"
             >Open Today.</td>
           </tr>
           <tr>
-            <th>[V]</th>
+            <th>[v]</th>
             <td
               data-setup="localize"
               data-text-ja="[確認待ち]で絞り込み"
             >Open Verify.</td>
           </tr>
           <tr>
-            <th>[R]</th>
+            <th>[r]</th>
             <td
               data-setup="localize"
               data-text-ja="[依頼中]で絞り込み"
             >Open Request.</td>
           </tr>
           <tr>
-            <th>[S]</th>
+            <th>[s]</th>
             <td
               data-setup="localize"
               data-text-ja="[スター]で絞り込み"
             >Open Star.</td>
           </tr>
           <tr>
-            <th>[C]</th>
+            <th>[c]</th>
             <td
               data-setup="localize"
               data-text-ja="[完了済み]で絞り込み"
             >Open Closed.</td>
           </tr>
           <tr>
-            <th>[Shift-C]</th>
+            <th>[shift-c]</th>
             <td
               data-setup="localize"
               data-text-ja="完了済みをクリア"
             >Clear Closed Tasks in List.</td>
           </tr>
           <tr>
-            <th>[Shift-(Right / Left)]</th>
+            <th>[shift-(right / left)]</th>
             <td
               data-setup="localize"
               data-text-ja="メニュー切り替え"
