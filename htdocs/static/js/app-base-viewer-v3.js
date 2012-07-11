@@ -1275,50 +1275,6 @@ app.setup.rightColumn = function(ele){
         counter.text(400);
     });
 }
-// app.setup.memberCounter = function(ele){
-//     var count = 0;
-//     var condition = ele.data('counter-condition');
-//     app.addListener('registerTask', function(task){
-//         if (app.util.hasChildTask(task)) {
-//             count = 0;
-//             for (var task_id in app.data.task_map) {
-//                 if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
-//                     count++;
-//                 }
-//             }
-//             ele.text(count || '');
-//         } else {
-//             var before = (task.before && app.util.taskFilter(task.before, condition)) ? 1 : 0;
-//             var after = app.util.taskFilter(task, condition) ? 1 : 0;
-//             var add = after - before;
-//             if (add) {
-//                 count+= add;
-//                 ele.text(count || '');
-//             }
-//         }
-//     });
-//     app.addListener('checkMute', function(){
-//         count = 0;
-//         for (var task_id in app.data.task_map) {
-//             if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
-//                 count++;
-//             }
-//         }
-//         ele.text(count || '');
-//     });
-//     app.addListener('resetCounter', function(list){
-//         count = 0;
-//         for (var task_id in app.data.task_map) {
-//             if (app.util.taskFilter(app.data.task_map[task_id], condition)) {
-//                 count++;
-//             }
-//         }
-//         ele.text(count || '');
-//     });
-//     app.addListener('clear', function(){
-//         ele.text('');
-//     });
-// }
 
 app.setup.publicListWindow = function(ele){
     ele.find('input').each(function(){
@@ -2739,6 +2695,7 @@ app.submit.registerTask = function(form){
                     + 'px');
                 app.dom.show(twipsy);
                 form.find('select[name="requester"]').val(app.data.sign.account_id);
+                app.dom.autofocus(form);
             }
         } else {
             // 現在 ステータスコード 200 の例外ケースは無い

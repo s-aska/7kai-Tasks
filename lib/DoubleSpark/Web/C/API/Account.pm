@@ -106,6 +106,7 @@ sub me {
             next if exists $users->{ $account_id };
             my $account = $c->db->single('account', { account_id => $account_id });
             if ($account) {
+                $account->{data}->{icon}=~s|http://a|https://si| if $account->{data}->{icon}=m|^http://a\d+\.twimg\.com/|;
                 $users->{ $account_id } = {
                     name => $account->data->{name},
                     icon => $account->data->{icon}
