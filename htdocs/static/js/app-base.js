@@ -405,7 +405,7 @@ app.setup.ui = function(ele){
     }
 }
 app.setup.escclose = function(ele){
-    ele.keydown(function(e){
+    ele.on('keydown', function(e){
         if (e.keyCode === 27) {
             app.dom.hide(ele);
         }
