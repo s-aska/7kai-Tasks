@@ -20,3 +20,5 @@ src-ld*
 blib
 app.pid
 htdocs/static/viewer
+design
+.dropbox

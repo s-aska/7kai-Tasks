@@ -71,12 +71,12 @@ __PACKAGE__->add_trigger(
 
         return if $c->req->path eq '/';
         return if $c->req->path eq '/v2';
-        return if $c->req->path =~m|^/join/|;
-        return if $c->req->path =~m|^/signin|;
+        return if $c->req->path =~ m|^/join/|;
+        return if $c->req->path =~ m|^/signin|;
         return if $c->req->path eq '/signout';
         return if $c->req->path eq '/token';
-        return if $c->req->path =~m|^/api/1/proxy/|;
-        return if $c->req->path =~m|^/public/|;
+        return if $c->req->path =~ m|^/api/1/proxy/|;
+        return if $c->req->path =~ m|^/public/|;
         return if $c->req->path eq '/manual';
 
         unless ($c->sign) {

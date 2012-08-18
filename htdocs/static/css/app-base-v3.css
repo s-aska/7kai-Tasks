@@ -5,14 +5,7 @@
 *****************************************************/
 
 /********** icon **********/
-.icon {
-    width: 16px;
-    height: 16px;
-    background-repeat: no-repeat;
-}
-span.icon {
-    display: inline-block;
-}
+
 .icon-tasks {
     background-image: url(/static/img/tasks.png);
 }
@@ -27,6 +20,46 @@ span.icon {
 }
 .icon-keyboard {
     background-image: url(/static/img/keyboard.png);
+}
+
+/* HD / Retina -------------------------*/
+@media only screen and (-webkit-min-device-pixel-ratio:1.5), only screen and (min--moz-device-pixel-ratio:1.5), only screen and (min-device-pixel-ratio:1.5), only screen and (min-resolution:200dpi) {
+    [class^="icon-"], [class*=" icon-"] {
+        background-image: url("../img/glyphicons-halflings@2x.png");
+        background-size: 469px 159px;
+    }
+    .icon-white {
+        background-image: url("../img/glyphicons-halflings-white@2x.png");
+    }
+    .icon-tasks {
+        background-image: url(/static/img/tasks@2x.png);
+        background-size: 16px 16px;
+    }
+    .icon-tasks-half {
+        background-image: url(/static/img/tasks_half@2x.png);
+        background-size: 16px 16px;
+    }
+    .icon-tasks-off {
+        background-image: url(/static/img/tasks_off@2x.png);
+        background-size: 16px 16px;
+    }
+    .icon-keyboard {
+        background-image: url(/static/img/keyboard@2x.png);
+        background-size: 16px 16px;
+    }
+    .icon-grip {
+        background-image: url(/static/img/grip@2x.png);
+        background-size: 16px 16px;
+    }
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+}
+span.icon {
+    display: inline-block;
 }
 .icon-gray {
     opacity: 0.3;

@@ -19,7 +19,7 @@
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-      <span class="logo"><img src="/static/img/logo-32.png"></span>
+      <span class="logo"><img src="/static/img/logo-gray-64.png" width="32" height="32"></span>
       <ul class="nav">
         <li class="active">
           <a
