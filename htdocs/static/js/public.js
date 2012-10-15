@@ -22,7 +22,7 @@ var app = ns.app = {
     },
     // Utility
     util: {},
-    
+
     loading: {},
     // API Call
     api: {},
@@ -261,12 +261,12 @@ app.setup.tasks = function(tbody){
                     .text('-')
                     .data('sort', '0');
             }
-            
+
             var created = new Date(task.created_on);
             tr.find('.created')
                 .text(app.date.ymdhm(created))
                 .data('sort', created.getTime().toString());
-            
+
             var fixed = null;
             if (task.status === 2) {
                 for (var ii = 0, max_ii = task.actions.length; ii < max_ii; ii++) {
@@ -276,7 +276,7 @@ app.setup.tasks = function(tbody){
                     }
                 }
             }
-            
+
             if (fixed) {
                 tr.find('.fixed')
                     .text(app.date.ymdhm(fixed))
@@ -286,7 +286,7 @@ app.setup.tasks = function(tbody){
                     .text('-')
                     .data('sort', '0');
             }
-            
+
             var progress = task.closed       ? 'closed'
                          : task.status === 0 ? 'open'
                          : task.status === 1 ? 'progress'
@@ -303,6 +303,9 @@ app.setup.tasks = function(tbody){
                 var sort = '';
                 for (var ii = 0, max_ii = task.assign.length; ii < max_ii; ii++) {
                     var account_id = task.assign[ii];
+                    if (!(account_id in users)) {
+                        continue;
+                    }
                     var user = users[account_id];
                     var li = $(li_template);
                     li.find('img').attr('src', user.icon);
