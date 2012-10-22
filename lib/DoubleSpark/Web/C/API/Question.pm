@@ -30,14 +30,13 @@ sub create {
     );
     return $c->res_403() unless $res;
 
-    my $question  = $c->req->param('question');
-    my $anonymous = $c->req->param('anonymous');
+    my $question = $c->req->param('question');
 
     $c->db->insert('question', {
         account_id => $c->sign_id,
         question   => $question,
         lang       => 'ja',
-        is_public  => 0,
+        is_public  => 1,
         data       => {
             star => {}
         },

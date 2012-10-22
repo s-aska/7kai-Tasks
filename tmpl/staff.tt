@@ -71,17 +71,12 @@
             <textarea
               style="width: 570px; margin-bottom: 10px;"
               name="request"
+              required="required"
+              maxlength="10000"
               data-setup="zoom"
             ></textarea>
           </div>
           <div class="clearfix">
-            <label style="position: absolute">
-              <input type="checkbox" name="anonymous" value="1">
-              <span
-                data-setup="localize"
-                data-text-ja="匿名"
-              >anonymous</span>
-            </label>
             <button
               class="btn primary right"
               data-setup="localize"
@@ -123,6 +118,8 @@
             <textarea
               style="width: 570px; margin-bottom: 10px;"
               name="question"
+              required="required"
+              maxlength="10000"
               data-setup="zoom"
             ></textarea>
           </div>

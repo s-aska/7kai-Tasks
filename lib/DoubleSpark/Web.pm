@@ -7,7 +7,7 @@ use DoubleSpark::Validator;
 use DoubleSpark::Validator::Query;
 use Encode qw/encode_utf8 decode_utf8/;
 use Log::Minimal;
-use JSON qw/encode_json/;
+use JSON::XS qw/encode_json/;
 
 # load all controller classes
 use Module::Find ();

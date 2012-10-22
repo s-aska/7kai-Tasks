@@ -78,7 +78,7 @@ app.setup.requests = function(ul){
             li.find('article > p').html(
                 app.util.autolink(request.response).replace(/\r?\n/g, '<br />'));
             li.find('.label').text(request.label_name);
-            
+
             li.find('.stars').empty();
             var stared = false;
             for (var star in request.data.star) {
@@ -141,7 +141,7 @@ app.setup.questions = function(ul){
                 app.util.autolink(question.question).replace(/\r?\n/g, '<br />'));
             li.find('article > p').html(
                 app.util.autolink(question.answer).replace(/\r?\n/g, '<br />'));
-            
+
             li.find('header').empty();
             var stared = false;
             for (var star in question.data.star) {
@@ -242,7 +242,7 @@ app.setup.statistics = function(ele){
             { label: "Google",   data: Number(stat.google_accounts)}
         ], {
             series: {
-    			pie: { 
+    			pie: {
     				show: true,
     				radius: 1,
     				label: {
@@ -273,6 +273,7 @@ app.submit.request = function(form){
             app.fireEvent('notice', 'request_create');
             form.get(0).reset();
             form.find('textarea').trigger('blur');
+            app.api.loadRequests();
         }
     });
 }
@@ -288,6 +289,7 @@ app.submit.question = function(form){
             app.fireEvent('notice', 'question_create');
             form.get(0).reset();
             form.find('textarea').trigger('blur');
+            app.api.loadQuestions();
         }
     });
 }

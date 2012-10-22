@@ -8,14 +8,8 @@ use 5.008001;
 use DoubleSpark::DB;
 use Facebook::Graph;
 use JSON::XS;
-use Log::Minimal;
 use Net::Twitter::Lite;
 use Path::Class;
-use Scope::Container;
-use Sub::Retry;
-use Teng;
-use Teng::Schema::Loader;
-use Time::HiRes;
 
 __PACKAGE__->load_plugin(qw/Web::JSON/);
 
@@ -26,27 +20,9 @@ sub db {
     unless ( defined $c->{db} ) {
         my $conf = $c->config->{DB}
           or die "missing configuration for 'DB'";
-        my $dbh = DBI->connect(@$conf);
-        my $schema = Teng::Schema::Loader->load(
-            namespace => 'DoubleSpark::DB',
-            dbh       => $dbh,
-        );
-        for my $table (values %{ $schema->tables }) {
-            next unless grep /^data$/, @{ $table->columns };
-            $table->add_inflator('data', sub {
-                $_[0] ? decode_json(shift) : {}
-            });
-            $table->add_deflator('data', sub {
-                encode_json(shift)
-            });
-        }
-        $schema
-            ->get_table('email_account')
-            ->add_inflator('password_saltedhash', sub { '********' });
-        $c->{db} = DoubleSpark::DB->new(
-            dbh    => $dbh,
-            schema => $schema,
-        );
+        my $dbh = DBI->connect(@$conf) or die "con't connect db.";
+        my $db = DoubleSpark::DB->new( dbh => $dbh );
+        $c->{db} = $db;
     }
     return $c->{db};
 }
