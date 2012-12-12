@@ -433,6 +433,7 @@ app.util.buildMe = function(option, data){
     app.data.sub_accounts = data.sub_accounts;
     app.data.users = data.users;
     app.data.if_modified_lists = data.list_ids;
+    app.data.holidays = data.holidays;
 
     app.fireEvent('receiveSign', app.data.sign);
 
@@ -1407,7 +1408,7 @@ app.setup.tasksheet = function(ul){
                 li.find('> ul.tasks').hide();
                 li.addClass('task-collapse');
             }
-            
+
         } else {
             folder.data('closed', false);
             folder.removeClass('icon-folder-close').addClass('icon-folder-open');

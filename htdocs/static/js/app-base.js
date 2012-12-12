@@ -26,6 +26,7 @@ $.extend(app, {
         task_map: {},
         taskli_map: {},
         sub_accounts: [],
+        holidays: {},
         messages: null,
         animation: true
     },

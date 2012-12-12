@@ -59,14 +59,23 @@ app.setup.ganttchartSheet = function(ele){
             } else if (date.getDay() === 0 || date.getDay() === 6) {
                 day.addClass('holiday');
             }
+            var holiday = app.date.is_holiday(date);
+            if (holiday) {
+                day.addClass('holiday');
+                var h2 = day.find('h2');
+                h2.data('text-ja', app.date.is_holiday(date));
+                app.setup.tooltip(h2);
+            }
             date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
             day_array.push(day);
         }
         ele.append($(blank));
     });
 
-    app.fireEvent('initGanttchart',
-        new Date(now.getFullYear(), now.getMonth(), now.getDate()));
+    app.addListener('receiveSign', function(){
+        app.fireEvent('initGanttchart',
+            new Date(now.getFullYear(), now.getMonth(), now.getDate()));
+    });
 
     app.addListener('selectDay', function(e){
         for (var i = 0, max_i = day_array.length; i < max_i; i++) {
@@ -114,7 +123,7 @@ app.setup.ganttchartListsV3 = function(ul){
                 li.find('> ul.tasks').hide();
                 li.addClass('task-collapse');
             }
-            
+
         } else {
             folder.data('closed', false);
             folder.removeClass('icon-folder-close').addClass('icon-folder-open');

@@ -24,7 +24,7 @@ var app = ns.app = {
     WEEK_NAMES_JA: [
         '日', '月', '火', '水', '木', '金', '土'
     ],
-    
+
     // Environment
     env: {
         token: '',
@@ -113,8 +113,8 @@ app.func.debounce = function(f, threshold){
 
     	timeout = setTimeout(function(){
     		f.apply(self, args);
-    		timeout = null; 
-    	}, threshold || 100); 
+    		timeout = null;
+    	}, threshold || 100);
     };
 }
 app.date.parse = function(str){
@@ -169,6 +169,15 @@ app.date.ymd = function(date){
 }
 app.date.mdy = function(date){
     return (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+}
+app.date.is_holiday = function(date){
+    if (app.env.lang === 'ja') {
+        var ymd = app.date.ymd(date);
+        if (ymd in app.data.holidays) {
+            return app.data.holidays[ymd];
+        }
+    }
+    return false;
 }
 app.dom.text = function(ele, key){
     if (key) {

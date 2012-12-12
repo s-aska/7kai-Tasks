@@ -1,6 +1,7 @@
 package DoubleSpark::Web::C::API::Account;
 use strict;
 use warnings;
+use Calendar::Japanese::Holiday;
 use Digest::MD5 qw(md5_hex);
 use DoubleSpark::API::Account;
 use DoubleSpark::API::Comment;
@@ -137,6 +138,21 @@ sub me {
         }
     }
 
+    my $holidays = {};
+    my $time = time - (60 * 60 * 24 * 180);
+    for my $i (1..12) {
+        my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
+            localtime($time);
+        $year += 1900;
+        $mon++;
+        my $days = getHolidays($year, $mon, 1);
+        for my $day (keys %$days) {
+            my $date = sprintf('%04d-%02d-%02d', $year, $mon, $day);
+            $holidays->{ $date } = $days->{ $day };
+        }
+        $time += (60 * 60 * 24 * Calendar::Japanese::Holiday::days_in_month($year, $mon));
+    }
+
     $c->render_json({
         success      => 1,
         sign         => $c->sign,
@@ -148,7 +164,8 @@ sub me {
         sub_accounts => \@sub_accounts,
         lists        => \@lists,
         list_ids     => $list_ids,
-        users        => $users
+        users        => $users,
+        holidays     => $holidays,
     });
 }
 
