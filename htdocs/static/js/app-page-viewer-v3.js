@@ -56,7 +56,7 @@ app.setup.settingsWindow = function(ele){
             li.appendTo(ul);
         }
         li_cache[sub_account.code] = li;
-        
+
         var iconli = $(icon_template);
         iconli.find('img').attr('src', app.util.getIconUrl(sub_account.code));
         iconli.find('span').text(sub_account.name);
@@ -66,6 +66,10 @@ app.setup.settingsWindow = function(ele){
         } else {
             iconli.appendTo(icon_ul);
         }
+        var url = /^tw-[0-9]+$/.test(sub_account.code) ? 'https://twitter.com/settings/profile'
+                : /^fb-[0-9]+$/.test(sub_account.code) ? 'https://www.facebook.com/me'
+                : app.env.lang === 'ja' ? 'https://ja.gravatar.com/' : 'https://gravatar.com/';
+        iconli.find('a').attr('href', url);
         iconli_cache[sub_account.code] = iconli;
     });
     app.addListener('clear', function(){
@@ -128,6 +132,9 @@ app.click.addTwitter = function(){
 }
 app.click.addFacebook = function(){
     $('#add-facebook').submit();
+}
+app.click.addGoogle = function(){
+    $('#add-google').submit();
 }
 app.click.openMini = function(ele){
     window.open(

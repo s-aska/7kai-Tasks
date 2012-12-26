@@ -1264,15 +1264,15 @@
             <ul class="tasks unstyled">
               <li class="clearfix">
                 <div
-                  class="left icon icon-tasks-off" 
+                  class="left icon icon-tasks-off"
                   data-setup="status"
                 ></div>
                 <div
-                  class="left icon" 
+                  class="left icon"
                   data-setup="star"
                 ><i class="icon-star"></i></div>
                 <div
-                  class="left name" 
+                  class="left name"
                   data-setup="name"
                 >牛乳を買う</div>
                 <div
@@ -1733,7 +1733,7 @@
             >
           </div>
           <div class="week left" style="color: gray; padding: 6px 0 0 6px; width: 24px; text-align: center;">
-            
+
           </div>
           <div class="due-control left">
             <a class="btn x-small due-minus"><i class="icon-minus"></i></a>
@@ -1838,7 +1838,10 @@
         data-text-ja="アイコン"
       >Icon</label>
       <ul class="unstyled ui-icons">
-        <li class="clearfix"><label><input type="radio" name="icon" value=""><img><span></span></label></li>
+        <li class="clearfix">
+          <label><input type="radio" name="icon" value=""><img><span></span></label>
+          <a target="_blank" style="margin-left:10px">change</a>
+        </li>
       </ul>
       <button
         class="btn btn-primary"
@@ -1863,12 +1866,19 @@
             data-click="addTwitter"
           >Connect with Twitter</a>
         </li>
-        <li>
+        <li style="margin-bottom: 10px;">
           <a
             class="btn"
             data-setup="click"
             data-click="addFacebook"
           >Connect with Facebook</a>
+        </li>
+        <li>
+          <a
+            class="btn"
+            data-setup="click"
+            data-click="addGoogle"
+          >Connect with Google ( OpenID )</a>
         </li>
       </ul>
       <h3
@@ -2333,6 +2343,9 @@
   <input type="hidden" name="mode" value="add">
 </form>
 <form id="add-facebook" method="post" action="/signin/facebook/signin">
+  <input type="hidden" name="mode" value="add">
+</form>
+<form id="add-google" method="post" action="/signin/google/signin">
   <input type="hidden" name="mode" value="add">
 </form>
 <div
