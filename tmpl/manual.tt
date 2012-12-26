@@ -660,6 +660,26 @@
           Please register if all else fails also.
         </p>
       </li>
+      <li>
+        <blockquote
+          data-setup="localize"
+          data-text-ja="タスクの通知を受信することは出来ますか？"
+        >
+          Is there anyway to show notification (e.g gmail's new mail is in bold or with updated marks/icon) on the task when there is updates / changes made to the task?
+        </blockquote>
+        <p>
+          <span
+            data-setup="localize"
+            data-text-ja="7kai Tasks Checker ( Chrome Extensions ) をお薦めしています。"
+          >Is recommended 7kai Tasks Checker. ( Chrome Extensions )</span><br>
+          <a href="https://chrome.google.com/webstore/detail/7kai-tasks-checker/dolhpjcchfcnkcanamhgcgbnmcogdank" target="_blank">7kai Tasks Checker</a><br>
+          <br>
+          <span
+            data-setup="localize"
+            data-text-ja="また、リストを「公開」するとRSSを受信する事ができます。"
+          >When you publish a list, RSS can be obtained.</span>
+        </p>
+      </li>
     </ul>
   </section>
 </div>
