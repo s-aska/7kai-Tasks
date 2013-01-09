@@ -6,6 +6,10 @@ MANIFEST
 *.key
 *.secret
 *.crt
+.carton
+MYMETA.*
+pm_to_blib
+native
 nytprof.out
 nytprof/
 development.db
@@ -22,3 +26,5 @@ app.pid
 htdocs/static/viewer
 design
 .dropbox
+7kai-tasks-checker-for-clone
+script/ope
