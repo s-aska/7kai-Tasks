@@ -1,3 +1,6 @@
+html, body {
+    background-color: #F7F7F6;
+}
 h1, h2, ul, li, p {
     margin: 0;
     padding: 0;
@@ -31,30 +34,33 @@ ul {
     cursor: pointer;
 }
 #popup-page h2 {
-    font-size: 20px;
-    margin: 0 0 6px 0;
+    font-size: 18px;
+    margin: 3px 0 4px 0;
     padding: 0;
 }
 #popup-page article ul {
-    margin: 0 0 0 10px;
+    margin: 0 0 0 0;
     padding: 0;
 }
 #popup-page article li {
     font-size: 11px;
     margin: 0 0 4px 0;
-    padding: 0 0 2px 0;
-    line-height: 1;
+    padding: 8px 0;
+    line-height: 1.4;
     cursor: pointer;
     font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+    margin: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
 }
 #popup-page article li:hover {
-    background-color: #fcea6c;
+    background-color: #fefecc;
 }
 #popup-page article li > img {
     display: block;
     position: absolute;
     width: 32px;
     height: 32px;
+    border-radius: 4px;
 }
 #popup-page article li img.feeling {
     width: 12px;
@@ -72,22 +78,44 @@ ul {
     color: #1E57FF;
 }
 #popup-page article li span.action {
-    margin-left: 4px;
     color: #333333;
+    margin-bottom: 4px;
+    padding: 1px 2px 1px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 14px;
+    color: white;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    white-space: nowrap;
+    vertical-align: baseline;
+    background-color: #999;
+
+}
+#popup-page article li span.action.close-task {
+    background-color: #0064CD;
+}
+#popup-page article li span.action.fix-task {
+    background-color: #468847;
+}
+#popup-page article li span.action.reopen-task {
+    background-color: #B94A48;
 }
 #popup-page article li span.list {
-    font-weight: bold;
-    color: #1E57FF;
+    color: #3A87AD;
+}
+#popup-page article li span.task {
+    /*font-weight: bold;*/
+    font-size: 12px;
 }
 #popup-page article li span.date {
     color: gray;
     font-size: 10px;
 }
 #popup-page article li span.message {
-    margin-bottom: 4px;
-    font-size: 12px;
+/*    font-size: 12px;
     line-height: 16px;
-    word-wrap: break-word;
+*/    word-wrap: break-word;
 }
 #digest {
     display: none;

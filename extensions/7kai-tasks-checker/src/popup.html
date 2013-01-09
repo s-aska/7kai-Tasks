@@ -17,20 +17,26 @@ $(document).ready(function() {
 <nav>
 <ul>
 <li
-  data-setup="click"
+  data-setup="click,localize"
   data-click="openSite"
+  data-text-ja="7kai Tasks へ"
 >Open Tasks (full)</li>
 <li
-  data-setup="click"
+  data-setup="click,localize"
   data-click="openSiteMini"
+  data-text-ja="7kai Tasks ミニウィンドウを開く"
 >Open Tasks (mini)</li>
 <li
-  data-setup="click"
+  data-setup="click,localize"
   data-click="openOption"
+  data-text-ja="通知設定"
 >Options</li>
 </ul>
 </nav>
-<h2>Notifications</h2>
+<h2
+  data-setup="localize"
+  data-text-ja="通知"
+>Notifications</h2>
 <article>
 <ul class="actions">
 <li
@@ -43,7 +49,9 @@ $(document).ready(function() {
     <span class="list"></span>
     <span class="action"></span>
     <br>
+    <span class="task"></span>
     <span class="message"></span>
+    <br>
     <span class="date"></span>
     <span class="name"></span>
   </div>
