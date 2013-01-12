@@ -319,7 +319,7 @@
       data-text-ja="1-4. ガントチャート"
     >1-4. Gantt Chart</h3>
 
-    <div class="thumbnail"><img src="/static/img/manual-gantt.png"></div>
+    <div class="thumbnail"><img src="/static/img/manual-gantt-v2.png"></div>
 
     <ol>
       <li
@@ -330,6 +330,14 @@
         data-setup="localize"
         data-text-ja="クリックで期日を指定"
       >A due date is appointed by a click.</li>
+      <li
+        data-setup="localize"
+        data-text-ja="バーをドラッグし期日変更"
+      >Click and drag the bar to change the due date of the task.</li>
+      <li
+        data-setup="localize"
+        data-text-ja="バー右端をドラッグし所要日数を変更"
+      >Click and drag the right edge to change the due date and duration of the task.</li>
     </ol>
 
     <hr>
