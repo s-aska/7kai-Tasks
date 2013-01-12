@@ -1711,33 +1711,57 @@
             <input class="span4" type="text" name="name" value="" required maxlength="50" data-autofocus="true">
           </div>
         </div>
-        <div class="clearfix control-group">
-          <label for="">
-            <span
-              data-setup="localize"
-              data-text-ja="期日"
-            >Due</span>&nbsp;
-            <span
-              style="color: gray; font-size: 0.8em;"
-              data-setup="localize"
-              data-text-ja="(YYYY-MM-DD or 今日/明日/来週)"
-            >(YYYY-MM-DD or "today" or "tomorrow" or "next week")</span>
-          </label>
-          <div class="input left">
-            <input
-              type="date"
-              name="due"
-              value=""
-              pattern="^\d{4}-\d{1,2}-\d{1,2}$"
-              style="width: 80px"
-            >
-          </div>
-          <div class="week left" style="color: gray; padding: 6px 0 0 6px; width: 24px; text-align: center;">
+        <div class="clearfix">
+          <div class="left">
+            <div class="clearfix control-group">
+              <label for="">
+                <span
+                  data-setup="localize"
+                  data-text-ja="期日"
+                >Due</span>&nbsp;
+                <span
+                  style="color: gray; font-size: 0.8em;"
+                  data-setup="localize"
+                  data-text-ja="(YYYY-MM-DD)"
+                >(YYYY-MM-DD)</span>
+              </label>
+              <div class="input left">
+                <input
+                  type="date"
+                  name="due"
+                  value=""
+                  pattern="^\d{4}-\d{1,2}-\d{1,2}$"
+                  style="width: 84px"
+                >
+              </div>
+              <div class="week left" style="color: gray; padding: 6px 0 0 6px; width: 24px; text-align: center;">
 
+              </div>
+              <div class="due-control left">
+                <a class="btn x-small due-minus"><i class="icon-minus"></i></a>
+                <a class="btn x-small due-plus"><i class="icon-plus"></i></a>
+              </div>
+            </div>
           </div>
-          <div class="due-control left">
-            <a class="btn x-small due-minus"><i class="icon-minus"></i></a>
-            <a class="btn x-small due-plus"><i class="icon-plus"></i></a>
+          <div class="left" style="margin-left:10px">
+            <div class="clearfix control-group">
+              <label for="">
+                <span
+                  data-setup="localize"
+                  data-text-ja="所要日数"
+                >Day of duration</span>&nbsp;
+              </label>
+              <div class="input">
+                <input
+                  type="number"
+                  name="duration"
+                  value=""
+                  min="0"
+                  max="255"
+                  style="width: 80px"
+                >
+              </div>
+            </div>
           </div>
         </div>
         <div class="clearfix team">
@@ -1854,48 +1878,54 @@
       data-setup="tab.content"
       data-tab='{"id":"account","group":"settings"}'
     >
-      <h3
-      data-setup="localize"
-      data-text-ja="アカウント追加"
-      >Add Account</h3>
-      <ul class="unstyled">
-        <li style="margin-bottom: 10px;">
-          <a
-            class="btn"
-            data-setup="click"
-            data-click="addTwitter"
-          >Connect with Twitter</a>
-        </li>
-        <li style="margin-bottom: 10px;">
-          <a
-            class="btn"
-            data-setup="click"
-            data-click="addFacebook"
-          >Connect with Facebook</a>
-        </li>
-        <li>
-          <a
-            class="btn"
-            data-setup="click"
-            data-click="addGoogle"
-          >Connect with Google ( OpenID )</a>
-        </li>
-      </ul>
-      <h3
-        data-setup="localize"
-        data-text-ja="アカウント削除"
-      >Delete Account</h3>
-      <ul class="unstyled accounts">
-        <li style="margin-bottom: 10px;">
-          <img class="sq24" style="vertical-align: middle;">
-          <span class="name"></span>
-          <button
-            class="btn btn-danger"
-            data-setup="localize"
-            data-text-ja="削除"
-          >Delete</button>
-        </li>
-      </ul>
+      <div class="pull-left">
+        <h3
+          style="margin-bottom: 10px;"
+          data-setup="localize"
+          data-text-ja="アカウント追加"
+        >Add Account</h3>
+        <ul class="unstyled">
+          <li style="margin-bottom: 10px;">
+            <a
+              class="btn"
+              data-setup="click"
+              data-click="addTwitter"
+            >Connect with Twitter</a>
+          </li>
+          <li style="margin-bottom: 10px;">
+            <a
+              class="btn"
+              data-setup="click"
+              data-click="addFacebook"
+            >Connect with Facebook</a>
+          </li>
+          <li>
+            <a
+              class="btn"
+              data-setup="click"
+              data-click="addGoogle"
+            >Connect with Google ( OpenID )</a>
+          </li>
+        </ul>
+      </div>
+      <div class="pull-left" style="margin-left:20px">
+        <h3
+          style="margin-bottom: 10px;"
+          data-setup="localize"
+          data-text-ja="アカウント削除"
+        >Delete Account</h3>
+        <ul class="unstyled accounts">
+          <li style="margin-bottom: 10px;">
+            <img class="sq24" style="vertical-align: middle;">
+            <span class="name"></span>
+            <button
+              class="btn btn-danger"
+              data-setup="localize"
+              data-text-ja="削除"
+            >Delete</button>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
   <div class="modal-footer">

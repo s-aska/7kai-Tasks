@@ -21,6 +21,7 @@ sub create {
     my $requester  = $req->param('requester') || $c->sign_id;
     my @assign     = $req->param('assign');
     my $due        = $c->stash->{date_loose};
+    my $duration   = int($req->param('duration'));
     my $list       = $c->stash->{list};
     my $time       = int(Time::HiRes::time * 1000);
     my $task_id    = $req->param('task_id') ||
@@ -40,6 +41,7 @@ sub create {
         assign => \@assign,
         name => $name,
         due => $due,
+        duration => $duration,
         status => 0,
         closed => 0,
         pending => 0,
@@ -77,7 +79,7 @@ sub update {
     for my $task (@{ $list->data->{tasks} }) {
         next if $task->{id} ne $task_id;
 
-        my @keys = qw(status closed pending name requester parent_id);
+        my @keys = qw(status closed pending name requester parent_id duration);
         for my $key (@keys) {
             my $val = $req->param($key);
             if (defined $val) {
@@ -113,6 +115,7 @@ sub update {
         if (defined $req->param('due') && !$c->stash->{date_loose}) {
             $task->{due} = '';
         }
+
         if ($action) {
             push @{$task->{actions}}, {
                 account_id => $c->sign_id,

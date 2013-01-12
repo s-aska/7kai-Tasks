@@ -522,14 +522,44 @@ ul.comments li span.name {
 }
 .gantttasks > ul > li > ul > li div.human img,
 .gantttasks > ul > li > ul > li div.human span {
+    position: relative;
 	opacity: 0.2;
 }
-.gantttasks > ul > li > ul > li div.human img:first-child {
+.gantttasks > ul > li > ul > li div.human img:first-child,
+.gantttasks > ul > li > ul > li div.human img:nth-child(2) {
 	opacity: 1;
 }
 .gantttasks > ul > li > ul > li div.due {
     position: absolute;
-    cursor: pointer;
+}
+.gantttasks > ul > li > ul > li div.due.draggable {
+    cursor: move;
+}
+.gantttasks > ul > li > ul > li div.back {
+    position: absolute;
+    border: 2px solid #9eca3d;
+    background-color: #edfcce;
+    height: 12px;
+    width: 100%;
+    border-radius: 3px;
+}
+.gantttasks > ul > li > ul > li div.handle {
+    position: absolute;
+    cursor: col-resize;
+    right: -6px;
+    width: 12px;
+    height: 16px;
+    z-index: 1;
+}
+body.move,
+body.move .gantttasks > ul > li > ul > li,
+body.move .gantttasks > ul > li > ul > li div.due {
+    cursor: move !important;
+}
+body.resize,
+body.resize .gantttasks > ul > li > ul > li,
+body.resize .gantttasks > ul > li > ul > li div.due {
+    cursor: col-resize !important;
 }
 
 /********** timeline **********/

@@ -223,6 +223,34 @@ app.setup.ganttchartListsV3 = function(ul){
 
     // ---
 
+    var set_due = function(bar, task, due){
+        var days = app.date.relativeDays(due, app.data.gantt.start);
+        if (task.duration > 1) {
+            days = days - task.duration + 1;
+        }
+        if (days > app.data.gantt.max_days) {
+            bar.css('left', ((app.data.gantt.max_days + 1) * 23) + 'px');
+            bar.find('.back, .handle').show();
+            bar.addClass('draggable');
+        } else if (days > -1) {
+            bar.css('left', ((days + 1) * 23) + 'px');
+            bar.find('.back, .handle').show();
+            bar.addClass('draggable');
+        } else {
+            bar.css('left', '0px');
+            bar.find('.back, .handle').hide();
+            bar.removeClass('draggable');
+        }
+    };
+
+    var set_duration = function(bar, task, duration){
+        if (duration > 1) {
+            bar.find('.back').css('width', (duration * 23) - 10 + 'px');
+        } else {
+            bar.find('.back').css('width', '12px');
+        }
+    };
+
     app.addListener('registerTask', function(task){
         var ul = listli_map[task.list.id].find('> ul:first');
         var li = $(task_template);
@@ -237,15 +265,118 @@ app.setup.ganttchartListsV3 = function(ul){
             li.addClass('pending');
         }
 
+        var dragmode = false;
         if (task.due) {
-            var days = app.date.relativeDays(task.due_date, app.data.gantt.start);
-            if (days > app.data.gantt.max_days) {
-                li.find('.due').css('left', ((app.data.gantt.max_days + 1) * 23) + 'px');
-            } else if (days > -1) {
-                li.find('.due').css('left', ((days + 1) * 23) + 'px');
-            }
+            var bar = li.find('.due');
+            var back = $('<div class="back"></div>')
+            var handle = $('<div class="handle"></div>');
+            var body = $('body');
+            bar.prepend(back.append(handle));
+            set_due(bar, task, task.due_date);
+            set_duration(bar, task, task.duration);
+            handle.mousedown(function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                dragmode  = true;
+                var x     = back.offset().left + back.width();
+                var diff  = 0;
+                var min   = 1 + ( task.duration || 1 ) * -1;
+                var max   = app.data.gantt.max_days - app.date.relativeDays(task.due_date, app.data.gantt.start) - 1;
+                body.addClass('resize');
+                $(d).off('mousemove.gantt-handle');
+                $(d).on('mousemove.gantt-handle', function(e){
+                    e.preventDefault();
+                    var move = e.pageX > x ? parseInt((e.pageX - x + 12) / 23) : Math.ceil((e.pageX - x) / 23);
+                    if (move === diff) {
+                        return;
+                    }
+                    if (move > max) {
+                        return;
+                    }
+                    diff = move > min ? move : min;
+                    set_duration(bar, task, ( task.duration || 1 ) + diff);
+                });
+                $(d).off('mouseup.gantt-handle');
+                $(d).on('mouseup.gantt-handle', function(e){
+                    e.preventDefault();
+                    body.removeClass('resize');
+                    $(d).off('mousemove.gantt-handle');
+                    $(d).off('mouseup.gantt-handle');
+                    if (diff) {
+                        app.api.task.update({
+                            list_id: task.list.id,
+                            task_id: task.id,
+                            due: app.date.mdy(
+                                new Date(
+                                    task.due_date.getFullYear()
+                                    , task.due_date.getMonth()
+                                    , task.due_date.getDate() + diff
+                                )
+                            ),
+                            duration: ( task.duration || 1 ) + diff
+                        });
+                    }
+                    dragmode = false;
+                });
+            });
+            bar.mousedown(function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                if (! bar.hasClass('draggable')) {
+                    return;
+                }
+                dragmode  = true;
+                var x     = e.pageX;
+                var diff  = 0;
+                var days  = app.date.relativeDays(task.due_date, app.data.gantt.start);
+                body.addClass('move');
+                $(d).off('mousemove.gantt-handle');
+                $(d).on('mousemove.gantt-handle', function(e){
+                    e.preventDefault();
+                    var move = e.pageX > x ? parseInt((e.pageX - x) / 23) : Math.ceil((e.pageX - x) / 23);
+                    if (move === diff) {
+                        return;
+                    }
+                    if ((days + move) < 1) {
+                        return;
+                    }
+                    if ((days + move) > app.data.gantt.max_days) {
+                        return;
+                    }
+                    diff = move;
+                    set_due(bar, task, new Date(
+                        task.due_date.getFullYear()
+                        , task.due_date.getMonth()
+                        , task.due_date.getDate() + diff
+                    ));
+                });
+                $(d).off('mouseup.gantt-handle');
+                $(d).on('mouseup.gantt-handle', function(e){
+                    e.preventDefault();
+                    body.removeClass('move');
+                    $(d).off('mousemove.gantt-handle');
+                    $(d).off('mouseup.gantt-handle');
+                    if (diff) {
+                        app.api.task.update({
+                            list_id: task.list.id,
+                            task_id: task.id,
+                            due: app.date.mdy(
+                                new Date(
+                                    task.due_date.getFullYear()
+                                    , task.due_date.getMonth()
+                                    , task.due_date.getDate() + diff
+                                )
+                            )
+                        });
+                    }
+                    dragmode = false;
+                });
+            });
         }
         li.mousemove(function(e){
+            if (dragmode) {
+                return;
+            }
             app.fireEvent('selectDay', e);
         });
         li.click(function(e){
@@ -258,11 +389,15 @@ app.setup.ganttchartListsV3 = function(ul){
             var due = '';
             var x = e.offsetX - 240 + 2;
             if (x > 23) {
+                var diff = parseInt(x / 23, 10);
+                if (task.duration) {
+                    diff = diff + task.duration - 1;
+                }
                 due = app.date.mdy(
                     new Date(
                         app.data.gantt.start.getFullYear()
                         , app.data.gantt.start.getMonth()
-                        , app.data.gantt.start.getDate() + parseInt(x / 23, 10) - 1
+                        , app.data.gantt.start.getDate() + diff - 1
                     )
                 );
             }
@@ -358,6 +493,7 @@ app.setup.ganttchartListsV3 = function(ul){
                 var paddingLeft = parseInt(taskli_map[task.parent_id].css('paddingLeft'), 10);
                 li.css('paddingLeft', (paddingLeft + 18) + 'px');
             } else {
+                li.css('paddingLeft', '0px');
                 li.prependTo(ul);
             }
             if (app.util.taskFilter(task, app.data.current_filter)) {
@@ -506,15 +642,11 @@ app.setup.ganttchartListsV3 = function(ul){
         for (var task_id in app.data.task_map) {
             var task = app.data.task_map[task_id];
             var li = taskli_map[task_id];
+            if (task.duration) {
+                set_duration(li.find('.due'), task, task.duration);
+            }
             if (task.due) {
-                var days = app.date.relativeDays(task.due_date, start);
-                if (days > app.data.gantt.max_days) {
-                    li.find('.due').css('left', ((app.data.gantt.max_days + 1) * 23) + 'px');
-                } else if (days > -1) {
-                    li.find('.due').css('left', ((days + 1) * 23) + 'px');
-                } else {
-                    li.find('.due').css('left', '0px');
-                }
+                set_due(li.find('.due'), task, task.due_date);
             }
         }
     });

@@ -2375,6 +2375,7 @@ app.setup.registerTaskWindow = function(form){
     var assign_template = assign_list.html();
     var name_input = form.find('input[name=name]');
     var due_input = form.find('input[name=due]');
+    var duration_input = form.find('input[name=duration]');
     var requester_select = form.find('select[name=requester]');
     var task_id_input = form.find('input[name=task_id]');
     var list_id_input = form.find('input[name=list_id]');
@@ -2526,6 +2527,9 @@ app.setup.registerTaskWindow = function(form){
             due_input.val(app.date.ymd(task.due_date));
             due_check();
         }
+        if (task.duration) {
+            duration_input.val(task.duration);
+        }
         requester_select.val(task.requester);
         task_id_input.val(task.id);
         form.find('input[name=assign]').val(task.assign);
@@ -2662,6 +2666,7 @@ app.submit.registerTask = function(form){
         due = app.date.parse(due);
         due = app.date.mdy(due);
     }
+    var duration = form.find('input[name="duration"]').val();
     if (typeof assign !== 'object') {
         assign = assign ? [assign] : [];
     }
@@ -2717,6 +2722,7 @@ app.submit.registerTask = function(form){
                 assign: assign,
                 name: name,
                 due: due,
+                duration: duration,
                 status: 0,
                 closed: 0,
                 actions: [],
