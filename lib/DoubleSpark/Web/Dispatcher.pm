@@ -52,6 +52,8 @@ post '/api/1/task/move'   => 'API::Task#move';
 
 post '/api/1/comment/create' => 'API::Comment#create';
 post '/api/1/comment/delete' => 'API::Comment#delete';
+post '/api/1/comment/pin'    => 'API::Comment#pin';
+post '/api/1/comment/unpin'  => 'API::Comment#unpin';
 
 get  '/api/1/staff/stat' => 'API::Staff#stat';
 

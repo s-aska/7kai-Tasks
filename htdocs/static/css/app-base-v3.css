@@ -21,6 +21,11 @@
 .icon-keyboard {
     background-image: url(/static/img/keyboard.png);
 }
+.icon-pin {
+    background-image: url(/static/img/pin.png);
+    background-size: 16px 16px;
+    background-position: 0 0;
+}
 
 /* HD / Retina -------------------------*/
 @media only screen and (-webkit-min-device-pixel-ratio:1.5), only screen and (min--moz-device-pixel-ratio:1.5), only screen and (min-device-pixel-ratio:1.5), only screen and (min-resolution:200dpi) {
@@ -49,6 +54,10 @@
     }
     .icon-grip {
         background-image: url(/static/img/grip@2x.png);
+        background-size: 16px 16px;
+    }
+    .icon-pin {
+        background-image: url(/static/img/pin@2x.png);
         background-size: 16px 16px;
     }
 }

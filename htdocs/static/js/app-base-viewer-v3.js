@@ -1091,7 +1091,7 @@ app.setup.rightColumn = function(ele){
     var ul               = ele.find('ul.comments');
     var counter          = ele.find('.ui-counter');
     var template         = ul.html();
-
+    var pin_ul           = ele.find('.pins ul');
 
     // 初期化処理
     ul.empty();
@@ -1184,12 +1184,14 @@ app.setup.rightColumn = function(ele){
             }
         });
         ul.empty();
+        pin_ul.empty();
         var li = $(template);
         li.find('.icon:first').append(app.util.getIcon(task.registrant, 32));
         li.find('.icon:last').remove();
         li.find('.name').text(app.util.getName(task.registrant));
         li.find('.status').text(app.data.messages.data('text-create-task-' + app.env.lang));
         li.find('.message').remove();
+        li.find('.menu').remove();
         li.find('.date').text(app.date.relative(task.created_on));
         li.prependTo(ul);
         $.each(task.actions, function(i, comment){
@@ -1213,15 +1215,43 @@ app.setup.rightColumn = function(ele){
                     li.find('.status').addClass('label-important');
                 }
             }
-            if (!comment.message) {
+            if (! comment.message) {
                 li.find('.message').remove();
                 li.find('.icon:last').remove();
+                li.find('.menu').remove();
             } else {
                 if (comment.message === '[like]') {
                     li.find('.message').html('<i class="icon-heart"></i>');
                 } else {
-                    li.find('.message').html(
-                        app.util.autolink(comment.message).replace(/\r?\n/g, '<br />'));
+                    var html = app.util.autolink(comment.message).replace(/\r?\n/g, '<br />');
+                    li.find('.message').html(html);
+                    if (pin_ul && comment.is_pinned) {
+                        var pin_li = $('<li/>').html(html);
+                        var unpin = $('<a class="unpin"><i class="icon-remove"></i></a>').appendTo(pin_li);
+                        pin_li.prependTo(pin_ul);
+                        unpin.click(function(e){
+                            e.preventDefault();
+                            app.ajax({
+                                type: 'POST',
+                                url: '/api/1/comment/unpin',
+                                data: {
+                                    list_id: task.list.id,
+                                    task_id: task.id,
+                                    comment_id: comment.id
+                                },
+                                dataType: 'json'
+                            })
+                            .done(function(data){
+                                if (data.success === 1) {
+                                    pin_li.hide('fade', function(){
+                                        app.fireEvent('registerTask', data.task, task.list);
+                                    });
+                                } else {
+                                    // 現在 ステータスコード 200 の例外ケースは無い
+                                }
+                            });
+                        });
+                    }
                 }
                 li.find('.icon:last').click(function(){
                     app.ajax({
@@ -1244,6 +1274,35 @@ app.setup.rightColumn = function(ele){
                     });
                     return false;
                 });
+                var a = li.find('.menu a');
+                if (a) {
+                    var method = 'pin';
+                    if (comment.is_pinned) {
+                        a.text('Unpinned');
+                        method = 'unpin';
+                    }
+                    a.click(function(e){
+                        e.preventDefault();
+                        app.ajax({
+                            type: 'POST',
+                            url: '/api/1/comment/' + method,
+                            data: {
+                                list_id: task.list.id,
+                                task_id: task.id,
+                                comment_id: comment.id
+                            },
+                            dataType: 'json'
+                        })
+                        .done(function(data){
+                            if (data.success === 1) {
+                                // li.hide('fade');
+                                app.fireEvent('registerTask', data.task, task.list);
+                            } else {
+                                // 現在 ステータスコード 200 の例外ケースは無い
+                            }
+                        });
+                    });
+                }
             }
             li.find('.date').text(app.date.relative(comment.time));
             li.prependTo(ul);

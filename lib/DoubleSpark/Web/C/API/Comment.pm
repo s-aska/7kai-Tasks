@@ -23,4 +23,24 @@ sub delete {
     $c->render_json($res);
 }
 
+sub pin {
+    my ($class, $c) = @_;
+
+    my $res = DoubleSpark::API::Comment->pin($c, $c->req);
+
+    return $c->res_403() unless $res;
+
+    $c->render_json($res);
+}
+
+sub unpin {
+    my ($class, $c) = @_;
+
+    my $res = DoubleSpark::API::Comment->unpin($c, $c->req);
+
+    return $c->res_403() unless $res;
+
+    $c->render_json($res);
+}
+
 1;

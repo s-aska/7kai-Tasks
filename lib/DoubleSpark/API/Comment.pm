@@ -107,4 +107,82 @@ sub delete {
     };
 }
 
+sub pin {
+    my ($class, $c, $req) = @_;
+
+    # status closed message
+    my $res = DoubleSpark::Validator->validate($c, $req,
+        list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
+        task_id    => [qw/NOT_NULL/],
+        comment_id => [qw/NOT_NULL/],
+    );
+    return unless $res;
+
+    my $account    = $c->account;
+    my $list       = $c->stash->{list};
+    my $list_id    = $req->param('list_id');
+    my $task_id    = $req->param('task_id');
+    my $comment_id = $req->param('comment_id');
+
+    my $target_task;
+    for my $task (@{ $list->data->{tasks} }) {
+        next if $task->{id} ne $task_id;
+        for (@{$task->{actions}}) {
+            $_->{is_pinned}++ if ($_->{id} || '') eq $comment_id;
+        }
+        $target_task = $task;
+        last;
+    }
+
+    return unless $target_task;
+
+    $list->update({ data => $list->data, actioned_on => int(Time::HiRes::time * 1000) });
+
+    infof('[%s] comment pinned', $c->sign_name);
+
+    return {
+        success => 1,
+        task => $target_task,
+    };
+}
+
+sub unpin {
+    my ($class, $c, $req) = @_;
+
+    # status closed message
+    my $res = DoubleSpark::Validator->validate($c, $req,
+        list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
+        task_id    => [qw/NOT_NULL/],
+        comment_id => [qw/NOT_NULL/],
+    );
+    return unless $res;
+
+    my $account    = $c->account;
+    my $list       = $c->stash->{list};
+    my $list_id    = $req->param('list_id');
+    my $task_id    = $req->param('task_id');
+    my $comment_id = $req->param('comment_id');
+
+    my $target_task;
+    for my $task (@{ $list->data->{tasks} }) {
+        next if $task->{id} ne $task_id;
+        for (@{$task->{actions}}) {
+            delete $_->{is_pinned} if ($_->{id} || '') eq $comment_id;
+        }
+        $target_task = $task;
+        last;
+    }
+
+    return unless $target_task;
+
+    $list->update({ data => $list->data, actioned_on => int(Time::HiRes::time * 1000) });
+
+    infof('[%s] comment unpinned', $c->sign_name);
+
+    return {
+        success => 1,
+        task => $target_task,
+    };
+}
+
 1;

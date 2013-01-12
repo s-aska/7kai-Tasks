@@ -322,6 +322,25 @@ ul.tasks > li div.recent-comment .message span {
 }
 
 /********** comments **********/
+div.pins {
+    margin-bottom: 10px;
+}
+div.pins li {
+    position: relative;
+}
+div.pins li a.unpin {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+div.pins li:hover {
+    background-color: #ffffe5;
+}
+div.pins li:hover a.unpin {
+    display: block;
+}
+
 .ui-shortcutkeys th,
 .ui-shortcutkeys td {
     padding: 4px;
@@ -353,7 +372,7 @@ ul.comments {
     padding-right: 10px;
 }
 ul.comments li {
-    margin-bottom: 4px;
+    margin-bottom: 10px;
     min-height: 34px;
 }
 ul.comments li:last-child {
@@ -364,8 +383,18 @@ ul.comments li img {
     -moz-border-radius: 4px;
     border-radius: 4px;
 }
-ul.comments li .icon-cross {
+ul.comments li label {
+    font-size: 10px;
+}
+ul.comments li .icon-remove {
+    display: none;
     cursor: pointer;
+}
+ul.comments li:hover {
+    background-color: #ffffe5;
+}
+ul.comments li:hover .icon-remove {
+    display: block;
 }
 ul.comments li .message {
     color: #333;
@@ -381,9 +410,9 @@ ul.comments li .message {
     border-radius: 3px;
 }
 ul.comments li .footer {
-    margin-top: 2px;
-    line-height: 10px;
-    font-size: 10px;
+    margin-top: 4px;
+    line-height: 12px;
+    font-size: 12px;
 }
 ul.comments li span.name {
     display: inline-block;

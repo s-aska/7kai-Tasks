@@ -741,6 +741,10 @@
           <div class="ui-counter">400</div>
         </div>
       </form>
+      <div class="pins">
+        <div><i class="icon icon-pin"></i> Pins</div>
+        <ul></ul>
+      </div>
       <ul
         class="unstyled comments"
         data-setup="stretch"
@@ -752,7 +756,7 @@
           <div class="" style="margin-left: 40px;">
             <span class="status label"></span>
             <div class="message"></div>
-            <div class="footer"><span class="date"></span><span class="name"></span></div>
+            <div class="footer"><span class="menu"><a>Pin</a> - </span><span class="date"></span><span class="name"></span></div>
           </div>
         </li>
       </ul>
