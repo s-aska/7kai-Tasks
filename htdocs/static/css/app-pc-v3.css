@@ -325,6 +325,7 @@ ul.tasks > li .comment .message i.icon-heart {
 ul.tasks > li .comment .message span {
     display: inline-block;
     vertical-align: top;
+    padding-top: 3px;
     padding-left: 3px;
     overflow: hidden;
     text-overflow: ellipsis;
