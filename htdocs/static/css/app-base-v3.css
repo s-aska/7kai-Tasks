@@ -64,6 +64,13 @@
     .icon-pin-large,
     .icon-pin {
         background-image: url(/static/img/pin@2x.png);
+        background-position: 0 0;
+    }
+    .icon-pin {
+        background-size: 14px 14px;
+    }
+    .icon-pin-large {
+        background-size: 16px 16px;
     }
 }
 
