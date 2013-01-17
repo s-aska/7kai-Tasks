@@ -21,7 +21,7 @@ sub create {
     my $requester  = $req->param('requester') || $c->sign_id;
     my @assign     = $req->param('assign');
     my $due        = $c->stash->{date_loose};
-    my $duration   = int($req->param('duration'));
+    my $duration   = int($req->param('duration') || 0);
     my $list       = $c->stash->{list};
     my $time       = int(Time::HiRes::time * 1000);
     my $task_id    = $req->param('task_id') ||
