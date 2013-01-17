@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap.css">
-<link rel="stylesheet" href="/static/css/app-base-v3.css?54083d749c5a8df57c19d9a10b98178d1d73287e" media="all">
-<link rel="stylesheet" href="/static/css/app-pc-v3.css?54083d749c5a8df57c19d9a10b98178d1d73287e" media="all">
+<link rel="stylesheet" href="/static/css/app-base-v3.css?b4cc7474b58959b3bcaae18f55345816048a5483" media="all">
+<link rel="stylesheet" href="/static/css/app-pc-v3.css?b4cc7474b58959b3bcaae18f55345816048a5483" media="all">
 <script src="/static/js/jquery-1.7.1.min.js"></script>
 <script src="/static/js/jquery-ui-1.8.21.custom.min.js"></script>
 <script src="/static/js/h5utils.js"></script>
 <script src="/static/js/app-core.js"></script>
 <script src="/static/js/app-base.js"></script>
-<script src="/static/js/app-base-viewer-v3.js?54083d749c5a8df57c19d9a10b98178d1d73287e"></script>
-<script src="/static/js/app-page-viewer-v3.js?54083d749c5a8df57c19d9a10b98178d1d73287e"></script>
-<script src="/static/js/app-gantt-viewer-v3.js?54083d749c5a8df57c19d9a10b98178d1d73287e"></script>
+<script src="/static/js/app-base-viewer-v3.js?b4cc7474b58959b3bcaae18f55345816048a5483"></script>
+<script src="/static/js/app-page-viewer-v3.js?b4cc7474b58959b3bcaae18f55345816048a5483"></script>
+<script src="/static/js/app-gantt-viewer-v3.js?b4cc7474b58959b3bcaae18f55345816048a5483"></script>
 </head>
 <body>
 <div class="navbar navbar-fixed-top">

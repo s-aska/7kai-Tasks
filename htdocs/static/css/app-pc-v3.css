@@ -50,9 +50,9 @@ div.alert {
     margin-bottom: 1px;
     vertical-align: baseline;
 }
-.active .icon-tag {
+/*.active .icon-tag {
     background-image: url(../img/glyphicons-halflings.png);
-}
+}*/
 .ui-autocomplete {
     z-index: 1051 !important;
 }
