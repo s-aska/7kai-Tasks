@@ -316,6 +316,34 @@
     </div>
     <div
       class="btn-group ui-tags"
+      data-setup="tab.content,tags"
+      data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
+    >
+      <a
+        class="btn x-small disabled btn-icon"
+        data-setup="tooltip"
+        data-text-ja="表示切替"
+        data-text-en="Display switching"
+      >
+        <i class="icon-eye-open"></i>
+      </a>
+      <a
+        class="btn x-small active"
+        data-setup="displaySwitch,tooltip"
+        data-display="comment"
+        data-text-ja="最近のコメント（自分以外）"
+        data-text-en="Recent Comment"
+      ><i class="icon-comment"></i></a>
+      <a
+        class="btn x-small"
+        data-setup="displaySwitch,tooltip"
+        data-display="pin"
+        data-text-ja="ピンされたコメント"
+        data-text-en="Pinned Comments"
+      ><i class="icon-pin"></i></a>
+    </div>
+    <div
+      class="btn-group ui-tags"
       data-setup="tab.content,tags,tooltip"
       data-text-ja="選択した色のリストのみ表示 ... [1-4]"
       data-text-en="Display the list of same colors. ... [1-4]"
@@ -659,10 +687,16 @@
                 data-text-ja="期日"
                 data-text-en="Due"
               ></div>
-              <div class="recent-comment" data-setup="recent">
+              <div class="comment comment-recent" data-setup="recent">
                 <div class="icon"></div>
                 <div class="message"><i class="icon-comment"></i><span></span></div>
               </div>
+              <ul class="comment comment-pin unstyled" data-setup="pin">
+                <li class="clearfix">
+                  <div class="icon"></div>
+                  <div class="message"><i class="icon-pin"></i><span></span></div>
+                </li>
+              </ul>
             </li>
           </ul>
         </li>
@@ -742,7 +776,7 @@
         </div>
       </form>
       <div class="pins">
-        <div><i class="icon icon-pin"></i> Pins</div>
+        <div><i class="icon icon-pin-large"></i> Pins</div>
         <ul></ul>
       </div>
       <ul

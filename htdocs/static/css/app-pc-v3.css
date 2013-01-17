@@ -294,31 +294,43 @@ ul.tasks > li div.delete,
 ul.tasks > li div.pending {
     float: right;
 }
-ul.tasks > li div.recent-comment {
+ul.tasks > li .comment {
+    display: none;
     position: relative;
     clear: both;
     margin-left: 54px;
     font-size: 11px;
     color: gray;
 }
-ul.tasks > li div.recent-comment .icon {
+body.display-comment ul.tasks > li .comment-recent {
+    display: block;
+}
+body.display-pin ul.tasks > li .comment-pin {
+    display: block;
+}
+ul.tasks > li .comment .icon {
     position: absolute;
 }
-ul.tasks > li div.recent-comment .message {
+ul.tasks > li .comment .message {
     margin-left: 20px;
 }
-ul.tasks > li div.recent-comment .message i {
+ul.tasks > li .comment .message i {
     display: inline-block;
     vertical-align: top;
     margin-top: 2px;
 }
-ul.tasks > li div.recent-comment .message i.icon-heart {
+ul.tasks > li .comment .message i.icon-heart {
     margin-top: 1px;
 }
-ul.tasks > li div.recent-comment .message span {
+ul.tasks > li .comment .message span {
     display: inline-block;
     vertical-align: top;
     padding-left: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 12px;
+    width: 480px;
 }
 
 /********** comments **********/
@@ -327,6 +339,11 @@ div.pins {
 }
 div.pins li {
     position: relative;
+    padding-right: 20px;
+    font-size: 12px;
+    line-height: 14px;
+    word-wrap: break-word;
+    padding-bottom: 4px;
 }
 div.pins li a.unpin {
     display: none;
@@ -334,9 +351,9 @@ div.pins li a.unpin {
     top: 0;
     right: 0;
 }
-div.pins li:hover {
+/*div.pins li:hover {
     background-color: #ffffe5;
-}
+}*/
 div.pins li:hover a.unpin {
     display: block;
 }
@@ -390,16 +407,16 @@ ul.comments li .icon-remove {
     display: none;
     cursor: pointer;
 }
-ul.comments li:hover {
+/*ul.comments li:hover {
     background-color: #ffffe5;
-}
+}*/
 ul.comments li:hover .icon-remove {
     display: block;
 }
 ul.comments li .message {
     color: #333;
     font-size: 12px;
-    line-height: 12px;
+    line-height: 14px;
     word-wrap: break-word;
     margin-top: 2px;
     margin-right: 8px;

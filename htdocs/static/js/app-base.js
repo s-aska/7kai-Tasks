@@ -378,7 +378,10 @@ app.setup.menu = function(ele){
         ul.slideDown('fast');
     }, function(){
         ul.slideUp('fast');
-    }, 500);
+    }, 250);
+    ul.on('click', 'a', function(){
+        ul.slideUp('fast');
+    });
 }
 app.setup.stretch = function(ele){
     var option   = ele.data('stretch') || {};

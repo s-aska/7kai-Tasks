@@ -1019,6 +1019,49 @@ app.setup.starCounter = function(ele){
         ele.text(count);
     });
 }
+app.setup.displaySwitch = function(ele){
+    var display = ele.data('display');
+    var body = $('body');
+    ele.click(function(e){
+        e.preventDefault();
+        if (ele.hasClass('active')) {
+            ele.removeClass('active');
+            body.removeClass('display-' + display);
+        } else {
+            ele.addClass('active');
+            body.addClass('display-' + display);
+        }
+        app.api.account.update({
+            ns: 'state.display',
+            method: 'set',
+            key: display,
+            val: ele.hasClass('active') ? 'on' : 'off',
+        })
+        .done(function(data){
+            if (data.success === 1) {
+                app.data.state.display = data.account.state.display;
+            } else {
+                // 現在 ステータスコード 200 の例外ケースは無い
+            }
+        });
+    });
+    if (ele.hasClass('active')) {
+        body.addClass('display-' + display);
+    } else {
+        body.removeClass('display-' + display);
+    }
+    app.addListener('receiveSign', function(){
+        if ("display" in app.data.state) {
+            if (!(display in app.data.state.display)) {
+                return;
+            }
+            var on = Boolean(app.data.state.display[display] === 'on');
+            if (on !== Boolean(ele.hasClass('active'))) {
+                ele.click();
+            }
+        }
+    });
+}
 app.setup.filterTask = function(ele){
     var orig_condition = ele.data('filter-condition');
     app.addListener('filterTask', function(condition){
@@ -2408,10 +2451,9 @@ app.setup.recent = function(ele, task){
                 ele.find('.message i').attr('class', 'icon-heart');
                 ele.find('.message span').text(date);
             } else {
-                var message = task.recent.message.length > 42
-                    ? task.recent.message.substring(0, 42) + '...'
-                    : task.recent.message;
-                ele.find('.message span').text(message + ' ' + date);
+                var html = app.util.autolink(task.recent.message).replace(/\r?\n/g, '<br />');
+                ele.find('.message span').html(html);
+                ele.find('.message span a').click(function(e){ e.stopPropagation() });
             }
         } else {
             // ele.find('.message i').attr('class', 'icon-info-sign');
@@ -2423,6 +2465,30 @@ app.setup.recent = function(ele, task){
         }
     } else {
         ele.hide();
+    }
+}
+app.setup.pin = function(ul, task){
+    if (!task) return;
+    var pins = [];
+    $.each(task.actions.concat().reverse(), function(i, action){
+        if (action.is_pinned) {
+            pins.push(action);
+        }
+    });
+    if (pins.length > 0) {
+        var template = ul.html();
+        ul.empty();
+        for (var i = 0, max_i = pins.length; i < max_i; i++) {
+            var action = pins[i];
+            var li = $(template);
+            var html = app.util.autolink(action.message).replace(/\r?\n/g, '<br />');
+            li.find('span')
+                .html(html)
+                .find('a').click(function(e){ e.stopPropagation() });
+            li.appendTo(ul);
+        }
+    } else {
+        ul.hide();
     }
 }
 app.setup.registerTaskWindow = function(form){

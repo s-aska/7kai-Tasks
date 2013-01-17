@@ -23,6 +23,11 @@
 }
 .icon-pin {
     background-image: url(/static/img/pin.png);
+    background-size: 14px 14px;
+    background-position: 0 0;
+}
+.icon-pin-large {
+    background-image: url(/static/img/pin.png);
     background-size: 16px 16px;
     background-position: 0 0;
 }
@@ -56,9 +61,9 @@
         background-image: url(/static/img/grip@2x.png);
         background-size: 16px 16px;
     }
+    .icon-pin-large,
     .icon-pin {
         background-image: url(/static/img/pin@2x.png);
-        background-size: 16px 16px;
     }
 }
 
