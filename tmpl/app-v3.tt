@@ -28,9 +28,10 @@
           >
             <i class="icon-home icon-white icon-gray"></i>&nbsp;
             <span
-               data-setup="localize"
-               data-text-ja="ホーム"
-             >Home</span></a>
+              data-setup="localize"
+              data-text-ja="ホーム"
+            >Home</span>
+          </a>
         </li>
         <li>
           <a
@@ -414,7 +415,6 @@
     </div>
     <div
       class="lists-wrap"
-      style2="margin-top: 3px"
       data-setup="stretch"
       data-stretch='{"padding":3}'
     >
@@ -775,25 +775,29 @@
           <div class="ui-counter">400</div>
         </div>
       </form>
-      <div class="pins">
-        <div><i class="icon icon-pin-large"></i> Pins</div>
-        <ul></ul>
-      </div>
-      <ul
-        class="unstyled comments"
+      <div
         data-setup="stretch"
-        data-stretch='{"padding":5}'
+        data-stretch='{"padding":25}'
+        style="overflow-y:auto"
       >
-        <li class="clearfix" style="position: relative;">
-          <div class="icon sq32" style="position: absolute;"></div>
-          <div class="icon" style="position: absolute; right: -10px;"><i class="icon-remove"></i></div>
-          <div class="" style="margin-left: 40px;">
-            <span class="status label"></span>
-            <div class="message"></div>
-            <div class="footer"><span class="menu"><a>Pin</a> - </span><span class="date"></span><span class="name"></span></div>
-          </div>
-        </li>
-      </ul>
+        <div class="pins">
+          <div><i class="icon icon-pin-large"></i> Pins</div>
+          <ul></ul>
+        </div>
+        <ul
+          class="unstyled comments"
+        >
+          <li class="clearfix" style="position: relative;">
+            <div class="icon sq32" style="position: absolute;"></div>
+            <div class="icon" style="position: absolute; right: -10px;"><i class="icon-remove"></i></div>
+            <div class="" style="margin-left: 40px;">
+              <span class="status label"></span>
+              <div class="message"></div>
+              <div class="footer"><span class="menu"><a>Pin</a> / </span><span class="date"></span><span class="name"></span></div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
     <div
       id="shotcut-key"
@@ -978,6 +982,7 @@
     </header>
     <ul
       class="unstyled comments"
+      style="overflow-y:auto"
       data-setup="stretch,timeline"
       data-stretch='{"padding":116}'
       data-text-empty-en="no member updates, Let's invite a member to the list."
@@ -1011,6 +1016,7 @@
     </header>
     <ul
       class="unstyled comments"
+      style="overflow-y:auto"
       data-setup="stretch,timeline"
       data-timeline="me"
       data-stretch='{"padding":116}'
