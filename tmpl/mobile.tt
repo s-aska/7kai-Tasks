@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1">
+<title>7kai Tasks</title>
+<link rel="stylesheet" href="/static/css/bootstrap-sp-2.2.2.min.css">
+<link rel="stylesheet" href="/static/css/bootstrap-responsive-2.2.2.min.css">
+<link rel="stylesheet" href="/static/css/app-base-v3.css">
+<link rel="stylesheet" href="/static/css/app-mobile-v3.css">
+<script src="/static/js/jquery-1.9.0.min.js"></script>
+<script src="/static/js/h5utils.js"></script>
+<script src="/static/js/app-core.js"></script>
+<script src="/static/js/app-base.js"></script>
+<script src="/static/js/app-base-viewer-v3.js"></script>
+<script src="/static/js/app-mobile-viewer-v3.js"></script>
+</head>
+<body>
+<section class="slider-in slider-fix" data-setup="slider,signin" data-slider="signin">
+	<header style="padding:10px">
+		<h1 style="text-align:center">7kai Tasks</h1>
+	</header>
+	<form method="post" action="/signin/twitter/signin">
+		<div><button class="btn btn-block btn-large btn-primary">Connect with Twitter</button></div>
+	</form>
+	<form method="post" action="/signin/facebook/signin">
+		<div><button class="btn btn-block btn-large btn-primary">Connect with Facebook</button></div>
+	</form>
+	<form method="post" action="/signin/google/signin">
+		<div><button class="btn btn-block btn-large btn-primary">Connect with Google</button></div>
+	</form>
+	<artile>
+		<ul>
+			<li><a href="/static/tos.html" target="_blank">Term of Service</a></li>
+			<li><a href="/static/privacy.html" target="_blank">Privacy Policy</a></li>
+			<li><a href="/manual" target="_blank">Manual</a></li>
+			<li><a href="https://twitter.com/su_aska" target="_blank">Support (@su_aska)</a></li>
+			<li>iOS 6+ / Android 4+</li>
+		</ul>
+	</article>
+</section>
+<section id="list" class="slider-out" data-mode="view" data-setup="slider,list" data-slider="list">
+	<ul class="unstyled list">
+		<li>
+			<a class="pull-right" data-mode="view" data-setup="click" data-click="listMenu" style="padding:10px"><i class="icon-th-list"></i></a>
+			<a class="pull-right" data-mode="sort" style="padding:10px"><i class="icon-chevron-up"></i></a>
+			<a class="pull-right" data-mode="sort" style="padding:10px"><i class="icon-chevron-down"></i></a>
+			<div class="pull-right btn-group" data-mode="tag" style="margin: 5px">
+				<button class="btn btn-primary" data-tag="primary"><i class="icon-tag icon-white"></i></button>
+				<button class="btn btn-success" data-tag="success"><i class="icon-tag icon-white"></i></button>
+				<button class="btn btn-warning" data-tag="warning"><i class="icon-tag icon-white"></i></button>
+				<button class="btn btn-danger" data-tag="danger"><i class="icon-tag icon-white"></i></button>
+			</div>
+			<a class="name"><i class="icon-folder-open"></i>&nbsp;<span>7kai Tasks</span></a>
+			<ul class="unstyled task">
+				<li>
+					<span class="icons">
+						<i class="icon-tasks" data-setup="status"></i>
+						<i class="icon-star" data-setup="star"></i>
+						<i class="icon-user" data-setup="assign"></i>
+					</span>
+					<span data-setup="name">スマートフォン版バージョンアップ1</span>
+					<i class="icon-pause"></i>
+					<div class="comment-recent" data-setup="recent">
+						<i class="icon-comment"></i><span>now loading...</span>
+					</div>
+					<ul class="comment-pin unstyled" data-setup="pin">
+						<li><i class="icon-pin"></i><span>http://example.com/</span></li>
+					</ul>
+					<div class="due" data-setup="due">
+						<i class="icon-calendar"></i><span class="date">1/31</span>&nbsp;<span class="week">Fri</span>
+					</div>
+				</li>
+			</ul>
+			<a class="link-block" data-mode="view" data-setup="click" data-click="createTask">
+				<i class="icon-plus"></i>
+				New Task
+			</a>
+			<a class="link-block" data-mode="closed"><i class="icon-trash"></i>&nbsp;Clear Closed Tasks</a>
+		</li>
+	</ul>
+	<a class="link-block" data-mode="view" data-setup="click" data-click="createList">
+		<i class="icon-plus"></i>
+		New List
+	</a>
+	<a class="link-block" data-mode="no-view">
+		<i class="icon-arrow-left"></i>
+		Back Normal View
+	</a>
+</section>
+<section id="task" class="slider-out" data-setup="slider,desc" data-slider="task">
+	<article>
+		<p>スマートフォン版バージョンアップ</p>
+		<div class="clearfix spec">
+			<div class="pull-left"><i class="icon-calendar"></i>&nbsp;<span class="due">1/21</span></div>
+			<div class="pull-left"><i class="icon-time"></i>&nbsp;<span class="duration">6 days</span></div>
+			<div class="pull-left"><span class="human" data-human-size="14"></span></div>
+		</div>
+		<form
+			class="form-stacked"
+			style="margin-bottom: 0;"
+		>
+			<input type="hidden" name="list_id" value="">
+			<input type="hidden" name="task_id" value="">
+			<input type="hidden" name="status" value="">
+			<input type="hidden" name="closed" value="">
+			<div class="btn-group">
+				<button
+					class="btn cancel"
+					tabindex="0"
+				>
+					<i class="icon-circle-arrow-left"></i>
+				</button>
+				<button
+					class="btn edit"
+				>
+					<i class="icon-edit"></i>
+					<span
+						data-setup="localize"
+						data-text-ja="編集"
+					>Edit</span>
+				</button>
+				<button
+					class="btn star"
+				>
+					<i class="icon-star"></i>
+					<span
+						data-setup="localize"
+						data-text-ja="スター"
+					>Star</span>
+				</button>
+				<button
+					class="btn pending"
+				>
+					<i class="icon-pause"></i>
+					<span
+						data-setup="localize"
+						data-text-ja="保留"
+					>Pending</span>
+				</button>
+			</div>
+			<textarea
+				name="message"
+				placeholder="comment (option)"
+				style="height: 56px; margin-bottom: 10px; font-size: 1.1em; width: 100%;box-sizing: border-box;"></textarea>
+			<div class="pull-right counter">400</div>
+			<div class="btn-group">
+				<button
+					class="btn comment"
+				>
+					<i class="icon-comment"></i>
+					<span
+						data-setup="localize"
+						data-text-ja="コメント"
+					>Comment</span>
+				</button>
+			</div><br>
+			<div class="btn-group">
+				<button
+					class="btn"
+					data-plus="start"
+				>
+					<i class="icon-play"></i>
+					<span
+						data-setup="localize"
+						data-text-ja="着手"
+					>Start</span>
+				</button>
+				<button
+					class="btn btn-success"
+					data-plus="fix"
+				>
+					<i class="icon-forward icon-white"></i>
+					<span
+						data-setup="localize"
+						data-text-ja="処理"
+					>Fix</span>
+				</button>
+				<button
+					class="btn btn-danger"
+					data-plus="revert"
+				>
+					<i class="icon-backward icon-white"></i>
+					<span
+						data-setup="localize"
+						data-text-ja="差戻"
+					>Revert</span>
+				</button>
+				<button
+					class="btn btn-primary"
+					data-plus="close"
+				>
+					<i class="icon-remove icon-white"></i>
+					<span
+						data-setup="localize"
+						data-text-ja="完了"
+					>Close</span>
+				</button>
+			</div>
+		</form>
+		<ul class="unstyled pins"></ul>
+		<ul class="unstyled comments">
+			<li class="clearfix" style="position: relative;">
+				<div class="icon sq32" style="position: absolute; top: 2px;">
+					<img class="sq32">
+				</div>
+				<div class="" style="position: relative; margin-left: 40px;">
+					<i class="icon-comment" style="position: absolute;"></i>
+					<div style="position: absolute;padding-top:0px;text-align:center;right:-10px;display:block;width:40px;height:40px" data-text-en="delete a comment?" data-text-ja="コメントを削除しますか？"><i class="icon-remove"></i></div>
+					<div class="message">がんばる...</div>
+					<div class="footer"><span class="menu"><a>Pin</a> </span><span class="date">1 hour ago</span> by <span class="name">Aska</span></div>
+				</div>
+			</li>
+		</ul>
+	</article>
+</section>
+<section id="menu" class="slider-out" data-setup="slider,menu" data-slider="menu">
+	<article>
+		<p><i class="icon-sort"></i>&nbsp;Sort</p>
+		<div
+			class="btn-group"
+			data-setup="tab.content"
+			data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
+		>
+			<button
+				class="btn"
+				data-setup="sortTask,tooltip"
+				data-sort-column="name"
+				data-text-ja="タスク名"
+				data-text-en="Name"
+			><i class="icon-font"></i></button>
+			<button
+				class="btn"
+				data-setup="sortTask,tooltip"
+				data-sort-column="updated_on"
+				data-sort-reverse="true"
+				data-text-ja="更新日時"
+				data-text-en="Updated"
+			><i class="icon-time"></i></button>
+			<a
+				class="btn active"
+				data-setup="sortTask,tooltip"
+				data-sort-column="due_epoch"
+				data-text-ja="期日"
+				data-text-en="Due"
+			><i class="icon-calendar"></i></a>
+			<a
+				class="btn"
+				data-setup="sortTask,tooltip"
+				data-sort-column="person"
+				data-text-ja="ターン (未処理: 担当者, 処理済: 依頼者)"
+				data-text-en="Whose turn is it"
+			><i class="icon-user"></i></a>
+		</div>
+		<ul class="unstyled">
+			<li>
+				<i class="icon-font"></i> ...
+				<span
+					data-setup="localize"
+					data-text-ja="タスク名"
+				>Task Name.</span>
+			</li>
+			<li>
+				<i class="icon-time"></i> ...
+				<span
+					data-setup="localize"
+					data-text-ja="更新日時"
+				>Updated time.</span>
+			</li>
+			<li>
+				<i class="icon-calendar"></i> ...
+				<span
+					data-setup="localize"
+					data-text-ja="期日"
+				>Due.</span>
+			</li>
+			<li>
+				<i class="icon-user"></i> ...
+				<span
+					data-setup="localize"
+					data-text-ja="ターン (未処理: 担当者, 処理済: 依頼者)"
+				>Whose turn is it.</span>
+			</li>
+		</ul>
+		<hr>
+		<p><i class="icon-search"></i>&nbsp;Filter</p>
+		<div
+			class="btn-group"
+			data-setup="tab.content"
+			data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
+		>
+			<a
+				class="btn"
+				data-setup="click,shortcut,filterTask,tooltip"
+				data-click="filterTask"
+				data-shortcut='{"code":84}'
+				data-filter-condition='{"todo":1}'
+				data-text-ja="自分のタスク ... [T]"
+				data-text-en="My TODO ... [T]"
+			>
+				<i class="icon-inbox"></i>
+				<span
+					class="ui-badge"
+					data-setup="taskCounter"
+					data-counter-condition='{"todo":1}'
+				>0</span>
+			</a>
+			<a
+				class="btn"
+				data-setup="click,shortcut,filterTask,tooltip"
+				data-click="filterTask"
+				data-shortcut='{"code":82}'
+				data-filter-condition='{"request":1}'
+				data-text-ja="リクエスト ... [R]"
+				data-text-en="Request ... [R]"
+			>
+				<i class="icon-arrow-up"></i>
+				<span
+					data-setup="localize"
+					data-text-ja=""
+				></span>
+				<span
+					class="ui-badge"
+					data-setup="taskCounter"
+					data-counter-condition='{"request":1}'
+				>0</span>
+			</a>
+			<a
+				class="btn"
+				data-setup="click,shortcut,filterTask,tooltip"
+				data-click="filterTask"
+				data-shortcut='{"code":86}'
+				data-filter-condition='{"verify":1}'
+				data-text-ja="確認待ち ... [V]"
+				data-text-en="Waiting for your confirmation. ... [V]"
+			>
+				<i class="icon-arrow-down"></i>
+				<span
+					class="ui-badge"
+					data-setup="taskCounter"
+					data-counter-condition='{"verify":1}'
+				>0</span>
+			</a>
+			<a
+				class="btn"
+				data-setup="click,shortcut,filterTask,tooltip"
+				data-click="filterTask"
+				data-shortcut='{"code":83}'
+				data-filter-condition='{"star":1}'
+				data-text-ja="スター ... [S]"
+				data-text-en="Star ... [S]"
+			>
+				<i class="icon-star"></i>
+				<span
+					class="ui-badge"
+					data-setup="starCounter"
+				>0</span>
+			</a>
+			<a
+				class="btn"
+				data-setup="shortcut,switchClosed,tooltip"
+				data-shortcut='{"code":67}'
+				data-text-ja="完了済 ... [C]"
+				data-text-en="Closed: Please confirm and clear. ... [C]"
+			>
+				<i class="icon-trash"></i>
+				<span
+					class="ui-badge"
+					data-setup="taskCounter"
+					data-counter-condition='{"closed":1}'
+				>0</span>
+			</a>
+		</div>
+		<ul class="unstyled">
+			<li>
+				<i class="icon-inbox"></i> ...
+				<span
+					data-setup="localize"
+					data-text-ja="今日やること"
+				>Todo.</span>
+			</li>
+			<li>
+				<i class="icon-arrow-up"></i> ...
+				<span
+					data-setup="localize"
+					data-text-ja="誰かに頼んだ"
+				>Request.</span>
+			</li>
+			<li>
+				<i class="icon-arrow-down"></i> ...
+				<span
+					data-setup="localize"
+					data-text-ja="処理済みで確認を待っている"
+				>It is waiting your confirmation.</span>
+			</li>
+			<li>
+				<i class="icon-star"></i> ...
+				<span
+					data-setup="localize"
+					data-text-ja="スターを付けた"
+				>Starred.</span>
+			</li>
+			<li>
+				<i class="icon-trash"></i> ...
+				<span
+					data-setup="localize"
+					data-text-ja="完了されたタスク"
+				>Closed task,</span>
+				<strong
+					data-setup="localize"
+					data-text-ja="ごみ箱を空にするまで残ります"
+				>It stay until I empty a trash box.</strong>
+			</li>
+		</ul>
+		<hr>
+		<p><i class="icon-eye-open"></i>&nbsp;Display</p>
+		<div
+			class="btn-group ui-tags"
+			data-setup="tab.content,tags"
+			data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
+		>
+			<a
+				class="btn active"
+				data-setup="displaySwitch,tooltip"
+				data-display="comment"
+				data-text-ja="最近のコメント（自分以外）"
+				data-text-en="Recent Comment"
+			><i class="icon-comment"></i></a>
+			<a
+				class="btn"
+				data-setup="displaySwitch,tooltip"
+				data-display="pin"
+				data-text-ja="ピンされたコメント"
+				data-text-en="Pinned Comments"
+			><i class="icon-pin"></i></a>
+		</div>
+
+		<ul class="unstyled">
+			<li>
+				<i class="icon-comment"></i> ...
+				<span
+					data-setup="localize"
+					data-text-ja="最近のコメント（自分以外）"
+				>Recent Comment.</span>
+			</li>
+			<li>
+				<i class="icon-pin"></i> ...
+				<span
+					data-setup="localize"
+					data-text-ja="ピンされたコメント"
+				>Pinned Comments.</span>
+			</li>
+		</ul>
+		<hr>
+		<p><i class="icon-tag"></i>&nbsp;Tag</p>
+		<div
+			class="btn-group ui-tags"
+			data-setup="tab.content,tags,tooltip"
+			data-text-ja="選択した色のリストのみ表示 ... [1-4]"
+			data-text-en="Display the list of same colors. ... [1-4]"
+			data-tab='{"group":"homemenu","id":"task","effect":"fade"}'
+		>
+			<a
+				class="btn btn-primary"
+				data-setup="shortcut"
+				data-shortcut='{"code":49}'
+				data-tag="primary"
+			><i class="icon-tag icon-white"></i></a>
+			<a
+				class="btn btn-success"
+				data-setup="shortcut"
+				data-shortcut='{"code":50}'
+				data-tag="success"
+			><i class="icon-tag icon-white"></i></a>
+			<a
+				class="btn btn-warning"
+				data-setup="shortcut"
+				data-shortcut='{"code":51}'
+				data-tag="warning"
+			><i class="icon-tag icon-white"></i></a>
+			<a
+				class="btn btn-danger"
+				data-setup="shortcut"
+				data-shortcut='{"code":52}'
+				data-tag="danger"
+			><i class="icon-tag icon-white"></i></a>
+		</div>
+		<a href="/signout" class="btn btn-block btn-inverse"><i class="icon-off icon-white"></i></a>
+	</article>
+</section>
+<section id="diary" class="slider-out" data-setup="slider,diary" data-slider="diary">
+	<article data-text-empty-en="no data." data-text-empty-ja="履歴はありません。">
+		<h1></h1>
+		<ul class="unstyled comments">
+			<li class="clearfix" style="position: relative;">
+				<div class="icon sq32" style="position: absolute; top: 2px;">
+					<img class="sq32">
+				</div>
+				<div class="" style="position: relative; margin-left: 40px;">
+					<i class="icon-comment" style="position:absolute"></i>
+					<div class="message">がんばる...</div>
+					<div class="footer">[<span class="list"></span>] <span class="task"></span> by <span class="name">Aska</span></div>
+				</div>
+			</li>
+		</ul>
+	</article>
+</section>
+<section class="slider-out" data-setup="slider,registerTask" data-slider="register-task">
+	<form>
+		<input type="hidden" name="list_id" value="">
+		<input type="hidden" name="task_id" value="">
+		<input type="hidden" name="parent_id" value="">
+
+		<label
+			style="margin-bottom:0"
+			data-setup="localize"
+			data-text-ja="リスト"
+		>List</label>
+		<div class="list-name" style="margin: 0 0 10px 0; font-weight: bold; border-bottom: 1px dotted #ccc;">
+			7kai Tasks
+		</div>
+
+		<label>
+			<span
+				data-setup="localize"
+				data-text-ja="タイトル"
+			>Title</span>&nbsp;
+			<span
+				style="color: gray; font-size: 0.8em;"
+				data-setup="localize"
+				data-text-ja="(1-50文字)"
+			>(1-50 characters)</span>
+		</label>
+		<input class="span4" type="text" name="name" value="" required="required" maxlength="50" data-autofocus="true">
+
+		<label
+			data-setup="localize"
+			data-text-ja="期日"
+		>Due</label>
+		<input
+			type="date"
+			name="due"
+			value=""
+			pattern="^\d{4}-\d{1,2}-\d{1,2}$"
+			style="width: 130px"
+		>
+
+		<label
+			data-setup="localize"
+			data-text-ja="所要日数"
+		>Day of duration</label>
+		<input
+			type="number"
+			name="duration"
+			value=""
+			min="0"
+			max="255"
+			pattern="[0-9]*"
+			style="width: 80px"
+		>
+
+		<label
+			data-setup="localize"
+			data-text-ja="依頼者"
+		>Requester</label>
+		<select name="requester"></select>
+
+		<label
+			style="margin-bottom:0"
+			data-setup="localize"
+			data-text-ja="担当者"
+		>Assign</label>
+		<ul class="unstyled assign">
+			<li>
+				<label class="checkbox inline">
+					<input type="checkbox" name="assign">
+					<span
+						style="
+							background-image: url(https://si0.twimg.com/profile_images/2358600149/pnkjdsot26kfrczlpe96_normal.png);
+							background-size: 16px 16px;
+							background-repeat: no-repeat;
+							background-position: top left;
+							padding-left: 20px;
+						"
+					>Aska</span>
+				</label>
+			</li>
+		</ul>
+
+		<label
+			data-setup="localize"
+			data-text-ja="親タスク"
+		>Parent Task</label>
+		<select name="parent_id">
+			<option value=""></option>
+		</select>
+
+		<button
+			class="btn btn-block btn-primary"
+			data-setup="localize"
+			data-text-ja="登録"
+		>Save</button>
+
+		<button
+			class="btn btn-block btn-inverse"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</button>
+
+	</form>
+</section>
+<section class="slider-out" data-setup="slider,registerList" data-slider="register-list">
+	<form>
+		<input type="hidden" name="list_id" value="">
+		<label>
+			<span
+				data-setup="localize"
+				data-text-ja="名前"
+			>Name</span>&nbsp;
+			<span
+				style="color: gray; font-size: 0.8em;"
+				data-setup="localize"
+				data-text-ja="(1-20文字)"
+			>(1-20 characters)</span>
+		</label>
+		<input class="span4" type="text" name="name" value="" required="required" maxlength="20" data-autofocus="true">
+		<label
+			data-setup="localize"
+			data-text-ja="概要"
+		>Description</label>
+		<textarea name="description" style="height: 3em; width: 100%;box-sizing: border-box;"></textarea>
+		<button
+			class="btn btn-block btn-primary"
+			data-setup="localize"
+			data-text-ja="登録"
+		>Save</button>
+		<button
+			type="button"
+			class="btn btn-block btn-inverse"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</button>
+	</form>
+</section>
+<section id="member" class="slider-out" data-setup="slider,member" data-slider="member">
+	<form>
+		<a
+			class="btn btn-block btn-primary"
+			data-setup="localize"
+			data-text-ja="招待URL生成"
+		>Invite On</a>
+		<a
+			class="btn btn-block btn-danger"
+			data-setup="localize"
+			data-text-ja="招待URL破棄"
+		>Invite Off</a>
+		<label
+			data-setup="localize"
+			data-text-ja="招待URL（リストへの参加を案内されます）"
+		>Invite URL</label>
+		<input class="span4" type="text" name="invite_code" value="">
+		<p>
+			<span></span>
+			<span data-setup="localize" data-text-ja="のメンバー">'s member</span>
+		</p>
+		<ul class="unstyled">
+			<li>
+				<img><span></span><a data-text-en="delete a member?" data-text-ja="メンバーを削除しますか？"><i class="icon-remove"></i></a>
+			</li>
+		</ul>
+		<button
+			type="button"
+			class="btn btn-block btn-inverse"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</button>
+	</form>
+</section>
+<section id="export" class="slider-out" data-setup="slider,export" data-slider="export">
+	<form>
+		<a
+			class="btn btn-block btn-public"
+			data-setup="localize"
+			data-text-ja="公開"
+		>Public</a>
+		<a
+			class="btn btn-block btn-private"
+			data-setup="localize"
+			data-text-ja="非公開"
+		>Private</a>
+		<label>HTML</label>
+		<input class="span6" type="text" name="html" value="">
+		<label>JSON</label>
+		<input class="span6" type="text" name="json" value="">
+		<label>JSONP</label>
+		<input class="span6" type="text" name="jsonp?callback=" value="">
+		<label>RSS</label>
+		<input class="span6" type="text" name="rss" value="">
+		<label>iCal</label>
+		<input class="span6" type="text" name="ical" value="">
+		<button
+			type="button"
+			class="btn btn-block btn-inverse"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</button>
+</section>
+<div class="navbar navbar-fixed-bottom navbar-inverse">
+	<div class="navbar-inner">
+		<div class="container" style="padding:0 20px">
+			<ul class="nav" style="display:none">
+				<li><a data-setup="touch" data-click="slider" data-slider="list"><i class="icon-home icon-white"></i></a></li>
+				<li><a data-setup="touch" data-click="slider" data-slider="menu"><i class="icon-th icon-white"></i></a></li>
+				<li><a data-setup="touch" data-click="slider" data-slider="diary"><i class="icon-bookmark icon-white"></i></a></li>
+			</ul>
+			<ul data-setup="logo" class="nav pull-right" style="
+				width: 40px;
+				height: 40px;
+				background-image: url(/static/img/logo-gray-64.png);
+				background-size: 24px 24px;
+				background-repeat: no-repeat;
+				background-position: center center;
+			">
+			</ul>
+		</div>
+	</div>
+</div>
+<div class="modal-backdrop fade" style="display:none"></div>
+<div class="modal fade" data-setup="modal,listMenu" data-modal="list-menu">
+	<a class="link-block"><i class="icon-sort"></i>&nbsp;Sort</a>
+	<a class="link-block"><i class="icon-tag"></i>&nbsp;Tag</a>
+	<a class="link-block"><i class="icon-share-alt"></i>&nbsp;Export</a>
+	<a class="link-block"><i class="icon-volume-off"></i>&nbsp;Mute On</a>
+	<a class="link-block"><i class="icon-volume-up"></i>&nbsp;Mute Off</a>
+	<a class="link-block"><i class="icon-user"></i>&nbsp;Member</a>
+	<a class="link-block"><i class="icon-edit"></i>&nbsp;Edit</a>
+	<a class="link-block"><i class="icon-remove"></i>&nbsp;Remove</a>
+</div>
+<div class="modal fade" data-setup="modal,invite" data-modal="invite">
+	<article style="padding:10px">
+		<input type="hidden" name="list_id" value="">
+		<input type="hidden" name="invite_code" value="">
+		<p
+			data-setup="localize"
+			data-text-ja="リストに招待されています、参加しますか？"
+		>You are invited.</p>
+		<strong></strong>
+		<hr>
+		<a
+			class="btn btn-block btn-primary"
+			data-setup="localize"
+			data-text-ja="参加する"
+		>Join</a>
+		<a
+			class="btn btn-block btn-danger"
+			data-setup="localize"
+			data-text-ja="拒否する"
+		>Reject</a>
+	</article>
+</div>
+<div
+	data-setup="messages"
+
+	data-text-comment-en="comment"
+	data-text-comment-ja="コメント"
+
+	data-text-create-task-en="create the task"
+	data-text-create-task-ja="作成"
+	data-text-update-task-en="update the task"
+	data-text-update-task-ja="更新"
+	data-text-clear-task-en="clear the task"
+	data-text-clear-task-ja="完了済タスクを削除"
+
+	data-text-reopen-task-en="revert the task"
+	data-text-reopen-task-ja="差戻"
+	data-text-start-task-en="start the task"
+	data-text-start-task-ja="着手"
+	data-text-fix-task-en="fix the task"
+	data-text-fix-task-ja="処理"
+	data-text-close-task-en="close the task"
+	data-text-close-task-ja="完了"
+
+	data-text-rereopen-task-en="update (close => open) the task"
+	data-text-rereopen-task-ja="タスクを更新 (完了 => 未着手)"
+	data-text-restart-task-en="update (close => start) the task"
+	data-text-restart-task-ja="タスクを更新 (処理済 => 着手)"
+	data-text-refix-task-en="update (close => fix) the task"
+	data-text-refix-task-ja="タスクを更新 (完了 => 処理済)"
+></div>
+</body>
+</html>

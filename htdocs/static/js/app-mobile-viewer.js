@@ -10,9 +10,6 @@ app.addEvents('domresize');
 app.addEvents('orientationchange');
 
 app.addListener('ready', function(){
-    // d.addEventListener('touchmove', function(e){
-    //     e.preventDefault();
-    // });
     w.addEventListener('online', function(){
         app.api.token();
     });

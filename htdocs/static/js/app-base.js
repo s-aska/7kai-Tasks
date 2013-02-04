@@ -240,7 +240,8 @@ app.dom.setup = function(){
         var ele = $(this);
         var methods = ele.data('setup').split(',');
         for (var i = 0, max_i = methods.length; i < max_i; i++) {
-            app.obj.get(app.setup, methods[i]).apply(app, [$(this)].concat(args));
+            var f = app.obj.get(app.setup, methods[i]);
+            if (f) f.apply(app, [$(this)].concat(args));
         }
     });
 }
@@ -355,7 +356,7 @@ app.dom.disableSelection = function(ele){
     ele.bind($.support.selectstart ? 'selectstart' : 'mousedown', function(e){
         e.preventDefault();
     });
-};
+}
 
 app.setup.localize = function(ele){
     ele.text(ele.data('text-' + app.env.lang));
@@ -575,6 +576,591 @@ app.setup.guide = function(ele){
     }, function(){
         app.dom.hide(app.dom.get('showable', option.id));
     }, 500);
+}
+
+app.api.account.me = function(option){
+    if (!navigator.onLine) {
+        console.log('offline');
+        return;
+    }
+    return app.ajax({
+        url: '/api/1/account/me',
+        data: option.data,
+        dataType: 'json',
+        loading: false,
+        setup: option.setup
+    })
+    .done(function(data){
+        if (data) {
+            localStorage.setItem("me", JSON.stringify(data));
+            app.util.buildMe(option, data);
+        }
+    });
+}
+app.api.account.update = function(params){
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/account/update',
+        data: params,
+        dataType: 'json',
+        salvage: true,
+        loading: false
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        if (!jqXHR.status) {
+            app.queue.push({
+                api: 'account.update',
+                req: params
+            });
+        }
+    });
+}
+app.api.account.update_profile = function(params){
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/account/update_profile',
+        data: params,
+        dataType: 'json',
+        salvage: false,
+        loading: false
+    });
+}
+app.api.task.update = function(params){
+    var list = app.data.list_map[params.list_id];
+    if (!list) {
+        alert('unknown list ' + params.list_id);
+        return;
+    }
+    if (!(params.task_id in app.data.task_map)) {
+        // FIXME
+        return;
+    }
+    var action;
+    var status_map = {
+        0: 'reopen-task',
+        1: 'start-task',
+        2: 'fix-task'
+    };
+    if ("status" in params) {
+        action = status_map[params.status];
+    }
+    if ("closed" in params) {
+        action = params.closed ? 'close-task' : 're' +
+            status_map[app.data.task_map[params.task_id].status];
+    }
+    if (action) {
+        var time = (new Date()).getTime();
+        app.data.task_map[params.task_id].actions.push({
+            account_id: app.data.sign.account_id,
+            action: action,
+            time: time
+        });
+        app.data.task_map[params.task_id].updated_on = time;
+    }
+    var task = $.extend({}, app.data.task_map[params.task_id], params);
+    app.fireEvent('registerTask', task, list);
+    app.ajax({
+        type: 'POST',
+        url: '/api/1/task/update',
+        data: params,
+        dataType: 'json',
+        salvage: true,
+        loading: false
+    })
+    .done(function(data){
+        if (data.success === 1) {
+            $.extend(app.data.task_map[params.task_id], data.task);
+            if ("parent_id" in params) {
+                app.util.sortTaskView();
+            }
+            // app.data.task_map[params.task_id].updated_on = data.task.updated_on;
+            // app.fireEvent('registerTask', data.task, list); // update updated_on
+        } else {
+            // 現在 ステータスコード 200 の例外ケースは無い
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        if (!jqXHR.status) {
+            app.queue.push({
+                api: 'task.update',
+                req: params,
+                updated_on: task.updated_on
+            });
+            task.salvage = true;
+            app.fireEvent('registerTask', task, list);
+        }
+    });
+}
+app.api.task.move = function(src_list_id, task_id, dst_list_id){
+    if (src_list_id === dst_list_id) {
+        alert("Can't be moved to the same list.");
+        return;
+    }
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/task/move',
+        data: {
+            task_id: task_id,
+            src_list_id: src_list_id,
+            dst_list_id: dst_list_id
+        },
+        dataType: 'json'
+    })
+    .done(function(data){
+        if (data.success === 1) {
+            $.each(data.tasks, function(i, task){
+                app.fireEvent('registerTask', task, app.data.list_map[dst_list_id]);
+                // if (app.data.current_task && app.data.current_task.id === task.id) {
+                //     app.fireEvent('openTask', task);
+                // }
+            });
+        }
+    });
+}
+app.api.list.invite = function(list_id){
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/list/invite',
+        data: {
+            list_id: list_id
+        },
+        dataType: 'json',
+        salvage: false,
+        loading: false
+    });
+}
+app.api.list.disinvite = function(list_id){
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/list/disinvite',
+        data: {
+            list_id: list_id
+        },
+        dataType: 'json',
+        salvage: false,
+        loading: false
+    });
+}
+app.api.list.join = function(list_id, invite_code){
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/list/join',
+        data: {
+            list_id: list_id,
+            invite_code: invite_code
+        },
+        dataType: 'json',
+        salvage: false,
+        loading: false
+    });
+}
+app.api.list.leave = function(list_id, account_id){
+    return app.ajax({
+        type: 'post',
+        url: '/api/1/list/leave',
+        data: {
+            list_id: list_id,
+            account_id: account_id
+        },
+        dataType: 'json',
+        salvage: false,
+        loading: false
+    });
+}
+
+app.util.getIconUrl = function(account_id, size){
+    if (!navigator.onLine) {
+        return '/static/img/address.png';
+    }
+    var user = app.data.users[account_id];
+    if (user) {
+        return user.icon;
+    }
+    return size === 16 ? '/static/img/address.png' : '/static/img/address24.png';
+}
+app.util.getIcon = function(account_id, size){
+    var src = app.util.getIconUrl(account_id, size);
+    if (!src) {
+        src = '/static/img/address.png';
+    }
+    return $('<img/>').attr('src', src).addClass('sq' + size);
+}
+app.util.getName = function(account_id){
+    var user = app.data.users[account_id];
+    if (user) {
+        return user.name;
+    } else {
+        return account_id;
+    }
+}
+app.util.findMe = function(account_ids){
+    for (var i = 0, max_i = account_ids.length; i < max_i; i++) {
+        if (Number(app.data.sign.account_id) === Number(account_ids[i])) {
+            return app.data.sign.account_id;
+        }
+    }
+    return false;
+}
+app.util.findAccount = function(account_id, account_ids){
+    for (var i = 0, max_i = account_ids.length; i < max_i; i++) {
+        if (Number(account_id) === Number(account_ids[i])) {
+            return account_id;
+        }
+    }
+    return false;
+}
+app.util.findOthers = function(account_ids){
+    for (var i = 0, max_i = account_ids.length; i < max_i; i++) {
+        if (app.data.sign.account_id !== account_ids[i]) {
+            return account_ids[i];
+        }
+    }
+    return false;
+}
+app.util.taskFilter = function(task, condition){
+    if (app.data.current_tag) {
+        if (!((task.list.id in app.data.state.tags)
+            && (app.data.current_tag === app.data.state.tags[task.list.id]))) {
+            return false;
+        }
+    }
+    if (!condition) {
+        return !app.util.isCloseTask(task);
+    }
+    if (condition.none) {
+        return false;
+    }
+    if (condition.closed) {
+        if (!app.util.isCloseTask(task)) {
+            return false;
+        }
+    } else {
+        if (app.util.isCloseTask(task)) {
+            return false;
+        }
+    }
+    if (condition.turn) {
+        if (task.list.id !== condition.list_id) {
+            return false;
+        }
+        // if (task.pending) {
+        //     return false;
+        // }
+        if (task.status === 2) {
+            if (Number(condition.turn) !== Number(task.requester)) {
+                return false;
+            }
+        } else {
+            // if (task.due_epoch && task.due_epoch > (new Date()).getTime()) {
+            //     return false;
+            // }
+            if (task.assign.length) {
+                if (!app.util.findAccount(condition.turn, task.assign)) {
+                    return false;
+                }
+            } else {
+                if (Number(condition.turn) !== Number(task.requester)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    if (condition.todo) {
+        if (task.list.id in app.data.state.mute) {
+            return false;
+        }
+        if (task.pending) {
+            return false;
+        }
+        if (task.status === 2) {
+            return false;
+        }
+        if (task.assign.length) {
+            if (!app.util.findMe(task.assign)) {
+                return false;
+            }
+        } else {
+            if (!app.util.findMe([task.requester])) {
+                return false;
+            }
+        }
+        if (task.due_epoch && task.due_epoch > (new Date()).getTime()) {
+            return false;
+        }
+    }
+    if (condition.verify) {
+        if (!app.util.findMe([task.requester])) {
+            return false;
+        }
+        if (!app.util.findOthers(task.assign)) {
+            return false;
+        }
+        if (task.status !== 2) {
+            return false;
+        }
+    }
+    if (condition.request) {
+        if (!app.util.findMe([task.requester])) {
+            return false;
+        }
+        if (!app.util.findOthers(task.assign)) {
+            return false;
+        }
+        if (task.status === 2) {
+            return false;
+        }
+    }
+    if (condition.star) {
+        if (!(task.id in app.data.state.star)) {
+            return false;
+        }
+    }
+    return true;
+}
+app.util.buildMe = function(option, data){
+    var friends
+        , friends_data
+        , sub_account
+        , reload
+        , user_id
+        , diff
+        , status;
+
+    if (data.list_ids !== app.data.if_modified_lists) {
+        option.reset = true;
+    }
+
+    if (option.reset) {
+        app.fireEvent('clear');
+    }
+
+    app.fireEvent('receiveToken', data.token);
+
+    app.data.sign = data.sign;
+    app.data.state = data.account.state;
+    app.data.sub_accounts = data.sub_accounts;
+    app.data.users = data.users;
+    app.data.if_modified_lists = data.list_ids;
+    app.data.holidays = data.holidays;
+
+    app.fireEvent('receiveSign', app.data.sign);
+
+    if (data.notice) {
+        app.fireEvent('notice', data.notice);
+    }
+
+    if (data.invite) {
+        app.fireEvent('receiveInvite', data.invite);
+    }
+
+    if (!('mute' in app.data.state)) {
+        app.data.state.mute = {};
+    }
+    if (!('tags' in app.data.state)) {
+        app.data.state.tags = {};
+    }
+    if (!('star' in app.data.state)) {
+        app.data.state.star = {};
+    }
+
+    for (var i = 0, max_i = data.sub_accounts.length; i < max_i; i++) {
+        app.fireEvent('registerSubAccount', data.sub_accounts[i]);
+    }
+
+    data.lists.sort(function(a, b){
+        return app.data.state.sort.list[a.id] - app.data.state.sort.list[b.id];
+    });
+
+    app.state.animation = false;
+
+    var tasks = 0;
+    $.each(data.lists, function(i, list){
+        if (list.actioned_on > app.data.if_modified_since) {
+            app.data.if_modified_since = list.actioned_on;
+        }
+        app.fireEvent('registerList', list);
+        $.each(list.tasks, function(i, task){
+            tasks++;
+            app.fireEvent('registerTask', task, list);
+        });
+    });
+
+    app.fireEvent('filterTask', app.data.current_filter);
+
+    app.state.animation = true;
+
+    if (option.setup && !tasks) {
+        setTimeout(function(){
+            app.dom.show(app.dom.get('showable', 'welcome'));
+        }, 600);
+    }
+
+    if (option.setup || option.reset) {
+        app.util.sortTaskView('due_epoch', false);
+    }
+
+    if (option.task_id in app.data.task_map) {
+        app.fireEvent('openTaskInHome', app.data.task_map[option.task_id]);
+    }
+
+    app.fireEvent('receiveMe', data);
+}
+app.util.findChildTasks = function(task, callback, tasks){
+    if (!tasks) {
+        tasks = [];
+    }
+    for (var id in app.data.task_map) {
+        if (app.data.task_map[id].parent_id === task.id) {
+            var child = app.data.task_map[id];
+            tasks.push(child);
+            if (callback) {
+                callback(child);
+            }
+            app.util.findChildTasks(child, callback, tasks);
+        }
+    }
+    return tasks;
+}
+app.util.isChildTask = function(task, child){
+    var childs = app.util.findChildTasks(task);
+    for (var i = 0, max_i = childs.length; i < max_i; i++) {
+        if (childs[i].id === child.id) {
+            return true;
+        }
+    }
+    return false;
+}
+app.util.findParentTask = function(task){
+    return app.data.task_map[task.parent_id];
+}
+app.util.findParentTasks = function(task){
+    var parents = [], current = task;
+    while (current.parent_id && current.parent_id.length && app.data.task_map[current.parent_id]) {
+        var parent = app.data.task_map[current.parent_id];
+        parents.push(parent);
+        current = parent;
+    }
+    return parents;
+}
+app.util.hasChildTask = function(task){
+    for (var task_id in app.data.task_map) {
+        if (app.data.task_map[task_id].parent_id === task.id) {
+            return true;
+        }
+    }
+    return false;
+}
+app.util.isCloseTask = function(task){
+    if (task.closed) {
+        return true;
+    };
+    var parents = app.util.findParentTasks(task);
+    for (var i = 0, max_i = parents.length; i < max_i; i++) {
+        if (parents[i].closed) {
+            return true;
+        }
+    }
+    return false;
+}
+app.util.sortTask = function(tasks, column, reverse){
+    var compareAttribute;
+    if (column === 'name') {
+        compareAttribute = function(a, b){
+            return a.name.localeCompare(b.name);
+        };
+    } else if (column === 'person') {
+        compareAttribute = function(a, b){
+            if (a.person === b.person) {
+                if (reverse) {
+                    return (Number(a.updated_on) || 0) - (Number(b.updated_on) || 0);
+                } else {
+                    return (Number(b.updated_on) || 0) - (Number(a.updated_on) || 0);
+                }
+            }
+            return a.person.localeCompare(b.person);
+        };
+    } else {
+        compareAttribute = function(a, b){
+            if (a[column] === b[column]) {
+                if (reverse) {
+                    return (Number(a.updated_on) || 0) - (Number(b.updated_on) || 0);
+                } else {
+                    return (Number(b.updated_on) || 0) - (Number(a.updated_on) || 0);
+                }
+            }
+            return (Number(a[column]) || 0) - (Number(b[column]) || 0);
+        };
+    }
+    var compareTask = function(a, b){
+        // root直下同士
+        if (!a.parent_id && !b.parent_id) {
+            return compareAttribute(a, b);
+        }
+        // 兄弟
+        else if (a.parent_id === b.parent_id) {
+            return compareAttribute(a, b);
+        }
+        // A親 - B子
+        else if (a.id === b.parent_id) {
+            return reverse ? 1 : -1;
+        }
+        // B親 - A子
+        else if (a.parent_id === b.id) {
+            return reverse ? -1 : 1;
+        }
+        else {
+            var parentsA = [a].concat(app.util.findParentTasks(a)),
+                parentsB = [b].concat(app.util.findParentTasks(b)),
+                compareTaskA = parentsA.pop(),
+                compareTaskB = parentsB.pop();
+
+            // 共通の親から離れるまでドリルダウン
+            while (compareTaskA.id === compareTaskB.id) {
+                // A親 - B子
+                if (!parentsA.length) {
+                    return reverse ? 1 : -1;
+                }
+                // B親 - A子
+                else if (!parentsB.length) {
+                    return reverse ? -1 : 1;
+                }
+                compareTaskA = parentsA.pop();
+                compareTaskB = parentsB.pop();
+            }
+
+            // 兄弟
+            return compareAttribute(compareTaskA, compareTaskB);
+        }
+    };
+    tasks.sort(function(a, b){
+        return compareTask(a, b);
+    });
+    if (reverse) {
+        tasks.reverse();
+    }
+    return tasks;
+}
+app.util.sortTaskView = function(column, reverse){
+    var tasks = [],
+        resort = false;
+    reverse = Boolean(reverse);
+    for (var task_id in app.data.task_map) {
+        tasks.push(app.data.task_map[task_id]);
+    }
+    if (!column) {
+        column = app.data.current_sort.column;
+        reverse = app.data.current_sort.reverse;
+        resort = true;
+    }
+    if (!resort
+        && app.data.current_sort.column === column
+        && app.data.current_sort.reverse === reverse) {
+        reverse = reverse ? false : true;
+    }
+    app.data.current_sort.column = column;
+    app.data.current_sort.reverse = reverse;
+    app.fireEvent('sortTask', app.util.sortTask(tasks, column, reverse), column, reverse);
 }
 
 })(this, window, document, jQuery);

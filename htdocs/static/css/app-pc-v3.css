@@ -385,8 +385,6 @@ body > .row > .columns.ui-comments {
     font-size: 15px;
 }
 ul.comments {
-    overflow-y: auto;
-    overflow-x: hidden;
     padding-right: 10px;
 }
 ul.comments li {

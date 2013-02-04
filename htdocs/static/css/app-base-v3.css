@@ -6,150 +6,181 @@
 
 /********** icon **********/
 
+.icon-sort {
+	background-image: url(/static/img/sort@2x.png);
+	background-position: 0 0;
+	background-size: 16px 16px;
+	width: 16px;
+	height: 16px;
+}
 .icon-tasks {
-    background-image: url(/static/img/tasks.png);
+	background-image: url(/static/img/tasks.png);
+	background-position: 0 0;
+	background-size: 16px 16px;
+	width: 16px;
+	height: 16px;
 }
 .icon-tasks-half {
-    background-image: url(/static/img/tasks_half.png);
+	background-image: url(/static/img/tasks_half.png);
+	background-position: 0 0;
+	background-size: 16px 16px;
+	width: 16px;
+	height: 16px;
 }
 .icon-tasks-off {
-    background-image: url(/static/img/tasks_off.png);
+	background-image: url(/static/img/tasks_off.png);
+	background-position: 0 0;
+	background-size: 16px 16px;
+	width: 16px;
+	height: 16px;
 }
 .icon-grip {
-    background-image: url(/static/img/grip.png);
+	background-image: url(/static/img/grip.png);
 }
 .icon-keyboard {
-    background-image: url(/static/img/keyboard.png);
+	background-image: url(/static/img/keyboard.png);
 }
 .icon-pin {
-    background-image: url(/static/img/pin.png);
-    background-size: 14px 14px;
-    background-position: 0 0;
+	background-image: url(/static/img/pin.png);
+	background-size: 14px 14px;
+	background-position: 0 0;
 }
 .icon-pin-large {
-    background-image: url(/static/img/pin.png);
-    background-size: 16px 16px;
-    background-position: 0 0;
+	background-image: url(/static/img/pin.png);
+	background-size: 16px 16px;
+	background-position: 0 0;
 }
 
 /* HD / Retina -------------------------*/
 @media only screen and (-webkit-min-device-pixel-ratio:1.5), only screen and (min--moz-device-pixel-ratio:1.5), only screen and (min-device-pixel-ratio:1.5), only screen and (min-resolution:200dpi) {
-    [class^="icon-"], [class*=" icon-"] {
-        background-image: url("../img/glyphicons-halflings@2x.png");
-        background-size: 469px 159px;
-    }
-    .icon-white {
-        background-image: url("../img/glyphicons-halflings-white@2x.png");
-    }
-    .icon-tasks {
-        background-image: url(/static/img/tasks@2x.png);
-        background-size: 16px 16px;
-    }
-    .icon-tasks-half {
-        background-image: url(/static/img/tasks_half@2x.png);
-        background-size: 16px 16px;
-    }
-    .icon-tasks-off {
-        background-image: url(/static/img/tasks_off@2x.png);
-        background-size: 16px 16px;
-    }
-    .icon-keyboard {
-        background-image: url(/static/img/keyboard@2x.png);
-        background-size: 16px 16px;
-    }
-    .icon-grip {
-        background-image: url(/static/img/grip@2x.png);
-        background-size: 16px 16px;
-    }
-    .icon-pin-large,
-    .icon-pin {
-        background-image: url(/static/img/pin@2x.png);
-        background-position: 0 0;
-    }
-    .icon-pin {
-        background-size: 14px 14px;
-    }
-    .icon-pin-large {
-        background-size: 16px 16px;
-    }
+	[class^="icon-"], [class*=" icon-"] {
+		background-image: url("../img/glyphicons-halflings@2x.png");
+		background-size: 469px 159px;
+	}
+	.icon-hand-left {
+		background-position: -167px -144px;
+		width: 15px;
+	}
+	.icon-white {
+		background-image: url("../img/glyphicons-halflings-white@2x.png");
+	}
+	.icon-sort {
+		background-image: url(/static/img/sort@2x.png);
+		background-size: 16px 16px;
+	}
+	.icon-tasks {
+		background-image: url(/static/img/tasks@2x.png);
+		background-size: 16px 16px;
+	}
+	.icon-tasks-half {
+		background-image: url(/static/img/tasks_half@2x.png);
+		background-size: 16px 16px;
+	}
+	.icon-tasks-off {
+		background-image: url(/static/img/tasks_off@2x.png);
+		background-size: 16px 16px;
+	}
+	.icon-keyboard {
+		background-image: url(/static/img/keyboard@2x.png);
+		background-size: 16px 16px;
+	}
+	.icon-grip {
+		background-image: url(/static/img/grip@2x.png);
+		background-size: 16px 16px;
+	}
+	.icon-pin-large,
+	.icon-pin {
+		background-image: url(/static/img/pin@2x.png);
+		background-position: 0 0;
+	}
+	.icon-pin {
+		background-size: 14px 14px;
+	}
+	.icon-pin-large {
+		background-size: 16px 16px;
+	}
 }
 
 .icon {
-    width: 16px;
-    height: 16px;
-    background-repeat: no-repeat;
+	width: 16px;
+	height: 16px;
+	background-repeat: no-repeat;
 }
 span.icon {
-    display: inline-block;
+	display: inline-block;
 }
 .icon-gray {
-    opacity: 0.3;
+	opacity: 0.3;
 }
 .active .icon-gray {
-    opacity: 1;
+	opacity: 1;
 }
 a:hover .icon-gray {
-    opacity: 1;
+	opacity: 1;
 }
 .label.closed {
-    background-color: #0064cd;
+	background-color: #0064cd;
 }
 .tooltip {
-    opacity: 1;
+	opacity: 1;
 }
 
 /********** parts **********/
 .clearfix {
-    zoom: 1;
+	zoom: 1;
 }
 .clearfix:before,
 .clearfix:after {
-    display:table;
-    content:"";
+	display:table;
+	content:"";
 }
 .clearfix:after {
-    clear:both;
+	clear:both;
+}
+.sq14 {
+	width: 14px;
+	height: 14px;
 }
 .sq16 {
-    width: 16px;
-    height: 16px;
+	width: 16px;
+	height: 16px;
 }
 .sq24 {
-    width: 24px;
-    height: 24px;
+	width: 24px;
+	height: 24px;
 }
 .sq32 {
-    width: 32px;
-    height: 32px;
+	width: 32px;
+	height: 32px;
 }
 .left {
-    float: left;
+	float: left;
 }
 .salvage {
-    background-color: #ffe0e0;
+	background-color: #ffe0e0;
 }
 
 /********** redefine **********/
 form {
-    padding: 0 !important;
+	padding: 0 !important;
 }
 .modal {
-    display: none;
+	display: none;
 }
 .row {
-    margin-left: 0;
+	margin-left: 0;
 }
 
 /********** register-task-window **********/
 #register-task-window ul li {
-    margin-bottom: 4px;
+	margin-bottom: 4px;
 }
 #register-task-window ul li > label > div {
-    float: left;
+	float: left;
 }
 #register-task-window ul li > label > div.icon {
-    padding-left: 4px;
+	padding-left: 4px;
 }
 #register-task-window ul li > label > div.name {
-    padding-left: 4px;
+	padding-left: 4px;
 }

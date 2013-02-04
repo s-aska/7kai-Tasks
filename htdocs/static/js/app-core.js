@@ -88,6 +88,7 @@ app.obj.get = function(obj, keys){
                 keys: keys
             };
             console.log(error);
+            return;
             throw error;
         }
         f = f[ns[i]];
@@ -221,6 +222,9 @@ app.util.autolink = function(text, truncate){
         div.appendChild(a);
         return div.innerHTML;
     });
+}
+app.util.parse = function(template){
+    return $($.parseHTML(template.replace(/^\s+/, '').replace(/\s+$/, '')));
 }
 
 })(this, this, document);

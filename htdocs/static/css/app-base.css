@@ -113,6 +113,10 @@ span.icon {
 .clearfix:after {
     clear:both;
 }
+.sq14 {
+    width: 14px;
+    height: 14px;
+}
 .sq16 {
     width: 16px;
     height: 16px;
