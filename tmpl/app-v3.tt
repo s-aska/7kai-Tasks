@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap.css">
-<link rel="stylesheet" href="/static/css/app-base-v3.css?b4cc7474b58959b3bcaae18f55345816048a5483" media="all">
-<link rel="stylesheet" href="/static/css/app-pc-v3.css?b4cc7474b58959b3bcaae18f55345816048a5483" media="all">
+<link rel="stylesheet" href="/static/css/app-base-v3.css?c1a605e00e4a69758e3c5940e436f75bfedc144e" media="all">
+<link rel="stylesheet" href="/static/css/app-pc-v3.css?c1a605e00e4a69758e3c5940e436f75bfedc144e" media="all">
 <script src="/static/js/jquery-1.7.1.min.js"></script>
 <script src="/static/js/jquery-ui-1.8.21.custom.min.js"></script>
 <script src="/static/js/h5utils.js"></script>
-<script src="/static/js/app-core.js"></script>
-<script src="/static/js/app-base.js"></script>
-<script src="/static/js/app-base-viewer-v3.js?b4cc7474b58959b3bcaae18f55345816048a5483"></script>
-<script src="/static/js/app-page-viewer-v3.js?b4cc7474b58959b3bcaae18f55345816048a5483"></script>
-<script src="/static/js/app-gantt-viewer-v3.js?b4cc7474b58959b3bcaae18f55345816048a5483"></script>
+<script src="/static/js/app-core.js?c1a605e00e4a69758e3c5940e436f75bfedc144e"></script>
+<script src="/static/js/app-base.js?c1a605e00e4a69758e3c5940e436f75bfedc144e"></script>
+<script src="/static/js/app-base-viewer-v3.js?c1a605e00e4a69758e3c5940e436f75bfedc144e"></script>
+<script src="/static/js/app-page-viewer-v3.js?c1a605e00e4a69758e3c5940e436f75bfedc144e"></script>
+<script src="/static/js/app-gantt-viewer-v3.js?c1a605e00e4a69758e3c5940e436f75bfedc144e"></script>
 </head>
 <body>
 <div class="navbar navbar-fixed-top">
@@ -1775,16 +1775,16 @@
                   name="due"
                   value=""
                   pattern="^\d{4}-\d{1,2}-\d{1,2}$"
-                  style="width: 84px"
+                  style="width: 120px"
                 >
               </div>
               <div class="week left" style="color: gray; padding: 6px 0 0 6px; width: 24px; text-align: center;">
 
               </div>
-              <div class="due-control left">
+              <!-- <div class="due-control left">
                 <a class="btn x-small due-minus"><i class="icon-minus"></i></a>
                 <a class="btn x-small due-plus"><i class="icon-plus"></i></a>
-              </div>
+              </div> -->
             </div>
           </div>
           <div class="left" style="margin-left:10px">
