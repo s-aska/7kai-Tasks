@@ -899,6 +899,17 @@ app.setup.registerTask = function(section){
 				} else {
 					app.data.list_map[list_id_val].tasks.push(data.task);
 				}
+				var alert = $('#register-task');
+				alert.removeClass('in').show();
+				setTimeout(function(){
+					alert.addClass('in');
+				});
+				setTimeout(function(){
+					alert.on(app.support.transitionend, function(){
+						alert.off(app.support.transitionend);
+						alert.removeClass('in').hide();
+					}).removeClass('in');
+				}, 1500);
 			} else {
 				// 現在 ステータスコード 200 の例外ケースは無い
 			}

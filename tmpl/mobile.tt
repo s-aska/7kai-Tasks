@@ -760,6 +760,9 @@
 		>Reject</a>
 	</article>
 </div>
+<div id="register-task" class="alert alert-success" data-setup="localize" data-text-ja="タスクを登録しました">
+Registered a task.
+</div>
 <div
 	data-setup="messages"
 
