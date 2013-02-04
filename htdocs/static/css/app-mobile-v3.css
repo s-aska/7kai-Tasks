@@ -170,9 +170,9 @@ ul.task > li i[data-setup="star"] {
 ul.task > li i[data-setup="assign"] {
 	margin-top: 3px;
 	left: 38px;
-	width: 16px;
-	height: 16px;
-	background-size: 16px 16px;
+	width: 14px;
+	height: 14px;
+	background-size: 14px 14px;
 	background-position: 0 0;
 	-webkit-border-radius: 2px;
 	-moz-border-radius: 2px;
