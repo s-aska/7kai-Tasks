@@ -8,14 +8,14 @@
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap-sp-2.2.2.min.css">
 <link rel="stylesheet" href="/static/css/bootstrap-responsive-2.2.2.min.css">
-<link rel="stylesheet" href="/static/css/app-base-v3.css">
-<link rel="stylesheet" href="/static/css/app-mobile-v3.css">
+<link rel="stylesheet" href="/static/css/app-base-v3.css?20130205a">
+<link rel="stylesheet" href="/static/css/app-mobile-v3.css?20130205a">
 <script src="/static/js/jquery-1.9.0.min.js"></script>
 <script src="/static/js/h5utils.js"></script>
-<script src="/static/js/app-core.js"></script>
-<script src="/static/js/app-base.js"></script>
-<script src="/static/js/app-base-viewer-v3.js"></script>
-<script src="/static/js/app-mobile-viewer-v3.js"></script>
+<script src="/static/js/app-core.js?20130205a"></script>
+<script src="/static/js/app-base.js?20130205a"></script>
+<script src="/static/js/app-base-viewer-v3.js?20130205a"></script>
+<script src="/static/js/app-mobile-viewer-v3.js?20130205a"></script>
 </head>
 <body>
 <section class="slider-in slider-fix" data-setup="slider,signin" data-slider="signin">
@@ -539,13 +539,7 @@
 			data-setup="localize"
 			data-text-ja="期日"
 		>Due</label>
-		<input
-			type="date"
-			name="due"
-			value=""
-			pattern="^\d{4}-\d{1,2}-\d{1,2}$"
-			style="width: 130px"
-		>
+		<select name="due"></select>
 
 		<label
 			data-setup="localize"

@@ -789,7 +789,7 @@ app.setup.registerTask = function(section){
 	var list_id         = form.find('input[name="list_id"]');
 	var task_id         = form.find('input[name="task_id"]');
 	var name            = form.find('input[name="name"]');
-	var due             = form.find('input[name="due"]');
+	var due             = form.find('select[name="due"]');
 	var duration        = form.find('input[name="duration"]');
 	var requester       = form.find('select[name="requester"]');
 	var parent_id       = form.find('select[name="parent_id"]');
@@ -798,8 +798,21 @@ app.setup.registerTask = function(section){
 	var assign_template = assign_ul.html();
 
 	var setup = function(list, task){
+		due.empty();
 		assign_ul.empty();
 		requester.empty();
+		due.append(new Option('', ''));
+		var due_date = new Date();
+		var now = new Date();
+		for (var i = 0, max_i = 90; i < max_i; i++) {
+			due.append(new Option(
+				now.getFullYear() === due_date.getFullYear()
+					? app.date.mdw(due_date)
+					: app.date.ymdw(due_date),
+				app.date.ymd(due_date)
+			));
+			due_date.setTime(due_date.getTime() + (24 * 60 * 60 * 1000));
+		}
 		if (list.members.length) {
 			form.find('.team').show();
 			var assigns = [list.owner].concat(list.members);
@@ -859,9 +872,9 @@ app.setup.registerTask = function(section){
 		list_id.val(task.list.id);
 		task_id.val(task.id);
 		name.val(task.name);
-		due.val(task.due ? app.date.ymd(task.due_date) : '');
 		duration.val(task.duration);
 		setup(task.list, task);
+		due.val(task.due ? app.date.ymd(task.due_date) : '');
 		parent_id.val(task.parent_id);
 		requester.val(task.requester);
 		assign_ul.find('input[name=assign]').val(task.assign);
@@ -870,7 +883,6 @@ app.setup.registerTask = function(section){
 
 	form.submit(function(e){
 		e.preventDefault();
-		document.activeElement.blur();
 		var task_id_val   = task_id.val();
 		var list_id_val   = list_id.val();
 		var assign_val    = form.find('input[name="assign"]:checked').map(function(){return $(this).val()}).get();
@@ -895,6 +907,7 @@ app.setup.registerTask = function(section){
 				app.fireEvent('registerTask', data.task, app.data.list_map[list_id_val], !task_id);
 				app.dom.reset(form);
 				if (task_id_val) {
+					document.activeElement.blur();
 					app.fireEvent('openTask', data.task);
 				} else {
 					app.data.list_map[list_id_val].tasks.push(data.task);

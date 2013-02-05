@@ -135,7 +135,9 @@ app.date.relative = function(epoch){
         epoch = parseInt(epoch / 1000);
     }
     var diff = now_epoch - epoch;
-    if (diff < 60) {
+    if (diff < 0) {
+        return '0 sec ago';
+    } else if (diff < 60) {
         var s = diff > 1 ? 's' : '';
         return diff + ' sec' + s + ' ago';
     } else if (diff < 3600) {
@@ -167,6 +169,20 @@ app.date.ymd = function(date){
         day = '0' + day;
     }
     return date.getFullYear() + '-' + month + '-' + day;
+}
+app.date.ymdw = function(date){
+    if (app.env.lang === 'ja') {
+        return date.getFullYear() + '年' + app.date.mdw(date);
+    } else {
+        return date.getFullYear() + '/' + app.date.mdw(date);
+    }
+}
+app.date.mdw = function(date){
+    if (app.env.lang === 'ja') {
+        return ( date.getMonth() + 1 ) + '月' + date.getDate() + '日 (' + app.WEEK_NAMES_JA[date.getDay()] + ')';
+    } else {
+        return ( date.getMonth() + 1 ) + '/' + date.getDate() + ' ' + app.WEEK_NAMES[date.getDay()];
+    }
 }
 app.date.mdy = function(date){
     return (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
