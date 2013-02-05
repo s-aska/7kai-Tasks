@@ -101,11 +101,14 @@ app.slider = {
 			});
 		});
 	},
-	show: function(name){
+	show: function(name, back){
 		var that       = this;
 		var show       = this.map[name];
 		if (this.busy || (name === this.cur)) {
 			return;
+		}
+		if (!back && history.pushState) {
+			history.pushState(name, '', location.protocol + '//' + location.host + location.pathname + location.search);
 		}
 		this.busy = true;
 		document.activeElement.blur();
@@ -154,6 +157,13 @@ app.slider = {
 		app.addListener('ready', app.slider.fixed);
 		app.addListener('resize', app.slider.fixed);
 		app.addListener('orientationchange', app.slider.fixed);
+		win.on('popstate', function(e){
+			if (e.originalEvent.state) {
+				e.preventDefault();
+				e.stopPropagation();
+				app.slider.show(e.originalEvent.state, true);
+			}
+		});
 	}
 };
 

@@ -10,6 +10,9 @@ app.addEvents('showListMenu');
 app.addListener('createTask', function(){
     app.dom.hide(app.dom.get('showable', 'welcome'));
 });
+app.addListener('openTask', function(task){
+    w.location.hash = task.list.id + '-' + task.id;
+});
 
 app.setup.rightColumn = function(ele){
     var list_id_input    = ele.find('input[name=list_id]');

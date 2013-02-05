@@ -90,9 +90,6 @@ app.addListener('collapseList', function(list, collapse){
         }
     });
 });
-app.addListener('openTask', function(task){
-    w.location.hash = task.list.id + '-' + task.id;
-});
 app.addListener('openTaskInHome', function(task){
     app.fireEvent('selectTab', 'viewer', 'task');
     app.fireEvent('selectTab', 'homemenu', 'task');
