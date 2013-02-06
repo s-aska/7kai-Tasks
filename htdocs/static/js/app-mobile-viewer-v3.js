@@ -192,17 +192,23 @@ app.slider = {
 app.modal = {
 	map: {},
 	visited: false,
+	busy: false,
 	show: function(name, args){
 		if (app.modal.visited) {
 			app.modal.visited.removeClass('in').hide();
 		}
+		app.modal.busy = true;
+		app.modal.guard.show();
 		app.modal.backdrop.show().addClass('in');
 		app.modal.map[name].show().scrollTop(0).addClass('in').trigger('show', args);
 		app.modal.visited = app.modal.map[name];
-		console.log(app.modal.map[name].scrollTop());
+		setTimeout(function(){
+			app.modal.busy = false;
+			app.modal.guard.hide();
+		}, 500);
 	},
 	hide: function(){
-		if (! app.modal.visited) {
+		if (! app.modal.visited || app.modal.busy) {
 			return;
 		}
 		app.modal.visited.removeClass('in').hide();
@@ -215,6 +221,7 @@ app.modal = {
 	setup: function(){
 		app.modal.modal = $('.modal');
 		app.modal.backdrop = $('.modal-backdrop');
+		app.modal.guard = $('#guard');
 		app.modal.modal.each(function(){
 			var ele = $(this);
 			var name = ele.data('modal');
@@ -304,6 +311,7 @@ app.dom.touch = function(ele, callback){
 		return ele;
 	}
 	ele.on('touchstart', function(e){
+		e.stopPropagation();
 		ele.on('touchend', function(e){
 			e.preventDefault();
 			e.stopPropagation();
