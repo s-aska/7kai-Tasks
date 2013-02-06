@@ -592,7 +592,8 @@ app.api.account.me = function(option){
     })
     .done(function(data){
         if (data) {
-            localStorage.setItem("me", JSON.stringify(data));
+            // console.log(data);
+            // localStorage.setItem("me", JSON.stringify(data));
             app.util.buildMe(option, data);
         }
     });
@@ -1036,10 +1037,16 @@ app.util.findParentTask = function(task){
 }
 app.util.findParentTasks = function(task){
     var parents = [], current = task;
+    var i = 0;
     while (current.parent_id && current.parent_id.length && app.data.task_map[current.parent_id]) {
         var parent = app.data.task_map[current.parent_id];
+        if (parent.id === task.id || i > 10) {
+            console.log('Circular reference.');
+            break; // loop
+        }
         parents.push(parent);
         current = parent;
+        i++;
     }
     return parents;
 }
@@ -1114,9 +1121,11 @@ app.util.sortTask = function(tasks, column, reverse){
                 parentsB = [b].concat(app.util.findParentTasks(b)),
                 compareTaskA = parentsA.pop(),
                 compareTaskB = parentsB.pop();
-
             // 共通の親から離れるまでドリルダウン
-            while (compareTaskA.id === compareTaskB.id) {
+            for (var i = 0, max_i = 10; i < max_i; i++) {
+                if (compareTaskA.id !== compareTaskB.id) {
+                    break;
+                }
                 // A親 - B子
                 if (!parentsA.length) {
                     return reverse ? 1 : -1;
