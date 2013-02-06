@@ -42,6 +42,8 @@ sub update {
     my $key     = $req->param('key');
     my $val     = $req->param('val');
 
+    infof('[%s] method:%s type:%s ns:%s key:%s val:%s', $c->sign_name, $method, $type, $ns, $key, $val);
+
     if ($type eq 'json') {
         $val = decode_json($val);
     }

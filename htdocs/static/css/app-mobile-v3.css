@@ -11,87 +11,46 @@ body {
 /******************************
  * Section
  ******************************/
-section {
-	top: 0;
-	left: 0;
-	overflow-y: auto;
-	-webkit-overflow-scrolling: touch;
-	background-color: #F7F7F6;
-}
-section:nth-child(n+2) {
-	position: absolute;
-	-webkit-transform: translatex(400px);
-	-moz-transform: translateX(400px);
-	-o-transform: translatex(400px);
-	-ms-transform: translatex(400px);
-	transform: translatex(400px);
+#container {
+	-webkit-transition-timing-function: cubic-bezier(0, 0, 0.25 ,1);
+	-moz-transition-timing-function: cubic-bezier(0, 0, 0.25 ,1);
+	-o-transition-timing-function: cubic-bezier(0, 0, 0.25 ,1);
+	transition-timing-function: cubic-bezier(0, 0, 0.25 ,1);
 	-webkit-transition-property: transform;
 	-moz-transition-property: transform;
 	-o-transition-property: transform;
 	transition-property: transform;
-	-webkit-transition-duration: 0.3s;
-	-moz-transition-duration: 0.3s;
-	-o-transition-duration: 0.3s;
-	transition-duration: 0.3s;
+	-webkit-transition-duration: 0.5s;
+	-moz-transition-duration: 0.5s;
+	-o-transition-duration: 0.5s;
+	transition-duration: 0.5s;
 }
-@media (min-width: 480px) {
-	section:nth-child(n+2) {
-		-webkit-transform: translatex(800px);
-		-moz-transform: translateX(800px);
-		-o-transform: translatex(800px);
-		-ms-transform: translatex(800px);
-		transform: translatex(800px);
-	}
-}
-@media (min-width: 768px) {
-	section:nth-child(n+2) {
-		-webkit-transform: translatex(1000px);
-		-moz-transform: translateX(1000px);
-		-o-transform: translatex(1000px);
-		-ms-transform: translatex(1000px);
-		transform: translatex(1000px);
-	}
-}
-@media (min-width: 980px) {
-	section:nth-child(n+2) {
-		-webkit-transform: translatex(1200px);
-		-moz-transform: translateX(1200px);
-		-o-transform: translatex(1200px);
-		-ms-transform: translatex(1200px);
-		transform: translatex(1200px);
-	}
-}
-@media (min-width: 1200px) {
-	section:nth-child(n+2) {
-		-webkit-transform: translatex(1600px);
-		-moz-transform: translateX(1600px);
-		-o-transform: translatex(1600px);
-		-ms-transform: translatex(1600px);
-		transform: translatex(1600px);
-	}
-}
-section.slider-out {
-	display: none;
-}
-section.slider-in {
-	-webkit-transform: translatex(0px);
-	-moz-transform: translateX(0px);
-	-o-transform: translatex(0px);
-	-ms-transform: translatex(0px);
-	transform: translatex(0px);
-}
-section.slider-fix {
-	position: static;
-}
-section > article {
-	padding: 10px 10px 10px 10px;
+section {
+	float: left;
+	top: 0;
+	left: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	background-color: #F7F7F6;
 }
 section > form {
 	padding: 10px 10px 0 10px !important;
 	margin-bottom: 10px;
 }
-
-
+article {
+	padding: 10px 10px 10px 10px;
+}
+.modal {
+	overflow: hidden;
+}
+.modal article {
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+.modal form {
+	padding: 10px 10px 0 10px !important;
+}
 hr {
 	margin: 10px 0 6px 0;
 }
@@ -102,7 +61,7 @@ hr {
 .navbar-fixed-bottom {
 	position: fixed;
 }
-a:hover {
+.btn:hover {
 	text-decoration: none;
 	cursor: pointer;
 }
@@ -137,7 +96,7 @@ ul.list > li[data-tag="warning"] {
 ul.list > li[data-tag="danger"] {
 	border-top: 2px solid #DA4F49;
 }
-ul.list > li > a.name {
+ul.list > li > span.name {
 	display: block;
 	padding: 10px 10px;
 	color: black;
@@ -257,15 +216,15 @@ ul.task > li > div.due span.week {
 .comments img {
 	border-radius: 4px;
 }
-a.link-block {
+span.link-block {
 	display: block;
 	padding: 10px 10px;
 	color: black;
 }
-a.link-block + a.link-block {
+span.link-block + span.link-block {
 	border-top: 1px solid #EBEBEC;
 }
-a[data-click="clearTask"] {
+span[data-click="clearTask"] {
 	display: none;
 }
 
@@ -286,10 +245,10 @@ section#list[data-mode="tag"] [data-mode="tag"] {
 
 
 /* 削除モード */
-body.mode-closed a[data-click="clearTask"] {
+body.mode-closed span[data-click="clearTask"] {
 	display: block;
 }
-body.mode-closed a[data-click="createTask"] {
+body.mode-closed span[data-click="createTask"] {
 	display: none;
 }
 
@@ -386,7 +345,7 @@ body.display-pin .comment-pin {
 #member ul li span {
 	margin-left: 10px;
 }
-#member ul li a {
+#member ul li span.delete {
 	display: block;
 	position: absolute;
 	top: 0;
@@ -394,7 +353,8 @@ body.display-pin .comment-pin {
 	padding: 10px;
 }
 #register-task {
-	position: absolute;
+	z-index: 1;
+	position: fixed;
 	top: 10px;
 	left: 10px;
 	right: 10px;

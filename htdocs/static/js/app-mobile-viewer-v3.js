@@ -4,41 +4,227 @@
 var win = $(w);
 var doc = $(d);
 var app = ns.app;
+var div = d.createElement('div');
 
 app.support = {
-	mousedown: 'mousedown',
-	mouseup: 'mouseup',
-	pageX: function(e){ return e.pageX },
-	pageY: function(e){ return e.pageY },
-	transitionend: 'transitionEnd'
+	prefix: ['webkit', 'moz', 'o', 'ms'],
+	touch: ('ontouchstart' in w),
+	mspointer: w.navigator.msPointerEnabled,
+	prop: function(props){
+		for (var i = 0, max_i = props.length; i < max_i; i++) {
+			if (props[i] in div.style) {
+				return props[i];
+			}
+		}
+	},
+	init: function(){
+		app.support.transform3d = app.support.prop([
+			'perspectiveProperty',
+			'WebkitPerspective',
+			'MozPerspective',
+			'OPerspective',
+			'msPerspective'
+		]);
+		app.support.transform = app.support.prop([
+			'transformProperty',
+			'WebkitTransform',
+			'MozTransform',
+			'OTransform',
+			'msTransform'
+		]);
+		app.support.transition = app.support.prop([
+			'transitionProperty',
+			'WebkitTransitionProperty',
+			'MozTransitionProperty',
+			'OTransitionProperty',
+			'msTransitionProperty'
+		]);
+		app.support.transitionDuration = app.support.prop([
+			'transitionDuration',
+			'WebkitTransitionDuration',
+			'MozTransitionDuration',
+			'OTransitionDuration',
+			'msTransitionDuration'
+		]);
+		app.support.cssAnimation = (app.support.transform3d || app.support.transform) && app.support.transition;
+		app.support.touchstart = app.support.mspointer ? 'MSPointerDown' : app.support.touch ? 'touchstart' : 'mousedown';
+		app.support.touchmove = app.support.mspointer ? 'MSPointerMove' : app.support.touch ? 'touchmove' : 'mousemove';
+		app.support.touchend = app.support.mspointer ? 'MSPointerUp' : app.support.touch ? 'touchend' : 'mouseup';
+		app.support.pageX = function(e){ return e.pageX || e.changedTouches[0].pageX };
+		app.support.pageY = function(e){ return e.pageY || e.changedTouches[0].pageY };
+	},
+	translate: function(x){
+		return app.support.transform3d ? 'translate3d(' + x + 'px, 0, 0)' : 'translate(' + x + 'px, 0)';
+	}
 };
 
-(function(){
-	if ('ontouchstart' in d) {
-		app.support.mousedown = 'touchstart';
-		app.support.mouseup   = 'touchend';
-		app.support.pageX     = function(e){ return e.originalEvent.pageX || e.originalEvent.changedTouches[0].pageX };
-		app.support.pageY     = function(e){ return e.originalEvent.pageY || e.originalEvent.changedTouches[0].pageY };
-	}
-	var div = d.createElement('div');
-	var prefixes = ['Moz', 'Webkit', 'O', 'ms'];
-	for (var i = 0; i < prefixes.length; ++i) {
-		var vendorProp = prefixes[i] + 'Transition';
-		if (vendorProp in div.style) {
-			app.support.transitionend = {
-				MozTransition:    'transitionend',
-				OTransition:      'oTransitionEnd',
-				WebkitTransition: 'webkitTransitionEnd',
-				msTransition:     'MSTransitionEnd'
-			}[vendorProp];
-			break;
+app.support.init();
+
+// ------------------------------
+// スライダー
+// ------------------------------
+app.slider = {
+	map: {},
+	arr: {},
+	cur: null,
+	width: 0,
+	show: function(name, silent){
+		var show = app.slider.map[name];
+		if (name === app.slider.cur) {
+			return;
 		}
+		if (!silent && history.pushState) {
+			history.pushState(name, '', location.protocol + '//' + location.host + location.pathname + location.search);
+		}
+		app.slider.cur = name;
+		// hide virtual Keybord
+		document.activeElement.blur();
+		app.slider.container.css(app.support.transform, app.support.translate(show.data('slider-index') * app.slider.width * -1));
+	},
+	setup: function(){
+		var container = d.getElementById('container');
+		app.slider._container = container;
+		app.slider.container = $(container);
+		app.slider.section = $('section');
+		app.slider.section.each(function(i){
+			var ele = $(this);
+			var name = ele.data('slider');
+			if (i === 0) {
+				app.slider.cur = name;
+			}
+			app.slider.map[name] = ele;
+			app.slider.arr[i] = ele;
+			ele.data('slider-index', i);
+		});
+		app.slider.fixed();
+		app.slider.section.show();
+		container.addEventListener(app.support.touchstart, app.slider, false);
+		container.addEventListener(app.support.touchmove, app.slider, false);
+		d.addEventListener(app.support.touchend, app.slider, false);
+	},
+	fixed: function(){
+		app.slider.width = win.width();
+		var height = (w.innerHeight ? w.innerHeight : win.height()) - 51;
+		app.slider.section.css({
+			height: height + 'px',
+			width: app.slider.width + 'px'
+		});
+		app.slider.container.css({
+			height: height + 'px',
+			width: (app.slider.width * app.slider.section.length) + 'px'
+		});
+	},
+	handleEvent: function(e){
+		switch (e.type) {
+			case app.support.touchstart:
+				this.touchstart(e);
+				break;
+			case app.support.touchmove:
+				this.touchmove(e);
+				break;
+			case app.support.touchend:
+				this.touchend(e);
+				break;
+			case 'click':
+				this.click(e);
+				break;
+		}
+	},
+	touchstart: function(e){
+		if (app.slider.cur === 'signin') { return }
+		app.slider.scrolling = true;
+		app.slider.moveReady = false;
+		app.slider.startPageX = app.support.pageX(e);
+		app.slider.startPageY = app.support.pageY(e);
+	},
+	touchmove: function(e){
+		if (! app.slider.scrolling) {
+			return;
+		}
+		if (app.slider.moveReady) {
+				e.preventDefault();
+				e.stopPropagation();
+		} else {
+			var deltaX = Math.abs(app.support.pageX(e) - app.slider.startPageX);
+			var deltaY = Math.abs(app.support.pageY(e) - app.slider.startPageY);
+			if (deltaX > 5) {
+				e.preventDefault();
+				e.stopPropagation();
+				app.slider.moveReady = true;
+				app.slider._container.addEventListener('click', app.slider, true);
+			} else if (deltaY > 5) {
+				app.slider.scrolling = false;
+			}
+		}
+	},
+	touchend: function(e){
+		if (! app.slider.scrolling) {
+			return;
+		}
+		app.slider.scrolling = false;
+		if (app.slider.moveReady) {
+			var deltaX = app.support.pageX(e) - app.slider.startPageX;
+			if (deltaX > 0) {
+				var cur = app.slider.map[app.slider.cur];
+				if (cur) {
+					cur.trigger('swipe-prev');
+				}
+			} else {
+				var cur = app.slider.map[app.slider.cur];
+				if (cur) {
+					cur.trigger('swipe-next');
+				}
+			}
+		}
+		setTimeout(function() {
+			app.slider._container.removeEventListener('click', app.slider, true);
+		}, 200);
+	},
+	click: function(e){
+		e.preventDefault();
+		e.stopPropagation();
 	}
-	// if ('transition' in div.style) {
-	// 	app.support.transitionend = 'transitionEnd';
-	// } else {
-	// }
-})();
+};
+
+// ------------------------------
+// モーダル
+// ------------------------------
+app.modal = {
+	map: {},
+	visited: false,
+	show: function(name, args){
+		if (app.modal.visited) {
+			app.modal.visited.removeClass('in').hide();
+		}
+		app.modal.backdrop.show().addClass('in');
+		app.modal.map[name].show().scrollTop(0).addClass('in').trigger('show', args);
+		app.modal.visited = app.modal.map[name];
+		console.log(app.modal.map[name].scrollTop());
+	},
+	hide: function(){
+		if (! app.modal.visited) {
+			return;
+		}
+		app.modal.visited.removeClass('in').hide();
+		app.modal.backdrop.removeClass('in').hide();
+		app.modal.visited = false;
+	},
+	fixed: function(){
+		app.modal.modal.find('article').css('maxHeight', (w.innerHeight ? w.innerHeight : win.height()) - 40 + 'px');
+	},
+	setup: function(){
+		app.modal.modal = $('.modal');
+		app.modal.backdrop = $('.modal-backdrop');
+		app.modal.modal.each(function(){
+			var ele = $(this);
+			var name = ele.data('modal');
+			app.modal.map[name] = ele;
+			ele.on(app.support.touchmove, function(e){ e.stopPropagation() });
+		});
+		app.modal.fixed();
+	}
+};
+
 
 app.option.auto_sync_friends = false;
 
@@ -46,12 +232,26 @@ app.addEvents('orientationchange');
 app.addEvents('exportMenu');
 
 app.addListener('ready', function(){
+	app.slider.setup();
+	app.modal.setup();
 	w.addEventListener('online', function(){
 		app.api.token();
 	});
 	w.addEventListener('orientationchange', function(){
 		app.fireEvent('orientationchange');
 	});
+	w.addEventListener('popstate', function(e){
+		if (app.modal.visited) {
+			app.modal.hide();
+			return;
+		}
+		if (e.state) {
+			e.preventDefault();
+			e.stopPropagation();
+			app.slider.show(e.state, true);
+		}
+	});
+	$('.modal-backdrop').on(app.support.touchstart, app.modal.hide);
 });
 
 app.addListener('setup', function(){
@@ -60,163 +260,14 @@ app.addListener('setup', function(){
 	}
 });
 
-// ------------------------------
-// スライダー
-// ------------------------------
-app.slider = {
-	map: {},
-	cur: null,
-	busy: false,
-	i: 0,
-	register: function(ele){
-		var that = this;
-		var name = ele.data('slider');
-		this.map[name] = ele;
-		ele.data('slider-index', this.i++);
-		if (ele.hasClass('slider-in')) {
-			this.cur = name;
-		}
-		// Swipe
-		ele.on(app.support.mousedown, function(e){
-			if (that.busy) return false;
-			var initX = app.support.pageX(e);
-			var initY = app.support.pageY(e);
-			ele.off(app.support.mouseup);
-			ele.on(app.support.mouseup, function(e){
-				var pageX = app.support.pageX(e);
-				var pageY = app.support.pageY(e);
-				var diffX = pageX - initX;
-				var diffY = Math.abs(pageY - initY);
-				if (diffX > 20 && diffX > diffY) {
-					e.preventDefault();
-					e.stopPropagation();
-					ele.off(app.support.mouseup);
-					ele.trigger('swipe-prev');
-				} else if (diffX < -20 && Math.abs(diffX) > diffY) {
-					e.preventDefault();
-					e.stopPropagation();
-					ele.off(app.support.mouseup);
-					ele.trigger('swipe-next');
-				}
-			});
-		});
-	},
-	show: function(name, back){
-		var that       = this;
-		var show       = this.map[name];
-		if (this.busy || (name === this.cur)) {
-			return;
-		}
-		if (!back && history.pushState) {
-			history.pushState(name, '', location.protocol + '//' + location.host + location.pathname + location.search);
-		}
-		this.busy = true;
-		document.activeElement.blur();
-		var hide = this.map[this.cur];
-		if (show.data('slider-index') > hide.data('slider-index')) {
-			// slide in
-			show.removeClass('slider-out');
-			setTimeout(function(){
-				show.on(app.support.transitionend, function(){
-					show.off(app.support.transitionend);
-					show.addClass('slider-fix');
-					hide
-						.removeClass('slider-fix')
-						.removeClass('slider-in')
-						.addClass('slider-out');
-					that.cur = name;
-					that.busy = false;
-				});
-				show.scrollTop(0);
-				show.addClass('slider-in');
-			}, 0);
-		} else {
-			// slide out
-			show
-				.removeClass('slider-out')
-				.addClass('slider-in')
-				.addClass('slider-fix');
-			hide
-				.on(app.support.transitionend, function(){
-					hide.off(app.support.transitionend);
-					hide.addClass('slider-out');
-					that.cur = name;
-					that.busy = false;
-				})
-				.removeClass('slider-fix')
-				.removeClass('slider-in');
-		}
-	},
-	fixed: function(){
-		$('section').css({
-			height: ((w.innerHeight ? w.innerHeight : win.height()) - 51) + 'px',
-			width: win.width() + 'px'
-		});
-	},
-	setup: function(){
-		app.addListener('ready', app.slider.fixed);
-		app.addListener('resize', app.slider.fixed);
-		app.addListener('orientationchange', app.slider.fixed);
-		win.on('popstate', function(e){
-			if (e.originalEvent.state) {
-				e.preventDefault();
-				e.stopPropagation();
-				app.slider.show(e.originalEvent.state, true);
-			}
-		});
-	}
-};
-
-// セットアップ
-app.slider.setup.call();
+app.addListener('resize', app.slider.fixed);
+app.addListener('resize', app.modal.fixed);
+app.addListener('orientationchange', app.slider.fixed);
+app.addListener('orientationchange', app.modal.fixed);
 
 // マッピング
-app.setup.slider = function(ele){
-	app.slider.register(ele);
-};
 app.click.slider = function(ele){
 	app.slider.show(ele.data('slider'));
-};
-
-// ------------------------------
-// モーダル
-// ------------------------------
-app.modal = {
-	map: {},
-	register: function(ele){
-		var that = this;
-		var name = ele.data('modal');
-		this.map[name] = ele;
-
-	},
-	show: function(name, args){
-		var backdrop =  $('.modal-backdrop');
-		backdrop.on(app.support.transitionend, function(){
-			backdrop.on(app.support.mousedown, function(){
-				backdrop.off(app.support.mouseup);
-				backdrop.on(app.support.mouseup, function(e){
-					e.preventDefault();
-					backdrop.off(app.support.transitionend);
-					app.modal.hide();
-				});
-			});
-		}).show().addClass('in');
-		this.map[name].show().addClass('in').trigger('show', args);
-	},
-	hide: function(){
-		var backdrop = $('.modal-backdrop');
-		var modal = $('.modal.in');
-		modal.removeClass('in').hide();
-		backdrop.on(app.support.transitionend, function(){
-			backdrop.off(app.support.transitionend);
-			backdrop.hide();
-		}).removeClass('in');
-	}
-};
-
-// マッピング
-app.setup.modal = function(ele){
-	app.modal.register(ele);
 };
 
 // ------------------------------
@@ -244,7 +295,7 @@ app.setup.click = function(ele){
 	});
 }
 app.dom.touch = function(ele, callback){
-	if (document.ontouchstart === undefined) {
+	if (! app.support.touch) {
 		ele.on('click', function(e){
 			e.preventDefault();
 			e.stopPropagation();
@@ -253,17 +304,19 @@ app.dom.touch = function(ele, callback){
 		return ele;
 	}
 	ele.on('touchstart', function(e){
-		ele.off('touchend');
 		ele.on('touchend', function(e){
 			e.preventDefault();
 			e.stopPropagation();
 			callback.call(this, e);
-			window.focus();
+			ele.off('touchend');
+			ele.off('touchmove');
 			document.activeElement.blur();
+			window.focus();
 		});
 	});
 	ele.on('touchmove', function(){
 		ele.off('touchend');
+		ele.off('touchmove');
 	});
 	return ele;
 }
@@ -352,11 +405,11 @@ app.setup.list = function(section){
 
 		if (list.id in app.data.listli_map) {
 			var li = app.data.listli_map[list.id];
-			li.find('> a.name span').text(list.name);
+			li.find('> span.name span').text(list.name);
 		} else {
 			var li = app.util.parse(list_template);
 			li.data('id', list.id);
-			li.find('> a.name span').text(list.name);
+			li.find('> span.name span').text(list.name);
 			li.find('> ul').empty();
 			app.dom.setup(li);
 			if (list.id in app.data.state.tags) {
@@ -690,6 +743,7 @@ app.setup.pin = function(ul, task){
 app.setup.listMenu = function(ele){
 	var section = $('#list');
 	ele.on('show', function(e, list_id){
+		var list = app.data.list_map[list_id];
 		ele.data('id', list_id);
 		ele.find('.icon-share-alt').parent().toggle(!!list.original);
 		ele.find('.icon-remove').parent().toggle(!!list.original);
@@ -709,7 +763,7 @@ app.setup.listMenu = function(ele){
 	app.dom.touch(ele.find('.icon-share-alt').parent(), function(e){
 		e.preventDefault();
 		app.fireEvent('exportMenu', app.data.list_map[ele.data('id')]);
-		app.modal.hide();
+		// app.modal.hide();
 	});
 	app.dom.touch(ele.find('.icon-volume-off').parent(), function(e){
 		e.preventDefault();
@@ -756,7 +810,7 @@ app.setup.listMenu = function(ele){
 	app.dom.touch(ele.find('.icon-user').parent(), function(e){
 		e.preventDefault();
 		app.fireEvent('editListMember', app.data.list_map[ele.data('id')]);
-		app.modal.hide();
+		// app.modal.hide();
 	});
 	app.dom.touch(ele.find('.icon-edit').parent(), function(e){
 		e.preventDefault();
@@ -793,7 +847,7 @@ app.setup.listMenu = function(ele){
 // Register Task
 // ------------------------------
 app.setup.registerTask = function(section){
-	var slider          = section.data('slider');
+	var modal           = section.data('modal');
 	var form            = section.find('form');
 	var list_name       = form.find('.list-name');
 	var list_id         = form.find('input[name="list_id"]');
@@ -804,7 +858,6 @@ app.setup.registerTask = function(section){
 	var requester       = form.find('select[name="requester"]');
 	var parent_id       = form.find('select[name="parent_id"]');
 	var assign_ul       = form.find('ul.assign');
-	var close           = form.find('button.btn-inverse');
 	var assign_template = assign_ul.html();
 
 	var setup = function(list, task){
@@ -874,7 +927,7 @@ app.setup.registerTask = function(section){
 		name.val('');
 		setup(list);
 		requester.val(app.data.sign.account_id);
-		app.slider.show(slider);
+		app.modal.show(modal);
 	});
 
 	app.addListener('editTask', function(task){
@@ -888,7 +941,7 @@ app.setup.registerTask = function(section){
 		parent_id.val(task.parent_id);
 		requester.val(task.requester);
 		assign_ul.find('input[name=assign]').val(task.assign);
-		app.slider.show(slider);
+		app.modal.show(modal);
 	});
 
 	form.submit(function(e){
@@ -919,6 +972,7 @@ app.setup.registerTask = function(section){
 				if (task_id_val) {
 					document.activeElement.blur();
 					app.fireEvent('openTask', data.task);
+					app.modal.hide();
 				} else {
 					app.data.list_map[list_id_val].tasks.push(data.task);
 				}
@@ -971,15 +1025,17 @@ app.setup.registerTask = function(section){
 			// }
 		});
 	});
-
-	app.dom.touch(close, function(e){
-		e.preventDefault();
-		app.slider.show(task_id.val() ? 'task' : 'list');
+	app.dom.touch(form.find('.btn-primary'), function(){
+		form.submit();
 	});
-
-	section.on('swipe-prev', function(){
-		app.slider.show(task_id.val() ? 'task' : 'list');
+	app.dom.touch(form.find('.btn-inverse'), function(){
+		app.modal.hide();
+		// app.slider.show(task_id.val() ? 'task' : 'list');
 	});
+	// section.on('swipe-prev', function(){
+	// 	// app.modal.hide();
+	// 	// app.slider.show(task_id.val() ? 'task' : 'list');
+	// });
 }
 
 // ------------------------------
@@ -988,13 +1044,13 @@ app.setup.registerTask = function(section){
 app.setup.registerList = function(section){
 	var form = section.find('form');
 	app.addListener('createList', function(){
-		app.slider.show(section.data('slider'));
+		app.modal.show(section.data('modal'));
 	});
 	app.addListener('editList', function(list){
 		form.find('input[name="list_id"]').val(list.id);
 		form.find('input[name="name"]').val(list.name);
 		form.find('textarea').val(list.description);
-		app.slider.show(section.data('slider'));
+		app.modal.show(section.data('modal'));
 	});
 	form.submit(function(e){
 		e.preventDefault();
@@ -1012,17 +1068,17 @@ app.setup.registerList = function(section){
 					$.extend(app.data.list_map[data.list.id], data.list);
 				}
 				app.fireEvent('registerList', data.list);
-				app.slider.show('list');
+				app.modal.hide();
 			} else {
 				// 現在 ステータスコード 200 の例外ケースは無い
 			}
 		});
 	});
-	app.dom.touch(form.find('.btn-inverse'), function(){
-		app.slider.show('list');
+	app.dom.touch(form.find('.btn-primary'), function(){
+		form.submit();
 	});
-	section.on('swipe-prev', function(){
-		app.slider.show('list');
+	app.dom.touch(form.find('.btn-inverse'), function(){
+		app.modal.hide();
 	});
 }
 
@@ -1043,12 +1099,12 @@ app.setup.desc = function(section){
 	var status   = form.find('input[name="status"]');
 	var closed   = form.find('input[name="closed"]');
 	var textarea = form.find('textarea');
-	var cancel   = form.find('.cancel');
-	var button   = form.find('button.comment');
-	var edit     = form.find('button.edit');
-	var star     = form.find('button.star');
-	var pending  = form.find('button.pending');
-	var buttons  = form.find('button[data-plus]');
+	var cancel   = form.find('span.cancel');
+	var button   = form.find('span.btn.comment');
+	var edit     = form.find('span.btn.edit');
+	var star     = form.find('span.btn.star');
+	var pending  = form.find('span.btn.pending');
+	var buttons  = form.find('span.btn[data-plus]');
 	var counter  = form.find('.counter');
 	var template = comments.html();
 
@@ -1062,7 +1118,9 @@ app.setup.desc = function(section){
 		.keyup(textarea_watch)
 		.on('paste', textarea_watch);
 
-	app.dom.touch(cancel, function(){
+	cancel.on(app.support.touchstart, function(e){
+		e.preventDefault();
+		e.stopPropagation();
 		app.slider.show('list');
 	});
 
@@ -1327,12 +1385,11 @@ app.setup.desc = function(section){
 // Member
 // ------------------------------
 app.setup.member = function(section){
-	var form = section.find('form');
-	var ul = form.find('ul');
+	var ul = section.find('ul');
 	var template = ul.html();
 
-	app.dom.touch(form.find('.btn-primary'), function(){
-		var id = form.data('id');
+	app.dom.touch(section.find('.btn-primary'), function(){
+		var id = section.data('id');
 		app.api.list.invite(id).done(function(data){
 			var url = location.protocol + '//'
 				+ location.host
@@ -1340,22 +1397,22 @@ app.setup.member = function(section){
 				+ id
 				+ '/'
 				+ data.invite_code;
-			form.find('input[name="invite_code"]').val(url);
+			section.find('input[name="invite_code"]').val(url);
 			app.data.list_map[id].invite_code = data.invite_code;
 		});
 	});
 
-	app.dom.touch(form.find('.btn-danger'), function(){
-		var id = form.data('id');
+	app.dom.touch(section.find('.btn-danger'), function(){
+		var id = section.data('id');
 		app.api.list.disinvite(id).done(function(){
-			form.find('input[name="invite_code"]').val('');
+			section.find('input[name="invite_code"]').val('');
 			app.data.list_map[id].invite_code = null;
 		});
 	});
 
 	app.addListener('editListMember', function(list){
-		form.data('id', list.id);
-		form.find('> p > span:first').text(list.name);
+		section.data('id', list.id);
+		section.find('p > span:first').text(list.name);
 		if (list.invite_code) {
 			var url = location.protocol + '//'
 				+ location.host
@@ -1363,9 +1420,9 @@ app.setup.member = function(section){
 				+ list.id
 				+ '/'
 				+ list.invite_code;
-				form.find('input[name="invite_code"]').val(url);
+				section.find('input[name="invite_code"]').val(url);
 		} else {
-			form.find('input[name="invite_code"]').val('');
+			section.find('input[name="invite_code"]').val('');
 		}
 		ul.empty();
 		for (var i = 0, max_i = list.members.length; i < max_i; i++) {
@@ -1376,8 +1433,8 @@ app.setup.member = function(section){
 			var user = app.data.users[account_id];
 			app.util.parse(template)
 				.find('img').attr('src', app.util.getIconUrl(account_id)).end()
-				.find('span').text(user.name).end()
-				.find('a')
+				.find('span:first').text(user.name).end()
+				.find('span:last')
 					.data('id', account_id)
 					.data('name', user.name)
 					.click(function(e){
@@ -1394,13 +1451,14 @@ app.setup.member = function(section){
 					}).end()
 				.appendTo(ul);
 		}
-		app.slider.show(section.data('slider'));
+		app.modal.show(section.data('modal'));
 	});
-	section.on('swipe-prev', function(){
-		app.slider.show('list');
-	});
+	// section.on('swipe-prev', function(){
+	// 	app.slider.show('list');
+	// });
 	app.dom.touch(section.find('.btn-inverse'), function(){
-		app.slider.show('list');
+		app.modal.hide();
+		// app.slider.show('list');
 	});
 }
 
@@ -1424,8 +1482,8 @@ app.setup.export = function(section){
 	});
 	app.addListener('exportMenu', function(list){
 		section.data('id', list.id);
-		section.trigger('show', list);
-		app.slider.show(section.data('slider'));
+		// section.trigger('show', list);
+		app.modal.show(section.data('modal'), list);
 	});
 	app.dom.touch(section.find('.btn-public'), function(){
 		var id = section.data('id');
@@ -1455,11 +1513,12 @@ app.setup.export = function(section){
 			section.trigger('show', app.data.list_map[id]);
 		});
 	});
-	section.on('swipe-prev', function(){
-		app.slider.show('list');
-	});
+	// section.on('swipe-prev', function(){
+	// 	app.slider.show('list');
+	// });
 	app.dom.touch(section.find('.btn-inverse'), function(){
-		app.slider.show('list');
+		// app.slider.show('list');
+		app.modal.hide();
 	});
 }
 
@@ -1590,6 +1649,7 @@ app.setup.logo = function(ele){
 		e.preventDefault();
 		app.fireEvent('reload');
 		app.fireEvent('resize');
+		alert('もうほんとダメ人間. ＼(^o^)／ by @dameninngenn');
 	});
 };
 app.setup.switchClosed = function(ele){

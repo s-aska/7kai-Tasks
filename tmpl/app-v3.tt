@@ -9,11 +9,11 @@
 <script src="/static/js/jquery-1.7.1.min.js"></script>
 <script src="/static/js/jquery-ui-1.8.21.custom.min.js"></script>
 <script src="/static/js/h5utils.js"></script>
-<script src="/static/js/app-core.js?20130205b"></script>
-<script src="/static/js/app-base.js?20130205b"></script>
-<script src="/static/js/app-base-viewer-v3.js?20130205b"></script>
-<script src="/static/js/app-page-viewer-v3.js?20130205b"></script>
-<script src="/static/js/app-gantt-viewer-v3.js?20130205b"></script>
+<script src="/static/js/app-core.js?20120205c"></script>
+<script src="/static/js/app-base.js?20120205c"></script>
+<script src="/static/js/app-base-viewer-v3.js?20120205c"></script>
+<script src="/static/js/app-page-viewer-v3.js?20120205c"></script>
+<script src="/static/js/app-gantt-viewer-v3.js?20120205c"></script>
 </head>
 <body>
 <div class="navbar navbar-fixed-top">

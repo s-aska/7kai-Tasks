@@ -52,7 +52,11 @@
 }
 
 /* HD / Retina -------------------------*/
-@media only screen and (-webkit-min-device-pixel-ratio:1.5), only screen and (min--moz-device-pixel-ratio:1.5), only screen and (min-device-pixel-ratio:1.5), only screen and (min-resolution:200dpi) {
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+	only screen and (min--moz-device-pixel-ratio: 1.5),
+	only screen and (-o-min-device-pixel-ratio: 3/2),
+	only screen and (min-device-pixel-ratio: 1.5),
+	only screen and (min-resolution: 200dpi) {
 	[class^="icon-"], [class*=" icon-"] {
 		background-image: url("../img/glyphicons-halflings@2x.png");
 		background-size: 469px 159px;
