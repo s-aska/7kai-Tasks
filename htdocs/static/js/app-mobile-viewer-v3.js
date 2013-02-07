@@ -546,7 +546,7 @@ app.setup.list = function(section){
 			li.find('> span.name span').text(list.name);
 			li.find('> ul').empty();
 			app.dom.setup(li);
-			app.draggable.li(li.get(0));
+			app.draggable.li(li.find('> span.name').get(0));
 			if (list.id in app.data.state.tags) {
 				li.attr('data-tag', app.data.state.tags[list.id]);
 			}
