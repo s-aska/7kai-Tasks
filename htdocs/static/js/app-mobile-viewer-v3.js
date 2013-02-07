@@ -261,15 +261,9 @@ app.draggable = {
 					}
 				}
 		} else {
-			var deltaX = Math.abs(app.support.pageX(e) - app.draggable.startPageX);
-			var deltaY = Math.abs(app.support.pageY(e) - app.draggable.startPageY);
-			if (deltaY > 5) {
-				e.preventDefault();
-				e.stopPropagation();
-				app.draggable.moveReady = true;
-			} else if (deltaX > 5) {
-				app.draggable.dragging = false;
-			}
+			e.preventDefault();
+			e.stopPropagation();
+			app.draggable.moveReady = true;
 		}
 	},
 	touchend: function(e){
