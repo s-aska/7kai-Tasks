@@ -8,14 +8,14 @@
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap-sp-2.2.2.min.css">
 <link rel="stylesheet" href="/static/css/bootstrap-responsive-2.2.2.min.css">
-<link rel="stylesheet" href="/static/css/app-base-v3.css?20130207d">
-<link rel="stylesheet" href="/static/css/app-mobile-v3.css?20130207d">
+<link rel="stylesheet" href="/static/css/app-base-v3.css?20130207f">
+<link rel="stylesheet" href="/static/css/app-mobile-v3.css?20130207f">
 <script src="/static/js/jquery-1.9.0.min.js"></script>
 <script src="/static/js/h5utils.js"></script>
-<script src="/static/js/app-core.js?20130207d"></script>
-<script src="/static/js/app-base.js?20130207d"></script>
-<script src="/static/js/app-base-viewer-v3.js?20130207d"></script>
-<script src="/static/js/app-mobile-viewer-v3.js?20130207d"></script>
+<script src="/static/js/app-core.js?20130207f"></script>
+<script src="/static/js/app-base.js?20130207f"></script>
+<script src="/static/js/app-base-viewer-v3.js?20130207f"></script>
+<script src="/static/js/app-mobile-viewer-v3.js?20130207f"></script>
 </head>
 <body>
 <div id="container">
@@ -47,9 +47,10 @@
 	<ul class="unstyled list">
 		<li>
 			<span class="pull-right" data-mode="view" data-setup="click" data-click="listMenu" style="padding:10px"><i class="icon-th-list"></i></span>
-			<span class="pull-right" data-mode="sort" style="padding:10px"><i class="icon-chevron-up"></i></span>
+			<span class="pull-right" data-mode="sort" style="padding:10px 10px 10px 50px"><i class="icon-sort"></i></span>
+<!-- 			<span class="pull-right" data-mode="sort" style="padding:10px"><i class="icon-chevron-up"></i></span>
 			<span class="pull-right" data-mode="sort" style="padding:10px"><i class="icon-chevron-down"></i></span>
-			<div class="pull-right btn-group" data-mode="tag" style="margin: 5px">
+ -->			<div class="pull-right btn-group" data-mode="tag" style="margin: 5px">
 				<span class="btn btn-primary" data-tag="primary"><i class="icon-tag icon-white"></i></span>
 				<span class="btn btn-success" data-tag="success"><i class="icon-tag icon-white"></i></span>
 				<span class="btn btn-warning" data-tag="warning"><i class="icon-tag icon-white"></i></span>
