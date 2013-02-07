@@ -254,6 +254,12 @@ section#list[data-mode="tag"] [data-mode="tag"] {
 	display: block;
 }
 
+/* Sortモード */
+section#list[data-mode="sort"] span.name i {
+	background-image: url(/static/img/sort@2x.png);
+	background-position: 0 0;
+	background-size: 14px 14px;
+}
 
 /* 削除モード */
 body.mode-closed span[data-click="clearTask"] {
