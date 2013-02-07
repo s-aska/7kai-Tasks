@@ -241,9 +241,12 @@ section#list[data-mode="view"] [data-mode="no-view"],
 section#list [data-mode="closed"],
 section#list [data-mode="view"],
 section#list [data-mode="sort"],
-section#list [data-mode="tag"] {
+section#list [data-mode="tag"],
+ul.task {
 	display: none;
 }
+section#list[data-mode="closed"] ul.task,
+section#list[data-mode="view"] ul.task,
 section#list[data-mode="closed"] [data-mode="closed"],
 section#list[data-mode="view"] [data-mode="view"],
 section#list[data-mode="sort"] [data-mode="sort"],
