@@ -1678,7 +1678,7 @@ app.setup.switchClosed = function(ele){
 	});
 }
 app.setup.tags = function(ul){
-	ul.find('a[data-tag]').each(function(i, element){
+	ul.find('.btn[data-tag]').each(function(i, element){
 		var ele = $(element);
 		var tag = ele.data('tag');
 		if (tag) {
@@ -1693,13 +1693,13 @@ app.setup.tags = function(ul){
 		}
 	});
 	app.addListener('toggleTag', function(tag){
-		ul.find('a[data-tag]').each(function(i, element){
+		ul.find('.btn[data-tag]').each(function(i, element){
 			var ele = $(element);
 			ele.toggleClass('active', tag === ele.data('tag'));
 		});
 	});
 	app.addListener('resetTag', function(){
-		ul.find('a[data-tag]').removeClass('active');
+		ul.find('.btn[data-tag]').removeClass('active');
 	});
 }
 

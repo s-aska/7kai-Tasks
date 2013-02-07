@@ -8,14 +8,14 @@
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap-sp-2.2.2.min.css">
 <link rel="stylesheet" href="/static/css/bootstrap-responsive-2.2.2.min.css">
-<link rel="stylesheet" href="/static/css/app-base-v3.css?20130206d">
-<link rel="stylesheet" href="/static/css/app-mobile-v3.css?20130206d">
+<link rel="stylesheet" href="/static/css/app-base-v3.css?20130207">
+<link rel="stylesheet" href="/static/css/app-mobile-v3.css?20130207">
 <script src="/static/js/jquery-1.9.0.min.js"></script>
 <script src="/static/js/h5utils.js"></script>
-<script src="/static/js/app-core.js?20130206d"></script>
-<script src="/static/js/app-base.js?20130206d"></script>
-<script src="/static/js/app-base-viewer-v3.js?20130206d"></script>
-<script src="/static/js/app-mobile-viewer-v3.js?20130206d"></script>
+<script src="/static/js/app-core.js?20130207"></script>
+<script src="/static/js/app-base.js?20130207"></script>
+<script src="/static/js/app-base-viewer-v3.js?20130207"></script>
+<script src="/static/js/app-mobile-viewer-v3.js?20130207"></script>
 </head>
 <body>
 <div id="container">
