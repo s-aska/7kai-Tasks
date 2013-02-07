@@ -217,7 +217,7 @@ app.draggable = {
 		app.draggable.moveI      = 0;
 		app.draggable.startPageX = app.support.pageX(e);
 		app.draggable.startPageY = app.support.pageY(e);
-		app.draggable.target = $(e.target).parents('li');
+		app.draggable.target = $(e.target).parents('li').addClass('dragging');
 		app.draggable.height = app.draggable.target.height();
 	},
 	touchmove: function(e){
@@ -277,11 +277,11 @@ app.draggable = {
 			return;
 		}
 		app.draggable.dragging = false;
+		app.draggable.target.removeClass('dragging');
 		if (app.draggable.moveI !== 0) {
 			app.draggable.moveI = 0;
 			app.draggable.refresh();
 			app.draggable.ul.trigger('app.update-sort');
-		} else {
 		}
 	},
 	click: function(e){

@@ -104,6 +104,9 @@ ul.list > li[data-tag="warning"] {
 ul.list > li[data-tag="danger"] {
 	border-top: 2px solid #DA4F49;
 }
+ul.list > li.dragging {
+	background-color: #e2f2e2;
+}
 ul.list > li > span.name {
 	display: block;
 	padding: 10px 10px;
