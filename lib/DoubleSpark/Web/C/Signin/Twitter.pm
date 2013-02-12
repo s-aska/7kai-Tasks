@@ -25,6 +25,7 @@ sub signin {
 sub callback {
     my ($class, $c) = @_;
 
+    my $next_url = $c->session->remove('next_url') || '/';
     my $tw_request = $c->session->remove('tw_request');
     unless ($tw_request) {
         if ($c->session->get('account')) {
@@ -44,8 +45,7 @@ sub callback {
 
     my $account = $c->account;
     if ($account && $tw_request->{mode} eq 'signin') {
-        warnf('signed.');
-        return $c->redirect('/', { twitter_signed => 1 });
+        return $c->redirect($next_url);
     }
 
     eval {
@@ -110,7 +110,7 @@ sub callback {
             # 新規作成
             else {
                 $account = DoubleSpark::API::Account->create($c, $code, $screen_name, $icon);
-                
+
                 infof('new tw_account aid:%s tw:%s', $account->account_id, $screen_name);
                 $c->session->set('notice', 'tw_account_create');
             }
@@ -137,7 +137,7 @@ sub callback {
         $c->redirect('/', { twitter_error => 1 });
     } else {
         $c->session->regenerate_session_id(1);
-        $c->redirect('/');
+        $c->redirect($next_url);
     }
 }
 

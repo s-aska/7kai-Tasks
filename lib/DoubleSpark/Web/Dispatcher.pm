@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Amon2::Web::Dispatcher::RouterSimple;
 
+sub any($;$$) { connect_with_method('', @_) }
 sub get($;$$) { connect_with_method('GET', @_) }
 sub post($;$$) { connect_with_method('POST', @_) }
 
@@ -13,6 +14,24 @@ get '/staff' => 'Root#staff';
 get '/token' => 'Root#token';
 get '/join/:list_id/:invite_code' => 'Root#join';
 get '/manual' => 'Root#manual';
+
+get '/apps/' => 'Apps#index';
+post '/apps/revoke' => 'Apps#revoke';
+
+get '/developer/apps/' => 'Developer::Apps#index';
+get '/developer/apps/new' => 'Developer::Apps#register';
+get '/developer/apps/:id/edit' => 'Developer::Apps#edit';
+any '/developer/apps/:id/show' => 'Developer::Apps#show';
+any '/developer/apps/:id/oauth' => 'Developer::Apps#oauth';
+any '/developer/apps/:id/reset' => 'Developer::Apps#reset';
+any '/developer/apps/:id/delete' => 'Developer::Apps#delete';
+post '/developer/apps/create' => 'Developer::Apps#create';
+post '/developer/apps/update' => 'Developer::Apps#update';
+get '/developer/docs/api' => 'Developer::Docs#api';
+
+post '/oauth/request_token' => 'OAuth::Root#request_token';
+any '/oauth/authorize' => 'OAuth::Root#authorize';
+post '/oauth/access_token' => 'OAuth::Root#access_token';
 
 get '/signout' => 'Root#signout';
 

@@ -8,6 +8,7 @@ use DoubleSpark::Validator::Query;
 use Encode qw/encode_utf8 decode_utf8/;
 use Log::Minimal;
 use JSON::XS qw/encode_json/;
+use DoubleSpark::OAuth;
 
 # load all controller classes
 use Module::Find ();
@@ -45,7 +46,7 @@ use HTTP::Session::Store::File;
 __PACKAGE__->load_plugins(
     'Web::FillInFormLite',
     'Web::NoCache', # do not cache the dynamic content by default
-    'Web::CSRFDefender',
+    'Web::CSRFDefender' => { post_only => 1, no_validate_hook => 1 },
     'Web::HTTPSession' => {
         state => HTTP::Session::State::Cookie->new(
             expires => '+1M'
@@ -69,28 +70,52 @@ __PACKAGE__->add_trigger(
     BEFORE_DISPATCH => sub {
         my ( $c ) = @_;
 
+        # POST from API
+        return if $c->req->path eq '/oauth/request_token';
+        return if $c->req->path eq '/oauth/access_token';
+
+        # public
         return if $c->req->path eq '/';
         return if $c->req->path eq '/v2';
         return if $c->req->path =~ m|^/join/|;
         return if $c->req->path =~ m|^/signin|;
         return if $c->req->path eq '/signout';
         return if $c->req->path eq '/token';
-        return if $c->req->path =~ m|^/api/1/proxy/|;
+        # return if $c->req->path =~ m|^/api/1/proxy/|;
         return if $c->req->path =~ m|^/public/|;
         return if $c->req->path eq '/manual';
 
+        if ($c->req->headers->header('Authorization') or $c->req->param('oauth_consumer_key')) {
+            my $oauth = DoubleSpark::OAuth->new;
+            my $account = $oauth->get_account($c);
+            if ($account) {
+                if ($oauth->access_token->access_level eq 'r') {
+                    unless ($c->req->path eq '/api/1/account/me') {
+                        return $c->res_401('this token read only.');
+                    }
+                }
+                $c->{account} = $account;
+                $c->{sign} = {
+                    account_id => $account->account_id,
+                    name       => $account->data->{name},
+                    icon       => $account->data->{icon},
+                };
+            }
+        } else {
+            unless ($c->validate_csrf()) {
+                warnf('CSRFDefender IP:%s UA:%s', $c->req->address, $c->req->user_agent);
+                return $c->res_403('CSRFDefender.');
+            }
+        }
+
         unless ($c->sign) {
-#            warnf('unsigned api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
-            return $c->res_401();
+            # warnf('unsigned api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
+            $c->session->set('next_url', $c->req->uri);
+            return $c->render('signin.tt');
+            # return $c->res_401();
         }
 
-        return if $c->req->path eq '/staff';
-
-        if ( ( $c->req->user_agent || '' ) !~ /Chrome/ and
-            ( $c->req->header('X-Requested-With') || '' ) ne 'XMLHttpRequest' ) {
-#            warnf('no ajax api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
-            return $c->res_401();
-        }
+        # API
     },
 );
 
@@ -169,7 +194,8 @@ sub res_304 {
 sub res_401 {
     my $c = shift;
 
-    my $content = 'Unauthorized';
+    my $content = shift || 'Unauthorized';
+    warnf($content);
     $c->create_response(
         401,
         [
@@ -188,6 +214,20 @@ sub res_403 {
         403,
         [
             'Content-Type' => 'text/plain',
+            'Content-Length' => length($content),
+        ],
+        [$content]
+    );
+}
+
+sub render_string {
+    my $c = shift;
+
+    my $content = shift;
+    $c->create_response(
+        200,
+        [
+            'Content-Type' => 'text/plain; charset=utf-8',
             'Content-Length' => length($content),
         ],
         [$content]

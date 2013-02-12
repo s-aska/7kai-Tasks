@@ -19,6 +19,7 @@ sub signin {
 sub callback {
     my( $self, $c ) = @_;
 
+    my $next_url = $c->session->remove('next_url') || '/';
     my $mode = $c->session->get('fb_request_mode');
     unless ($mode) {
         warnf('missing mode.');
@@ -28,7 +29,7 @@ sub callback {
     my $account = $c->account;
     if ($account && $mode eq 'signin') {
         warnf('signed.');
-        return $c->redirect('/', { fb_signed => 1 });
+        return $c->redirect($next_url);
     }
 
     eval {
@@ -120,7 +121,7 @@ sub callback {
     } else {
         $c->session->remove('fb_request_mode');
         $c->session->regenerate_session_id(1);
-        $c->redirect('/');
+        $c->redirect($next_url);
     }
 }
 

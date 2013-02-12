@@ -1,0 +1,19 @@
+[% WRAPPER 'include/layout_developer.tt' %]
+
+<h1>[% app.name %]</h1>
+
+<ul class="nav nav-tabs">
+	<li><a href="show">Details</a></li>
+	<li><a href="edit">Edit</a></li>
+	<li><a href="oauth">OAuth tool</a></li>
+	<li><a href="reset">Reset keys</a></li>
+	<li class="active"><a href="delete">Delete</a></li>
+</ul>
+
+<h3>Delete ?</h3>
+
+<form method="post">
+	<button class="btn btn-danger">Delete</button>
+</form>
+
+[% END %]

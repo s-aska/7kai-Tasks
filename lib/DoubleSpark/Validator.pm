@@ -4,12 +4,18 @@ use warnings;
 use FormValidator::Lite;
 use Log::Minimal;
 
-sub validate {
+sub check {
     my ($class, $c, $query, @rule) = @_;
     my $validator = FormValidator::Lite->new($query);
-    $validator->load_constraints(qw/Email/);
+    $validator->load_constraints(qw/Email URL/);
     $validator->load_constraints('+DoubleSpark::Validator::Constraint');
     $validator->check(@rule);
+    $validator;
+}
+
+sub validate {
+    my ($class, $c, $query, @rule) = @_;
+    my $validator = $class->check($c, $query, @rule);
     if ($validator->has_error) {
         # ATTACK
         warnf('[%s] validate error...', $c->sign_name);

@@ -1,0 +1,27 @@
+[% WRAPPER 'include/layout_developer.tt' %]
+<h4 class="pull-right">My applications</h4>
+<a href="/developer/apps/new" class="btn btn-primary">Create a new application</a>
+<hr>
+<div class="row-fluid">
+
+<table class="table table-bordered table-striped table-hover">
+	<thead>
+		<tr>
+			<td>Name</td>
+			<td>Description</td>
+			<td>Tokens</td>
+		</tr>
+	</thead>
+	<tbody>
+		[% FOR app IN apps %]
+		<tr>
+			<td><a href="[% app.app_id %]/show">[% app.name %]</a></td>
+			<td>[% app.description %]</td>
+			<td>[% app.tokens %]</td>
+		</tr>
+		[% END %]
+	</tbody>
+</table>
+
+</div><!--/row-->
+[% END %]

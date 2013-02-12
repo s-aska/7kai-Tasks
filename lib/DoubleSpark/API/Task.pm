@@ -73,7 +73,6 @@ sub update {
 
     my $target_task;
     my $task_id      = $req->param('task_id');
-    my $requested_on = $req->param('requested_on');
     my $list         = $c->stash->{list};
     my $time         = int(Time::HiRes::time * 1000);
     for my $task (@{ $list->data->{tasks} }) {

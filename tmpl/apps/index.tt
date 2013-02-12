@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>7kai Tasks</title>
+<link rel="stylesheet" href="/static/css/bootstrap-2.2.2.min.css">
+<style type="text/css">
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+.sidebar-nav {
+  padding: 9px 0;
+}
+.form-required {
+  color: #F00;
+  font-weight: bold;
+}
+@media (max-width: 980px) {
+  /* Enable use of floated navbar text */
+  .navbar-text.pull-right {
+    float: none;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+</style>
+<link rel="stylesheet" href="/static/css/bootstrap-responsive-2.2.2.min.css">
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container-fluid">
+      <a class="brand" href="/">7kai Tasks</a>
+      <div class="nav-collapse collapse">
+        <p class="navbar-text pull-right">
+          Logged in as [% c().sign_name %]
+        </p>
+        <ul class="nav">
+          <li[% IF c().req.path.search('/apps/') %] class="active"[% END %]><a href="/apps/">Apps</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <h1>Applications</h1>
+  <table class="table table-bordered table-striped table-hover">
+    <thead>
+      <tr>
+        <td>Name</td>
+        <td>Description</td>
+        <td>Website</td>
+        <td>-</td>
+      </tr>
+    </thead>
+    <tbody>
+      [% FOR app IN apps %]
+      <tr>
+        <td>[% app.name %]</td>
+        <td>[% app.description %]</td>
+        <td><a href="[% app.website %]" target="_blank">[% app.website %]</a></td>
+        <td>
+          <form action="revoke" method="post" onsubmit="return confirm('remove ok?')">
+            <input type="hidden" name="app_id" value="[% app.app_id %]">
+            <button class="btn">Revoke access</button>
+          </form>
+        </td>
+      </tr>
+      [% END %]
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

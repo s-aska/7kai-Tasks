@@ -51,9 +51,9 @@ sub signin {
 sub callback {
     my ($self, $c) = @_;
 
-    my $request = $c->req->parameters->mixed;
-
-    my $account = $c->account;
+    my $request  = $c->req->parameters->mixed;
+    my $account  = $c->account;
+    my $next_url = $c->session->remove('next_url') || '/';
 
     Net::OpenID::Consumer::Lite->handle_server_response(
         $request => (
@@ -146,7 +146,7 @@ sub callback {
                     });
                 }
                 $c->session->regenerate_session_id(1);
-                $c->redirect('/');
+                $c->redirect($next_url);
             },
             error => sub {
                 my $error = shift;

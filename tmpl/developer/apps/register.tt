@@ -1,0 +1,110 @@
+[% WRAPPER 'include/layout_developer.tt' %]
+
+[% IF app %]
+<h1>[% app.name %]</h1>
+
+<ul class="nav nav-tabs">
+	<li><a href="show">Details</a></li>
+	<li class="active"><a href="edit">Edit</a></li>
+	<li><a href="oauth">OAuth tool</a></li>
+	<li><a href="reset">Reset keys</a></li>
+	<li><a href="delete">Delete</a></li>
+</ul>
+[% END %]
+
+<form action="[% app ? '/developer/apps/update' : '/developer/apps/create' %]" method="post">
+
+	<input type="hidden" name="app_id">
+
+	[% IF errors %]
+	<div class="alert alert-error">
+		<ul style="margin-top:10px">
+			[% IF errors.name.NOT_NULL %]<li>Name field is required.</li>[% END %]
+			[% IF errors.name.LENGTH %]<li>Name field is 32 characters max.</li>[% END %]
+			[% IF errors.name.UNIQUE %]<li>Name field has already been used.</li>[% END %]
+			[% IF errors.description.NOT_NULL %]<li>Description field is required.</li>[% END %]
+			[% IF errors.description.LENGTH %]<li>Description field is between 10 and 200 characters max.</li>[% END %]
+			[% IF errors.website.NOT_NULL %]<li>Website field is required.</li>[% END %]
+			[% IF errors.website.HTTP_URL %]<li>Website field is URL.</li>[% END %]
+			[% IF errors.callback_url.HTTP_URL %]<li>Callback URL field is URL.</li>[% END %]
+			[% IF errors.organization.LENGTH %]<li>Organization field is 32 characters max.</li>[% END %]
+			[% IF errors.organization_website.HTTP_URL %]<li>Organization Website field is URL.</li>[% END %]
+			[% IF errors.agree.NOT_NULL %]<li>you cannot create an application without agreeing to the terms of service.</li>[% END %]
+		</ul>
+	</div>
+	[% END %]
+
+	<h3>Application Details</h3>
+
+	<div class="control-group[% IF errors.name %] error[% END %]">
+		<label for="name" class="control-label">Name: <span class="form-required" title="This field is required.">*</span></label>
+		<input id="name" class="span4" type="text" name="name" required="required" maxlength="32">
+		<span class="help-inline">1-32</span>
+	</div>
+
+	<div class="control-group[% IF errors.description %] error[% END %]">
+		<label for="description" class="control-label">Description: <span class="form-required" title="This field is required.">*</span></label>
+		<input id="description" class="span8" type="text" name="description" required="required" maxlength="200">
+		<span class="help-inline">1-200</span>
+	</div>
+
+	<div class="control-group[% IF errors.website %] error[% END %]">
+		<label for="website" class="control-label">Website: <span class="form-required" title="This field is required.">*</span></label>
+		<input id="website" class="span8" type="text" name="website" required="required" pattern="^https?://.*">
+	</div>
+
+	<div class="control-group[% IF errors.callback_url %] error[% END %]">
+		<label for="callback_url" class="control-label">Callback URL:</label>
+		<input id="callback_url" class="span8" type="text" name="callback_url">
+	</div>
+
+	<hr>
+
+	<h3>Application Type</h3>
+
+	<label for="access" class="control-label">Access:</label>
+	<label class="radio" for="access-level-r"><input type="radio" id="access-level-r" name="access_level" value="r" checked="checked"> Read only</label>
+	<label class="radio" for="access-level-rw"><input type="radio" id="access-level-rw" name="access_level" value="rw"> Read and Write</label>
+
+	<hr>
+
+	<h3>Organization</h3>
+
+	<div class="control-group[% IF errors.organization_name %] error[% END %]">
+		<label for="organization_name" class="control-label">Organization name:</label>
+		<input id="organization_name" class="span4" type="text" name="organization_name" maxlength="32">
+		<span class="help-inline">1-32</span>
+	</div>
+
+	<div class="control-group[% IF errors.organization_website %] error[% END %]">
+		<label for="organization_website" class="control-label">Organization Website:</label>
+		<input id="organization_website" class="span8" type="text" name="organization_website" pattern="^https?://.*">
+	</div>
+
+	[% UNLESS app %]
+
+	<hr>
+
+	<p>Developer Rules Of The Road</p>
+	<ol>
+		<li>7kai Tasksは <a href="https://twitter.com/su_aska" target="_blank">Aska氏</a> の提供（時間・お金・スキル）でお送りしています。</li>
+		<!-- <li>7kai Tasksはgithubでソースコードやインストールマニュアルが公開されています。</li>
+		<li><small>高可用性・セキュリティ・カスタマイズなど特殊要件について自前で環境を構築する選択肢も含めて検討、相談ください。</small></li>
+		<li>利用者とサードパーティ開発者間で係争が発生した場合、私の意見と健康を優先してください。</li>
+		<li>わからないことは聞いてください。</li> -->
+		<li>私が辛いとか悲しい事にならないように配慮してください。</li>
+	</ol>
+
+	<label class="checkbox">
+		<input type="checkbox" name="agree" value="1" required="required"> Yes, I agree
+	</label>
+
+	<p><strong>7kai Tasksへの貢献を感謝します :)</strong></p>
+
+	[% END %]
+
+	<div class="form-actions">
+		<button class="btn btn-primary">[% app ? 'Update' : 'Create' %]</button>
+	</div>
+</form>
+[% END %]

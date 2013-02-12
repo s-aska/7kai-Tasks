@@ -1,0 +1,901 @@
+[% WRAPPER 'include/layout_developer.tt' %]
+
+<style>
+.table th {
+  font-size: 12px;
+  font-weight: normal;
+  color: gray;
+}
+ul {
+  margin-bottom: 0;
+}
+.sidebar-nav {
+  position: fixed;
+  top: 60px;
+  width: 290px;
+}
+</style>
+<script>
+$(function(){
+  var body = $('body');
+  $('.nav-list a').click(function(){
+    var a = $(this);
+    var h2 = $(document.getElementById(a.attr('href').substring(1)));
+    body.animate({scrollTop: h2.offset().top - 54 + 'px'}, 'slow', 'easeOutQuart');
+    return false;
+    // $(window).scrollTo();
+  });
+  if ((/^ja/.test(navigator.language || navigator.userLanguage))) {
+    $('[data-text-ja]').each(function(){
+      var ele = $(this);
+      ele.text(ele.data('text-ja'));
+    });
+  }
+});
+</script>
+
+<div class="row-fluid">
+<div class="span3">
+  <div class="well sidebar-nav">
+    <ul class="nav nav-list">
+      <li class="nav-header">Tutorial</li>
+      <li><a href="#sample-code">Sample Code</a></li>
+      <li class="nav-header">REST API</li>
+      <li><a href="#/account/me">/account/me</a></li>
+      <!-- <li><a href="#">/account/update</a></li> -->
+      <li><a href="#/task/create">/task/create</a></li>
+      <li><a href="#/task/update">/task/update</a></li>
+      <li><a href="#/task/move">/task/move</a></li>
+      <li><a href="#/comment/create">/comment/create</a></li>
+      <li><a href="#/comment/delete">/comment/delete</a></li>
+      <li><a href="#/comment/pin">/comment/pin</a></li>
+      <li><a href="#/comment/unpin">/comment/unpin</a></li>
+      <!-- <li><a href="#">/list/create</a></li>
+      <li><a href="#">/list/update</a></li>
+      <li><a href="#">/list/invite</a></li>
+      <li><a href="#">/list/disinvite</a></li>
+      <li><a href="#">/list/join</a></li>
+      <li><a href="#">/list/leave</a></li>
+      <li><a href="#">/list/public</a></li>
+      <li><a href="#">/list/private</a></li>
+      <li><a href="#">/list/delete</a></li>
+      <li><a href="#">/list/clear</a></li> -->
+    </ul>
+  </div><!--/.well -->
+</div><!--/span-->
+<div class="span9">
+
+  <h1>Tutorial</h1>
+
+  <h2 id="sample-code">Sample Code</h2>
+
+  <ul>
+    <li><a href="https://gist.github.com/s-aska/4769872" target="_blank">Perl (Amon2)</a></li>
+    <!-- <li>Ruby (Sinatra)</li>
+    <li>Python (Django)</li>
+    <li>PHP (Limonade)</li>
+    <li>Java (Play Framework)</li>
+    <li>Java (Android)</li>
+    <li>Javascript (Node.js)</li>
+    <li>Javascript (Google Apps Script)</li>
+    <li>Javascript (Chrome Apps)</li>
+    <li>iOS</li>
+    <li>C</li>
+    <li>D</li>
+    <li>bash</li>
+    <li>Vim</li>
+    <li>Emacs</li>
+    <li>VBA</li>
+    <li>Lisp</li> -->
+  </ul>
+
+  <hr>
+
+  <h1>REST API</h1>
+
+  <h2 id="/account/me">/account/me</h2>
+
+  <table class="table table-bordered">
+    <tbody>
+      <tr>
+        <th>DESCRIPTION</th>
+        <td data-text-ja="アカウント・リスト・タスク・コメント全ての情報が含まれています。">
+          Retrieves information about the user's account that contains the task.
+        </td>
+      </tr>
+      <tr>
+        <th>URL STRUCTURE</th>
+        <td>https://tasks.7kai.org/api/1/account/me</td>
+      </tr>
+      <tr>
+        <th>METHOD</th>
+        <td>GET</td>
+      </tr>
+      <tr>
+        <th>PARAMETERS</th>
+        <td>
+          <ul class="unstyled">
+            <li><strong>if_modified_since</strong> lists[].actioned_on at the time of last access.</li>
+            <li><strong>if_modified_lists</strong> account.list_ids at the time of last access.</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th>RETURNS</th>
+        <td>
+          <p>User account information.</p>
+          <p><strong>Sample JSON response</strong></p>
+          <pre>{
+  "success" : 1,
+  "invite" : null,
+  "lists" : [
+    {
+      "owner" : "1",
+      "tasks" : [
+        {
+          "registrant" : "1",
+          "closed" : 0,
+          "due" : "02/11/2013",
+          "actions" : [
+             {
+                "time" : 1360529581018,
+                "action" : "fix-task",
+                "id" : 1,
+                "account_id" : "1",
+                "message" : "bought."
+             }
+          ],
+          "status" : 2,
+          "name" : "buy the coffee.",
+          "duration" : 1,
+          "pending" : 0,
+          "parent_id" : "",
+          "updated_on" : 1360529581018,
+          "last_comment_id" : 1,
+          "requester" : 1,
+          "created_on" : 1360529499179,
+          "assign" : [
+            "1",
+            "2"
+          ],
+          "id" : "1:19"
+        }
+      ],
+      "original" : 1,
+      "actioned_on" : 1360529749454,
+      "name" : "su_aska's list",
+      "invite_code" : "WoV2Np77D5pZB5tU",
+      "public_code" : null,
+      "members" : [
+        "2"
+      ],
+      "last_task_id" : "19",
+      "id" : "1"
+    },
+    {
+      "owner" : "1",
+      "tasks" : [],
+      "actioned_on" : 1360529794337,
+      "name" : "7kai Tasks",
+      "invite_code" : null,
+      "description" : "7kai Tasks Issues.",
+      "public_code" : null,
+      "members" : [],
+      "last_task_id" : "2",
+      "id" : "6"
+    }
+  ],
+  "holidays" : {
+    "2012-12-23" : "天皇誕生日",
+    "2012-11-03" : "文化の日",
+    "2013-02-11" : "建国記念の日",
+    "2013-03-20" : "春分の日",
+    "2012-11-23" : "勤労感謝の日",
+    "2013-07-15" : "海の日",
+    "2013-01-01" : "元日",
+    "2012-09-17" : "敬老の日",
+    "2012-12-24" : "振替",
+    "2013-04-29" : "昭和の日",
+    "2012-09-22" : "秋分の日",
+    "2012-10-08" : "体育の日",
+    "2013-01-14" : "成人の日",
+    "2013-05-03" : "憲法記念日",
+    "2013-05-04" : "みどりの日",
+    "2013-05-05" : "こどもの日",
+    "2013-05-06" : "振替"
+  },
+  "account" : {
+    "icon" : "http://a0.twimg.com/profile_images/2358600149/pnkjdsot26kfrczlpe96_normal.png",
+    "name" : "su_aska",
+    "state" : {
+      "sort" : {
+        "list" : {
+          "6" : 1,
+          "1" : 3
+        }
+      },
+      "mute" : {},
+      "star" : {
+        "1:6" : 1
+      },
+      "tags" : {
+        "6" : "danger",
+        "1" : "success"
+      },
+      "display" : {
+        "pin" : "on"
+      }
+    }
+  },
+  "sub_accounts" : [
+    {
+      "tw_account_id" : "1",
+      "name" : "su_aska",
+      "data" : {
+        "icon" : "https://si0.twimg.com/profile_images/2358600149/pnkjdsot26kfrczlpe96_normal.png"
+      },
+      "account_id" : "1",
+      "updated_on" : "2012-08-21 00:52:15",
+      "authenticated_on" : "2013-02-11 02:37:14",
+      "created_on" : "2012-08-21 00:52:15",
+      "code" : "tw-69886580"
+    }
+  ],
+  "list_ids" : "1,6",
+  "users" : {
+    "1" : {
+      "icon" : "https://si0.twimg.com/profile_images/2358600149/pnkjdsot26kfrczlpe96_normal.png",
+      "name" : "su_aska"
+    },
+    "2" : {
+      "icon" : "https://si0.twimg.com/sticky/default_profile_images/default_profile_6_normal.png",
+      "name" : "7kai_org"
+    }
+  },
+  "notice" : null,
+  "modified_on" : "1360529393769",
+  "token" : null,
+  "sign" : {
+    "icon" : "https://si0.twimg.com/profile_images/2358600149/pnkjdsot26kfrczlpe96_normal.png",
+    "name" : "su_aska",
+    "account_id" : "1"
+  }
+}</pre>
+          <p><strong>Return value definitions</strong></p>
+          <table class="table table-bordered">
+            <tbody>
+              <tr><td>Field</td><td>Description</td></tr>
+              <tr><td>lists[]</td><td>List array.</td></tr>
+              <tr><td>lists[].id</td><td>List ID.</td></tr>
+              <tr><td>lists[].last_task_id</td><td>Sequence for assigning a task ID.</td></tr>
+              <tr><td>lists[].name</td><td>List name.</td></tr>
+              <tr><td>lists[].description</td><td>List description.</td></tr>
+              <tr><td>lists[].owner</td><td>List owner account ID.</td></tr>
+              <tr><td>lists[].original</td><td>1 ... Can not delete the list.</td></tr>
+              <tr><td>lists[].invite_code</td><td>Codes used to invite URL.</td></tr>
+              <tr><td>lists[].public_code</td><td>Codes used to public URL.</td></tr>
+              <tr><td>lists[].actioned_on</td><td>Datetime last modified.<br>When checking update, specified in the <strong>if_modified_since</strong>.</td></tr>
+              <tr><td>lists[].members[]</td><td>Assigned accounts ID array.</td></tr>
+              <tr><td>lists[].tasks[]</td><td>Task array.</td></tr>
+              <tr><td>lists[].tasks[].id</td><td>Task ID.</td></tr>
+              <tr><td>lists[].tasks[].parent_id</td><td>Parent task ID.</td></tr>
+              <tr><td>lists[].tasks[].name</td><td>Task name.</td></tr>
+              <tr><td>lists[].tasks[].status</td><td>0 ... open, 1 ... start, 2 ... fixed. ( check icon )</td></tr>
+              <tr><td>lists[].tasks[].pending</td><td>0 ... active, 1 ... pending. ( pause icon )</td></tr>
+              <tr><td>lists[].tasks[].closed</td><td>0 ... open, 1 ... closed. ( cross icon )</td></tr>
+              <tr><td>lists[].tasks[].due</td><td>Due date.</td></tr>
+              <tr><td>lists[].tasks[].duration</td><td>Day of duration.</td></tr>
+              <tr><td>lists[].tasks[].registrant</td><td>Registered the task by the account ID.</td></tr>
+              <tr><td>lists[].tasks[].requester</td><td>Requester account ID.</td></tr>
+              <tr><td>lists[].tasks[].assign[]</td><td>Assigned accounts ID array.</td></tr>
+              <tr><td>lists[].tasks[].created_on</td><td>Datetime of creation.</td></tr>
+              <tr><td>lists[].tasks[].updated_on</td><td>Datetime of last modified.</td></tr>
+              <tr><td>lists[].tasks[].actions[]</td><td>Actions array.</td></tr>
+              <tr><td>lists[].tasks[].actions[].id</td><td>Action ID</td></tr>
+              <tr>
+                <td>lists[].tasks[].actions[].action</td>
+                <td>
+                  <ul>
+                    <li>comment ... commented</li>
+                    <li>reopen-task ... start of fix to open</li>
+                    <li>start-task ... open to start</li>
+                    <li>fix-task ... open of start to fix</li>
+                    <li>close-task ... open or start or fix to closed</li>
+                    <li>rereopen-task ... closed to open</li>
+                    <li>restart-task... closed to start</li>
+                    <li>refix-task... closed to fix</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr><td>lists[].tasks[].actions[].time</td><td>Action on the time.</td></tr>
+              <tr><td>lists[].tasks[].actions[].account_id</td><td>Action by the account ID.</td></tr>
+              <tr><td>lists[].tasks[].actions[].message</td><td>Comment.</td></tr>
+              <tr><td>holidays</td><td>Holidays, key ... Date(YYYY-MM-DD), value ... Holiday name.</td></tr>
+              <tr><td>account</td><td>Account information for yourself.</td></tr>
+              <tr><td>account.name</td><td>Display name.</td></tr>
+              <tr><td>account.icon</td><td>Icon URL.</td></tr>
+              <tr><td>account.state</td><td>Settings for Official Web Application.</td></tr>
+              <tr><td>account.sub_accounts[]</td><td>Account information for signin account.<br>( twitter or facebook or google )</td></tr>
+              <tr><td>account.sub_accounts[].name</td><td>Display name.</td></tr>
+              <tr><td>account.sub_accounts[].code</td><td>Code.</td></tr>
+              <tr><td>account.sub_accounts[].created_on</td><td>Datetime of creation.</td></tr>
+              <tr><td>account.sub_accounts[].updated_on</td><td>Datetime of last modified.</td></tr>
+              <tr><td>account.sub_accounts[].authenticated_on</td><td>Datetime of last signin.</td></tr>
+              <tr><td>account.sub_accounts[].data.icon</td><td>Icon URL.</td></tr>
+              <tr><td>account.list_ids</td><td>When checking update, specified in the <strong>if_modified_lists</strong>.</td></tr>
+              <tr><td>account.users</td><td>Information of the members that are assigned to the list.</td></tr>
+              <tr><td>account.users["account_id"].name</td><td>Display name.</td></tr>
+              <tr><td>account.users["account_id"].icon</td><td>Icon URL.</td></tr>
+              <tr><td>account.modified_on</td><td>Datetime of last modified.</td></tr>
+              <tr><td>account.sign</td><td>Account information for signed sub account.</td></tr>
+              <tr><td>account.sign.account_id</td><td>Account ID.</td></tr>
+              <tr><td>account.sign.name</td><td>Display name.</td></tr>
+              <tr><td>account.sign.icon</td><td>Icon URL.</td></tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- <hr>
+
+  <h2 id="">/account/update</h2>
+
+  <table class="table table-bordered">
+    <tbody>
+      <tr>
+        <th>DESCRIPTION</th>
+        <td>
+          アカウントの設定を更新します。
+        </td>
+      </tr>
+      <tr>
+        <th>URL STRUCTURE</th>
+        <td>https://tasks.7kai.org/api/1/account/update</td>
+      </tr>
+      <tr>
+        <th>METHOD</th>
+        <td>GET</td>
+      </tr>
+      <tr>
+        <th>PARAMETERS</th>
+        <td>
+          <ul class="unstyled">
+            <li><strong>if_modified_since</strong> lists[].actioned_on at the time of last access.</li>
+            <li><strong>if_modified_lists</strong> account.list_ids at the time of last access.</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th>RETURNS</th>
+        <td>
+          <p>User account information.</p>
+          <p><strong>Sample JSON response</strong></p>
+          <pre></pre>
+          <p><strong>Return value definitions</strong></p>
+          <table class="table table-bordered">
+            <tbody>
+              <tr><td>Field</td><td>Description</td></tr>
+              <tr><td>lists[]</td><td>List array.</td></tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table> -->
+
+  <h2 id="/task/create">/task/create</h2>
+
+  <table class="table table-bordered">
+    <tbody>
+      <tr>
+        <th>DESCRIPTION</th>
+        <td data-text-ja="タスクを作成します。">
+          Create a task.
+        </td>
+      </tr>
+      <tr>
+        <th>URL STRUCTURE</th>
+        <td>https://tasks.7kai.org/api/1/task/create</td>
+      </tr>
+      <tr>
+        <th>METHOD</th>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <th>PARAMETERS</th>
+        <td>
+          <ul class="unstyled">
+            <li><strong>list_id</strong> <span class="form-required" title="This field is required.">*</span> List ID.</li>
+            <li><strong>name</strong> <span class="form-required" title="This field is required.">*</span> Task name.</li>
+            <li><strong>requester</strong> <span class="form-required" title="This field is required.">*</span> Requester account ID.</li>
+            <li><strong>due</strong> Due date.</li>
+            <li><strong>duration</strong> Day of duration.</li>
+            <li><strong>assign</strong> Assigned accounts IDs.</li>
+            <li><strong>parent_id</strong> Parent Task ID.</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th>RETURNS</th>
+        <td>
+          <p>User account information.</p>
+          <p><strong>Sample JSON response</strong></p>
+          <pre>{
+  "success" : 1,
+  "task" : {
+    "registrant" : "1",
+    "closed" : 0,
+    "due" : "02/11/2013",
+    "actions" : [],
+    "status" : 0,
+    "name" : "buy the coffee.",
+    "duration" : 1,
+    "pending" : 0,
+    "parent_id" : "",
+    "updated_on" : 1360529581018,
+    "last_comment_id" : 1,
+    "requester" : 1,
+    "created_on" : 1360529499179,
+    "assign" : [
+       "1",
+       "2"
+    ],
+    "id" : "1:19"
+  }
+}</pre>
+          <p><strong>Return value definitions</strong></p>
+          <table class="table table-bordered">
+            <tbody>
+              <tr><td>Field</td><td>Description</td></tr>
+              <tr><td>success</td><td>aleady "1".</td></tr>
+              <tr><td>task</td><td>Created task, see also /account/me lists[].tasks[] field.</td></tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="/task/update">/task/update</h2>
+
+  <table class="table table-bordered">
+    <tbody>
+      <tr>
+        <th>DESCRIPTION</th>
+        <td data-text-ja="タスクを更新します。">
+          Update a task.
+        </td>
+      </tr>
+      <tr>
+        <th>URL STRUCTURE</th>
+        <td>https://tasks.7kai.org/api/1/task/update</td>
+      </tr>
+      <tr>
+        <th>METHOD</th>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <th>PARAMETERS</th>
+        <td>
+          <ul class="unstyled">
+            <li><strong>list_id</strong> <span class="form-required" title="This field is required.">*</span> List ID.</li>
+            <li><strong>task_id</strong> <span class="form-required" title="This field is required.">*</span> Task ID.</li>
+            <li><strong>name</strong> Task name.</li>
+            <li><strong>requester</strong> Requester account ID.</li>
+            <li><strong>due</strong> Due date.</li>
+            <li><strong>duration</strong> Day of duration.</li>
+            <li><strong>assign</strong> Assigned accounts IDs.</li>
+            <li><strong>parent_id</strong> Parent Task ID.</li>
+            <li><strong>status</strong> 0 ... open, 1 ... start, 2 ... fixed. ( check icon )</li>
+            <li><strong>pending</strong> 0 ... active, 1 ... pending. ( pause icon )</li>
+            <li><strong>closed</strong> 0 ... open, 1 ... closed. ( cross icon )</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th>RETURNS</th>
+        <td>
+          <p>User account information.</p>
+          <p><strong>Sample JSON response</strong></p>
+          <pre>{
+  "success" : 1,
+  "task" : {
+    "registrant" : "1",
+    "closed" : 0,
+    "due" : "02/11/2013",
+    "actions" : [],
+    "status" : 0,
+    "name" : "buy the coffee.",
+    "duration" : 1,
+    "pending" : 0,
+    "parent_id" : "",
+    "updated_on" : 1360529581018,
+    "last_comment_id" : 1,
+    "requester" : 1,
+    "created_on" : 1360529499179,
+    "assign" : [
+      "1",
+      "2"
+    ],
+    "id" : "1:19"
+  }
+}</pre>
+          <p><strong>Return value definitions</strong></p>
+          <table class="table table-bordered">
+            <tbody>
+              <tr><td>Field</td><td>Description</td></tr>
+              <tr><td>success</td><td>aleady "1".</td></tr>
+              <tr><td>task</td><td>Created task, see also /account/me lists[].tasks[] field.</td></tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="/task/move">/task/move</h2>
+
+  <table class="table table-bordered">
+    <tbody>
+      <tr>
+        <th>DESCRIPTION</th>
+        <td data-text-ja="指定されたタスク及びその下層タスクを別のリストに移動します。">
+          Move a task to another list.
+        </td>
+      </tr>
+      <tr>
+        <th>URL STRUCTURE</th>
+        <td>https://tasks.7kai.org/api/1/task/move</td>
+      </tr>
+      <tr>
+        <th>METHOD</th>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <th>PARAMETERS</th>
+        <td>
+          <ul class="unstyled">
+            <li><strong>src_list_id</strong> <span class="form-required" title="This field is required.">*</span> From List ID.</li>
+            <li><strong>dst_list_id</strong> <span class="form-required" title="This field is required.">*</span> To List ID.</li>
+            <li><strong>task_id</strong> <span class="form-required" title="This field is required.">*</span> Task ID.</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th>RETURNS</th>
+        <td>
+          <p>User account information.</p>
+          <p><strong>Sample JSON response</strong></p>
+          <pre>{
+  "success" : 1,
+  "tasks" : [
+    {
+      "registrant" : "1",
+      "closed" : 0,
+      "due" : "02/11/2013",
+      "actions" : [],
+      "status" : 0,
+      "name" : "buy the coffee.",
+      "duration" : 1,
+      "pending" : 0,
+      "parent_id" : "",
+      "updated_on" : 1360529581018,
+      "last_comment_id" : 1,
+      "requester" : 1,
+      "created_on" : 1360529499179,
+      "assign" : [
+        "1",
+        "2"
+      ],
+      "id" : "1:19"
+    }
+  ]
+}</pre>
+          <p><strong>Return value definitions</strong></p>
+          <table class="table table-bordered">
+            <tbody>
+              <tr><td>Field</td><td>Description</td></tr>
+              <tr><td>success</td><td>aleady "1".</td></tr>
+              <tr><td>tasks[]</td><td>Modified tasks tree, see also /account/me lists[].tasks[] field.</td></tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="/comment/create">/comment/create</h2>
+
+  <table class="table table-bordered">
+    <tbody>
+      <tr>
+        <th>DESCRIPTION</th>
+        <td data-text-ja="コメントします。">
+          Create a comment.
+        </td>
+      </tr>
+      <tr>
+        <th>URL STRUCTURE</th>
+        <td>https://tasks.7kai.org/api/1/comment/create</td>
+      </tr>
+      <tr>
+        <th>METHOD</th>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <th>PARAMETERS</th>
+        <td>
+          <ul class="unstyled">
+            <li><strong>list_id</strong> <span class="form-required" title="This field is required.">*</span> List ID.</li>
+            <li><strong>task_id</strong> <span class="form-required" title="This field is required.">*</span> Task ID.</li>
+            <li><strong>message</strong> <span class="form-required" title="This field is required.">*</span> Message.</li>
+            <li><strong>status</strong> 0 ... open, 1 ... start, 2 ... fixed. ( check icon )</li>
+            <li><strong>closed</strong> 0 ... open, 1 ... closed. ( cross icon )</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th>RETURNS</th>
+        <td>
+          <p>User account information.</p>
+          <p><strong>Sample JSON response</strong></p>
+          <pre>{
+  "success" : 1,
+  "task" : {
+    "registrant" : "1",
+    "closed" : 0,
+    "due" : "02/11/2013",
+    "actions" : [],
+    "status" : 0,
+    "name" : "buy the coffee.",
+    "duration" : 1,
+    "pending" : 0,
+    "parent_id" : "",
+    "updated_on" : 1360529581018,
+    "last_comment_id" : 1,
+    "requester" : 1,
+    "created_on" : 1360529499179,
+    "assign" : [
+      "1",
+      "2"
+    ],
+    "id" : "1:19"
+  }
+}</pre>
+          <p><strong>Return value definitions</strong></p>
+          <table class="table table-bordered">
+            <tbody>
+              <tr><td>Field</td><td>Description</td></tr>
+              <tr><td>success</td><td>aleady "1".</td></tr>
+              <tr><td>task</td><td>Modified task, see also /account/me lists[].tasks[] field.</td></tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="/comment/delete">/comment/delete</h2>
+
+  <table class="table table-bordered">
+    <tbody>
+      <tr>
+        <th>DESCRIPTION</th>
+        <td data-text-ja="コメントを削除します。">
+          Delete the comment.
+        </td>
+      </tr>
+      <tr>
+        <th>URL STRUCTURE</th>
+        <td>https://tasks.7kai.org/api/1/comment/delete</td>
+      </tr>
+      <tr>
+        <th>METHOD</th>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <th>PARAMETERS</th>
+        <td>
+          <ul class="unstyled">
+            <li><strong>list_id</strong> <span class="form-required" title="This field is required.">*</span> List ID.</li>
+            <li><strong>task_id</strong> <span class="form-required" title="This field is required.">*</span> Task ID.</li>
+            <li><strong>comment_id</strong> <span class="form-required" title="This field is required.">*</span> Action ID.</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th>RETURNS</th>
+        <td>
+          <p>User account information.</p>
+          <p><strong>Sample JSON response</strong></p>
+          <pre>{
+  "success" : 1,
+  "task" : {
+    "registrant" : "1",
+    "closed" : 0,
+    "due" : "02/11/2013",
+    "actions" : [],
+    "status" : 0,
+    "name" : "buy the coffee.",
+    "duration" : 1,
+    "pending" : 0,
+    "parent_id" : "",
+    "updated_on" : 1360529581018,
+    "last_comment_id" : 1,
+    "requester" : 1,
+    "created_on" : 1360529499179,
+    "assign" : [
+      "1",
+      "2"
+    ],
+    "id" : "1:19"
+  }
+}</pre>
+          <p><strong>Return value definitions</strong></p>
+          <table class="table table-bordered">
+            <tbody>
+              <tr><td>Field</td><td>Description</td></tr>
+              <tr><td>success</td><td>aleady "1".</td></tr>
+              <tr><td>task</td><td>Modified task, see also /account/me lists[].tasks[] field.</td></tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="/comment/pin">/comment/pin</h2>
+
+  <table class="table table-bordered">
+    <tbody>
+      <tr>
+        <th>DESCRIPTION</th>
+        <td data-text-ja="コメントにピンを付けます。">
+          Attach a pin to comment.
+        </td>
+      </tr>
+      <tr>
+        <th>URL STRUCTURE</th>
+        <td>https://tasks.7kai.org/api/1/comment/pin</td>
+      </tr>
+      <tr>
+        <th>METHOD</th>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <th>PARAMETERS</th>
+        <td>
+          <ul class="unstyled">
+            <li><strong>list_id</strong> <span class="form-required" title="This field is required.">*</span> List ID.</li>
+            <li><strong>task_id</strong> <span class="form-required" title="This field is required.">*</span> Task ID.</li>
+            <li><strong>comment_id</strong> <span class="form-required" title="This field is required.">*</span> Action ID.</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th>RETURNS</th>
+        <td>
+          <p>User account information.</p>
+          <p><strong>Sample JSON response</strong></p>
+          <pre>{
+  "success" : 1,
+  "task" : {
+    "registrant" : "1",
+    "closed" : 0,
+    "due" : "02/11/2013",
+    "actions" : [],
+    "status" : 0,
+    "name" : "buy the coffee.",
+    "duration" : 1,
+    "pending" : 0,
+    "parent_id" : "",
+    "updated_on" : 1360529581018,
+    "last_comment_id" : 1,
+    "requester" : 1,
+    "created_on" : 1360529499179,
+    "assign" : [
+      "1",
+      "2"
+    ],
+    "id" : "1:19"
+  }
+}</pre>
+          <p><strong>Return value definitions</strong></p>
+          <table class="table table-bordered">
+            <tbody>
+              <tr><td>Field</td><td>Description</td></tr>
+              <tr><td>success</td><td>aleady "1".</td></tr>
+              <tr><td>task</td><td>Modified task, see also /account/me lists[].tasks[] field.</td></tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="/comment/unpin">/comment/unpin</h2>
+
+  <table class="table table-bordered">
+    <tbody>
+      <tr>
+        <th>DESCRIPTION</th>
+        <td data-text-ja="コメントからピンを外します。">
+          Remove the pin from the comment.
+        </td>
+      </tr>
+      <tr>
+        <th>URL STRUCTURE</th>
+        <td>https://tasks.7kai.org/api/1/comment/unpin</td>
+      </tr>
+      <tr>
+        <th>METHOD</th>
+        <td>POST</td>
+      </tr>
+      <tr>
+        <th>PARAMETERS</th>
+        <td>
+          <ul class="unstyled">
+            <li><strong>list_id</strong> <span class="form-required" title="This field is required.">*</span> List ID.</li>
+            <li><strong>task_id</strong> <span class="form-required" title="This field is required.">*</span> Task ID.</li>
+            <li><strong>comment_id</strong> <span class="form-required" title="This field is required.">*</span> Action ID.</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <th>RETURNS</th>
+        <td>
+          <p>User account information.</p>
+          <p><strong>Sample JSON response</strong></p>
+          <pre>{
+  "success" : 1,
+  "task" : {
+    "registrant" : "1",
+    "closed" : 0,
+    "due" : "02/11/2013",
+    "actions" : [],
+    "status" : 0,
+    "name" : "buy the coffee.",
+    "duration" : 1,
+    "pending" : 0,
+    "parent_id" : "",
+    "updated_on" : 1360529581018,
+    "last_comment_id" : 1,
+    "requester" : 1,
+    "created_on" : 1360529499179,
+    "assign" : [
+      "1",
+      "2"
+    ],
+    "id" : "1:19"
+  }
+}</pre>
+          <p><strong>Return value definitions</strong></p>
+          <table class="table table-bordered">
+            <tbody>
+              <tr><td>Field</td><td>Description</td></tr>
+              <tr><td>success</td><td>aleady "1".</td></tr>
+              <tr><td>task</td><td>Modified task, see also /account/me lists[].tasks[] field.</td></tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- <h2 id="">/list/create</h2>
+  <h2>/list/update</h2>
+  <h2>/list/invite</h2>
+  <h2>/list/disinvite</h2>
+  <h2>/list/join</h2>
+  <h2>/list/leave</h2>
+  <h2>/list/public</h2>
+  <h2>/list/private</h2>
+  <h2>/list/delete</h2>
+  <h2>/list/clear</h2> -->
+
+</div><!--/span-->
+</div><!--/row-->
+
+[% END %]

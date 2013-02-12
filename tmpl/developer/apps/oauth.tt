@@ -1,0 +1,48 @@
+[% WRAPPER 'include/layout_developer.tt' %]
+
+<h1>[% app.name %]</h1>
+
+<ul class="nav nav-tabs">
+	<li><a href="show">Details</a></li>
+	<li><a href="edit">Edit</a></li>
+	<li class="active"><a href="oauth">OAuth tool</a></li>
+	<li><a href="reset">Reset keys</a></li>
+	<li><a href="delete">Delete</a></li>
+</ul>
+
+<form action="" method="post">
+
+	<label>Consumer key: <span class="form-required" title="This field is required.">*</span></label>
+	<input class="span8" type="text" name="consumer_key" required="required">
+
+	<label>Consumer secret: <span class="form-required" title="This field is required.">*</span></label>
+	<input class="span8" type="text" name="consumer_secret" required="required">
+
+	<label>Access token: <span class="form-required" title="This field is required.">*</span></label>
+	<input class="span8" type="text" name="access_token" required="required">
+
+	<label>Access token secret: <span class="form-required" title="This field is required.">*</span></label>
+	<input class="span8" type="text" name="access_token_secret" required="required">
+
+	<label>Request type <span class="form-required" title="This field is required.">*</span></label>
+	<input type="text" name="method" required="required">
+
+	<label>Request URI: <span class="form-required" title="This field is required.">*</span></label>
+	<input class="span8" type="text" name="url" required="required">
+
+	<div class="form-actions">
+		<button class="btn btn-primary">Go</button>
+	</div>
+
+</form>
+
+
+[% IF body %]
+
+<pre><code>[% code %]</code></pre>
+<pre><code>[% body %]</code></pre>
+
+[% END %]
+
+
+[% END %]

@@ -127,6 +127,12 @@
                 target="_blank"
               >Staff Room</a>
             </li>
+            <li>
+              <a
+                href="/apps/"
+                target="_blank"
+              >Apps</a>
+            </li>
             <li class="divider"></li>
             <li><a href="/signout">Sign Out</a></li>
           </ul>

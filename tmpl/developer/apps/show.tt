@@ -1,0 +1,107 @@
+[% WRAPPER 'include/layout_developer.tt' %]
+
+<style>
+td:first-child {
+	width: 280px;
+}
+</style>
+
+<h1>[% app.name %]</h1>
+
+<ul class="nav nav-tabs">
+	<li class="active"><a href="show">Details</a></li>
+	<li><a href="edit">Edit</a></li>
+	<li><a href="oauth">OAuth tool</a></li>
+	<li><a href="reset">Reset keys</a></li>
+	<li><a href="delete">Delete</a></li>
+</ul>
+
+<p>[% app.description %]</p>
+<p><a href="[% app.website %]" target="_blank">[% app.website %]</a></p>
+
+<h3>Organization</h3>
+
+<table class="table">
+	<tbody>
+		<tr>
+			<td>Organization</td>
+			<td>[% app.organization || 'None' %]</td>
+		</tr>
+		<tr>
+			<td>Organization website</td>
+			<td>[% app.organization_website || 'None' %]</td>
+		</tr>
+	</tbody>
+</table>
+
+
+<h3>OAuth settings</h3>
+
+<table class="table">
+	<tbody>
+		<tr>
+			<td>Access level</td>
+			<td>[% app.access_level == 'r' ? 'Read only' : 'Read and write' %]</td>
+		</tr>
+		<tr>
+			<td>Consumer key</td>
+			<td>[% app.app_id %]-[% app.consumer_key %]</td>
+		</tr>
+		<tr>
+			<td>Consumer secret</td>
+			<td>[% app.consumer_secret %]</td>
+		</tr>
+		<tr>
+			<td>Request token URL</td>
+			<td>https://tasks.7kai.org/oauth/request_token</td>
+		</tr>
+		<tr>
+			<td>Authorize URL</td>
+			<td>https://tasks.7kai.org/oauth/authorize</td>
+		</tr>
+		<tr>
+			<td>Access token URL</td>
+			<td>https://tasks.7kai.org/oauth/access_token</td>
+		</tr>
+		<tr>
+			<td>Callback URL</td>
+			<td>[% app.callback_url || 'None' %]</td>
+		</tr>
+	</tbody>
+</table>
+
+<h3>Your access token</h3>
+
+[% IF access_token %]
+
+<table class="table">
+	<tbody>
+		<tr>
+			<td>Access token</td>
+			<td>[% access_token.access_level == 'r' ? 'Read only' : 'Read and write' %]</td>
+		</tr>
+		<tr>
+			<td>Access token secret</td>
+			<td>[% access_token.access_token_id %]-[% access_token.access_token %]</td>
+		</tr>
+		<tr>
+			<td>Access level</td>
+			<td>[% access_token.access_token_secret %]</td>
+		</tr>
+	</tbody>
+</table>
+
+<form method="post">
+	<button class="btn btn-primary">Recreate my access token</button>
+</form>
+
+[% ELSE %]
+
+<form method="post">
+	<button class="btn btn-primary">Create my access token</button>
+</form>
+
+[% END %]
+
+
+[% END %]

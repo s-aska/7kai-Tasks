@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>7kai Tasks</title>
+<link rel="stylesheet" href="/static/css/bootstrap-2.2.2.min.css">
+<style type="text/css">
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+h1 {
+  font-size: 20px;
+  line-height: 20px;
+}
+.sidebar-nav {
+  padding: 9px 0;
+}
+form .form-required {
+  color: #F00;
+  font-weight: bold;
+}
+@media (max-width: 980px) {
+  /* Enable use of floated navbar text */
+  .navbar-text.pull-right {
+    float: none;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+.pin {
+  font-size: 42px;
+  letter-spacing: 4px;
+  text-align: center;
+  padding: 10px;
+}
+</style>
+<link rel="stylesheet" href="/static/css/bootstrap-responsive-2.2.2.min.css">
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="/">7kai Tasks</a>
+      <div class="nav-collapse collapse">
+        <p class="navbar-text pull-right">
+          Signed in as [% c().sign_name %]
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="alert alert-error">Rejected.</div>
+</div>
+</body>
+</html>
