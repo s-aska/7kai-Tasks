@@ -39,11 +39,11 @@ sub verify {
     $util->support_signature_method('HMAC-SHA1');
 
     if ($type eq 'request token') {
-        $util->allow_extra_params(qw/oauth_callback/);
+        $util->allow_extra_params(qw/oauth_callback oauth_body_hash/);
         my $callback_url = $oauth_params->{oauth_callback} // '';
         $self->callback_url($callback_url);
     } elsif ($type eq 'access token') {
-        $util->allow_extra_params(qw/oauth_verifier/);
+        $util->allow_extra_params(qw/oauth_verifier oauth_body_hash/);
         my $oauth_token  = $oauth_params->{oauth_token} // '';
         my $verifier     = $oauth_params->{oauth_verifier} // '';
         my ($request_token_id, $token) = split '-', $oauth_token;
@@ -61,6 +61,7 @@ sub verify {
             return;
         }
         unless ($verifier eq $request_token->verifier) {
+            warnf('oauth_verifier %s', $verifier);
             $self->error('invalid oauth_verifier');
             return;
         }
@@ -80,7 +81,7 @@ sub verify {
         $token_secret = $access_token->access_token_secret;
     }
     unless ($util->validate_params($oauth_params, $token_secret ? 1 : 0)) {
-        $self->error($util->errstr);
+        $self->error($util->errstr . ' ' . join ', ', keys %$oauth_params);
         return;
     }
 
@@ -144,6 +145,7 @@ sub get_access_token {
         authenticated_on    => \'now()',
         created_on          => \'now()',
     });
+    $app->update_tokens();
     $self->access_token($access_token);
     my $token = OAuth::Lite::Token->new;
     $token->token($access_token->access_token_id . '-' . $access_token->access_token);

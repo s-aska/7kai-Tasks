@@ -12,7 +12,6 @@ ul {
 .sidebar-nav {
   position: fixed;
   top: 60px;
-  width: 290px;
 }
 </style>
 <script>

@@ -17,7 +17,7 @@
 		<tr>
 			<td><a href="[% app.app_id %]/show">[% app.name %]</a></td>
 			<td>[% app.description %]</td>
-			<td>[% app.tokens %]</td>
+			<td>[% app.tokens %] Users</td>
 		</tr>
 		[% END %]
 	</tbody>

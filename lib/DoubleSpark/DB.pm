@@ -76,4 +76,22 @@ sub as_hashref {
     $data;
 }
 
+package DoubleSpark::DB::Row::App;
+use parent 'Teng::Row';
+
+sub update_tokens {
+    my $row = shift;
+    my $count = $row->handle->count('access_token', 'distinct(account_id)', { app_id => $row->app_id });
+    $row->update({ tokens => $count });
+    $row;
+}
+
+package DoubleSpark::DB::Row::AccessToken;
+use parent 'Teng::Row';
+
+sub app {
+    my $row = shift;
+    $row->handle->single('app', { app_id => $row->app_id });
+}
+
 1;

@@ -50,6 +50,7 @@ sub show {
             authenticated_on    => \'now()',
             created_on          => \'now()',
         });
+        $app->update_tokens();
     } else {
         $access_token = $db->single('access_token', {
             account_id => $c->sign_id,
