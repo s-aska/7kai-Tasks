@@ -71,8 +71,8 @@ $(function(){
   <ul>
     <li><a href="https://gist.github.com/s-aska/4769872" target="_blank">Perl (Amon2)</a></li>
     <li><a href="https://gist.github.com/s-aska/4942131" target="_blank">Ruby (Sinatra)</a></li>
+    <li><a href="https://gist.github.com/s-aska/4943237" target="_blank">PHP (Limonade)</a></li>
     <!-- <li>Python (Django)</li>
-    <li>PHP (Limonade)</li>
     <li>Java (Play Framework)</li>
     <li>Java (Android)</li>
     <li>Javascript (Node.js)</li>
