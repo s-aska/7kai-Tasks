@@ -110,7 +110,9 @@ __PACKAGE__->add_trigger(
 
         unless ($c->sign) {
             # warnf('unsigned api access IP:%s UA:%s', $c->req->address, $c->req->user_agent);
-            $c->session->set('next_url', $c->req->uri);
+            if ($c->req->path !~ m|^/api/|) {
+                $c->session->set('next_url', $c->req->uri);
+            }
             return $c->render('signin.tt');
             # return $c->res_401();
         }
