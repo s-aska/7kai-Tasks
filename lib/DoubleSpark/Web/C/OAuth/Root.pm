@@ -42,6 +42,8 @@ sub authorize {
 
     my $callback_url = $request_token->callback_url || $app->callback_url;
 
+    undef $callback_url if $callback_url eq 'oob';
+
     # confirm
     if ($req->method ne 'POST') {
         if ($request_token->is_authorized_by_user) {
