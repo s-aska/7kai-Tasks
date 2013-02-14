@@ -71,12 +71,12 @@ $(function(){
   <ul>
     <li><a href="https://gist.github.com/s-aska/4769872" target="_blank">Perl (Amon2)</a></li>
     <li><a href="https://gist.github.com/s-aska/4942131" target="_blank">Ruby (Sinatra)</a></li>
+    <li><a href="https://gist.github.com/s-aska/4951123" target="_blank">Python (Flask)</a></li>
     <li><a href="https://gist.github.com/s-aska/4943237" target="_blank">PHP (Limonade)</a></li>
     <li><a href="https://gist.github.com/s-aska/4943917" target="_blank">Javascript (Node.js)</a></li>
-    <!-- <li>Python (Django)</li>
+    <!--
     <li>Java (Play Framework)</li>
     <li>Java (Android)</li>
-    <li>Javascript (Node.js)</li>
     <li>Javascript (Google Apps Script)</li>
     <li>Javascript (Chrome Apps)</li>
     <li>iOS</li>
@@ -86,7 +86,8 @@ $(function(){
     <li>Vim</li>
     <li>Emacs</li>
     <li>VBA</li>
-    <li>Lisp</li> -->
+    <li>Lisp</li>
+    -->
   </ul>
 
   <hr>
