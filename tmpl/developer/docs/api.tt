@@ -74,6 +74,7 @@ $(function(){
     <li><a href="https://gist.github.com/s-aska/4951123" target="_blank">Python (Flask)</a></li>
     <li><a href="https://gist.github.com/s-aska/4943237" target="_blank">PHP (Limonade)</a></li>
     <li><a href="https://gist.github.com/s-aska/4943917" target="_blank">Javascript (Node.js)</a></li>
+    <li><a href="https://gist.github.com/s-aska/4951559" target="_blank">Java</a></li>
     <!--
     <li>Java (Play Framework)</li>
     <li>Java (Android)</li>
