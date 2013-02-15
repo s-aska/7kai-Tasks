@@ -76,20 +76,6 @@ $(function(){
     <li><a href="https://gist.github.com/s-aska/4943917" target="_blank">Javascript (Node.js)</a></li>
     <li><a href="https://gist.github.com/s-aska/4952139" target="_blank">Java (Spark)</a></li>
     <li><a href="https://gist.github.com/s-aska/4951559" target="_blank">Java (CUI)</a></li>
-    <!--
-    <li>Java (Play Framework)</li>
-    <li>Java (Android)</li>
-    <li>Javascript (Google Apps Script)</li>
-    <li>Javascript (Chrome Apps)</li>
-    <li>iOS</li>
-    <li>C</li>
-    <li>D</li>
-    <li>bash</li>
-    <li>Vim</li>
-    <li>Emacs</li>
-    <li>VBA</li>
-    <li>Lisp</li>
-    -->
   </ul>
 
   <hr>
@@ -318,22 +304,22 @@ $(function(){
               <tr><td>account.name</td><td>Display name.</td></tr>
               <tr><td>account.icon</td><td>Icon URL.</td></tr>
               <tr><td>account.state</td><td>Settings for Official Web Application.</td></tr>
-              <tr><td>account.sub_accounts[]</td><td>Account information for signin account.<br>( twitter or facebook or google )</td></tr>
-              <tr><td>account.sub_accounts[].name</td><td>Display name.</td></tr>
-              <tr><td>account.sub_accounts[].code</td><td>Code.</td></tr>
-              <tr><td>account.sub_accounts[].created_on</td><td>Datetime of creation.</td></tr>
-              <tr><td>account.sub_accounts[].updated_on</td><td>Datetime of last modified.</td></tr>
-              <tr><td>account.sub_accounts[].authenticated_on</td><td>Datetime of last signin.</td></tr>
-              <tr><td>account.sub_accounts[].data.icon</td><td>Icon URL.</td></tr>
-              <tr><td>account.list_ids</td><td>When checking update, specified in the <strong>if_modified_lists</strong>.</td></tr>
-              <tr><td>account.users</td><td>Information of the members that are assigned to the list.</td></tr>
-              <tr><td>account.users["account_id"].name</td><td>Display name.</td></tr>
-              <tr><td>account.users["account_id"].icon</td><td>Icon URL.</td></tr>
-              <tr><td>account.modified_on</td><td>Datetime of last modified.</td></tr>
-              <tr><td>account.sign</td><td>Account information for signed sub account.</td></tr>
-              <tr><td>account.sign.account_id</td><td>Account ID.</td></tr>
-              <tr><td>account.sign.name</td><td>Display name.</td></tr>
-              <tr><td>account.sign.icon</td><td>Icon URL.</td></tr>
+              <tr><td>sub_accounts[]</td><td>Account information for signin account.<br>( twitter or facebook or google )</td></tr>
+              <tr><td>sub_accounts[].name</td><td>Display name.</td></tr>
+              <tr><td>sub_accounts[].code</td><td>Code.</td></tr>
+              <tr><td>sub_accounts[].created_on</td><td>Datetime of creation.</td></tr>
+              <tr><td>sub_accounts[].updated_on</td><td>Datetime of last modified.</td></tr>
+              <tr><td>sub_accounts[].authenticated_on</td><td>Datetime of last signin.</td></tr>
+              <tr><td>sub_accounts[].data.icon</td><td>Icon URL.</td></tr>
+              <tr><td>list_ids</td><td>When checking update, specified in the <strong>if_modified_lists</strong>.</td></tr>
+              <tr><td>users</td><td>Information of the members that are assigned to the list.</td></tr>
+              <tr><td>users["account_id"].name</td><td>Display name.</td></tr>
+              <tr><td>users["account_id"].icon</td><td>Icon URL.</td></tr>
+              <tr><td>modified_on</td><td>Datetime of last modified.</td></tr>
+              <tr><td>sign</td><td>Account information for signed sub account.</td></tr>
+              <tr><td>sign.account_id</td><td>Account ID.</td></tr>
+              <tr><td>sign.name</td><td>Display name.</td></tr>
+              <tr><td>sign.icon</td><td>Icon URL.</td></tr>
             </tbody>
           </table>
         </td>
