@@ -148,10 +148,14 @@ app.date.relative = function(epoch){
         var hour = parseInt(diff / 3600);
         var s = hour > 1 ? 's' : '';
         return hour + ' hour' + s + ' ago';
-    } else {
+    } else if (diff < (3600 * 24 * 365)) {
         var day = parseInt(diff / (3600 * 24));
         var s = day > 1 ? 's' : '';
         return day + ' day' + s + ' ago';
+    } else {
+        var year = parseInt(diff / (3600 * 24 * 365));
+        var s = year > 1 ? 's' : '';
+        return year + ' year' + s + ' ago';
     }
 }
 app.date.relativeDays = function(date1, date2){
