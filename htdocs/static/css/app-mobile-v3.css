@@ -31,8 +31,8 @@ section {
 	left: 0;
 	overflow-x: hidden;
 	overflow-y: auto;
-	-webkit-overflow-scrolling: touch;
 	background-color: #F7F7F6;
+	-webkit-overflow-scrolling: touch;
 }
 section > form {
 	padding: 10px 10px 0 10px !important;
@@ -90,6 +90,7 @@ ul.list {
 	border-bottom: 1px solid #EBEBEC;
 }
 ul.list > li {
+	display: none;
 	border-top: 2px solid rgba(0, 0, 0, 0.15);
 }
 ul.list > li[data-tag="primary"] {
@@ -103,6 +104,13 @@ ul.list > li[data-tag="warning"] {
 }
 ul.list > li[data-tag="danger"] {
 	border-top: 2px solid #DA4F49;
+}
+body[data-tag="any"] ul.list > li,
+body[data-tag="primary"] ul.list > li[data-tag="primary"],
+body[data-tag="success"] ul.list > li[data-tag="success"],
+body[data-tag="warning"] ul.list > li[data-tag="warning"],
+body[data-tag="danger"] ul.list > li[data-tag="danger"] {
+	display: block;
 }
 ul.list > li.dragging {
 	background-color: #e2f2e2;

@@ -473,7 +473,8 @@ app.setup.displaySwitch = function(ele){
 			}
 			var on = Boolean(app.data.state.display[display] === 'on');
 			if (on !== Boolean(ele.hasClass('active'))) {
-				ele.click();
+				ele.toggleClass('active', on);
+				body.toggleClass('display-' + display, on);
 			}
 		}
 	});
@@ -517,6 +518,19 @@ app.setup.tags = function(ul){
 		var tag = ele.data('tag');
 		if (tag) {
 			ele.click(function(e){
+				app.api.account.update({
+					ns: 'state',
+					method: 'set',
+					key: 'tag',
+					val: ele.hasClass('active') ? '' : tag,
+				})
+				.done(function(data){
+					if (data.success === 1) {
+						app.data.state.tag = data.account.state.tag;
+					} else {
+						// 現在 ステータスコード 200 の例外ケースは無い
+					}
+				});
 				if (ele.hasClass('active')) {
 					app.fireEvent('resetTag');
 				} else {
@@ -534,6 +548,11 @@ app.setup.tags = function(ul){
 	});
 	app.addListener('resetTag', function(){
 		ul.find('a[data-tag]').removeClass('active');
+	});
+	app.addListener('receiveSign', function(){
+		if ("tag" in app.data.state && app.data.state.tag.length) {
+			app.fireEvent('toggleTag', app.data.state.tag);
+		}
 	});
 }
 app.click.filterTask = function(ele){

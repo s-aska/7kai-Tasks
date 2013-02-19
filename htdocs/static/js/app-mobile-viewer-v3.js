@@ -501,23 +501,23 @@ app.setup.list = function(section){
 
 	ul.on('app.update-sort', updateSort);
 
-	var listli_toggle = function(li){
-		var id = li.data('id');
-		var tag = app.data.current_tag;
-		if (tag) {
-			li.toggle(Boolean((id in app.data.state.tags) && (tag === app.data.state.tags[id])));
-		} else {
-			li.show();
-		}
-	};
+	// var listli_toggle = function(li){
+	// 	var id = li.data('id');
+	// 	var tag = app.data.current_tag;
+	// 	if (tag) {
+	// 		li.toggle(Boolean((id in app.data.state.tags) && (tag === app.data.state.tags[id])));
+	// 	} else {
+	// 		li.show();
+	// 	}
+	// };
 
-	app.addListener('toggleTag', function(tag){
-		ul.children().each(function(i, element){ listli_toggle($(element)) });
-	});
+	// app.addListener('toggleTag', function(tag){
+	// 	ul.children().each(function(i, element){ listli_toggle($(element)) });
+	// });
 
-	app.addListener('resetTag', function(){
-		ul.children().each(function(i, element){ listli_toggle($(element)) });
-	});
+	// app.addListener('resetTag', function(){
+	// 	ul.children().each(function(i, element){ listli_toggle($(element)) });
+	// });
 
 	app.addListener('registerList', function(list){
 
@@ -1819,11 +1819,25 @@ app.setup.switchClosed = function(ele){
 	});
 }
 app.setup.tags = function(ul){
+	var body = $('body');
 	ul.find('.btn[data-tag]').each(function(i, element){
 		var ele = $(element);
 		var tag = ele.data('tag');
 		if (tag) {
 			app.dom.touch(ele, function(){
+				app.api.account.update({
+					ns: 'state',
+					method: 'set',
+					key: 'tag',
+					val: ele.hasClass('active') ? '' : tag,
+				})
+				.done(function(data){
+					if (data.success === 1) {
+						app.data.state.tag = data.account.state.tag;
+					} else {
+						// 現在 ステータスコード 200 の例外ケースは無い
+					}
+				});
 				if (ele.hasClass('active')) {
 					app.fireEvent('resetTag');
 				} else {
@@ -1838,9 +1852,18 @@ app.setup.tags = function(ul){
 			var ele = $(element);
 			ele.toggleClass('active', tag === ele.data('tag'));
 		});
+		body.attr('data-tag', tag);
 	});
 	app.addListener('resetTag', function(){
 		ul.find('.btn[data-tag]').removeClass('active');
+		body.attr('data-tag', 'any');
+	});
+	app.addListener('receiveSign', function(){
+		if ("tag" in app.data.state && app.data.state.tag.length) {
+			app.fireEvent('toggleTag', app.data.state.tag);
+		} else {
+			app.fireEvent('resetTag');
+		}
 	});
 }
 
