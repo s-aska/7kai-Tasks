@@ -120,7 +120,7 @@ app.addListener('registerTask', function(task, list){
 			task.pins.push(action);
 		}
 		if (!app.util.findMe([action.account_id])) {
-			if (action.message && action.message !== '[like]') {
+			if (!task.recent && action.message && action.message !== '[like]') {
 				task.recent = action;
 			}
 		}
