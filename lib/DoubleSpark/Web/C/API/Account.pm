@@ -79,6 +79,7 @@ sub me {
         $ids{$_->list_id}++;
     }
     my $list_ids = join(',', sort keys %ids);
+    my $modified_since = $account->modified_on;
     my @lists;
     if (my $if_modified_since = $c->req->param('if_modified_since')) {
         my $if_modified_lists = $c->req->param('if_modified_lists') || '';
@@ -100,6 +101,7 @@ sub me {
     }
     my $users = {};
     for my $list (@lists) {
+        $modified_since = $list->{actioned_on} if $list->{actioned_on} > $modified_since;
         my @members = map {
             $_->account_id
         } $c->db->search('list_account', { list_id => $list->{id} })->all;
@@ -154,18 +156,19 @@ sub me {
     }
 
     $c->render_json({
-        success      => 1,
-        sign         => $c->sign,
-        token        => $token,
-        notice       => $notice,
-        invite       => $invite,
-        account      => $account->data,
-        modified_on  => $account->modified_on,
-        sub_accounts => \@sub_accounts,
-        lists        => \@lists,
-        list_ids     => $list_ids,
-        users        => $users,
-        holidays     => $holidays,
+        success        => 1,
+        sign           => $c->sign,
+        token          => $token,
+        notice         => $notice,
+        invite         => $invite,
+        account        => $account->data,
+        modified_on    => $account->modified_on,
+        modified_since => $modified_since,
+        sub_accounts   => \@sub_accounts,
+        lists          => \@lists,
+        list_ids       => $list_ids,
+        users          => $users,
+        holidays       => $holidays,
     });
 }
 
