@@ -8,7 +8,7 @@ sub index {
 
     if ($c->req->user_agent =~ /iPhone|iPod|iPad|Android/ || $c->req->param('mobile')){
         $c->render('mobile.tt');
-    } elsif (my $sign = $c->sign) {
+    } elsif (my $sign = $c->sign && !$c->req->param('top')) {
         $c->account->update({ authenticated_on => \'now()' });
         $c->render('app-v3.tt');
     } else {
@@ -16,12 +16,12 @@ sub index {
     }
 }
 
-sub v2 {
+sub v4 {
     my ($class, $c) = @_;
 
     if (my $sign = $c->sign) {
         $c->account->update({ authenticated_on => \'now()' });
-        $c->render('app.tt');
+        $c->render('app-v4.tt');
     } else {
         $c->render('index-v3.tt');
     }

@@ -1,0 +1,842 @@
+/*
+ * 1.
+ * 2.
+ * 3.
+ * 4.
+ * 5.
+ * 6.
+ */
+
+/******************************
+ *
+ *  icon
+ *
+ ******************************/
+
+/*
+ * fontello.com 使ってるのでBootstrapのcss打ち消しとく
+ */
+[class^="icon-"],
+[class*=" icon-"],
+.btn-mini [class^="icon-"],
+.btn-mini [class*=" icon-"],
+.navbar-inverse .nav > .active > a > [class^="icon-"] {
+	background: none;
+	width: auto;
+	height: auto;
+	line-height: inherit;
+	vertical-align: inherit;
+	display: inline;
+	margin-top: inherit;
+}
+
+/*
+ * 引き締まったアイコン
+ */
+[class^="icon-"]::before,
+[class*=" icon-"]::before {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.icon-ok.open {
+	opacity: 0.3;
+}
+
+/******************************
+ *
+ *  Bootstrap調整
+ *
+ ******************************/
+
+/*
+ * グラデーションが気に入らないので調整
+ */
+ .navbar-inverse .navbar-inner {
+	background-color: #1b1b1b;
+	background-image: -moz-linear-gradient(top, #333, #111);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#333), to(#111));
+	background-image: -webkit-linear-gradient(top, #333, #111);
+	background-image: -o-linear-gradient(top, #333, #111);
+	background-image: linear-gradient(to bottom, #333, #111);
+	background-repeat: repeat-x;
+	border-color: #252525;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff333333', endColorstr='#ff111111', GradientType=0);
+}
+
+/*
+ * 引き締まったボタン
+ */
+.btn-small {
+	padding: 2px 8px;
+}
+
+/*
+ * 20pxの指定が色々とカオス
+ */
+ul.unstyled li {
+	line-height: inherit;
+}
+
+/*
+ * 余白が不自然
+ */
+.modal-header h3 {
+	margin-top: 5px;
+}
+
+/******************************
+ *
+ *  基本調整
+ *
+ ******************************/
+html, body {
+	overflow-y: hidden;
+}
+
+body {
+	background-color: #F7F7F6;
+	padding-top: 51px;
+	line-height: 1em;
+}
+
+/*
+ * とりあえずこれくらいはいるやろ
+ */
+section {
+	margin: 0 10px 0 10px;
+}
+
+/*
+ * href付けたくない
+ */
+a {
+	cursor: pointer;
+}
+
+/*
+ * 2段以上になっても良いように調整
+ */
+.btn-group {
+	margin-bottom: 10px;
+	margin-right: 5px;
+}
+.btn-group + .btn-group {
+	margin-left: 0;
+}
+
+/*
+ * スクロールバー
+ */
+ul::-webkit-scrollbar,
+div::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+	padding: 18px;
+	-webkit-border-radius: 1ex
+}
+ul::-webkit-scrollbar-thumb,
+div::-webkit-scrollbar-thumb {
+	background-color: rgba(053, 057, 071, 0.3);
+	padding: 8px;
+	width: 6px;
+	height: 6px;
+	-webkit-border-radius: 1ex;
+}
+ul::-webkit-scrollbar-button:start:decrement,
+ul::-webkit-scrollbar-button:end:increment,
+div::-webkit-scrollbar-button:start:decrement,
+div::-webkit-scrollbar-button:end:increment {
+	display: none;
+}
+ul::-webkit-scrollbar-thumb:vertical,
+ul::-webkit-scrollbar-thumb:horizontal,
+div::-webkit-scrollbar-thumb:vertical,
+div::-webkit-scrollbar-thumb:horizontal {
+	height: 3px;
+	width: 3px;
+	margin: 3px;
+}
+
+/******************************
+ *
+ *  共通コンポーネント
+ *
+ ******************************/
+
+/*
+ * タブ切り替え
+ */
+body:not(.tab-main-home) .tab-main-home,
+body:not(.tab-main-analysis) .tab-main-analysis,
+body:not(.tab-task-basic) .tab-task-basic,
+body:not(.tab-task-due) .tab-task-due,
+body:not(.tab-task-parent) .tab-task-parent,
+body:not(.tab-task-assign) .tab-task-assign,
+body:not(.tab-analysis-daily) .tab-analysis-daily,
+body:not(.tab-analysis-list) .tab-analysis-list,
+body:not(.tab-analysis-user) .tab-analysis-user {
+	display: none;
+}
+
+/*
+ * タグ切り替え
+ */
+body[data-tag="success"]:not([data-mode="list"]) ul.list > li[data-tag="primary"],
+body[data-tag="warning"]:not([data-mode="list"]) ul.list > li[data-tag="primary"],
+body[data-tag="danger"]:not([data-mode="list"])  ul.list > li[data-tag="primary"],
+body[data-tag="primary"]:not([data-mode="list"]) ul.list > li[data-tag="success"],
+body[data-tag="warning"]:not([data-mode="list"]) ul.list > li[data-tag="success"],
+body[data-tag="danger"]:not([data-mode="list"])  ul.list > li[data-tag="success"],
+body[data-tag="primary"]:not([data-mode="list"]) ul.list > li[data-tag="warning"],
+body[data-tag="success"]:not([data-mode="list"]) ul.list > li[data-tag="warning"],
+body[data-tag="danger"]:not([data-mode="list"])  ul.list > li[data-tag="warning"],
+body[data-tag="primary"]:not([data-mode="list"]) ul.list > li[data-tag="danger"],
+body[data-tag="warning"]:not([data-mode="list"]) ul.list > li[data-tag="danger"],
+body[data-tag="success"]:not([data-mode="list"]) ul.list > li[data-tag="danger"] {
+	display: none;
+}
+
+/*
+ * 表示切り替え
+ */
+body:not(.display-help) .help,
+body:not(.display-sort) .btn-group-sort a:nth-child(n+2),
+body:not(.display-filter) .btn-group-filter a:nth-child(n+2),
+body:not(.display-switch) .btn-group-switch a:nth-child(n+2),
+body:not(.display-tag) .btn-group-tag a:nth-child(n+2),
+body:not(.display-comment) ul.task ul.comment,
+body:not(.display-pin) ul.task ul.pin {
+	display: none;
+}
+body:not(.display-sort) .btn-group-sort a:first-child,
+body:not(.display-filter) .btn-group-filter a:first-child,
+body:not(.display-switch) .btn-group-switch a:first-child,
+body:not(.display-tag) .btn-group-tag a:first-child {
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+}
+
+/******************************
+ *
+ *  タスク管理
+ *
+ ******************************/
+
+/*
+ * 横並びのレイアウト
+ */
+section .fluid-container {
+	position: relative;
+}
+ul.list {
+	margin-right: 295px;
+}
+aside {
+	position: absolute;
+	top: 0;
+	right: -10px;
+	width: 280px;
+	padding: 10px 10px 0 10px;
+	background-color: rgba(0, 0, 0, 0.05);
+	-webkit-border-radius: 4px 0 0 0;
+	-moz-border-radius: 4px 0 0 0;
+	-ms-border-radius: 4px 0 0 0;
+	-o-border-radius: 4px 0 0 0;
+	border-radius: 4px 0 0 0;
+	font-size: 13px;
+	line-height: 13px;
+}
+
+/*
+ * ガントチャート時のレイアウト
+ */
+
+
+
+@media(max-width:640px){
+	/*section .fluid-container {
+		display: block;
+	}
+	aside {
+		width: auto;
+		padding-left: 10px;
+		padding-right: 10px;
+		position: fixed;
+		height: 300px;
+		bottom: 0;
+		right: 0;
+		background-color: rgba(0, 0, 0, 0.05);
+
+	}*/
+}
+
+.profile img {
+	width: 16px;
+	height: 16px;
+	margin-right: 2px
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+}
+
+/*
+ * タスクビュー
+ */
+ul.list {
+	font-size: 13px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.075);
+	margin-bottom: 0;
+	padding-right: 5px;
+	overflow-y: auto;
+}
+ul.list > li {
+	border-top: 1px solid rgba(0, 0, 0, 0.25);
+}
+ul.list > li.dragging {
+	background-color: rgba(0, 0, 0, 0.05);
+}
+
+/*
+ * 着色
+ */
+ul.list > li[data-tag="primary"] {
+	border-top: 1px solid #006DCC;
+}
+ul.list > li[data-tag="primary"] > header > i {
+	color: #006DCC;
+}
+ul.list > li[data-tag="success"] {
+	border-top: 1px solid #5BB75B;
+}
+ul.list > li[data-tag="success"] > header > i {
+	color: #5BB75B;
+}
+ul.list > li[data-tag="warning"] {
+	border-top: 1px solid #FAA732;
+}
+ul.list > li[data-tag="warning"] > header > i {
+	color: #FAA732;
+}
+ul.list > li[data-tag="danger"] {
+	border-top: 1px solid #DA4F49;
+}
+ul.list > li[data-tag="danger"] > header > i {
+	color: #DA4F49;
+}
+
+ul.list > li > header {
+	padding: 4px;
+}
+ul.list > li > header > i {
+	line-height: 22px;
+	cursor: pointer;
+}
+ul.list > li > header > i.icon-sort {
+	cursor: move;
+}
+ul.list > li > header > .name {
+	font-weight: bold;
+	padding-left: 2px;
+	line-height: 22px;
+}
+ul.list > li > header .btn-group {
+	margin-bottom: 0;
+}
+ul.list > li > header .btn-group-tags {
+	margin-right: 0;
+}
+body:not([data-mode="list"]) ul.list > li.closed > header > .name {
+	color: gray;
+	font-style: italic;
+	font-weight: normal;
+}
+ul.list > li.closed ul.task,
+ul.list > li.closed [data-mode-show="task"],
+ul.list > li.closed [data-mode-show="task,gantt"],
+ul.list > li.closed [data-mode-show="closed"] {
+	display: none;
+}
+ul.task {
+}
+ul.task > li {
+	padding: 4px;
+	border-top: 1px solid rgba(0, 0, 0, 0.075);
+	cursor: pointer;
+	position: relative;
+}
+/*ul.task > li:nth-child(even) {
+	background-color: rgba(0, 0, 0, 0.025);
+}*/
+body[data-filter="inbox"] ul.task > li:not(.filter-inbox),
+body[data-filter="sent"] ul.task > li:not(.filter-sent),
+body[data-filter="received"] ul.task > li:not(.filter-received) {
+	display: none;
+}
+
+/*
+ * 階層タスクの都合で表示しているタスクは半透明化
+ */
+body:not([data-mode="closed"]) ul.task > li.closed,
+body[data-mode="closed"] ul.task > li:not([class*="closed"]) {
+	opacity: 0.5;
+}
+body:not([data-mode="closed"]) ul.task > li.closed .right,
+body[data-mode="closed"] ul.task > li:not(.closed) .right {
+	display: none;
+}
+
+ul.task > li:hover {
+	background-color: rgba(0, 0, 0, 0.025);
+}
+ul.task > li.selected {
+	background-color: rgba(0, 0, 0, 0.025);
+}
+ul.task > li.closed .center span,
+ul.task > li.in-closed .center span {
+	text-decoration: line-through;
+}
+ul.task > li .left {
+	display: block;
+	position: absolute;
+	top: 6px;
+}
+ul.task > li .left i.icon-move {
+	opacity: 0.3;
+	cursor: pointer;
+}
+ul.task > li .left i.icon-move:hover {
+	opacity: 1;
+}
+ul.task > li .right {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	font-size: 12px;
+}
+ul.task > li .center {
+	display: block;
+	margin-left: 18px;
+	margin-right: 170px;
+	word-wrap: break-word;
+	word-break: break-all;
+	height: 20px;
+	line-height: 20px;
+	overflow: hidden;
+}
+ul.task > li .center > span:first-child {
+	margin-right: 4px;
+}
+body[data-mode="gantt"] ul.task > li .center > span:first-child {
+	position: absolute;
+	left: 400px;
+}
+body[data-mode="gantt"] ul.task > li .center > span:first-child span {
+	position: absolute;
+}
+body[data-mode="gantt"] ul.task > li .center .back {
+	position: absolute;
+	top: 2px;
+	border: 2px solid #9eca3d;
+	background-color: #edfcce;
+	height: 12px;
+	width: 0;
+	border-radius: 3px;
+}
+body[data-mode="gantt"] ul.task > li .center .handle {
+	position: absolute;
+	cursor: col-resize;
+	right: -6px;
+	width: 12px;
+	height: 16px;
+	z-index: 1;
+}
+ul.task > li .center img {
+	width: 16px;
+	height: 16px;
+	margin-top: -2px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+}
+ul.task > li .center img + img {
+	margin-left: 4px;
+}
+ul.task > li .center i {
+	margin-left: 4px;
+	margin-right: 4px;
+}
+ul.task > li .center > span:last-child {
+	padding-right: 20px;
+	outline: none;
+}
+ul.task > li > ul {
+	margin-left: 34px;
+}
+ul.task > li > ul span {
+	color: #999;
+	font-size: 12px;
+}
+ul.task .due {
+	display: inline-block;
+	min-width: 74px;
+	text-align: right;
+	color: #666;
+}
+
+/*
+ * レーティング
+ */
+ul.task .rate i.icon-star-empty {
+	opacity: 0;
+}
+ul.task .rate i.icon-star {
+	opacity: 0.5;
+}
+ul.task .rate {
+	margin-top: 1px;
+}
+ul.task .rate:hover i {
+	opacity: 0.3;
+}
+ul.task .rate span:hover > i {
+	opacity: 1;
+}
+ul.task .rate > span > i {
+	opacity: 0;
+}
+
+/*
+ * コメントフォーム
+ */
+aside > div > .user img {
+	width: 14px;
+	height: 14px;
+	margin-top: -2px;
+	margin-right: 2px
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+}
+aside > div > .user img + img {
+	margin-left: 4px;
+}
+aside > div > .user i {
+	margin-left: 4px;
+	margin-right: 4px;
+}
+aside textarea {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+	height: 56px;
+	width: 100%;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	font-size: 11px;
+	line-height: 11px;
+}
+
+/*
+ * コメント一覧
+ */
+ul.comments {
+	margin-bottom: 0;
+}
+ul.comments img {
+	position: absolute;
+	width: 32px;
+	height: 32px;
+	webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+}
+ul.comments li {
+	position:relative;
+	margin-bottom: 10px;
+}
+ul.comments li > div {
+	position: relative;
+	margin-left: 40px;
+}
+ul.comments .delete {
+	cursor: pointer;
+	position: absolute;
+	padding-top: 0px;
+	text-align: center;
+	right: 5px;
+	width: 20px;
+	height: 20px;
+}
+ul.comments .message {
+	margin-bottom: 6px;
+}
+ul.actions .icon-play,
+ul.comments .message .icon-play {
+	color: #5BB75B;
+}
+ul.actions .icon-ok,
+ul.comments .message .icon-ok {
+	color: #5BB75B;
+}
+ul.actions .icon-to-start,
+ul.comments .message .icon-to-start {
+	color: #DA4F49;
+}
+ul.actions .icon-ccw,
+ul.comments .message .icon-ccw {
+	color: #DA4F49;
+}
+ul.actions .icon-cancel,
+ul.comments .message .icon-cancel {
+	color: #006DCC;
+}
+ul.comments .footer {
+	font-size: 12px;
+	color: #666;
+}
+
+/*
+ * ガントチャート
+ */
+body[data-mode="gantt"] ul.list {
+	position: relative;
+	margin-top: 34px;
+	margin-right: 0;
+}
+body[data-mode="gantt"] ul.task > li {
+	padding: 0 4px;
+	background: none;
+}
+body[data-mode="gantt"] ul.task > li:hover {
+	background-color: rgba(0, 0, 0, 0.05);
+}
+body[data-mode="gantt"] ul.task > li > div {
+	width: 290px;
+	box-sizing: border-box;
+}
+body[data-mode="gantt"] ul.task > li .center {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin-left: 16px;
+	margin-right: 0;
+}
+body[data-mode="gantt"] ul.task > li .left {
+	top: 2px;
+}
+body[data-mode="gantt"] ul.task > li .center i {
+	display: none;
+}
+/*ul.task > li:nth-child(even) {
+	background-color: rgba(0, 0, 0, 0.025);
+}*/
+.sheet {
+	position: absolute;
+	left: 300px;
+	/*width: 600px;*/
+	margin-top: -34px;
+	/*overflow-x: auto;*/
+	/*height: 300px;*/
+}
+.sheet div {
+	height: 100%;
+}
+.sheet h1 {
+	margin: 0;
+	font-size: 12px;
+	line-height: 12px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	text-align: center;
+	border-left: 1px solid rgba(0, 0, 0, 0.2);
+}
+.sheet .month {
+	float: left;
+}
+.sheet .days {
+}
+.sheet .days div {
+	float: left;
+	width: 20px;
+	border-left: 1px solid #ddd;
+	background-color: white;
+}
+.sheet .days div:first-child {
+	border-left: 1px solid rgba(0, 0, 0, 0.2);
+}
+/*.sheet .days div:hover {
+	background-color: #ddd;
+}*/
+.sheet .days div.holiday {
+	background-color: #efefef;
+}
+.sheet h2 {
+	margin: 0;
+	font-size: 10px;
+	line-height: 14px;
+	color: #999;
+	font-weight: normal;
+	text-align: center;
+	background-color: #ddd;
+}
+
+body.resize,
+body.resize ul.task > li {
+	cursor: col-resize !important;
+}
+body.move,
+body.move ul.task > li {
+	cursor: move !important;
+}
+
+/*
+ * 解析
+ */
+.tab-main-analysis [class^="tab-analysis-"] {
+	margin-left: 20px;
+	overflow-y: auto;
+}
+.tab-main-analysis h2 {
+	font-size: 24px;
+	line-height: 1em;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+}
+.tab-main-analysis h2:first-child {
+	padding-top: 0;
+}
+.tab-main-analysis h3 {
+	font-size: 20px;
+	line-height: 1em;
+	margin-left: 10px;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	font-weight: normal;
+}
+.tab-main-analysis h4 {
+	font-size: 16px;
+	line-height: 1em;
+	margin-left: 15px;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+	font-weight: normal;
+}
+.tab-main-analysis ul.actions {
+	margin-left: 20px;
+	margin-bottom: 20px;
+}
+.tab-main-analysis ul.actions li {
+	font-size: 20px;
+	line-height: 1em;
+	margin-bottom: 8px;
+}
+.tab-main-analysis ul.actions li img {
+	width: 20px;
+	height: 20px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+	margin-right: 6px;
+}
+.tab-main-analysis ul.actions li i {
+	margin-right: 6px;
+	font-size: 16px;
+}
+.tab-main-analysis ul.actions li span {
+	font-size: 16px;
+}
+.tab-main-analysis ul.actions li i + span {
+	font-weight: bold;
+}
+.tab-main-analysis ul.actions li span + span {
+	margin-left: 10px;
+}
+
+/*
+ * モーダル
+ */
+.modal,
+.modal-backdrop {
+	display: none;
+ }
+ .modal-backdrop, .modal-backdrop.fade.in {
+	opacity: .6;
+	filter: alpha(opacity=60);
+}
+.modal article {
+	padding: 20px;
+}
+.modal form {
+	margin: 0;
+}
+.modal footer {
+	text-align: right;
+	margin-top: 20px;
+}
+.modal h1 {
+	font-size: 20px;
+	line-height: 20px;
+	font-weight: bold;
+	margin: 0 0 16px 0;
+}
+#assign-list img {
+	width: 16px;
+	height: 16px;
+	margin-right: 4px;
+	webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+}
+#assign-list ul li:hover {
+	background-color: rgba(0, 0, 0, 0.025);
+}
+#assign-list ul li span.name {
+	display: inline-block;
+	min-width: 160px;
+}
+#assign-list ul li span.delete {
+	cursor: pointer;
+	display: inline-block;
+	margin-top: 2px;
+}
+
+/******************************
+ *
+ *  切り替え
+ *
+ ******************************/
+
+/*
+ * モード切り替え
+ */
+body[data-mode="task"]   [data-mode-show]:not([data-mode-show*="task"]),
+body[data-mode="closed"] [data-mode-show]:not([data-mode-show*="closed"]),
+body[data-mode="gantt"]  [data-mode-show]:not([data-mode-show*="gantt"]),
+body[data-mode="list"]   [data-mode-show]:not([data-mode-show*="list"]),
+body[data-mode="task"]   [data-mode-hide*="task"],
+body[data-mode="closed"] [data-mode-hide*="closed"],
+body[data-mode="gantt"]  [data-mode-hide*="gantt"],
+body[data-mode="list"]   [data-mode-hide*="list"] {
+	display: none;
+}
+

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>7kai Tasks</title>
+<link rel="stylesheet" href="/static/css/bootstrap-2.2.2.min.css">
+<link rel="stylesheet" href="/static/css/fontello.css">
+<link rel="stylesheet" href="/static/css/app-pc-v4.css">
+<script src="/static/js/jquery-1.9.1.min.js"></script>
+<script src="/static/js/v4/app-core.js"></script>
+<script src="/static/js/v4/app-date.js"></script>
+<script src="/static/js/v4/app-util.js"></script>
+<script src="/static/js/v4/app-api.js"></script>
+<script src="/static/js/v4/app-setup.js"></script>
+<script src="/static/js/v4/app-support.js"></script>
+<script src="/static/js/v4/app-modal.js"></script>
+<script src="/static/js/v4/app-draggable.js"></script>
+<script src="/static/js/v4/app-tab.js"></script>
+<script src="/static/js/v4/app-tasks.js"></script>
+<script src="/static/js/v4/app-tasks-desktop.js"></script>
+</head>
+<body class="tab-main-home tab-task-basic tab-analysis-daily">
+<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="fluid-container">
+			<ul class="nav">
+				<li class="active">
+					<a data-setup="tab" data-tab="main-home">
+						<i class="icon-home"></i>
+						<span data-setup="localize" data-text-ja="ホーム">Home</span>
+					</a>
+				</li>
+				<li>
+					<a data-setup="tab" data-tab="main-analysis">
+						<i class="icon-chart-line"></i>
+						<span data-setup="localize" data-text-ja="解析">Analysis</span>
+					</a>
+				</li>
+			</ul>
+			<ul class="nav pull-right">
+				<li>
+					<a href="#">
+						<i class="icon-megaphone"></i>
+						<span data-setup="localize" data-text-ja="フィードバック">Feedback</span>
+					</a>
+				</li>
+				<li>
+					<a class="profile" data-setup="profile">
+						<i class="icon-user"></i>
+						<span>Xxxx</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<section class="tab-main-home" data-setup="home">
+	<header>
+		<div class="pull-right">
+			<a
+					class="active btn btn-small"
+					data-setup="display"
+					data-display="help"
+			>
+				<i class="icon-help-circle"></i>
+				<span class="help" data-setup="localize" data-text-ja="ラベルを消す">hide label</span>
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="tooltip"
+				data-text-ja="ショートカットキー ... [? or /]"
+				data-text-en="Display the shortcuts ... [? or /]"
+			>
+				<i class="icon-keyboard"></i>
+			</a>
+		</div>
+		<div class="btn-group">
+			<a class="btn btn-small active" data-setup="mode" data-mode="task">
+				<i class="icon-ok"></i>
+				<span class="help">タスク</span>
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="mode,shortcut,tooltip"
+				data-mode="closed"
+				data-shortcut='{"code":67}'
+				data-text-ja="完了済 ... [C]"
+				data-text-en="Closed: Please confirm and clear. ... [C]"
+			>
+				<i class="icon-trash"></i>
+				<span class="help">完了済</span>
+			</a>
+			<a class="btn btn-small" data-setup="mode" data-mode="gantt">
+				<i class="icon-calendar"></i>
+				<span class="help">スケジューリング</span>
+			</a>
+			<a class="btn btn-small" data-setup="mode" data-mode="list">
+				<i class="icon-th-list"></i>
+				<span class="help">リスト</span>
+			</a>
+		</div>
+		<div class="btn-group" data-mode-show="list">
+			<a class="btn btn-small btn-primary">
+				<i class="icon-plus"></i>
+				<span class="help">新しいリスト</span>
+			</a>
+		</div>
+		<div
+			class="btn-group btn-group-sort"
+			data-mode-hide="list"
+		>
+			<a
+				class="btn btn-small"
+				data-setup="display,tooltip"
+				data-display="sort"
+				data-display-active="disabled"
+				data-text-ja="ソート"
+				data-text-en="Sort"
+			>
+				<i class="icon-sort"></i>
+				<span class="help">ソート</span>
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="sort,tooltip"
+				data-sort-column="name"
+				data-text-ja="進捗順"
+				data-text-en="Progress"
+			>
+				<i class="icon-ok"></i>
+				<span class="help">進捗順</span>
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="sort,tooltip"
+				data-sort-column="rate"
+				data-sort-reverse="true"
+				data-text-ja="レート順"
+				data-text-en="Whose turn is it"
+			>
+				<i class="icon-star"></i>
+				<span class="help">レート順</span>
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="sort,tooltip"
+				data-sort-column="person"
+				data-text-ja="担当順"
+				data-text-en="Whose turn is it"
+			>
+				<i class="icon-user"></i>
+				<span class="help">担当順</span>
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="sort,tooltip"
+				data-sort-column="due_epoch"
+				data-text-ja="期日順"
+				data-text-en="Due"
+			>
+				<i class="icon-calendar"></i>
+				<span class="help">期日順</span>
+			</a>
+		</div>
+		<div
+			class="btn-group btn-group-filter"
+			data-mode-show="task,gantt"
+		>
+			<a
+				class="btn btn-small"
+				data-setup="display,tooltip"
+				data-display="filter"
+				data-display-active="disabled"
+				data-text-ja="フィルター"
+				data-text-en="Filter"
+			>
+				<i class="icon-filter"></i>
+				<span class="help">フィルター</span>
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="shortcut,filter,tooltip"
+				data-shortcut='{"code":84}'
+				data-filter="inbox"
+				data-text-ja="自分のタスク ... [T]"
+				data-text-en="My TODO ... [T]"
+			>
+				<i class="icon-inbox"></i>
+				<span class="help">自分</span>
+				<!-- <span class="count">0</span> -->
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="shortcut,filter,tooltip"
+				data-shortcut='{"code":82}'
+				data-filter="sent"
+				data-text-ja="頼んだ ... [R]"
+				data-text-en="Request ... [R]"
+			>
+				<i class="icon-upload"></i>
+				<span
+					data-setup="localize"
+					data-text-ja=""
+				></span>
+				<span class="help">頼んだ</span>
+				<!-- <span class="count">0</span> -->
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="shortcut,filter,tooltip"
+				data-shortcut='{"code":86}'
+				data-filter="received"
+				data-text-ja="頼まれた ... [V]"
+				data-text-en="Waiting for your confirmation. ... [V]"
+			>
+				<i class="icon-download"></i>
+				<span class="help">頼まれた</span>
+				<!-- <span class="count">0</span> -->
+			</a>
+		</div>
+		<div
+			class="btn-group btn-group-switch"
+			data-mode-show="task,closed"
+		>
+			<a
+				class="btn btn-small"
+				data-setup="display,tooltip"
+				data-display="switch"
+				data-display-active="disabled"
+				data-text-ja="表示切替"
+				data-text-en="Display switching"
+			>
+				<i class="icon-eye"></i>
+				<span class="help">表示切替</span>
+			</a>
+			<a
+				class="btn btn-small active"
+				data-setup="display,tooltip"
+				data-display="comment"
+				data-text-ja="直近のコメント（自分以外）"
+				data-text-en="Recent Comment"
+			>
+				<i class="icon-chat"></i>
+				<span class="help">直近コメント</span>
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="display,tooltip"
+				data-display="pin"
+				data-text-ja="ピンされたコメント"
+				data-text-en="Pinned Comments"
+			>
+				<i class="icon-pin"></i>
+				<span class="help">ピンコメント</span>
+			</a>
+		</div>
+		<div
+			class="btn-group btn-group-tag"
+			data-setup="tags,tooltip"
+			data-mode-hide="list"
+			data-text-ja="選択した色のリストのみ表示 ... [1-4]"
+			data-text-en="Display the list of same colors. ... [1-4]"
+		>
+			<a
+				class="btn btn-small"
+				data-setup="display,tooltip"
+				data-display="tag"
+				data-display-active="disabled"
+				data-text-ja="表示切替"
+				data-text-en="Display switching"
+
+			><i class="icon-tag"></i></a>
+			<a
+				class="btn btn-small btn-primary"
+				data-setup="shortcut"
+				data-shortcut='{"code":49}'
+				data-tag="primary"
+			><i class="icon-tag icon-white"></i></a>
+			<a
+				class="btn btn-small btn-success"
+				data-setup="shortcut"
+				data-shortcut='{"code":50}'
+				data-tag="success"
+			><i class="icon-tag icon-white"></i></a>
+			<a
+				class="btn btn-small btn-warning"
+				data-setup="shortcut"
+				data-shortcut='{"code":51}'
+				data-tag="warning"
+			><i class="icon-tag icon-white"></i></a>
+			<a
+				class="btn btn-small btn-danger"
+				data-setup="shortcut"
+				data-shortcut='{"code":52}'
+				data-tag="danger"
+			><i class="icon-tag icon-white"></i></a>
+		</div>
+	</header>
+	<div class="fluid-container">
+		<div class="sheet" data-setup="stretch,gantt" data-mode-show="gantt">
+			<div class="month"><h1>&nbsp;</h1><div class="days"><div><h2>&nbsp;</h2></div></div></div>
+		</div>
+		<ul class="unstyled list" data-setup="stretch">
+			<li data-setup="list">
+				<header class="clearfix">
+					<i class="icon-folder-open" data-mode-hide="list"></i>
+					<i class="icon-sort" data-mode-show="list"></i>
+					<span class="name">7kai Tasks</span>
+					<span class="pull-right btn btn-mini btn-primary" data-mode-show="task">
+						<i class="icon-plus"></i>
+						<span class="help" data-setup="localize" data-text-ja="新しいタスク">New Task</span>
+					</span>
+					<span class="pull-right btn btn-mini btn-danger" data-mode-show="closed">
+						<i class="icon-trash"></i>
+						<span class="help" data-setup="localize" data-text-ja="空にする">Clear Closed Task</span>
+					</span>
+					<div class="pull-right btn-group btn-group-tags" data-mode-show="list">
+						<a class="btn btn-mini btn-primary" data-tag="primary"><i class="icon-tag"></i></a>
+						<a class="btn btn-mini btn-success" data-tag="success"><i class="icon-tag"></i></a>
+						<a class="btn btn-mini btn-warning" data-tag="warning"><i class="icon-tag"></i></a>
+						<a class="btn btn-mini btn-danger" data-tag="danger"><i class="icon-tag"></i></a>
+					</div>
+					<div class="pull-right btn-group" data-mode-show="list">
+						<span class="btn btn-mini">
+							<i class="icon-users"></i>
+							<span class="help" data-setup="localize" data-text-ja="メンバー管理">Member</span>
+						</span>
+						<span class="btn btn-mini">
+							<i class="icon-rss"></i>
+							<span class="help" data-setup="localize" data-text-ja="エクスポート">Export</span>
+						</span>
+						<span class="btn btn-mini">
+							<i class="icon-edit"></i>
+							<span class="help" data-setup="localize" data-text-ja="編集">Edit</span>
+						</span>
+						<span class="btn btn-mini btn-danger">
+							<i class="icon-cancel"></i>
+							<span class="help" data-setup="localize" data-text-ja="削除">Delete</span>
+						</span>
+					</div>
+				</header>
+				<ul class="unstyled task" data-mode-hide="list">
+					<li class="clearfix" data-setup="task" draggable="true">
+						<div>
+							<div class="left">
+								<!-- <i class="icon-move" data-mode-hide="gantt"></i> -->
+								<i class="icon-ok"></i>
+							</div>
+							<div class="center"><span><span class="back"><span class="handle"></span></span><span></span></span><span contenteditable="true">URLとか</span></div>
+							<div class="right" data-mode-hide="gantt">
+								<span class="rate" data-mode-hide="closed">
+									<span data-rate="0">
+										<i class="icon-star-empty" style="opacity:0"></i>
+										<span data-rate="1">
+											<i class="icon-star-empty"></i>
+											<span data-rate="2">
+												<i class="icon-star-empty"></i>
+												<span data-rate="3">
+													<i class="icon-star-empty"></i>
+													<span data-rate="4">
+														<i class="icon-star-empty"></i>
+														<span data-rate="5">
+															<i class="icon-star-empty"></i>
+														</span>
+													</span>
+												</span>
+											</span>
+										</span>
+									</span>
+								</span>
+								<span class="due" data-mode-hide="gantt">12/31 (金)</span>
+								<i class="icon-cancel" data-mode-hide="gantt,closed"></i>
+								<i class="icon-ccw" data-mode-show="closed"></i>
+							</div>
+						</div>
+						<ul class="unstyled pin" data-mode-hide="gantt">
+							<li><i class="icon-pin"></i> <span>URLとか</span></li>
+						</ul>
+						<ul class="unstyled comment" data-mode-hide="gantt">
+							<li><i class="icon-comment"></i> <span>URLとか</span></li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+		<aside data-mode-hide="list,gantt" data-setup="aside">
+			<div class="clearfix">
+				<span class="btn btn-small pull-right edit">
+					<i class="icon-edit"></i>
+					<span
+						class="help"
+						data-setup="localize"
+						data-text-ja="編集"
+					>Edit</span>
+				</span>
+				<p><strong>PC版バージョンアップ</strong></p>
+				<i class="icon-calendar"></i>
+				<span class="due">1/21</span>
+				<i class="icon-clock"></i>
+				<span class="duration">6 days</span>
+				<span class="user"><i class="icon-user"></i></span>
+			</div>
+
+			<form class="form-stacked" style="margin-bottom:0" method="post">
+				<input type="hidden" name="list_id" value="">
+				<input type="hidden" name="task_id" value="">
+				<input type="hidden" name="status" value="">
+				<input type="hidden" name="closed" value="">
+				<textarea name="message"></textarea>
+				<div class="clearfix">
+					<div class="pull-right counter">400</div>
+					<div class="btn-group pull-left" style="margin-right:10px">
+						<button
+							class="btn btn-small comment"
+						>
+							<i class="icon-comment"></i>
+							<span
+								class="help"
+								data-setup="localize"
+								data-text-ja="コメント"
+							>Comment</button>
+						</span>
+					</div>
+					<div class="btn-group pull-left btn-group-open">
+						<span
+							class="btn btn-small"
+							data-plus="start"
+						>
+							<i class="icon-play"></i>
+							<span
+								class="help"
+								data-setup="localize"
+								data-text-ja="着手"
+							>Start</span>
+						</span>
+						<span
+							class="btn btn-small btn-success"
+							data-plus="fix"
+						>
+							<i class="icon-ok"></i>
+							<span
+								class="help"
+								data-setup="localize"
+								data-text-ja="処理"
+							>Fix</span>
+						</span>
+						<span
+							class="btn btn-small btn-danger"
+							data-plus="revert"
+						>
+							<i class="icon-to-start"></i>
+							<span
+								class="help"
+								data-setup="localize"
+								data-text-ja="差戻"
+							>Revert</span>
+						</span>
+						<span
+							class="btn btn-small btn-primary"
+							data-plus="close"
+						>
+							<i class="icon-cancel"></i>
+							<span
+								class="help"
+								data-setup="localize"
+								data-text-ja="完了"
+							>Close</span>
+						</span>
+					</div>
+					<div class="btn-group pull-left btn-group-closed">
+						<span
+							class="btn btn-small btn-danger"
+							data-plus="reopen"
+						>
+							<i class="icon-ccw"></i>
+							<span
+								class="help"
+								data-setup="localize"
+								data-text-ja="再オープン"
+							>Reopen</span>
+						</span>
+					</div>
+					<div class="pull-left btn-group-in-closed" style="margin-top:12px;font-size:12px;color:gray" data-setup="localize" data-text-ja="完了タスク配下は変更出来ません">
+						Under the closed tasks can't be changed.
+					</div>
+				</div>
+			</form>
+			<div data-setup="stretch,comments" style="overflow-y:auto;overflow-x:hidden">
+				<ul class="unstyled pins">
+					<li><i class="icon-pin"></i> <span></span></li>
+				</ul>
+				<ul class="unstyled comments">
+					<li style="position:relative;">
+						<img>
+						<div>
+							<div class="delete" data-text-en="delete a comment?" data-text-ja="コメントを削除しますか？"><i class="icon-cancel"></i></div>
+							<div class="message"><i class="icon-comment"></i> <span></span></div>
+							<div class="footer"><span class="menu"><a>Pin</a> </span><span class="date">1 hour ago</span> by <span class="name">Aska</span></div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</aside>
+	</div>
+</section>
+<section class="tab-main-analysis" data-setup="analysis">
+	<article data-text-empty-en="no data." data-text-empty-ja="履歴はありません。">
+		<ul class="nav nav-tabs">
+			<li class="active">
+				<a data-setup="tab" data-tab="analysis-daily">日別</a>
+			</li>
+			<li><a data-setup="tab" data-tab="analysis-list">リスト別</a></li>
+			<li><a data-setup="tab" data-tab="analysis-user">ユーザー別</a></li>
+		</ul>
+		<div class="tab-analysis-daily" data-setup="stretch" data-stretch='{"padding":130}'>
+			<h2>2013/3/31</h2>
+			<h3>7kai Tasks</h3>
+			<ul class="unstyled actions">
+				<li><img><i class="icon-comment"></i><span>hoge</span></li>
+			</ul>
+		</div>
+		<div class="tab-analysis-list" data-setup="stretch" data-stretch='{"padding":130}'>
+			<h2>7kai Tasks</h2>
+			<h3>2013/3/31</h3>
+			<ul class="unstyled actions">
+				<li><img><i class="icon-comment"></i><span>hoge</span></li>
+			</ul>
+		</div>
+		<div class="tab-analysis-user" data-setup="stretch" data-stretch='{"padding":130}'>
+			<h2>Aska</h2>
+			<h3>2013/3/31</h3>
+			<h4>7kai Tasks</h4>
+			<ul class="unstyled actions">
+				<li><img><i class="icon-comment"></i><span>hoge</span></li>
+			</ul>
+		</div>
+	</article>
+</section>
+<form class="modal" data-setup="modal,registerTask" data-modal="register-task">
+	<div class="modal-header">
+		<button type="button" class="close">&times;</button>
+		<h3 data-setup="localize" data-text-ja="タスク登録">Register Task</h3>
+	</div>
+	<div class="modal-body">
+		<input type="hidden" name="list_id" value="">
+		<input type="hidden" name="task_id" value="">
+		<input type="hidden" name="parent_id" value="">
+
+		<h1>7kai Tasks</h1>
+
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-setup="tab" data-tab="task-basic">Basic</a></li>
+			<li><a data-setup="tab" data-tab="task-due">Due</a></li>
+			<li><a data-setup="tab" data-tab="task-assign">Assign</a></li>
+			<li><a data-setup="tab" data-tab="task-parent">Parent</a></li>
+		</ul>
+
+		<div class="tab-task-basic">
+			<label
+				data-setup="localize"
+				data-text-ja="タスク"
+			>Task</label>
+			<input class="span6" type="text" name="name" value="" required="required" maxlength="50">
+			<p class="help-block" data-setup="localize" data-text-ja="最大50文字">50 characters</p>
+		</div>
+		<div class="tab-task-due">
+			<label
+				data-setup="localize"
+				data-text-ja="期日"
+			>Due</label>
+			<select name="due"></select>
+			<label
+				data-setup="localize"
+				data-text-ja="所要日数"
+			>Day of duration</label>
+			<input
+				type="number"
+				name="duration"
+				value=""
+				min="0"
+				max="255"
+				pattern="[0-9]*"
+				style="width: 80px"
+			>
+		</div>
+		<div class="tab-task-assign">
+			<label
+				data-setup="localize"
+				data-text-ja="依頼者"
+			>Requester</label>
+			<select name="requester"></select>
+
+			<label
+				style="margin-bottom:0"
+				data-setup="localize"
+				data-text-ja="担当者"
+			>Assign</label>
+			<ul class="unstyled assign">
+				<li>
+					<label class="checkbox inline">
+						<input type="checkbox" name="assign">
+						<span
+							style="
+								background-image: url(https://si0.twimg.com/profile_images/2358600149/pnkjdsot26kfrczlpe96_normal.png);
+								background-size: 16px 16px;
+								background-repeat: no-repeat;
+								background-position: top left;
+								padding-left: 20px;
+							"
+						>Aska</span>
+					</label>
+				</li>
+			</ul>
+		</div>
+		<div class="tab-task-parent">
+			<select name="parent_id">
+				<option value=""></option>
+			</select>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<span
+			class="btn"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</span>
+		<button
+			class="btn btn-primary"
+			data-setup="localize"
+			data-text-ja="登録"
+		>Save</button>
+	</div>
+</form>
+<form class="modal" data-setup="modal,registerList" data-modal="register-list">
+	<div class="modal-header">
+		<button type="button" class="close">&times;</button>
+		<h3 data-setup="localize" data-text-ja="リスト登録">Register List</h3>
+	</div>
+	<div class="modal-body">
+		<input type="hidden" name="list_id" value="">
+
+		<label
+			data-setup="localize"
+			data-text-ja="リスト"
+		>List</label>
+		<input class="span6" type="text" name="name" value="" required="required" maxlength="20">
+		<p class="help-block" data-setup="localize" data-text-ja="最大20文字">20 characters</p>
+
+		<label
+			data-setup="localize"
+			data-text-ja="詳細"
+		>Description</label>
+		<textarea class="span6" name="description" rows="4"></textarea>
+
+	</div>
+	<div class="modal-footer">
+		<span
+			class="btn"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</span>
+		<button
+			class="btn btn-primary"
+			data-setup="localize"
+			data-text-ja="登録"
+		>Save</button>
+	</div>
+</form>
+<form class="modal" data-setup="modal,deleteList" data-modal="delete-list">
+	<div class="modal-header">
+		<button type="button" class="close">&times;</button>
+		<h3 data-setup="localize" data-text-ja="リスト削除">Delete List</h3>
+	</div>
+	<div class="modal-body">
+		<input type="hidden" name="list_id" value="">
+		<h1></h1>
+		<p
+			data-setup="localize"
+			data-text-ja="本当にこのリストを削除しますか？"
+		>Are you sure you want to delete the list?</p>
+	</div>
+	<div class="modal-footer">
+		<span
+			class="btn"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</span>
+		<button
+			class="btn btn-danger"
+			data-setup="localize"
+			data-text-ja="削除"
+		>Delete</button>
+	</div>
+</form>
+<form id="assign-list" class="modal" data-setup="modal,assignList" data-modal="assign-list">
+	<div class="modal-header">
+		<button type="button" class="close">&times;</button>
+		<h3 data-setup="localize" data-text-ja="メンバー">Member</h3>
+	</div>
+	<div class="modal-body">
+		<input type="hidden" name="list_id" value="">
+		<span
+			class="btn btn-primary"
+			data-setup="localize"
+			data-text-ja="招待URL生成"
+		>Invite On</span>
+		<span
+			class="btn btn-danger"
+			data-setup="localize"
+			data-text-ja="招待URL破棄"
+		>Invite Off</span>
+		<label
+			style="margin-top:20px"
+			data-setup="localize"
+			data-text-ja="招待URL（リストへの参加を案内されます）"
+		>Invite URL</label>
+		<input class="span6" type="text" name="invite_code" value="">
+		<p>
+			<span></span>
+			<span data-setup="localize" data-text-ja="のメンバー">'s member</span>
+		</p>
+		<ul class="unstyled">
+			<li>
+				<img><span class="name"></span><span class="delete" data-text-en="delete a member?" data-text-ja="メンバーを削除しますか？"><i class="icon-cancel"></i></span>
+			</li>
+		</ul>
+	</div>
+	<div class="modal-footer">
+		<span
+			class="btn"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</span>
+	</div>
+</form>
+<form id="export-list" class="modal" data-setup="modal,exportList" data-modal="export-list">
+	<div class="modal-header">
+		<button type="button" class="close">&times;</button>
+		<h3 data-setup="localize" data-text-ja="エクスポート">Export</h3>
+	</div>
+	<div class="modal-body">
+		<span
+			class="btn btn-public"
+			data-setup="localize"
+			data-text-ja="公開"
+		>Public</span>
+		<span
+			class="btn btn-private"
+			data-setup="localize"
+			data-text-ja="非公開"
+		>Private</span>
+		<label>HTML</label>
+		<input class="span6" type="text" name="html" value="">
+		<label>JSON</label>
+		<input class="span6" type="text" name="json" value="">
+		<label>JSONP</label>
+		<input class="span6" type="text" name="jsonp?callback=" value="">
+		<label>RSS</label>
+		<input class="span6" type="text" name="rss" value="">
+		<label>iCal</label>
+		<input class="span6" type="text" name="ical" value="">
+	</div>
+	<div class="modal-footer">
+		<span
+			class="btn"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</span>
+	</div>
+</form>
+<form id="clear-list" class="modal" data-setup="modal,clearList" data-modal="clear-list">
+	<div class="modal-header">
+		<button type="button" class="close">&times;</button>
+		<h3 data-setup="localize" data-text-ja="完了済タスクを削除する">Delete closed tasks</h3>
+	</div>
+	<div class="modal-body">
+		<input type="hidden" name="list_id" value="">
+		<h1></h1>
+		<p
+			data-setup="localize"
+			data-text-ja="このリストの完了済タスクを削除しますか？"
+		>Are you sure you want to delete closed tasks?</p>
+	</div>
+	<div class="modal-footer">
+		<span
+			class="btn"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</span>
+		<button
+			class="btn btn-danger"
+			data-setup="localize"
+			data-text-ja="削除"
+		>Delete</button>
+	</div>
+</form>
+<div class="modal-backdrop fade"></div>
+</body>
+</html>
