@@ -1046,7 +1046,7 @@ app.setup.analysis = function(section){
 			li.find('i').attr('class', this.icon);
 			li.find('img').attr('src', app.util.getIconUrl(this.account_id));
 			li.find('span').text(this.task);
-			if (this.action === 'comment' && this.message !== '[like]') {
+			if (this.message && this.message !== '[like]') {
 				$('<span class="comment"/>').text(this.message).appendTo(li);
 			}
 			li.appendTo(ul);

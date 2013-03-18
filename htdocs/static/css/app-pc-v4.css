@@ -101,6 +101,14 @@ body {
 }
 
 /*
+ * 背景色に合わせる
+ */
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover {
+	background-color: #F7F7F6;
+}
+
+/*
  * とりあえずこれくらいはいるやろ
  */
 section {
@@ -705,21 +713,24 @@ body.move ul.task > li {
 /*
  * 解析
  */
-.tab-main-analysis [class^="tab-analysis-"] {
-	margin-left: 20px;
+section.tab-main-analysis .nav {
+	margin-bottom: 5px;
+}
+section.tab-main-analysis [class^="tab-analysis-"] {
+	margin-left: 10px;
 	overflow-y: auto;
 }
-.tab-main-analysis h2 {
+section.tab-main-analysis h2 {
 	font-size: 24px;
 	line-height: 1em;
 	margin-bottom: 10px;
 	padding-bottom: 10px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 }
-.tab-main-analysis h2:first-child {
+section.tab-main-analysis h2:first-child {
 	padding-top: 0;
 }
-.tab-main-analysis h3 {
+section.tab-main-analysis h3 {
 	font-size: 20px;
 	line-height: 1em;
 	margin-left: 10px;
@@ -728,7 +739,7 @@ body.move ul.task > li {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 	font-weight: normal;
 }
-.tab-main-analysis h4 {
+section.tab-main-analysis h4 {
 	font-size: 16px;
 	line-height: 1em;
 	margin-left: 15px;
@@ -737,18 +748,18 @@ body.move ul.task > li {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 	font-weight: normal;
 }
-.tab-main-analysis ul.actions {
+section.tab-main-analysis ul.actions {
 	margin-left: 20px;
 	margin-bottom: 20px;
 }
-.tab-main-analysis ul.actions li {
-	font-size: 20px;
+section.tab-main-analysis ul.actions li {
+	font-size: 14px;
 	line-height: 1em;
 	margin-bottom: 8px;
 }
-.tab-main-analysis ul.actions li img {
-	width: 20px;
-	height: 20px;
+section.tab-main-analysis ul.actions li img {
+	width: 14px;
+	height: 14px;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-ms-border-radius: 4px;
@@ -756,18 +767,21 @@ body.move ul.task > li {
 	border-radius: 4px;
 	margin-right: 6px;
 }
-.tab-main-analysis ul.actions li i {
-	margin-right: 6px;
-	font-size: 16px;
+section.tab-main-analysis ul.actions li i {
+	margin-right: 4px;
+	font-size: 14px;
 }
-.tab-main-analysis ul.actions li span {
-	font-size: 16px;
+section.tab-main-analysis ul.actions li span {
+	font-size: 13px;
 }
-.tab-main-analysis ul.actions li i + span {
-	font-weight: bold;
+section.tab-main-analysis ul.actions li i + span {
+
 }
-.tab-main-analysis ul.actions li span + span {
-	margin-left: 10px;
+section.tab-main-analysis ul.actions li span + span {
+	margin-left: 6px;
+	font-size: 12px;
+	line-height: 12px;
+	color: #666;
 }
 
 /*
