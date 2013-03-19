@@ -11,7 +11,7 @@ app.data.listtr_map = {};
 app.data.gantt_start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 app.data.gantt_width = 0;
 
-var editableFix = $('<input style="width:1px;height:1px;border:none;margin:0;padding:0;" tabIndex="-1">').appendTo('body');
+var editableFix = $('<input style="width:1px;height:1px;border:none;margin:0;padding:0;position:absolute;" tabIndex="-1">').appendTo('html');
 
 app.addEvents('initGanttchart');
 

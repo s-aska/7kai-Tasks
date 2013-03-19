@@ -380,6 +380,7 @@ ul.list > li > div {
 }
 ul.list > li > div > i {
 	position: absolute;
+	top: 5px;
 }
 ul.list > li > div > div {
 	outline: none;
