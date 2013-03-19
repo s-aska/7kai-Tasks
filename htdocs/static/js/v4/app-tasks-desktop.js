@@ -11,6 +11,8 @@ app.data.listtr_map = {};
 app.data.gantt_start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 app.data.gantt_width = 0;
 
+var editableFix = $('<input style="width:1px;height:1px;border:none;margin:0;padding:0;" tabIndex="-1">').appendTo('html');
+
 app.addEvents('initGanttchart');
 
 app.addListener('showTask', function(task, is_notification){
@@ -312,6 +314,8 @@ app.setup.list = function(li){
 		})
 		.on('blur', function(e){
 			$(this).parent().removeClass('editing');
+			editableFix[0].setSelectionRange(0, 0);
+			editableFix.blur();
 			// var ele = $(this);
 			// var list = li.data('list');
 			// var name = ele.text();
@@ -909,6 +913,7 @@ app.setup.aside = function(aside){
 		due.text(task.due ? app.date.mdw(task.due_date) : '-');
 		duration.text(task.duration ? task.duration + ' days' : '-');
 		textarea.prop('disabled', false);
+		// textarea.focus();
 
 		var mode = app.util.hasCloseParentTask(task) ? 2 : task.closed ? 1 : 0;
 		group_open.toggle( mode === 0 );

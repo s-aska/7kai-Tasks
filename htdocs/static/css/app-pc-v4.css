@@ -384,9 +384,11 @@ ul.list > li > div > div {
 	outline: none;
 	padding-left: 18px;
 }
-ul.list > li > div:hover,
+ul.list > li > div:hover {
+	background-color: #ffffea;
+}
 ul.list > li > div.editing {
-	background-color: rgba(252, 252, 215, 0.8);
+	background-color: #fefed6;
 }
 
 ul.task {
@@ -503,6 +505,7 @@ ul.task > li .center i {
 ul.task > li .center > span:last-child {
 	padding-right: 20px;
 	outline: none;
+	cursor: text;
 }
 ul.task > li > ul {
 	margin-left: 34px;
