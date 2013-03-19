@@ -374,6 +374,7 @@ ul.list > li.closed [data-mode-show="closed"] {
  * タスク登録部分
  */
 ul.list > li > div {
+	position: relative;
 	padding: 4px 4px 4px 4px;
 	border-top: 1px solid rgba(0, 0, 0, 0.075);
 }
@@ -383,6 +384,9 @@ ul.list > li > div > i {
 ul.list > li > div > div {
 	outline: none;
 	padding-left: 18px;
+	height: 14px;
+	width: auto;
+	cursor: text;
 }
 ul.list > li > div:hover {
 	background-color: #ffffea;
