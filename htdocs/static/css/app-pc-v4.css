@@ -370,6 +370,25 @@ ul.list > li.closed [data-mode-show="task,gantt"],
 ul.list > li.closed [data-mode-show="closed"] {
 	display: none;
 }
+/*
+ * タスク登録部分
+ */
+ul.list > li > div {
+	padding: 4px 4px 4px 4px;
+	border-top: 1px solid rgba(0, 0, 0, 0.075);
+}
+ul.list > li > div > i {
+	position: absolute;
+}
+ul.list > li > div > div {
+	outline: none;
+	padding-left: 18px;
+}
+ul.list > li > div:hover,
+ul.list > li > div.editing {
+	background-color: rgba(252, 252, 215, 0.8);
+}
+
 ul.task {
 }
 ul.task > li {
@@ -832,6 +851,33 @@ section.tab-main-analysis ul.actions li span + span {
 	cursor: pointer;
 	display: inline-block;
 	margin-top: 2px;
+}
+
+.dropdown-menu {
+	display: block;
+	visibility: hidden;
+	opacity: 0;
+	-webkit-transition-timing-function: cubic-bezier(0, 0, 0.25 ,1);
+	-moz-transition-timing-function: cubic-bezier(0, 0, 0.25 ,1);
+	-o-transition-timing-function: cubic-bezier(0, 0, 0.25 ,1);
+	transition-timing-function: cubic-bezier(0, 0, 0.25 ,1);
+	-webkit-transition-property: transform;
+	-moz-transition-property: transform;
+	-o-transition-property: transform;
+	transition-property: transform;
+	-webkit-transition-duration: 0.2s;
+	-moz-transition-duration: 0.2s;
+	-o-transition-duration: 0.2s;
+	transition-duration: 0.2s;
+}
+li:hover > .dropdown-menu {
+	visibility: visible;
+	opacity: 1;
+	-webkit-transform: translatey(-10px);
+	-moz-transform: translateY(-10px);
+	-ms-transform: translatey(-10px);
+	-o-transform: translatey(-10px);
+	transform: translatey(-10px);
 }
 
 /******************************

@@ -47,8 +47,15 @@
 				<li>
 					<a class="profile" data-setup="profile">
 						<i class="icon-user"></i>
-						<span>Xxxx</span>
+						<span></span>
 					</a>
+					<ul class="dropdown-menu">
+						<li><a href="#">Action</a></li>
+						<li><a href="#">Another action</a></li>
+						<li><a href="#">Something else here</a></li>
+						<li class="divider"></li>
+						<li><a href="/signout" data-setup="localize" data-text-ja="サインアウト">Sign Out</a></li>
+					</ul>
 				</li>
 			</ul>
 		</div>
@@ -187,7 +194,6 @@
 			>
 				<i class="icon-inbox"></i>
 				<span class="help">自分</span>
-				<!-- <span class="count">0</span> -->
 			</a>
 			<a
 				class="btn btn-small"
@@ -203,7 +209,6 @@
 					data-text-ja=""
 				></span>
 				<span class="help">頼んだ</span>
-				<!-- <span class="count">0</span> -->
 			</a>
 			<a
 				class="btn btn-small"
@@ -215,7 +220,6 @@
 			>
 				<i class="icon-download"></i>
 				<span class="help">頼まれた</span>
-				<!-- <span class="count">0</span> -->
 			</a>
 		</div>
 		<div
@@ -381,6 +385,10 @@
 						</ul>
 					</li>
 				</ul>
+				<div data-mode-show="task,gantt">
+					<i class="icon-plus"></i>
+					<div contenteditable="true"></div>
+				</div>
 			</li>
 		</ul>
 		<aside data-mode-hide="list,gantt" data-setup="aside">

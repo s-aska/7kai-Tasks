@@ -104,7 +104,7 @@ app.setup.home = function(section){
 				if (task.parent_id in app.data.taskli_map) {
 					app.data.taskli_map[task.parent_id].after(li);
 				} else {
-					li.prependTo(ul);
+					li.appendTo(ul);
 				}
 			}
 		} else {
@@ -113,7 +113,11 @@ app.setup.home = function(section){
 			if (task.parent_id in app.data.taskli_map) {
 				app.data.taskli_map[task.parent_id].after(li);
 			} else {
-				li.prependTo(ul);
+				li.hide();
+				li.appendTo(ul);
+				li.slideDown('fast', function(){
+					li.css('display', '');
+				});
 			}
 		}
 	});
@@ -210,7 +214,7 @@ app.setup.list = function(li){
 		}
 	});
 
-	app.on(li.find('.icon-plus').parent(), 'click', function(e){
+	app.on(li.find('header > .icon-plus').parent(), 'click', function(e){
 		app.modal.show('register-task', li.data('list'));
 	});
 
@@ -301,6 +305,44 @@ app.setup.list = function(li){
 			app.task.move(app.data.dragtask.list.id, app.data.dragtask.id, list.id);
 		}
 	}, false);
+
+	li.find('> div div')
+		.on('focus', function(e){
+			$(this).parent().addClass('editing');
+		})
+		.on('blur', function(e){
+			$(this).parent().removeClass('editing');
+			// var ele = $(this);
+			// var list = li.data('list');
+			// var name = ele.text();
+			// if (name.length) {
+			// 	app.task.create({
+			// 		list_id: list.id,
+			// 		name: name
+			// 	}, list);
+			// 	ele.text('');
+			// }
+		})
+		.on('keydown', function(e){
+			e.stopPropagation();
+			if (e.keyCode === 13) {
+				e.preventDefault();
+				var list = li.data('list');
+				var ele = $(this);
+				var name = ele.text();
+				if (name.length) {
+					app.task.create({
+						list_id: list.id,
+						name: name
+					}, list);
+					ele.text('');
+				}
+			}
+		})
+		.on('click dblclick', function(e){
+			e.preventDefault();
+			e.stopPropagation();
+		});
 
 	li.data('init', true);
 };
@@ -479,9 +521,6 @@ app.setup.task = function(li){
 			e.preventDefault();
 			e.stopPropagation();
 		});
-
-	// return;
-
 
 	/*
 	 * D&Dによる階層変更
