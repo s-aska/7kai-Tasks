@@ -54,7 +54,7 @@
 						<li><a class="/apps/" data-setup="localize" data-text-ja="連携アプリ">Apps</a></li>
 						<li><a href="/manual" target="_blank" data-setup="localize" data-text-ja="マニュアル">Manual</a></li>
 						<li class="divider"></li>
-						<li><a class="/developer/docs/api" data-setup="localize" data-text-ja="開発者向けAPI">API for Developer</a></li>
+						<li><a href="/developer/docs/api" data-setup="localize" data-text-ja="開発者向けAPI">API for Developer</a></li>
 						<li><a class="about" data-setup="localize" data-text-ja="7kai Tasksについて">About</a></li>
 						<li class="divider"></li>
 						<li><a href="/signout" data-setup="localize" data-text-ja="サインアウト">Sign Out</a></li>
@@ -313,9 +313,10 @@
 					<i class="icon-folder-open" data-mode-hide="list"></i>
 					<i class="icon-sort" data-mode-show="list"></i>
 					<span class="name">7kai Tasks</span>
-					<span class="pull-right btn btn-mini btn-primary" data-mode-show="task">
-						<i class="icon-plus"></i>
-						<span class="help" data-setup="localize" data-text-ja="新しいタスク">New Task</span>
+					<span data-mode-show="tasks">
+						<i class="icon-info-circle"></i>
+					</span>
+					<span class="pull-right members" data-mode-show="tasks">
 					</span>
 					<span class="pull-right btn btn-mini btn-danger" data-mode-show="closed">
 						<i class="icon-trash"></i>
@@ -333,7 +334,7 @@
 							<span class="help" data-setup="localize" data-text-ja="メンバー管理">Member</span>
 						</span>
 						<span class="btn btn-mini">
-							<i class="icon-rss"></i>
+							<i class="icon-upload"></i>
 							<span class="help" data-setup="localize" data-text-ja="エクスポート">Export</span>
 						</span>
 						<span class="btn btn-mini">
@@ -345,6 +346,7 @@
 							<span class="help" data-setup="localize" data-text-ja="削除">Delete</span>
 						</span>
 					</div>
+					<div class="description" data-mode-show="tasks"></div>
 				</header>
 				<table class="task" data-mode-hide="list">
 					<tbody>
@@ -562,10 +564,10 @@
 		<h1>7kai Tasks</h1>
 
 		<ul class="nav nav-tabs">
-			<li class="active"><a data-setup="tab" data-tab="task-basic">Basic</a></li>
-			<li><a data-setup="tab" data-tab="task-due">Due</a></li>
-			<li><a data-setup="tab" data-tab="task-assign">Assign</a></li>
-			<li><a data-setup="tab" data-tab="task-parent">Parent</a></li>
+			<li class="active"><a data-setup="tab,localize" data-tab="task-basic" data-text-ja="基本">Basic</a></li>
+			<li><a data-setup="tab,localize" data-tab="task-due" data-text-ja="期日">Due</a></li>
+			<li><a data-setup="tab,localize" data-tab="task-assign" data-text-ja="担当者">Assign</a></li>
+			<li><a data-setup="tab,localize" data-tab="task-parent" data-text-ja="親タスク">Parent</a></li>
 		</ul>
 
 		<div class="tab-task-basic">
@@ -610,7 +612,7 @@
 			>Assign</label>
 			<ul class="unstyled assign">
 				<li>
-					<label class="checkbox inline">
+					<label class="checkbox">
 						<input type="checkbox" name="assign">
 						<span
 							style="
@@ -934,6 +936,7 @@
 					<li><a href="mailto:s.aska.org@gmail.com"><i class="icon-mail"></i> E-mail</a></li>
 					<li><a href="https://twitter.com/su_aska" target="_blank"><i class="icon-twitter"></i> Twitter</a></li>
 					<li><a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank"><i class="icon-facebook"></i> Facebook Page</a></li>
+					<li><a href="https://github.com/s-aska/7kai-Tasks/issues" target="_blank"><i class="icon-github"></i> Github</a></li>
 				</ul>
 			</dd>
 			<dt data-setup="localize" data-text-ja="共有">Share</dt>

@@ -184,6 +184,7 @@ app.api.task.create = function(data){
 		url: '/api/1/task/create',
 		data: data,
 		dataType: 'json',
+		traditional: true,
 		salvage: true,
 		loading: false
 	});

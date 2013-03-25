@@ -199,15 +199,43 @@ app.setup.list = function(li){
 	// name
 	li.find('> header > span.name').text(list.name);
 
-	// if (list.description) {
-	// 	li.find('.ui-description').html(app.util.autolink(list.description, 64).replace(/\r?\n/g, '<br />'));
-	// 	li.find('> header .name')
-	// 		.css('cursor', 'pointer')
-	// 		.append($('<i class="icon-info-sign"/>'))
-	// 		.click(function(e){
-	// 			li.find('.ui-description').slideToggle();
-	// 		});
-	// }
+	if (list.description) {
+		li.find('.description').html(app.util.autolink(list.description, 64).replace(/\r?\n/g, '<br />'));
+		if (! li.data('init')) {
+			li.find('.description').hide();
+			app.on(li.find('.icon-info-circle').parent().show(), 'click', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				li.find('.description').slideToggle('fast');
+			});
+		}
+	} else {
+		li.find('.icon-info-circle').parent().hide();
+	}
+
+	var span_members = li.find('> header > span.members');
+	span_members.empty();
+	if (list.members.length) {
+		var members = [list.owner].concat(list.members);
+		var find = false;
+		$.each(members, function(i, member){
+			var img = app.util.getIcon(member).appendTo(span_members);
+			img.data('id', member);
+			img.click(function(e){
+				if (img.hasClass('active')) {
+					img.removeClass('active');
+				} else {
+					span_members.find('.active').removeClass('active');
+					img.addClass('active');
+					li.find('> div div').focus();
+				}
+			});
+			// if (!find && app.util.findMe([member])) {
+			// 	find = true;
+			// 	img.addClass('active');
+			// }
+		});
+	}
 
 	// tag
 	if (list.id in app.data.state.tags) {
@@ -241,8 +269,8 @@ app.setup.list = function(li){
 		}
 	});
 
-	app.on(li.find('header .icon-plus').parent(), 'click', function(e){
-		app.modal.show('register-task', li.data('list'));
+	app.on(li.find('.icon-plus'), 'click', function(e){
+		li.find('> div [contenteditable]').focus();
 	});
 
 	app.on(li.find('.icon-edit').parent(), 'click', function(e){
@@ -257,7 +285,7 @@ app.setup.list = function(li){
 		app.modal.show('assign-list', li.data('list'));
 	});
 
-	app.on(li.find('.icon-rss').parent(), 'click', function(e){
+	app.on(li.find('.icon-upload').parent(), 'click', function(e){
 		app.modal.show('export-list', li.data('list'));
 	});
 
@@ -359,10 +387,15 @@ app.setup.list = function(li){
 				var list = li.data('list');
 				var ele = $(this);
 				var name = ele.text();
+				var assign = [];
+				span_members.find('img.active').each(function(){
+					assign.push($(this).data('id'));
+				});
 				if (name.length) {
 					app.task.create({
 						list_id: list.id,
-						name: name
+						name: name,
+						assign: assign
 					}, list);
 					ele.text('');
 				}
@@ -620,10 +653,10 @@ app.setup.task = function(tr){
 		var task = tr.data('task');
 		if (task.due || due_date) {
 			var days = app.date.delta(due_date || task.due_date, app.data.gantt_start).days + 1;
-			if (task.duration > 1) {
-				days = days - ( task.duration - 1 );
-			}
-			if (days <= app.data.gantt_width) {
+			if (days > 0 && days <= app.data.gantt_width) {
+				if (task.duration > 1) {
+					days = days - ( task.duration - 1 );
+				}
 				due_span.css('left', 303 + days * 21 + 'px');
 				due_span.addClass('draggable');
 			} else if (days > 0) {

@@ -48,6 +48,7 @@
 .icon-bell-alt:before { content: '\f0f3'; } /* '' */
 .icon-desktop:before { content: '\f108'; } /* '' */
 .icon-mobile:before { content: '\f10b'; } /* '' */
+.icon-github:before { content: '\f113'; } /* '' */
 .icon-award:before { content: '🏉'; } /* '\1f3c9' */
 .icon-user:before { content: '👤'; } /* '\1f464' */
 .icon-users:before { content: '👥'; } /* '\1f465' */

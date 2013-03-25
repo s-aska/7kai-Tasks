@@ -611,6 +611,18 @@
     },
     {
       "search": [
+        "github"
+      ],
+      "code": 61715,
+      "uid": "5e0a374728ffa8d0ae1f331a8f648231",
+      "css": "github",
+      "orig_css": "github",
+      "orig_code": 61715,
+      "src": "fontawesome",
+      "from": 61715
+    },
+    {
+      "search": [
         "top",
         "trophy",
         "prize",
