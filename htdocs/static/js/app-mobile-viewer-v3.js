@@ -1663,11 +1663,7 @@ app.setup.export = function(section){
 			section.trigger('show', app.data.list_map[id]);
 		});
 	});
-	// section.on('swipe-prev', function(){
-	// 	app.slider.show('list');
-	// });
 	app.dom.touch(section.find('.btn-inverse'), function(){
-		// app.slider.show('list');
 		app.modal.hide();
 	});
 }
