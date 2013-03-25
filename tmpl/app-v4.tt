@@ -77,12 +77,16 @@
 				<span class="help" data-setup="localize" data-text-ja="ラベルを消す">hide label</span>
 			</a>
 			<a
-				class="btn btn-small"
-				data-setup="tooltip"
+				class="active btn btn-small"
+				ddata-setup="tooltip"
+				data-setup="display,shortcut,tooltip"
+				data-display="shortcut"
+				data-shortcut-code="191"
 				data-text-ja="ショートカットキー ... [? or /]"
 				data-text-en="Display the shortcuts ... [? or /]"
 			>
 				<i class="icon-keyboard"></i>
+				<span class="shortcut">[?]</span>
 			</a>
 		</div>
 		<div class="btn-group">
@@ -271,37 +275,37 @@
 		>
 			<a
 				class="btn btn-small"
-				data-setup="display,tooltip"
+				data-setup="display,tooltip,shortcut"
 				data-display="tag"
 				data-display-active="disabled"
 				data-text-ja="表示切替"
 				data-text-en="Display switching"
-
-			><i class="icon-tag"></i></a>
+				data-shortcut-code="48"
+			><i class="icon-tag"></i><span class="shortcut">[0]</span></a>
 			<a
 				class="btn btn-small btn-primary"
 				data-setup="shortcut"
-				data-shortcut='{"code":49}'
+				data-shortcut-code="49"
 				data-tag="primary"
-			><i class="icon-tag icon-white"></i></a>
+			><i class="icon-tag icon-white"></i><span class="shortcut">[1]</span></a>
 			<a
 				class="btn btn-small btn-success"
 				data-setup="shortcut"
-				data-shortcut='{"code":50}'
+				data-shortcut-code="50"
 				data-tag="success"
-			><i class="icon-tag icon-white"></i></a>
+			><i class="icon-tag icon-white"></i><span class="shortcut">[2]</span></a>
 			<a
 				class="btn btn-small btn-warning"
 				data-setup="shortcut"
-				data-shortcut='{"code":51}'
+				data-shortcut-code="51"
 				data-tag="warning"
-			><i class="icon-tag icon-white"></i></a>
+			><i class="icon-tag icon-white"></i><span class="shortcut">[3]</span></a>
 			<a
 				class="btn btn-small btn-danger"
 				data-setup="shortcut"
-				data-shortcut='{"code":52}'
+				data-shortcut-code="52"
 				data-tag="danger"
-			><i class="icon-tag icon-white"></i></a>
+			><i class="icon-tag icon-white"></i><span class="shortcut">[4]</span></a>
 		</div>
 	</header>
 	<div class="fluid-container">
@@ -353,12 +357,13 @@
 							<td class="main">
 								<div>
 									<div class="action-ok"><i class="icon-ok"></i></div>
-									<div class="name" contenteditable="false">URLとか</div>
+									<div class="guard"></div>
+									<div class="name" contenteditable="false" tabindex="-1"></div>
 									<ul class="unstyled pin" data-mode-hide="gantt">
-										<li><i class="icon-pin"></i><span>URLとか</span></li>
+										<li><i class="icon-pin"></i><span></span></li>
 									</ul>
 									<ul class="unstyled comment" data-mode-hide="gantt">
-										<li><i class="icon-comment"></i><span>URLとか</span></li>
+										<li><i class="icon-comment"></i><span></span></li>
 									</ul>
 								</div>
 							</td>
@@ -403,21 +408,31 @@
 		<aside data-mode-hide="list,gantt" data-setup="aside">
 			<div class="clearfix">
 				<span class="pull-right">
-					<span class="btn btn-small edit">
+					<span
+						class="btn btn-small edit"
+						data-setup="shortcut"
+						data-shortcut-code="69"
+					>
 						<i class="icon-edit"></i>
 						<span
 							class="help"
 							data-setup="localize"
 							data-text-ja="編集"
 						>Edit</span>
+						<span class="shortcut">[e]</span>
 					</span>
-					<span class="btn btn-small tree">
+					<span
+						class="btn btn-small tree"
+						data-setup="shortcut"
+						data-shortcut-code="78"
+					>
 						<i class="icon-flow-cascade"></i>
 						<span
 							class="help"
 							data-setup="localize"
 							data-text-ja="子タスク"
 						>Child</span>
+						<span class="shortcut">[n]</span>
 					</span>
 				</span>
 				<p><strong></strong></p>
@@ -528,6 +543,15 @@
 				</ul>
 			</div>
 		</aside>
+	</div>
+	<div class="shortcut">
+		[TAB] <span data-setup="localize" data-text-ja="タスク登録">Register Task</span>
+		[ESC] <span data-setup="localize" data-text-ja="キャンセル">Cancel</span>
+		[Up/Down j/k] <span data-setup="localize" data-text-ja="タスク選択">Select Task</span>
+		[Space] <span data-setup="localize" data-text-ja="進捗">Progress</span>
+		[Enter] <span data-setup="localize" data-text-ja="完了">Closed</span>
+		[r] <span data-setup="localize" data-text-ja="レート">Rate</span>
+		[Left/Right h/l] <span data-setup="localize" data-text-ja="期日">Due</span>
 	</div>
 </section>
 <section class="tab-main-analysis" data-setup="analysis">

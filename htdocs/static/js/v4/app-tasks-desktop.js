@@ -51,8 +51,10 @@ app.setup.nav = function(ele){
 };
 app.setup.home = function(section){
 
+	/*
+	 * 関係ないところをクリックしたらタスク選択解除
+	 */
 	section.find('> header, ul.list').click(function(e){
-		// console.log(e.target.tagName);
 		app.fireEvent('showTask');
 	});
 
@@ -137,6 +139,13 @@ app.setup.home = function(section){
 			app.data.taskli_map[task.id] = app.setup.init(tr);
 			if (task.parent_id in app.data.taskli_map) {
 				app.data.taskli_map[task.parent_id].after(tr);
+				if (task.name === '-') {
+					tr
+						.attr('draggable', 'false')
+						.find('div.name')
+							.text('')
+							.attr('contenteditable', 'true').focus();
+				}
 			} else {
 				tr.hide();
 				tr.appendTo(tbody);
@@ -161,11 +170,10 @@ app.setup.home = function(section){
 	});
 
 	app.addListener('showTask', function(task){
-		ul.find('table.task tr.selected')
-			.attr('draggable', 'true')
-			.removeClass('selected')
-			.find('td.main div.name')
-				.attr('contenteditable', 'false');
+		ul.find('tr.selected').removeClass('selected');
+		ul.find('tr[draggable="false"]').attr('draggable', 'true');
+		ul.find('div.name[contenteditable="true"]').attr('contenteditable', 'false');
+
 		if (! task) { return }
 		app.data.taskli_map[task.id]
 			.addClass('selected')
@@ -193,6 +201,197 @@ app.setup.home = function(section){
 			}
 			delete app.data.task_map[task_id];
 		});
+	});
+
+	/*
+	 * 次のリスト
+	 */
+	var nextList = function(){
+		var tr = ul.find('tr.selected');
+		var next;
+		if (tr.length) {
+			var li = tr.parent().parent().parent();
+			li.nextAll(':visible').each(function(){
+				var tr = $(this).find('tr:visible:first');
+				if (tr.length) {
+					next = tr;
+					return false;
+				}
+			});
+		}
+		if (! next) {
+			next = ul.find('tr:visible:first');
+		}
+		if (next.length) {
+			next.click();
+		}
+	};
+
+	/*
+	 * 前のリスト
+	 */
+	var prevList = function(){
+		var tr = ul.find('tr.selected');
+		var prev;
+		if (tr.length) {
+			var li = tr.parent().parent().parent();
+			li.prevAll(':visible').each(function(){
+				var tr = $(this).find('tr:visible:last');
+				if (tr.length) {
+					prev = tr;
+					return false;
+				}
+			});
+		}
+		if (! prev) {
+			prev = ul.find('tr:visible:last');
+		}
+		if (prev.length) {
+			prev.click();
+		}
+	};
+
+	/*
+	 * 次のタスク
+	 */
+	 var nextTask = function(){
+		var tr = ul.find('tr.selected:first');
+		if (tr.length) {
+			var next = tr.nextAll(':visible:first');
+			if (next.length) {
+					next.click();
+			} else {
+				nextList.call();
+			}
+		} else {
+			tr = ul.find('tr:visible:first');
+			if (tr.length) {
+				tr.click();
+			}
+		}
+	 };
+
+	/*
+	 * 前のタスク
+	 */
+	 var prevTask = function(){
+		var tr = ul.find('tr.selected:first');
+		var prev = tr.prevAll(':visible:first');
+		if (prev.length) {
+				prev.click();
+		} else {
+			prevList.call();
+		}
+	 };
+
+
+
+
+	doc.keydown(function(e){
+		if (d.activeElement.tagName !== 'BODY'
+			|| e.ctrlKey
+			|| e.altKey
+			|| e.metaKey
+		) {
+			return;
+		}
+		if (e.shiftKey) {
+			if (e.keyCode === 38 || e.keyCode === 75) { // Up
+				prevList.call();
+			} else if (e.keyCode === 40 || e.keyCode === 74) { // Down
+				nextList.call();
+			} else {
+				return;
+			}
+			return false;
+		}
+
+		if (e.keyCode === 38 || e.keyCode === 75) { // Up
+			prevTask.call();
+		} else if (e.keyCode === 40 || e.keyCode === 74) { // Down
+			nextTask.call();
+		} else if (e.keyCode === 37 || e.keyCode === 72) { // Left / H
+			var task = ul.find('tr.selected').data('task');
+			if (! task) { return }
+			var today = new Date();
+			var due;
+			if (task.due_date && task.due_date.getTime() > today.getTime()) {
+				due = app.date.mdy(new Date(task.due_date.getTime() - (24 * 60 * 60 * 1000)));
+			} else {
+				due = '';
+			}
+			app.task.update({
+				list_id: task.list.id,
+				task_id: task.id,
+				due: due
+			});
+		} else if (e.keyCode === 39 || e.keyCode === 76) { // Right / L
+			var task = ul.find('tr.selected').data('task');
+			if (! task) { return }
+			var today = new Date();
+			var date;
+			if (task.due_date && task.due_date.getTime() > today.getTime()) {
+				date = new Date(task.due_date.getTime() + (24 * 60 * 60 * 1000));
+			} else {
+				date = new Date(today.getTime() + (24 * 60 * 60 * 1000));
+			}
+			var due = app.date.mdy(date);
+			app.task.update({
+				list_id: task.list.id,
+				task_id: task.id,
+				due: due
+			});
+		} else if (e.keyCode === 8) { // Delete
+			var tr = ul.find('tr.selected');
+			if (tr.length) {
+				var div = tr.find('div.name');
+				div.focus();
+				/*
+				 * カーソル位置を末尾に移動
+				 * TODO: utilへ
+				 */
+				if (d.selection) {
+					var sel = d.selection.createRange();
+					sel.moveStart('character', div.text().length);
+					sel.select();
+				} else {
+					var sel = w.getSelection();
+					sel.collapse(div.get(0).firstChild, div.text().length);
+				}
+			}
+		} else if (e.keyCode === 32) { // Space
+			var task = ul.find('tr.selected').data('task');
+			if (! task) { return }
+			var status = task.status >= 2 ? 0 : task.status + 1;
+			app.task.update({
+				list_id: task.list.id,
+				task_id: task.id,
+				status: status
+			});
+		} else if (e.keyCode === 13) { // Enter
+			var task = ul.find('tr.selected').data('task');
+			if (! task) { return }
+			var closed = task.closed ? 0 : 1;
+			app.task.update({
+				list_id: task.list.id,
+				task_id: task.id,
+				closed: closed
+			}).done(function(){
+				nextTask.call();
+			});
+		} else if (e.keyCode === 82) { // r
+			var task = ul.find('tr.selected').data('task');
+			if (! task) { return }
+			var rate = task.rate >= 5 ? 0 : task.rate + 1;
+			app.task.update({
+				list_id: task.list.id,
+				task_id: task.id,
+				rate: rate
+			});
+		} else {
+			return;
+		}
+		return false;
 	});
 };
 app.setup.list = function(li){
@@ -366,7 +565,9 @@ app.setup.list = function(li){
 		}
 	}, false);
 
-	li.find('> div div')
+	var register = li.find('> div div');
+
+	register
 		.on('focus', function(e){
 			$(this).parent().addClass('editing');
 		})
@@ -410,6 +611,18 @@ app.setup.list = function(li){
 					}, list);
 					ele.text('');
 				}
+			} else if (e.keyCode === 27) { // ESC
+				e.preventDefault();
+				$(this).blur();
+			} else if (e.keyCode === 9) {
+				var next = li.next();
+				if (next.length) {
+
+				} else {
+					e.preventDefault();
+					top_li = li.parent().find('> li:first');
+					top_li.find('> div div').focus();
+				}
 			}
 		})
 		.on('click dblclick', function(e){
@@ -436,34 +649,18 @@ app.setup.task = function(tr){
 		task.assign.length > 0 && app.util.findMe([task.requester])
 	);
 
-	tr.toggleClass('filter-received', !app.util.findMe([task.requester]) && app.util.findMe(task.assign));
+	tr.toggleClass('filter-received',
+		!app.util.findMe([task.requester]) && app.util.findMe(task.assign)
+	);
 
-	// task closed
-	// if (tr.data('init')) {
-	// 	/*
-	// 	 * 完了切り替え時にエフェクト
-	// 	 */
-	// 	if (Boolean(tr.hasClass('closed')) !== Boolean(task.closed)) {
-	// 		tr.css('display', 'table-row').find('td.main > div').slideUp(function(){
-	// 			tr.css('display', '');
-	// 			tr.find('td.main > div').css('display', '');
-	// 		});
-	// 	}
-	// }
 	tr.toggleClass('closed', task.closed ? true : false);
 	tr.toggleClass('in-closed', app.util.hasCloseParentTask(task) ? true : false);
 
 	if (task.closed || app.util.hasCloseParentTask(task)) {
-		// tr.attr('data-mode-show', app.util.hasOpenChildTask(task) ? 'task,gantt,closed' : 'closed');
 		tr.attr('data-mode-show', 'closed');
 	} else {
 		tr.attr('data-mode-show', app.util.hasCloseChildTask(task) ? 'task,gantt,closed' : 'task,gantt');
 	}
-
-	// tr.attr('data-mode-show',
-	// 	app.util.hasClosedChildTask(task) ? 'task,gantt,closed' :
-	// 	app.util.isCloseTask(task)        ? 'closed' : 'task,gantt');
-
 
 	// task status
 	tr.find('.action-ok i').attr('class',
@@ -567,11 +764,19 @@ app.setup.task = function(tr){
 
 	var body = $('body');
 
-	tr.find('td.main div.name')
+	tr.find('div.name')
 		.on('focus', function(e){
+			console.log('focus');
 			tr.addClass('editing');
+			var ele = $(this);
+			if (ele.text() === '-') {
+				ele.text('');
+			}
 		})
 		.on('blur', function(e){
+			console.log('blur');
+			editableFix[0].setSelectionRange(0, 0);
+			editableFix.blur();
 			tr.removeClass('editing');
 			var ele = $(this);
 			var task = tr.data('task');
@@ -910,12 +1115,14 @@ app.setup.aside = function(aside){
 	flow.click(function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		flow.toggleClass('active');
-		if (flow.hasClass('active')) {
-			var listli = app.data.listli_map[ flow.data('list_id') ];
-			if (listli) {
-				listli.find('> div div').focus();
-			}
+		if (flow.attr('disabled')) {
+			;
+		} else {
+			app.task.create({
+				list_id: flow.data('list_id'),
+				parent_id: flow.data('task_id'),
+				name: '-'
+			}, app.data.list_map[ flow.data('list_id') ]);
 		}
 	});
 
@@ -941,7 +1148,9 @@ app.setup.aside = function(aside){
 		e.preventDefault();
 		e.stopPropagation();
 		var task = aside.data('task');
-		app.modal.show('register-task', [task.list, task]);
+		if (task) {
+			app.modal.show('register-task', [task.list, task]);
+		}
 	});
 
 	form.submit(function(e){

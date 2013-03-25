@@ -20,6 +20,7 @@ app.modal = {
 		app.modal.current.removeClass('in').hide();
 		app.modal.backdrop.removeClass('in').hide();
 		app.modal.current = false;
+		d.activeElement.blur();
 	}
 };
 

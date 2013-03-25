@@ -4,6 +4,7 @@ $.extend(ns.app, { setup: {} });
 
 var app = ns.app;
 var win = $(w);
+var doc = $(d);
 
 /*
  * data-setup のDOMを走査し対応するメソッドを叩く
@@ -145,6 +146,22 @@ app.setup.stretch = function(ele){
 	};
 	app.addListener('resize', callback);
 	callback.call();
+}
+app.setup.shortcut = function(ele){
+	var code = ele.data('shortcut-code');
+	doc.keydown(function(e){
+		if (d.activeElement.tagName === 'BODY'
+			&& !e.shiftKey
+			&& !e.ctrlKey
+			&& !e.altKey
+			&& !e.metaKey
+			&& e.keyCode === code
+			&& ele.is(':visible')) {
+			e.preventDefault();
+			e.stopPropagation();
+			ele.click();
+		}
+	});
 }
 
 })(this, window, document, jQuery);

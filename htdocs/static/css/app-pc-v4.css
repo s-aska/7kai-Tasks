@@ -223,6 +223,7 @@ body[data-tag="success"]:not([data-mode="list"]) ul.list > li[data-tag="danger"]
  * 表示切り替え
  */
 body:not(.display-help) .help,
+body:not(.display-shortcut) .shortcut,
 body:not(.display-sort) .btn-group-sort a:nth-child(n+2),
 body:not(.display-filter) .btn-group-filter a:nth-child(n+2),
 body:not(.display-switch) .btn-group-switch a:nth-child(n+2),
@@ -242,6 +243,10 @@ body:not(.display-tag) .btn-group-tag a:first-child {
 	border-radius: 4px;
 }
 
+.shortcut {
+	font-family: 'Consolas', 'Courier New', Courier, monospace, sans-serif;
+}
+
 /******************************
  *
  *  タスク管理
@@ -256,6 +261,26 @@ section .fluid-container {
 }
 ul.list {
 	margin-right: 295px;
+}
+
+/*
+ * ショートカット表示時に30px縮める
+ */
+section > div.shortcut {
+	position: absolute;
+	bottom: 0;
+	padding: 4px;
+	margin-bottom: 10px;
+	color: white;
+	background-color: rgba(0, 0, 0, 0.8);
+}
+body.display-shortcut ul.list {
+	padding-bottom: 30px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
 }
 aside {
 	position: absolute;
@@ -464,6 +489,12 @@ table.task td.main {
 table.task td.main div.action-ok {
 	position: absolute;
 }
+table.task td.main div.guard {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 25px;
+}
 table.task td.main div.name {
 	margin-left: 17px;
 	word-wrap: break-word;
@@ -474,6 +505,9 @@ table.task td.main div.name {
 }
 table.task tr.selected td.main div.name {
 	cursor: text;
+}
+table.task tr.selected td.main div.guard {
+	display: none;
 }
 table.task td.assign {
 	width: 15px;
