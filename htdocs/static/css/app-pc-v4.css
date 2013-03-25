@@ -204,18 +204,10 @@ body:not(.tab-settings-account) .tab-settings-account {
 /*
  * タグ切り替え
  */
-body[data-tag="success"]:not([data-mode="list"]) ul.list > li[data-tag="primary"],
-body[data-tag="warning"]:not([data-mode="list"]) ul.list > li[data-tag="primary"],
-body[data-tag="danger"]:not([data-mode="list"])  ul.list > li[data-tag="primary"],
-body[data-tag="primary"]:not([data-mode="list"]) ul.list > li[data-tag="success"],
-body[data-tag="warning"]:not([data-mode="list"]) ul.list > li[data-tag="success"],
-body[data-tag="danger"]:not([data-mode="list"])  ul.list > li[data-tag="success"],
-body[data-tag="primary"]:not([data-mode="list"]) ul.list > li[data-tag="warning"],
-body[data-tag="success"]:not([data-mode="list"]) ul.list > li[data-tag="warning"],
-body[data-tag="danger"]:not([data-mode="list"])  ul.list > li[data-tag="warning"],
-body[data-tag="primary"]:not([data-mode="list"]) ul.list > li[data-tag="danger"],
-body[data-tag="warning"]:not([data-mode="list"]) ul.list > li[data-tag="danger"],
-body[data-tag="success"]:not([data-mode="list"]) ul.list > li[data-tag="danger"] {
+body[data-tag="success"]:not([data-mode="list"]) ul.list > li:not([data-tag="success"]),
+body[data-tag="warning"]:not([data-mode="list"]) ul.list > li:not([data-tag="warning"]),
+body[data-tag="danger"]:not([data-mode="list"]) ul.list > li:not([data-tag="danger"]),
+body[data-tag="primary"]:not([data-mode="list"]) ul.list > li:not([data-tag="primary"]) {
 	display: none;
 }
 
