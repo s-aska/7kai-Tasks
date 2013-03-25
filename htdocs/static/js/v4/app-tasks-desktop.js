@@ -220,9 +220,9 @@ app.setup.list = function(li){
 		li.find('.icon-info-circle').parent().hide();
 	}
 
-	var span_members = li.find('> header > span.members');
-	span_members.empty();
+	var span_members = li.find('> div > span.members');
 	if (list.members.length) {
+		span_members.html('<i class="icon-right"></i>');
 		var members = [list.owner].concat(list.members);
 		var find = false;
 		$.each(members, function(i, member){
@@ -234,10 +234,12 @@ app.setup.list = function(li){
 				} else {
 					span_members.find('.active').removeClass('active');
 					img.addClass('active');
-					li.find('> div div').focus();
 				}
+				li.find('> div div').focus();
 			});
 		});
+	} else {
+		span_members.empty();
 	}
 
 	// tag

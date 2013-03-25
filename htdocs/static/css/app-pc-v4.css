@@ -371,7 +371,19 @@ ul.list > li > header > .name {
 ul.list > li > header i.icon-info-circle {
 	cursor: pointer;
 }
-ul.list > li > header > .members img {
+ul.list > li > div {
+	position: relative;
+}
+ul.list > li > div > span.members {
+	position: absolute;
+	top: 0;
+	right: 3px;
+}
+ul.list > li > div > span.members i {
+	position: relative;
+	top: 3px;
+}
+ul.list > li > div > span.members img {
 	margin-top: 4px;
 	width: 16px;
 	height: 16px;
@@ -386,7 +398,7 @@ ul.list > li > header > .members img {
 	opacity: 0.5;
 	cursor: pointer;
 }
-ul.list > li > header > .members img.active {
+ul.list > li > div > span.members img.active {
 	opacity: 1;
 }
 ul.list > li > header .btn-group {

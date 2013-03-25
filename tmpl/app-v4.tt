@@ -317,8 +317,6 @@
 					<span data-mode-show="tasks">
 						<i class="icon-info-circle"></i>
 					</span>
-					<span class="pull-right members" data-mode-show="tasks">
-					</span>
 					<span class="pull-right btn btn-mini btn-danger" data-mode-show="closed">
 						<i class="icon-trash"></i>
 						<span class="help" data-setup="localize" data-text-ja="空にする">Clear Closed Task</span>
@@ -396,6 +394,9 @@
 				<div data-mode-show="task,gantt">
 					<i class="icon-plus"></i>
 					<div contenteditable="true"></div>
+					<span class="pull-right members" data-mode-show="tasks">
+						<i class="icon-right"></i>
+					</span>
 				</div>
 			</li>
 		</ul>
