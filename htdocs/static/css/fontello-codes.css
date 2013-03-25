@@ -21,8 +21,9 @@
 .icon-edit:before { content: '\270d'; } /* '✍' */
 .icon-ok:before { content: '\2713'; } /* '✓' */
 .icon-cancel:before { content: '\2715'; } /* '✕' */
+.icon-right:before { content: '\27a1'; } /* '➡' */
 .icon-ccw:before { content: '\27f2'; } /* '⟲' */
-.icon-left:before { content: '\e0d4'; } /* '' */
+.icon-mail:before { content: '\e0eb'; } /* '' */
 .icon-help-circle:before { content: '\e704'; } /* '' */
 .icon-info-circle:before { content: '\e705'; } /* '' */
 .icon-eye:before { content: '\e70a'; } /* '' */

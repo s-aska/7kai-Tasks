@@ -214,13 +214,14 @@ app.util.findChildTasks = function(task, callback, tasks){
 	return tasks;
 }
 app.util.isChildTask = function(task, child){
-	var childs = app.util.findChildTasks(task);
-	for (var i = 0, max_i = childs.length; i < max_i; i++) {
-		if (childs[i].id === child.id) {
-			return true;
+	var ret = false;
+	app.util.findParentTasks(child, function(parent){
+		if (parent.id === task.id) {
+			ret = true;
+			return false;
 		}
-	}
-	return false;
+	});
+	return ret;
 }
 app.util.findParentTask = function(task){
 	return app.data.task_map[task.parent_id];
@@ -398,6 +399,13 @@ app.util.sortTaskView = function(column, reverse){
 }
 app.util.findQuery = function(data, key){
 	return Boolean((typeof data === 'object') ? (key in data) : (data.indexOf(key) !== -1));
-};
+}
+app.util.text = function(ele, key){
+	if (key) {
+		return ele.data('text-' + key + '-' + app.env.lang);
+	} else {
+		return ele.data('text-' + app.env.lang);
+	}
+}
 
 })(this, window, document, jQuery);

@@ -5,7 +5,8 @@ $.extend(ns.app, {
 		account: {},
 		list: {},
 		task: {},
-		comment: {}
+		comment: {},
+		feedback: {}
 	}
 });
 
@@ -49,16 +50,16 @@ app.api.account.update = function(params){
 	// 	}
 	// });
 }
-// app.api.account.update_profile = function(params){
-// 	return app.ajax({
-// 		type: 'post',
-// 		url: '/api/1/account/update_profile',
-// 		data: params,
-// 		dataType: 'json',
-// 		salvage: false,
-// 		loading: false
-// 	});
-// }
+app.api.account.update_profile = function(params){
+	return app.ajax({
+		type: 'post',
+		url: '/api/1/account/update_profile',
+		data: params,
+		dataType: 'json',
+		salvage: false,
+		loading: false
+	});
+}
 app.api.list.create = function(data){
 	return app.ajax({
 		type: 'post',
@@ -247,6 +248,16 @@ app.api.comment.delete = function(list_id, task_id, comment_id){
 			comment_id: comment_id
 		},
 		dataType: 'json'
+	});
+}
+app.api.feedback.send = function(params){
+	return app.ajax({
+		type: 'post',
+		url: '/api/1/feedback/send',
+		data: params,
+		dataType: 'json',
+		salvage: false,
+		loading: false
 	});
 }
 

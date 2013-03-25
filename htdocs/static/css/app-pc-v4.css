@@ -100,11 +100,15 @@ body {
 	line-height: 1em;
 }
 
+[draggable=true] {
+  -khtml-user-drag: element;
+}
+
 /*
  * 背景色に合わせる
  */
-.nav-tabs > .active > a,
-.nav-tabs > .active > a:hover {
+section.tab-main-analysis .nav-tabs > .active > a,
+section.tab-main-analysis .nav-tabs > .active > a:hover {
 	background-color: #F7F7F6;
 }
 
@@ -183,7 +187,9 @@ body:not(.tab-task-parent) .tab-task-parent,
 body:not(.tab-task-assign) .tab-task-assign,
 body:not(.tab-analysis-daily) .tab-analysis-daily,
 body:not(.tab-analysis-list) .tab-analysis-list,
-body:not(.tab-analysis-user) .tab-analysis-user {
+body:not(.tab-analysis-user) .tab-analysis-user,
+body:not(.tab-settings-name) .tab-settings-name,
+body:not(.tab-settings-account) .tab-settings-account {
 	display: none;
 }
 
@@ -298,6 +304,7 @@ aside {
  */
 ul.list {
 	font-size: 13px;
+	line-height: 13px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.075);
 	margin-bottom: 0;
 	padding-right: 5px;
@@ -384,7 +391,7 @@ ul.list > li > div > i {
 }
 ul.list > li > div > div {
 	outline: none;
-	padding-left: 18px;
+	padding-left: 16px;
 	height: 14px;
 	width: auto;
 	cursor: text;
@@ -396,6 +403,64 @@ ul.list > li > div.editing {
 	background-color: #fefed6;
 }
 
+/*
+ * タスク一覧
+ */
+table.task {
+	width: 100%;
+}
+table.task tr {
+	border-top: 1px solid #e0e0e0;
+	cursor: pointer;
+}
+table.task td {
+	padding: 4px 2px;
+}
+table.task td.main {
+	position: relative;
+	padding-left: 4px;
+}
+table.task td.main div.action-ok {
+	position: absolute;
+}
+table.task td.main div.name {
+	margin-left: 17px;
+	word-wrap: break-word;
+	word-break: break-all;
+}
+table.task td.main div.name {
+	outline: none;
+}
+table.task tr.selected td.main div.name {
+	cursor: text;
+}
+table.task td.assign {
+	width: 15px;
+	white-space: nowrap;
+	text-align: right;
+}
+table.task td.assign i.icon-right {
+	display: inline-block;
+	margin: 2px 2px 0;
+}
+table.task td.rate {
+	width: 98px;
+	white-space: nowrap;
+}
+table.task td.due {
+	padding-left: 4px;
+	width: 70px;
+	white-space: nowrap;
+}
+table.task td.action-ok {
+	padding-left: 4px;
+	padding-right: 0;
+	width: 15px;
+}
+table.task td.action-close {
+	padding: 4px;
+	width: 15px;
+}
 ul.task {
 }
 ul.task > li {
@@ -404,56 +469,47 @@ ul.task > li {
 	cursor: pointer;
 	position: relative;
 }
-/*ul.task > li:nth-child(even) {
-	background-color: rgba(0, 0, 0, 0.025);
-}*/
-body[data-filter="inbox"] ul.task > li:not(.filter-inbox),
-body[data-filter="sent"] ul.task > li:not(.filter-sent),
-body[data-filter="received"] ul.task > li:not(.filter-received) {
+body[data-filter="inbox"] table.task tr:not(.filter-inbox),
+body[data-filter="sent"] table.task tr:not(.filter-sent),
+body[data-filter="received"] table.task tr:not(.filter-received) {
 	display: none;
 }
 
 /*
  * 階層タスクの都合で表示しているタスクは半透明化
  */
-body:not([data-mode="closed"]) ul.task > li.closed,
-body[data-mode="closed"] ul.task > li:not([class*="closed"]) {
+body:not([data-mode="closed"]) table.task tr.closed,
+body[data-mode="closed"] table.task tr:not([class*="closed"]) {
 	opacity: 0.5;
 }
-body:not([data-mode="closed"]) ul.task > li.closed .right,
-body[data-mode="closed"] ul.task > li:not(.closed) .right {
+body:not([data-mode="closed"]) table.task tr.closed .right,
+body[data-mode="closed"] table.task tr:not(.closed) .right {
 	display: none;
 }
 
-ul.task > li:hover {
+table.task tr:hover {
 	background-color: rgba(0, 0, 0, 0.025);
 }
-ul.task > li.selected {
+table.task tr.selected {
 	background-color: rgba(0, 0, 0, 0.025);
 }
-ul.task > li.closed .center span,
-ul.task > li.in-closed .center span {
+table.task tr.closed .center span,
+table.task tr.in-closed .center span {
 	text-decoration: line-through;
 }
-ul.task > li .left {
+table.task tr .left {
 	display: block;
 	position: absolute;
 	top: 6px;
 }
-ul.task > li .left i.icon-move {
+table.task tr .left i.icon-move {
 	opacity: 0.3;
 	cursor: pointer;
 }
-ul.task > li .left i.icon-move:hover {
+table.task tr .left i.icon-move:hover {
 	opacity: 1;
 }
-ul.task > li .right {
-	position: absolute;
-	top: 6px;
-	right: 6px;
-	font-size: 12px;
-}
-ul.task > li .center {
+table.task tr .center {
 	display: block;
 	margin-left: 18px;
 	margin-right: 170px;
@@ -463,26 +519,40 @@ ul.task > li .center {
 	line-height: 20px;
 	overflow: hidden;
 }
-ul.task > li .center > span:first-child {
+table.task td.assign img {
+	width: 16px;
+	height: 16px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+	vertical-align: top;
+}
+table.task tr .center > span:first-child {
 	margin-right: 4px;
 }
-body[data-mode="gantt"] ul.task > li .center > span:first-child {
+body[data-mode="gantt"] table.task tr {
+	position: relative;
+}
+body[data-mode="gantt"] table.task td.assign {
+}
+body[data-mode="gantt"] table.task td.assign > span {
 	position: absolute;
 	left: 400px;
 }
-body[data-mode="gantt"] ul.task > li .center > span:first-child span {
+body[data-mode="gantt"] table.task td.assign .user {
 	position: absolute;
 }
-body[data-mode="gantt"] ul.task > li .center .back {
+body[data-mode="gantt"] table.task td.assign .back {
 	position: absolute;
-	top: 2px;
 	border: 2px solid #9eca3d;
 	background-color: #edfcce;
 	height: 12px;
 	width: 0;
 	border-radius: 3px;
 }
-body[data-mode="gantt"] ul.task > li .center .handle {
+body[data-mode="gantt"] table.task td.assign .handle {
 	position: absolute;
 	cursor: col-resize;
 	right: -6px;
@@ -490,34 +560,34 @@ body[data-mode="gantt"] ul.task > li .center .handle {
 	height: 16px;
 	z-index: 1;
 }
-ul.task > li .center img {
-	width: 16px;
-	height: 16px;
-	margin-top: -2px;
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	-ms-border-radius: 4px;
-	-o-border-radius: 4px;
-	border-radius: 4px;
-}
-ul.task > li .center img + img {
+table.task tr .center img + img {
 	margin-left: 4px;
 }
-ul.task > li .center i {
+table.task tr .center i {
 	margin-left: 4px;
 	margin-right: 4px;
 }
-ul.task > li .center > span:last-child {
+table.task tr .center > span:last-child {
 	padding-right: 20px;
 	outline: none;
 	cursor: text;
 }
-ul.task > li > ul {
-	margin-left: 34px;
+table.task td.main ul {
+	margin: 2px 0 2px 16px;
 }
-ul.task > li > ul span {
+table.task td.main ul li {
+	padding-top: 2px;
+}
+table.task td.main ul span {
 	color: #999;
 	font-size: 12px;
+	margin-left: 4px;
+}
+table.task td.main ul.pin i {
+	margin-left: 1px;
+}
+table.task td.main ul.pin span {
+	margin-left: 3px;
 }
 ul.task .due {
 	display: inline-block;
@@ -529,28 +599,33 @@ ul.task .due {
 /*
  * レーティング
  */
-ul.task .rate i.icon-star-empty {
+table.task .rate i.icon-star-empty {
 	opacity: 0;
 }
-ul.task .rate i.icon-star {
+table.task .rate i.icon-star {
 	opacity: 0.5;
 }
-ul.task .rate {
+table.task .rate {
 	margin-top: 1px;
 }
-ul.task .rate:hover i {
+table.task .rate:hover i {
 	opacity: 0.3;
 }
-ul.task .rate span:hover > i {
+table.task .rate span:hover > i {
 	opacity: 1;
 }
-ul.task .rate > span > i {
+table.task .rate > span > i {
 	opacity: 0;
 }
 
 /*
  * コメントフォーム
  */
+aside > div > p {
+	max-width: 250px;
+	word-wrap: break-word;
+	word-break: break-all;
+}
 aside > div > .user img {
 	width: 14px;
 	height: 14px;
@@ -568,6 +643,12 @@ aside > div > .user img + img {
 aside > div > .user i {
 	margin-left: 4px;
 	margin-right: 4px;
+}
+aside > div > .user i.icon-right {
+	top: 1px;
+	margin-left: 2px;
+	margin-right: 2px;
+	position: relative;
 }
 aside textarea {
 	-webkit-box-sizing: border-box;
@@ -652,22 +733,30 @@ body[data-mode="gantt"] ul.list {
 	margin-top: 34px;
 	margin-right: 0;
 }
-body[data-mode="gantt"] ul.task > li {
-	padding: 0 4px;
+body[data-mode="gantt"] table.task td {
+	padding-top: 2px;
+	padding-bottom: 0;
+	height: 18px;
 	background: none;
+	vertical-align: top;
 }
 body[data-mode="gantt"] ul.task > li:hover {
 	background-color: rgba(0, 0, 0, 0.05);
 }
-body[data-mode="gantt"] ul.task > li > div {
+body[data-mode="gantt"] table.task td.main > div {
 	width: 290px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-o-box-sizing: border-box;
 	box-sizing: border-box;
+	padding-top: 2px;
 }
-body[data-mode="gantt"] ul.task > li .center {
+body[data-mode="gantt"] table.task td.main div.name {
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	margin-left: 16px;
-	margin-right: 0;
+	overflow-x: hidden;
+	height: 15px;
 }
 body[data-mode="gantt"] ul.task > li .left {
 	top: 2px;
@@ -675,6 +764,10 @@ body[data-mode="gantt"] ul.task > li .left {
 body[data-mode="gantt"] ul.task > li .center i {
 	display: none;
 }
+body[data-mode="gantt"] table.task td.assign {
+	width: auto;
+}
+
 /*ul.task > li:nth-child(even) {
 	background-color: rgba(0, 0, 0, 0.025);
 }*/
@@ -838,6 +931,7 @@ section.tab-main-analysis ul.actions li span + span {
 	font-weight: bold;
 	margin: 0 0 16px 0;
 }
+
 #assign-list img {
 	width: 16px;
 	height: 16px;
@@ -859,6 +953,30 @@ section.tab-main-analysis ul.actions li span + span {
 	cursor: pointer;
 	display: inline-block;
 	margin-top: 2px;
+}
+
+#settings h4 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	font-size: 20px;
+	line-height: 20px;
+	font-weight: normal;
+}
+#settings img {
+	width: 16px;
+	height: 16px;
+	webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
+}
+#settings .tab-settings-name img {
+	margin-right: 4px;
+}
+#feedback textarea {
+	width: 90%;
+	height: 80px;
 }
 
 .dropdown-menu {
@@ -905,6 +1023,6 @@ body[data-mode="task"]   [data-mode-hide*="task"],
 body[data-mode="closed"] [data-mode-hide*="closed"],
 body[data-mode="gantt"]  [data-mode-hide*="gantt"],
 body[data-mode="list"]   [data-mode-hide*="list"] {
-	display: none;
+	display: none !important;
 }
 

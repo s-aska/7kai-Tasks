@@ -7,48 +7,48 @@ sub any($;$$) { connect_with_method('', @_) }
 sub get($;$$) { connect_with_method('GET', @_) }
 sub post($;$$) { connect_with_method('POST', @_) }
 
-get '/' => 'Root#index';
-get '/v4' => 'Root#v4';
-get '/mock' => 'Root#mock';
-get '/staff' => 'Root#staff';
-get '/token' => 'Root#token';
-get '/join/:list_id/:invite_code' => 'Root#join';
-get '/manual' => 'Root#manual';
+get  '/' => 'Root#index';
+get  '/v4' => 'Root#v4';
+get  '/mock' => 'Root#mock';
+get  '/staff' => 'Root#staff';
+get  '/token' => 'Root#token';
+get  '/join/:list_id/:invite_code' => 'Root#join';
+get  '/manual' => 'Root#manual';
 
-get '/apps/' => 'Apps#index';
+get  '/apps/' => 'Apps#index';
 post '/apps/revoke' => 'Apps#revoke';
 
-get '/developer/apps/' => 'Developer::Apps#index';
-get '/developer/apps/new' => 'Developer::Apps#register';
-get '/developer/apps/:id/edit' => 'Developer::Apps#edit';
-any '/developer/apps/:id/show' => 'Developer::Apps#show';
-any '/developer/apps/:id/oauth' => 'Developer::Apps#oauth';
-any '/developer/apps/:id/reset' => 'Developer::Apps#reset';
-any '/developer/apps/:id/delete' => 'Developer::Apps#delete';
+get  '/developer/apps/' => 'Developer::Apps#index';
+get  '/developer/apps/new' => 'Developer::Apps#register';
+get  '/developer/apps/:id/edit' => 'Developer::Apps#edit';
+any  '/developer/apps/:id/show' => 'Developer::Apps#show';
+any  '/developer/apps/:id/oauth' => 'Developer::Apps#oauth';
+any  '/developer/apps/:id/reset' => 'Developer::Apps#reset';
+any  '/developer/apps/:id/delete' => 'Developer::Apps#delete';
 post '/developer/apps/create' => 'Developer::Apps#create';
 post '/developer/apps/update' => 'Developer::Apps#update';
-get '/developer/docs/api' => 'Developer::Docs#api';
+get  '/developer/docs/api' => 'Developer::Docs#api';
 
 post '/oauth/request_token' => 'OAuth::Root#request_token';
-any '/oauth/authorize' => 'OAuth::Root#authorize';
+any  '/oauth/authorize' => 'OAuth::Root#authorize';
 post '/oauth/access_token' => 'OAuth::Root#access_token';
 
-get '/signout' => 'Root#signout';
+get  '/signout' => 'Root#signout';
 
 post '/signin/twitter/signin'  => 'Signin::Twitter#signin';
-get '/signin/twitter/callback' => 'Signin::Twitter#callback';
+get  '/signin/twitter/callback' => 'Signin::Twitter#callback';
 
 post '/signin/google/signin'  => 'Signin::Google#signin';
-get '/signin/google/callback' => 'Signin::Google#callback';
+get  '/signin/google/callback' => 'Signin::Google#callback';
 
 post '/signin/facebook/signin'  => 'Signin::Facebook#signin';
-get '/signin/facebook/callback' => 'Signin::Facebook#callback';
+get  '/signin/facebook/callback' => 'Signin::Facebook#callback';
 
 post '/signin/email/signup' => 'Signin::Email#signup';
 post '/signin/email/verify' => 'Signin::Email#verify';
 post '/signin/email/signin' => 'Signin::Email#signin';
 
-get '/api/1/account/me'              => 'API::Account#me';
+get  '/api/1/account/me'              => 'API::Account#me';
 post '/api/1/account/update'         => 'API::Account#update';
 post '/api/1/account/update_profile' => 'API::Account#update_profile';
 post '/api/1/account/delete'         => 'API::Account#delete';
@@ -76,6 +76,8 @@ post '/api/1/comment/unpin'  => 'API::Comment#unpin';
 
 get  '/api/1/staff/stat' => 'API::Staff#stat';
 
+post '/api/1/feedback/send' => 'API::Feedback#send';
+
 get  '/api/1/request/list'   => 'API::Request#list';
 post '/api/1/request/create' => 'API::Request#create';
 post '/api/1/request/update' => 'API::Request#update';
@@ -90,15 +92,15 @@ post '/api/1/question/unstar' => 'API::Question#unstar';
 
 post '/api/1/twitter/update_friends' => 'API::Twitter#update_friends';
 
-get '/api/1/profile_image/:screen_name' => 'API::ProfileImage#twitter';
-get '/api/1/profile/gravatar/:code' => 'API::ProfileImage#gravatar';
+get  '/api/1/profile_image/:screen_name' => 'API::ProfileImage#twitter';
+get  '/api/1/profile/gravatar/:code' => 'API::ProfileImage#gravatar';
 
-get '/public/:public_code/html' => 'API::Public#html';
-get '/public/:public_code/ical' => 'API::Public#ical';
-get '/public/:public_code/json' => 'API::Public#json';
-get '/public/:public_code/jsonp' => 'API::Public#jsonp';
-get '/public/:public_code/rss' => 'API::Public#rss';
-get '/public/:public_code/atom' => 'API::Public#atom';
+get  '/public/:public_code/html' => 'API::Public#html';
+get  '/public/:public_code/ical' => 'API::Public#ical';
+get  '/public/:public_code/json' => 'API::Public#json';
+get  '/public/:public_code/jsonp' => 'API::Public#jsonp';
+get  '/public/:public_code/rss' => 'API::Public#rss';
+get  '/public/:public_code/atom' => 'API::Public#atom';
 
 if ($ENV{PLACK_ENV} eq 'development') {
     warn router->as_string;

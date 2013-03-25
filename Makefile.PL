@@ -10,6 +10,7 @@ WriteMakefile(
         'Calendar::Japanese::Holiday'         => '',
         'Data::ICal'                          => '0.16',
         'DBD::mysql'                          => '4.021',
+        'Email::Send'                         => '',
         'Email::Sender'                       => '0.110001',
         'Email::Valid::Loose'                 => '0.05',
         'Facebook::Graph'                     => '1.0300',

@@ -193,7 +193,8 @@
       "search": [
         "settings",
         "cog",
-        "gear"
+        "gear",
+        "params"
       ],
       "code": 9881,
       "from": 9881,
@@ -263,6 +264,19 @@
     },
     {
       "search": [
+        "arrow",
+        "right"
+      ],
+      "code": 10145,
+      "uid": "9e67bfab0143d9511f8eef6897caeb88",
+      "css": "right",
+      "orig_css": "right",
+      "orig_code": 10145,
+      "src": "entypo",
+      "from": 10145
+    },
+    {
+      "search": [
         "reload",
         "undo",
         "arrow"
@@ -277,16 +291,17 @@
     },
     {
       "search": [
-        "arrow",
-        "left"
+        "mail",
+        "email",
+        "envelope"
       ],
-      "code": 57556,
-      "uid": "1b2ef17b42012a1e46743f9be8384f83",
-      "css": "left",
-      "orig_css": "left",
-      "orig_code": 57556,
+      "code": 57579,
+      "uid": "b6ef4443ecc502136135437837d9724b",
+      "css": "mail",
+      "orig_css": "mail",
+      "orig_code": 57579,
       "src": "elusive",
-      "from": 57556
+      "from": 57579
     },
     {
       "search": [
@@ -395,7 +410,8 @@
     },
     {
       "search": [
-        "inbox"
+        "inbox",
+        "stack"
       ],
       "code": 59396,
       "from": 59255,
@@ -582,7 +598,8 @@
     },
     {
       "search": [
-        "mobile"
+        "mobile",
+        "phone"
       ],
       "code": 61707,
       "uid": "0357f7abbc0babf43509669f332e41e6",

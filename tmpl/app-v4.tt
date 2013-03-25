@@ -19,8 +19,8 @@
 <script src="/static/js/v4/app-tasks.js"></script>
 <script src="/static/js/v4/app-tasks-desktop.js"></script>
 </head>
-<body class="tab-main-home tab-task-basic tab-analysis-daily">
-<div class="navbar navbar-inverse navbar-fixed-top">
+<body class="tab-main-home tab-task-basic tab-analysis-daily tab-settings-name">
+<div class="navbar navbar-inverse navbar-fixed-top" data-setup="nav">
 	<div class="navbar-inner">
 		<div class="fluid-container">
 			<ul class="nav">
@@ -39,7 +39,7 @@
 			</ul>
 			<ul class="nav pull-right">
 				<li>
-					<a href="#">
+					<a class="feedback">
 						<i class="icon-megaphone"></i>
 						<span data-setup="localize" data-text-ja="フィードバック">Feedback</span>
 					</a>
@@ -50,9 +50,12 @@
 						<span></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a href="#">Action</a></li>
-						<li><a href="#">Another action</a></li>
-						<li><a href="#">Something else here</a></li>
+						<li><a class="settings" data-setup="localize" data-text-ja="設定">Settings</a></li>
+						<li><a class="/apps/" data-setup="localize" data-text-ja="連携アプリ">Apps</a></li>
+						<li><a href="/manual" target="_blank" data-setup="localize" data-text-ja="マニュアル">Manual</a></li>
+						<li class="divider"></li>
+						<li><a class="/developer/docs/api" data-setup="localize" data-text-ja="開発者向けAPI">API for Developer</a></li>
+						<li><a class="about" data-setup="localize" data-text-ja="7kai Tasksについて">About</a></li>
 						<li class="divider"></li>
 						<li><a href="/signout" data-setup="localize" data-text-ja="サインアウト">Sign Out</a></li>
 					</ul>
@@ -343,48 +346,50 @@
 						</span>
 					</div>
 				</header>
-				<ul class="unstyled task" data-mode-hide="list">
-					<li class="clearfix" data-setup="task" draggable="true">
-						<div>
-							<div class="left">
-								<!-- <i class="icon-move" data-mode-hide="gantt"></i> -->
-								<i class="icon-ok"></i>
-							</div>
-							<div class="center"><span><span class="back"><span class="handle"></span></span><span></span></span><span contenteditable="true">URLとか</span></div>
-							<div class="right" data-mode-hide="gantt">
-								<span class="rate" data-mode-hide="closed">
-									<span data-rate="0">
-										<i class="icon-star-empty" style="opacity:0"></i>
-										<span data-rate="1">
+				<table class="task" data-mode-hide="list">
+					<tbody>
+						<tr data-setup="task" draggable="true">
+							<td class="main">
+								<div>
+									<div class="action-ok"><i class="icon-ok"></i></div>
+									<div class="name" contenteditable="false">URLとか</div>
+									<ul class="unstyled pin" data-mode-hide="gantt">
+										<li><i class="icon-pin"></i><span>URLとか</span></li>
+									</ul>
+									<ul class="unstyled comment" data-mode-hide="gantt">
+										<li><i class="icon-comment"></i><span>URLとか</span></li>
+									</ul>
+								</div>
+							</td>
+							<td class="rate" data-mode-hide="gantt,closed">
+								<span data-rate="0">
+									<i class="icon-star-empty" style="opacity:0"></i>
+									<span data-rate="1">
+										<i class="icon-star-empty"></i>
+										<span data-rate="2">
 											<i class="icon-star-empty"></i>
-											<span data-rate="2">
+											<span data-rate="3">
 												<i class="icon-star-empty"></i>
-												<span data-rate="3">
+												<span data-rate="4">
 													<i class="icon-star-empty"></i>
-													<span data-rate="4">
+													<span data-rate="5">
 														<i class="icon-star-empty"></i>
-														<span data-rate="5">
-															<i class="icon-star-empty"></i>
-														</span>
 													</span>
 												</span>
 											</span>
 										</span>
 									</span>
 								</span>
-								<span class="due" data-mode-hide="gantt">12/31 (金)</span>
+							</td>
+							<td class="assign"><span><span class="back"><span class="handle"></span></span><span class="user"></span></span></td>
+							<td class="due" data-mode-hide="gantt">12/31 (金)</td>
+							<td class="action-close" data-mode-hide="gantt">
 								<i class="icon-cancel" data-mode-hide="gantt,closed"></i>
 								<i class="icon-ccw" data-mode-show="closed"></i>
-							</div>
-						</div>
-						<ul class="unstyled pin" data-mode-hide="gantt">
-							<li><i class="icon-pin"></i> <span>URLとか</span></li>
-						</ul>
-						<ul class="unstyled comment" data-mode-hide="gantt">
-							<li><i class="icon-comment"></i> <span>URLとか</span></li>
-						</ul>
-					</li>
-				</ul>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 				<div data-mode-show="task,gantt">
 					<i class="icon-plus"></i>
 					<div contenteditable="true"></div>
@@ -401,11 +406,11 @@
 						data-text-ja="編集"
 					>Edit</span>
 				</span>
-				<p><strong>PC版バージョンアップ</strong></p>
+				<p><strong></strong></p>
 				<i class="icon-calendar"></i>
-				<span class="due">1/21</span>
+				<span class="due">-</span>
 				<i class="icon-clock"></i>
-				<span class="duration">6 days</span>
+				<span class="duration">-</span>
 				<span class="user"><i class="icon-user"></i></span>
 			</div>
 
@@ -802,6 +807,199 @@
 		>Delete</button>
 	</div>
 </form>
+<form id="settings" class="modal" data-setup="modal,settings" data-modal="settings">
+	<div class="modal-header">
+		<button type="button" class="close">&times;</button>
+		<h3 data-setup="localize" data-text-ja="設定">Settings</h3>
+	</div>
+	<div class="modal-body">
+		<ul class="nav nav-tabs">
+			<li class="active">
+				<a
+					data-setup="localize,tab"
+					data-tab="settings-name"
+					data-text-ja="表示名 / アイコン"
+				>Display Name / Icon</a>
+			</li>
+			<li>
+				<a
+					data-setup="localize,tab"
+					data-tab="settings-account"
+					data-text-ja="アカウント追加 / 削除"
+				>Account Add / Delete</a>
+			</li>
+		</ul>
+		<div class="tab-settings-name">
+			<label
+				data-setup="localize"
+				data-text-ja="表示名 (1-20文字)"
+			>Display Name (1-20 characters)</label>
+			<input type="text" name="name" value="">
+			<label
+				data-setup="localize"
+				data-text-ja="アイコン"
+			>Icon</label>
+			<ul class="unstyled">
+				<li class="clearfix">
+					<label class="radio"><input type="radio" name="icon" value=""><img><span></span><a target="_blank" style="margin-left:10px" data-setup="localize" data-text-ja="変更">change</a></label>
+				</li>
+			</ul>
+			<button
+				class="btn btn-primary"
+				data-setup="localize"
+				data-text-ja="保存"
+			>Save</button>
+		</div>
+		<div class="tab-settings-account">
+			<div class="pull-left" style="width: 50%;">
+				<h4
+					data-setup="localize"
+					data-text-ja="アカウント追加"
+				>Add Account</h4>
+				<ul class="unstyled">
+					<li style="margin-bottom: 10px;">
+						<a class="btn btn-small btn-connect-with-twitter"><i class="icon-twitter"></i> Connect with Twitter</a>
+					</li>
+					<li style="margin-bottom: 10px;">
+						<a class="btn btn-small btn-connect-with-facebook"><i class="icon-facebook"></i> Connect with Facebook</a>
+					</li>
+					<li>
+						<a class="btn btn-small btn-connect-with-google"><i class="icon-google"></i> Connect with Google</a>
+					</li>
+				</ul>
+			</div>
+			<div class="pull-left" style="margin-left:20px">
+				<h4
+					data-setup="localize"
+					data-text-ja="アカウント削除"
+				>Delete Account</h4>
+				<ul class="unstyled">
+					<li style="margin-bottom: 10px;">
+						<img>
+						<span class="name"></span>
+						<button
+							class="btn btn-danger btn-mini"
+							data-setup="localize"
+							data-text-ja="削除"
+							data-text-confirm-en="Do you really want to delete the account?"
+							data-text-confirm-ja="本当にこのアカウントを削除しますか?"
+						>Delete</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<span
+			class="btn"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</span>
+	</div>
+</form>
+<form id="feedback" class="modal" data-setup="modal,feedback" data-modal="feedback">
+	<div class="modal-header">
+		<button type="button" class="close">&times;</button>
+		<h3 data-setup="localize" data-text-ja="フィードバック">Feedback</h3>
+	</div>
+	<div class="modal-body">
+		<h4 data-setup="localize" data-text-ja="ご意見・ご要望など">Please let us know what you think.</h4>
+		<textarea></textarea>
+	</div>
+	<div class="modal-footer">
+		<span
+			class="btn"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</span>
+		<button
+			class="btn btn-primary"
+			data-setup="localize"
+			data-text-ja="送信"
+		>Send</button>
+	</div>
+</form>
+<form id="about" class="modal" data-setup="modal,about" data-modal="about">
+	<div class="modal-header">
+		<button type="button" class="close">&times;</button>
+		<h3 data-setup="localize" data-text-ja="7kai Tasksについて">About 7kai Tasks</h3>
+	</div>
+	<div class="modal-body">
+		<dl>
+			<dt data-setup="localize" data-text-ja="デベロッパー">Developer</dt>
+			<dd>Shinichiro Aska</dd>
+			<dt data-setup="localize" data-text-ja="サポート">Support</dt>
+			<dd>
+				<ul class="unstyled">
+					<li><a href="mailto:s.aska.org@gmail.com"><i class="icon-mail"></i> E-mail</a></li>
+					<li><a href="https://twitter.com/su_aska" target="_blank"><i class="icon-twitter"></i> Twitter</a></li>
+					<li><a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank"><i class="icon-facebook"></i> Facebook Page</a></li>
+				</ul>
+			</dd>
+			<dt data-setup="localize" data-text-ja="共有">Share</dt>
+			<dd>
+				<ul class="unstyled">
+					<li><a class="tweet"><i class="icon-twitter"></i> Tweet</a></li>
+					<li><a class="share"><i class="icon-facebook"></i> Share</a></li>
+				</ul>
+			</dd>
+			<dt data-setup="localize" data-text-ja="統計・歴史">Statistics / History ...etc</dt>
+			<dd><a href="/staff" target="_blank" data-setup="localize" data-text-ja="スタッフルーム">Staff Room</a></dd>
+		</dl>
+	</div>
+	<div class="modal-footer">
+		<span
+			class="btn"
+			data-setup="localize"
+			data-text-ja="閉じる"
+		>Close</span>
+	</div>
+</form>
 <div class="modal-backdrop fade"></div>
+<div id="ui-tooltip" class="tooltip bottom" style="display: none;">
+	<div class="tooltip-arrow"></div>
+	<div class="tooltip-inner"></div>
+</div>
+<div style="display: none;">
+<form id="connect-with-twitter" method="post" action="/signin/twitter/signin">
+	<input type="hidden" name="mode" value="add">
+</form>
+<form id="connect-with-facebook" method="post" action="/signin/facebook/signin">
+	<input type="hidden" name="mode" value="add">
+</form>
+<form id="connect-with-google" method="post" action="/signin/google/signin">
+	<input type="hidden" name="mode" value="add">
+</form>
+<div
+	data-setup="messages"
+
+	data-text-comment-en="comment"
+	data-text-comment-ja="コメント"
+
+	data-text-create-task-en="create the task"
+	data-text-create-task-ja="タスクを作成"
+	data-text-update-task-en="update the task"
+	data-text-update-task-ja="タスクを更新"
+	data-text-clear-task-en="clear the task"
+	data-text-clear-task-ja="完了済タスクを削除"
+
+	data-text-reopen-task-en="revert the task"
+	data-text-reopen-task-ja="タスクを差戻"
+	data-text-start-task-en="start the task"
+	data-text-start-task-ja="タスクに着手"
+	data-text-fix-task-en="fix the task"
+	data-text-fix-task-ja="タスクを処理"
+	data-text-close-task-en="close the task"
+	data-text-close-task-ja="タスクを完了"
+
+	data-text-rereopen-task-en="update (close => open) the task"
+	data-text-rereopen-task-ja="タスクを更新 (完了 => 未着手)"
+	data-text-restart-task-en="update (close => start) the task"
+	data-text-restart-task-ja="タスクを更新 (処理済 => 着手)"
+	data-text-refix-task-en="update (close => fix) the task"
+	data-text-refix-task-ja="タスクを更新 (完了 => 処理済)"
+></div>
+<div id="receiver" data-setup="receiver"></div>
+</div>
 </body>
 </html>

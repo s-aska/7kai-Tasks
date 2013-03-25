@@ -31,6 +31,23 @@ app.addListener('showTask', function(task, is_notification){
 	}
 });
 
+app.setup.nav = function(ele){
+	ele.find('.settings').click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		app.modal.show('settings');
+	});
+	ele.find('.feedback').click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		app.modal.show('feedback');
+	});
+	ele.find('.about').click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		app.modal.show('about');
+	});
+};
 app.setup.home = function(section){
 
 	app.on(section.find('> header .icon-plus').parent(), 'click', function(){
@@ -52,7 +69,7 @@ app.setup.home = function(section){
 
 	var ul = section.find('ul.list');
 	var html_list = ul.html();
-	var html_task = section.find('ul.task').html();
+	var html_task = section.find('table.task tbody').html();
 
 	ul.empty();
 
@@ -95,55 +112,63 @@ app.setup.home = function(section){
 	});
 
 	app.addListener('registerTask', function(task, list, is_move){
-		var ul = app.data.listli_map[list.id].find('> ul');
+		var tbody = app.data.listli_map[list.id].find('> table tbody');
 		if (task.id in app.data.taskli_map) {
-			var li = app.data.taskli_map[task.id].data('task', task);
-			app.setup.init(li);
+			var tr = app.data.taskli_map[task.id].data('task', task);
+			app.setup.init(tr);
 			/*
 			 * D&Dで他のリストやタスクにドロップしたとき
 			 */
 			if (is_move) {
 				if (task.parent_id in app.data.taskli_map) {
-					app.data.taskli_map[task.parent_id].after(li);
+					app.data.taskli_map[task.parent_id].after(tr);
 				} else {
-					li.appendTo(ul);
+					tr.appendTo(tbody);
 				}
 			}
 		} else {
-			var li = app.util.parseHTML(html_task).data('task', task);
-			app.data.taskli_map[task.id] = app.setup.init(li);
+			var tr = app.util.parseHTML(html_task).data('task', task);
+			app.data.taskli_map[task.id] = app.setup.init(tr);
 			if (task.parent_id in app.data.taskli_map) {
-				app.data.taskli_map[task.parent_id].after(li);
+				app.data.taskli_map[task.parent_id].after(tr);
 			} else {
-				li.hide();
-				li.appendTo(ul);
-				li.slideDown('fast', function(){
-					li.css('display', '');
+				tr.hide();
+				tr.appendTo(tbody);
+				tr.slideDown('fast', function(){
+					tr.css('display', '');
 				});
 			}
 		}
 	});
 
 	app.addListener('sortTask', function(tasks, column, reverse){
-		for (var i = 0, max_i = tasks.length; i < max_i; i++) {
-			var li = app.data.taskli_map[tasks[i].id];
-			var parents = app.util.findParentTasks(tasks[i]);
-			if (parents.length) {
-				li.find('> div').css('paddingLeft', parents.length * 18 + 'px');
-			} else {
-				li.find('> div').css('paddingLeft', '0');
-			}
-			app.data.listli_map[tasks[i].list.id].find('> ul').append(li);
-		}
+		// for (var i = 0, max_i = tasks.length; i < max_i; i++) {
+		// 	var li = app.data.taskli_map[tasks[i].id];
+		// 	var parents = app.util.findParentTasks(tasks[i]);
+		// 	if (parents.length) {
+		// 		li.find('> div').css('paddingLeft', parents.length * 18 + 'px');
+		// 	} else {
+		// 		li.find('> div').css('paddingLeft', '0');
+		// 	}
+		// 	app.data.listli_map[tasks[i].list.id].find('> ul').append(li);
+		// }
 	});
 
 	app.addListener('showTask', function(task){
-		ul.find('ul.task > li.selected').removeClass('selected');
-		app.data.taskli_map[task.id].addClass('selected');
+		ul.find('table.task tr.selected')
+			.attr('draggable', 'true')
+			.removeClass('selected')
+			.find('td.main div.name')
+				.attr('contenteditable', 'false');
+		app.data.taskli_map[task.id]
+			.addClass('selected')
+			.attr('draggable', 'false')
+			.find('td.main div.name')
+				.attr('contenteditable', 'true');
 	});
 
 	app.addListener('initGanttchart', function(){
-		ul.find('ul.task > li').trigger('app.resize.gantt');
+		ul.find('table.task tr').trigger('app.resize.gantt');
 	});
 
 	app.addListener('clearList', function(list){
@@ -200,7 +225,7 @@ app.setup.list = function(li){
 	// 1回だけ
 	if (li.data('init')) { return }
 
-	li.find('> ul').empty();
+	li.find('tbody').empty();
 
 	app.draggable.handle(li.find('i.icon-sort').get(0));
 
@@ -216,7 +241,7 @@ app.setup.list = function(li){
 		}
 	});
 
-	app.on(li.find('header > .icon-plus').parent(), 'click', function(e){
+	app.on(li.find('header .icon-plus').parent(), 'click', function(e){
 		app.modal.show('register-task', li.data('list'));
 	});
 
@@ -350,8 +375,8 @@ app.setup.list = function(li){
 
 	li.data('init', true);
 };
-app.setup.task = function(li){
-	var task = li.data('task');
+app.setup.task = function(tr){
+	var task = tr.data('task');
 
 	// テンプレートとして読まれた時
 	if (!task) { return }
@@ -359,55 +384,61 @@ app.setup.task = function(li){
 	// 新規、更新時共通
 
 	// todo
-	li.toggleClass('filter-inbox',
+	tr.toggleClass('filter-inbox',
 		task.assign.length > 0 ? !!app.util.findMe(task.assign) : !!app.util.findMe([task.requester])
 	);
 
-	li.toggleClass('filter-sent',
+	tr.toggleClass('filter-sent',
 		task.assign.length > 0 && app.util.findMe([task.requester])
 	);
 
-	li.toggleClass('filter-received', !app.util.findMe([task.requester]) && app.util.findMe(task.assign));
+	tr.toggleClass('filter-received', !app.util.findMe([task.requester]) && app.util.findMe(task.assign));
 
 	// task closed
-	if (li.data('init')) {
-		/*
-		 * 完了切り替え時にエフェクト
-		 */
-		if (Boolean(li.hasClass('closed')) !== Boolean(task.closed)) {
-			li.css('display', 'block').fadeOut('fast', function(){
-				li.css('display', '');
-			});
-		}
-	}
-	li.toggleClass('closed', task.closed ? true : false);
-	li.toggleClass('in-closed', app.util.hasCloseParentTask(task) ? true : false);
+	// if (tr.data('init')) {
+	// 	/*
+	// 	 * 完了切り替え時にエフェクト
+	// 	 */
+	// 	if (Boolean(tr.hasClass('closed')) !== Boolean(task.closed)) {
+	// 		tr.css('display', 'table-row').find('td.main > div').slideUp(function(){
+	// 			tr.css('display', '');
+	// 			tr.find('td.main > div').css('display', '');
+	// 		});
+	// 	}
+	// }
+	tr.toggleClass('closed', task.closed ? true : false);
+	tr.toggleClass('in-closed', app.util.hasCloseParentTask(task) ? true : false);
 
 	if (task.closed || app.util.hasCloseParentTask(task)) {
-		// li.attr('data-mode-show', app.util.hasOpenChildTask(task) ? 'task,gantt,closed' : 'closed');
-		li.attr('data-mode-show', 'closed');
+		// tr.attr('data-mode-show', app.util.hasOpenChildTask(task) ? 'task,gantt,closed' : 'closed');
+		tr.attr('data-mode-show', 'closed');
 	} else {
-		li.attr('data-mode-show', app.util.hasCloseChildTask(task) ? 'task,gantt,closed' : 'task,gantt');
+		tr.attr('data-mode-show', app.util.hasCloseChildTask(task) ? 'task,gantt,closed' : 'task,gantt');
 	}
 
-	// li.attr('data-mode-show',
+	// tr.attr('data-mode-show',
 	// 	app.util.hasClosedChildTask(task) ? 'task,gantt,closed' :
 	// 	app.util.isCloseTask(task)        ? 'closed' : 'task,gantt');
 
 
 	// task status
-	li.find('.left i:last').attr('class',
+	tr.find('.action-ok i').attr('class',
 		task.status === 0 ? 'icon-ok open' :
 		task.status === 1 ? 'icon-play' : 'icon-ok'
 	);
 
 	// task name
-	li.find('.center > span:last').text(task.name);
+	tr.find('td.main div.name').text(task.name);
 
 	// assign
-	var assign = li.find('.center > span:first span:last');
+	var assign = tr.find('td.assign span.user');
 	assign.empty();
 	if (task.assign.length) {
+		assign.append(
+			$('<img/>').attr('src', app.util.getIconUrl(task.requester)).attr('data-mode-hide', 'gantt')
+		).append(
+			$('<i class="icon-right"></i>').attr('data-mode-hide', 'gantt')
+		);
 		for (var i = 0, max_i = task.assign.length; i < max_i; i++) {
 			var icon = $('<img/>').attr('src', app.util.getIconUrl(task.assign[i]));
 			if (i > 0) {
@@ -415,8 +446,6 @@ app.setup.task = function(li){
 			}
 			assign.append(icon);
 		}
-		var icon = $('<img/>').attr('src', app.util.getIconUrl(task.requester)).attr('data-mode-hide', 'gantt');
-		assign.append($('<i class="icon-left"></i>').attr('data-mode-hide', 'gantt')).append(icon);
 	} else {
 		var icon = $('<img/>').attr('src', app.util.getIconUrl(task.requester));
 		assign.append(icon);
@@ -424,14 +453,14 @@ app.setup.task = function(li){
 
 	// task due
 	if (task.due) {
-		li.find('.due').text(app.date.mdw(task.due_date));
+		tr.find('.due').text(app.date.mdw(task.due_date));
 	} else {
-		li.find('.due').text('');
+		tr.find('.due').text('');
 	}
 
 	//
-	var back = li.find('.back');
-	var handle = li.find('.handle');
+	var back = tr.find('.back');
+	var handle = tr.find('.handle');
 	if (task.duration > 1) {
 		back.css('width', (task.duration * 21) - 9 + 'px');
 	} else {
@@ -439,7 +468,7 @@ app.setup.task = function(li){
 	}
 
 	// task rate
-	li.find('.rate i').each(function(i){
+	tr.find('.rate i').each(function(i){
 		if (i > 0 && i <= task.rate) {
 			$(this).attr('class', 'icon-star');
 		} else {
@@ -448,10 +477,10 @@ app.setup.task = function(li){
 	});
 
 	// recent
-	var ul_comment = li.find('ul.comment');
+	var ul_comment = tr.find('ul.comment');
 	if (task.recent) {
 		ul_comment.empty();
-		$('<li><i class="icon-comment"></i> <span></span></li>')
+		$('<li><i class="icon-comment"></i><span></span></li>')
 			.find('span').text(task.recent.message)
 			.end()
 			.appendTo(ul_comment);
@@ -460,11 +489,11 @@ app.setup.task = function(li){
 	}
 
 	// pin
-	var ul_pin = li.find('ul.pin');
+	var ul_pin = tr.find('ul.pin');
 	if (task.pins.length) {
 		ul_pin.empty();
 		for (var i = 0, max_i = task.pins.length; i < max_i; i++) {
-			$('<li><i class="icon-pin"></i> <span></span></li>')
+			$('<li><i class="icon-pin"></i><span></span></li>')
 				.find('span').text(task.pins[i].message)
 				.end()
 				.appendTo(ul_pin);
@@ -474,32 +503,34 @@ app.setup.task = function(li){
 	}
 
 	if (task.parent_id in app.data.taskli_map) {
-		var paddingLeft = parseInt(app.data.taskli_map[task.parent_id].find('> div').css('paddingLeft'), 10);
-		li.find('> div').css('paddingLeft', (paddingLeft + 18) + 'px');
-		// app.data.taskli_map[task.parent_id].after(li);
+		var paddingLeft = parseInt(app.data.taskli_map[task.parent_id].find('td.main > div').css('paddingLeft'), 10);
+		tr.find('td.main > div').css('paddingLeft', (paddingLeft + 16) + 'px');
+		// app.data.taskli_map[task.parent_id].after(tr);
 	} else {
-		li.find('> div').css('paddingLeft', '');
+		tr.find('td.main > div').css('paddingLeft', '');
 	}
 
-	li.trigger('app.resize');
+	tr.trigger('app.resize');
 
-	if (li.data('init')) {
-		li.trigger('app.resize');
+	if (tr.data('init')) {
+		tr.trigger('app.resize');
 		return;
 	}
 
-	li.data('init', true);
+	// return ;
+
+	tr.data('init', true);
 
 	var body = $('body');
 
-	li.find('.center > span:last')
+	tr.find('td.main div.name')
 		.on('focus', function(e){
-			li.prop('draggable', false);
+			// li.prop('draggable', false);
 		})
 		.on('blur', function(e){
-			li.prop('draggable', true);
+			// li.prop('draggable', true);
 			var ele = $(this);
-			var task = li.data('task');
+			var task = tr.data('task');
 			var name = ele.text();
 			if (name === task.name) {
 				return;
@@ -521,7 +552,12 @@ app.setup.task = function(li){
 				this.blur();
 			}
 		})
-		.on('click dblclick', function(e){
+		.on('mousedown', function(e){
+			if (tr.hasClass('selected')) {
+				e.stopPropagation();
+			}
+		})
+		.on('dblclick', function(e){
 			e.preventDefault();
 			e.stopPropagation();
 		});
@@ -529,18 +565,19 @@ app.setup.task = function(li){
 	/*
 	 * D&Dによる階層変更
 	 */
-	li.get(0).addEventListener('dragstart', function(e){
-		li.addClass('dragging');
-		var task = li.data('task');
+	tr.get(0).addEventListener('dragstart', function(e){
+		tr.addClass('dragging');
+		var task = tr.data('task');
 		app.data.dragtask = task;
+		e.dataTransfer.setData('text', task.id);
 	}, false);
-	li.get(0).addEventListener('dragend', function(e){
-		li.removeClass('dragging');
+	tr.get(0).addEventListener('dragend', function(e){
+		tr.removeClass('dragging');
 		app.data.dragtask = null;
 	}, false);
-	li.get(0).addEventListener('dragover', function(e){
+	tr.get(0).addEventListener('dragover', function(e){
 		e.stopPropagation();
-		var task = li.data('task');
+		var task = tr.data('task');
 		if (task.id === app.data.dragtask.id) {
 			return true;
 		}
@@ -556,10 +593,10 @@ app.setup.task = function(li){
 		e.preventDefault();
 		return false;
 	}, false);
-	li.get(0).addEventListener('drop', function(e){
+	tr.get(0).addEventListener('drop', function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		var task = li.data('task');
+		var task = tr.data('task');
 		// 念の為
 		if (task.id === app.data.dragtask.id) {
 			return true;
@@ -578,9 +615,9 @@ app.setup.task = function(li){
 	/*
 	 * アイコン位置調整
 	 */
-	var due_span = li.find('.center span:first');
-	li.on('app.resize.gantt', function(e, due_date){
-		var task = li.data('task');
+	var due_span = tr.find('td.assign > span');
+	tr.on('app.resize.gantt', function(e, due_date){
+		var task = tr.data('task');
 		if (task.due || due_date) {
 			var days = app.date.delta(due_date || task.due_date, app.data.gantt_start).days + 1;
 			if (task.duration > 1) {
@@ -600,7 +637,7 @@ app.setup.task = function(li){
 			due_span.css('left', '303px');
 		}
 	});
-	li.trigger('app.resize.gantt');
+	tr.trigger('app.resize.gantt');
 
 	/*
 	 * D&Dによる所要日数変更
@@ -609,7 +646,7 @@ app.setup.task = function(li){
 	handle.mousedown(function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		var task  = li.data('task');
+		var task  = tr.data('task');
 		if (!task.due) {
 			return;
 		}
@@ -668,7 +705,7 @@ app.setup.task = function(li){
 	bar.mousedown(function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		var task  = li.data('task');
+		var task  = tr.data('task');
 		if (!bar.hasClass('draggable')) {
 			return;
 		}
@@ -694,7 +731,7 @@ app.setup.task = function(li){
 				return;
 			}
 			diff = move;
-			li.trigger('app.resize.gantt',
+			tr.trigger('app.resize.gantt',
 				new Date(
 					task.due_date.getFullYear()
 					, task.due_date.getMonth()
@@ -731,7 +768,7 @@ app.setup.task = function(li){
 	 */
 	bar.click(function(e){ return false });
 
-	li.on('click', function(e){
+	tr.on('click', function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		if (body.attr('data-mode') === 'gantt') {
@@ -752,15 +789,15 @@ app.setup.task = function(li){
 				}, task.list);
 			}
 		} else {
-			app.fireEvent('showTask', li.data('task'));
+			app.fireEvent('showTask', tr.data('task'));
 		}
 	});
-	li.on('dblclick', function(e){
+	tr.on('dblclick', function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		app.modal.show('register-task', [li.data('task').list, li.data('task')]);
+		app.modal.show('register-task', [tr.data('task').list, tr.data('task')]);
 	});
-	app.on(li.find('.left i:last'), 'click dblclick', function(e){
+	app.on(tr.find('td.action-ok i'), 'click dblclick', function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		var task = li.data('task');
@@ -770,7 +807,7 @@ app.setup.task = function(li){
 				status: task.status >= 2 ? 0 : task.status + 1
 		});
 	});
-	app.on(li.find('i.icon-cancel'), 'click dblclick', function(e){
+	app.on(tr.find('i.icon-cancel'), 'click dblclick', function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		app.task.update({
@@ -779,7 +816,7 @@ app.setup.task = function(li){
 				closed: 1
 		});
 	});
-	app.on(li.find('i.icon-ccw'), 'click dblclick', function(e){
+	app.on(tr.find('i.icon-ccw'), 'click dblclick', function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		app.task.update({
@@ -788,7 +825,7 @@ app.setup.task = function(li){
 				closed: 0
 		});
 	});
-	app.on(li.find('span[data-rate]'), 'click dblclick', function(e){
+	app.on(tr.find('span[data-rate]'), 'click dblclick', function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		app.task.update({
@@ -922,12 +959,15 @@ app.setup.aside = function(aside){
 
 		user.empty();
 		if (task.assign.length) {
+			user.append(
+				$('<img/>').attr('src', app.util.getIconUrl(task.requester))
+			).append(
+				$('<i class="icon-right"></i>')
+			);
 			for (var i = 0, max_i = task.assign.length; i < max_i; i++) {
 				var icon = $('<img/>').attr('src', app.util.getIconUrl(task.assign[i]));
 				user.append(icon);
 			}
-			var icon = $('<img/>').attr('src', app.util.getIconUrl(task.requester));
-			user.append($('<i class="icon-left"></i>')).append(icon);
 		} else {
 			var icon = $('<img/>').attr('src', app.util.getIconUrl(task.requester));
 			user.append(icon);
@@ -1078,7 +1118,7 @@ app.setup.gantt = function(ele){
 		app.data.gantt_width = parseInt((win.width() - ele.offset().left - 42) / 21, 10);
 		app.fireEvent('initGanttchart');
 	});
-}
+};
 app.setup.analysis = function(section){
 
 	/*
@@ -1468,6 +1508,110 @@ app.setup.clearList = function(form){
 	form.on('show', function(e, list){
 		h1.text(list.name);
 		list_id.val(list.id);
+	});
+};
+app.setup.settings = function(form){
+	var ul_icon = form.find('.tab-settings-name ul');
+	var html_icon = ul_icon.html();
+	var ul_account = form.find('.tab-settings-account ul:last');
+	var html_account = ul_account.html();
+	app.addListener('receiveMe', function(data){
+		ul_icon.empty();
+		ul_account.empty();
+		$.each(data.sub_accounts, function(i, sub_account){
+			var li_account = app.util.parseHTML(html_account);
+			li_account.find('img').attr('src', app.util.getIconUrl(sub_account.code));
+			li_account.find('.name').text(sub_account.name);
+			li_account.find('button').click(function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				if (confirm(app.util.text($(this), 'confirm'))) {
+					;
+				}
+			});
+			app.setup.init(li_account).appendTo(ul_account);
+			var li_icon = app.util.parseHTML(html_icon);
+			li_icon.find('img').attr('src', app.util.getIconUrl(sub_account.code));
+			li_icon.find('span').text(sub_account.name);
+			li_icon.find('input').val(sub_account.data.icon);
+			var url = /^tw-[0-9]+$/.test(sub_account.code) ? 'https://twitter.com/settings/profile'
+							: /^fb-[0-9]+$/.test(sub_account.code) ? 'https://www.facebook.com/me'
+							: app.env.lang === 'ja' ? 'https://ja.gravatar.com/' : 'https://gravatar.com/';
+			li_icon.find('a').attr('href', url);
+			app.setup.init(li_icon).appendTo(ul_icon);
+		});
+	});
+	form.submit(function(e){
+		e.preventDefault();
+		var name = form.find('input[name="name"]').val();
+		var icon = form.find('input[name="icon"]:checked').val();
+		app.api.account.update_profile({
+			name: name,
+			icon: icon
+		}).done(function(){
+			app.modal.hide();
+			app.load();
+		});
+	});
+	form.on('show', function(e){
+		form.find('input[name="name"]').val(app.data.sign.name);
+		form.find('input[name="icon"]').val([app.data.sign.icon]);
+	});
+	form.find('.btn-connect-with-twitter').click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		$('#connect-with-twitter').submit();
+	})
+	form.find('.btn-connect-with-facebook').click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		$('#connect-with-facebook').submit();
+	})
+	form.find('.btn-connect-with-google').click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		$('#connect-with-google').submit();
+	})
+};
+app.setup.feedback = function(form){
+	form.submit(function(e){
+		e.preventDefault();
+		var message = form.find('textarea').val();
+		app.api.feedback.send({
+			message: message
+		}).done(function(){
+			form.find('textarea').val('');
+			app.modal.hide();
+		});
+	});
+	form.on('show', function(){
+		form.find('textarea').focus();
+	});
+};
+app.setup.about = function(form){
+	var url = location.protocol + '//' + location.host + '/';
+	var title = '7kai Tasks';
+	app.on(form.find('.tweet'), 'click', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		window.tweet = window.tweet || {};
+		var D=550,A=450,C=screen.height,B=screen.width,H=Math.round((B/2)-(D/2)),G=0,F=document,E;
+		if(C>A)
+			G=Math.round((C/2)-(A/2));
+		window.tweet.shareWin = window.open(
+			'http://twitter.com/share?url=' + url + '&text=' + title,
+			'','left='+H+',top='+G+',width='+D+',height='+A+',personalbar=0,toolbar=0,scrollbars=1,resizable=1'
+		);
+	});
+	app.on(form.find('.share'), 'click', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		window.share = window.share || {};
+		var D=550,A=450,C=screen.height,B=screen.width,H=Math.round((B/2)-(D/2)),G=0;
+		if(C>A)
+			G=Math.round((C/2)-(A/2));
+		window.fbshare.shareWin = window.open('http://www.facebook.com/sharer.php?u=' + url,
+			'','left='+H+',top='+G+',width='+D+',height='+A+',personalbar=0,toolbar=0,scrollbars=1,resizable=1');
 	});
 };
 
