@@ -5,6 +5,7 @@ use warnings;
 use DoubleSpark::Validator;
 use Log::Minimal;
 use Email::Sender::Simple qw(sendmail);
+use Email::Sender::Transport::SMTP;
 use Email::Simple;
 use Email::Simple::Creator;
 
