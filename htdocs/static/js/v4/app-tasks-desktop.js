@@ -567,10 +567,10 @@ app.setup.task = function(tr){
 
 	tr.find('td.main div.name')
 		.on('focus', function(e){
-			// li.prop('draggable', false);
+			tr.addClass('editing');
 		})
 		.on('blur', function(e){
-			// li.prop('draggable', true);
+			tr.removeClass('editing');
 			var ele = $(this);
 			var task = tr.data('task');
 			var name = ele.text();
@@ -895,6 +895,9 @@ app.setup.aside = function(aside){
 	var html_pin        = pin.html();
 	var html_comment    = comments.html();
 
+	textarea.prop('disabled', true);
+	aside.find('.btn').attr('disabled', 'true');
+
 	pin.empty();
 	comments.empty();
 
@@ -1019,8 +1022,10 @@ app.setup.aside = function(aside){
 			flow.data('task_id', '');
 			flow.data('list_id', '');
 			flow.removeClass('active');
+			aside.find('.btn').attr('disabled', 'true');
 			return;
 		}
+		aside.find('.btn').removeAttr('disabled');
 		aside.data('task', task);
 		form.find('input[name="list_id"]').val(task.list.id);
 		form.find('input[name="task_id"]').val(task.id);

@@ -520,7 +520,10 @@ table.task tr:hover {
 	background-color: rgba(0, 0, 0, 0.025);
 }
 table.task tr.selected {
-	background-color: rgba(0, 0, 0, 0.025);
+	background-color: #ffffea;
+}
+table.task tr.editing {
+	background-color: #fefed6;
 }
 table.task tr.closed .center span,
 table.task tr.in-closed .center span {
