@@ -20,7 +20,7 @@
 .icon-attention:before { content: '\26a0'; } /* '⚠' */
 .icon-edit:before { content: '\270d'; } /* '✍' */
 .icon-ok:before { content: '\2713'; } /* '✓' */
-.icon-cancel:before { content: '\2715'; } /* '✕' */
+.icon-cancel:before { content: '\e808'; } /* '' */
 .icon-right:before { content: '\27a1'; } /* '➡' */
 .icon-ccw:before { content: '\27f2'; } /* '⟲' */
 .icon-mail:before { content: '\e0eb'; } /* '' */
@@ -35,6 +35,7 @@
 .icon-inbox:before { content: '\e804'; } /* '' */
 .icon-font:before { content: '\e779'; } /* '' */
 .icon-off:before { content: '\e78e'; } /* '' */
+.icon-flow-cascade:before { content: '\e790'; } /* '' */
 .icon-move:before { content: '\f047'; } /* '' */
 .icon-twitter:before { content: '\f099'; } /* '' */
 .icon-facebook:before { content: '\f09a'; } /* '' */

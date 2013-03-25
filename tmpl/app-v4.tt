@@ -51,10 +51,11 @@
 					</a>
 					<ul class="dropdown-menu">
 						<li><a class="settings" data-setup="localize" data-text-ja="設定">Settings</a></li>
-						<li><a class="/apps/" data-setup="localize" data-text-ja="連携アプリ">Apps</a></li>
+						<li><a href="/apps/" target="_blank" data-setup="localize" data-text-ja="連携アプリ">Apps</a></li>
 						<li><a href="/manual" target="_blank" data-setup="localize" data-text-ja="マニュアル">Manual</a></li>
 						<li class="divider"></li>
-						<li><a href="/developer/docs/api" data-setup="localize" data-text-ja="開発者向けAPI">API for Developer</a></li>
+						<li><a href="https://chrome.google.com/webstore/detail/dolhpjcchfcnkcanamhgcgbnmcogdank" target="_blank" data-setup="localize" data-text-ja="Chrome 拡張">Chrome Extensions</a></li>
+						<li><a href="/developer/docs/api" target="_blank" data-setup="localize" data-text-ja="開発者向けAPI">API for Developer</a></li>
 						<li><a class="about" data-setup="localize" data-text-ja="7kai Tasksについて">About</a></li>
 						<li class="divider"></li>
 						<li><a href="/signout" data-setup="localize" data-text-ja="サインアウト">Sign Out</a></li>
@@ -400,13 +401,23 @@
 		</ul>
 		<aside data-mode-hide="list,gantt" data-setup="aside">
 			<div class="clearfix">
-				<span class="btn btn-small pull-right edit">
-					<i class="icon-edit"></i>
-					<span
-						class="help"
-						data-setup="localize"
-						data-text-ja="編集"
-					>Edit</span>
+				<span class="pull-right">
+					<span class="btn btn-small edit">
+						<i class="icon-edit"></i>
+						<span
+							class="help"
+							data-setup="localize"
+							data-text-ja="編集"
+						>Edit</span>
+					</span>
+					<span class="btn btn-small tree">
+						<i class="icon-flow-cascade"></i>
+						<span
+							class="help"
+							data-setup="localize"
+							data-text-ja="子タスク"
+						>Child</span>
+					</span>
 				</span>
 				<p><strong></strong></p>
 				<i class="icon-calendar"></i>
@@ -907,6 +918,10 @@
 	<div class="modal-body">
 		<h4 data-setup="localize" data-text-ja="ご意見・ご要望など">Please let us know what you think.</h4>
 		<textarea></textarea>
+		<p class="help-block">
+			<span data-setup="localize" data-text-ja="ご質問など回答が必要な場合はこちらへ">If you need to reply here.</span>
+			<a href="mailto:s.aska.org@gmail.com" target="_blank">s.aska.org@gmail.com</a>
+		</p>
 	</div>
 	<div class="modal-footer">
 		<span

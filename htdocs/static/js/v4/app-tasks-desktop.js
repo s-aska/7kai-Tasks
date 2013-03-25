@@ -10,6 +10,7 @@ app.data.taskli_map = {};
 app.data.listtr_map = {};
 app.data.gantt_start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 app.data.gantt_width = 0;
+app.data.flow_switch = null;
 
 var editableFix = $('<input style="width:1px;height:1px;border:none;margin:0;padding:0;position:absolute;" tabIndex="-1">').appendTo('html');
 
@@ -49,6 +50,11 @@ app.setup.nav = function(ele){
 	});
 };
 app.setup.home = function(section){
+
+	section.find('> header, ul.list').click(function(e){
+		// console.log(e.target.tagName);
+		app.fireEvent('showTask');
+	});
 
 	app.on(section.find('> header .icon-plus').parent(), 'click', function(){
 		app.modal.show('register-list');
@@ -160,6 +166,7 @@ app.setup.home = function(section){
 			.removeClass('selected')
 			.find('td.main div.name')
 				.attr('contenteditable', 'false');
+		if (! task) { return }
 		app.data.taskli_map[task.id]
 			.addClass('selected')
 			.attr('draggable', 'false')
@@ -230,10 +237,6 @@ app.setup.list = function(li){
 					li.find('> div div').focus();
 				}
 			});
-			// if (!find && app.util.findMe([member])) {
-			// 	find = true;
-			// 	img.addClass('active');
-			// }
 		});
 	}
 
@@ -391,11 +394,17 @@ app.setup.list = function(li){
 				span_members.find('img.active').each(function(){
 					assign.push($(this).data('id'));
 				});
+				var parent_id = '';
+				if (app.data.flow_switch.hasClass('active') &&
+					app.data.flow_switch.data('list_id') === list.id) {
+					parent_id = app.data.flow_switch.data('task_id');
+				}
 				if (name.length) {
 					app.task.create({
 						list_id: list.id,
 						name: name,
-						assign: assign
+						assign: assign,
+						parent_id: parent_id
 					}, list);
 					ele.text('');
 				}
@@ -830,10 +839,10 @@ app.setup.task = function(tr){
 		e.stopPropagation();
 		app.modal.show('register-task', [tr.data('task').list, tr.data('task')]);
 	});
-	app.on(tr.find('td.action-ok i'), 'click dblclick', function(e){
+	app.on(tr.find('.action-ok'), 'click dblclick', function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		var task = li.data('task');
+		var task = tr.data('task');
 		app.task.update({
 				list_id: task.list.id,
 				task_id: task.id,
@@ -877,6 +886,7 @@ app.setup.aside = function(aside){
 	var comments        = aside.find('ul.comments');
 	var form            = aside.find('form');
 	var textarea        = aside.find('textarea');
+	var flow            = aside.find('.icon-flow-cascade').parent();
 	var status          = form.find('input[name="status"]');
 	var closed          = form.find('input[name="closed"]');
 	var group_open      = form.find('.btn-group-open');
@@ -891,6 +901,20 @@ app.setup.aside = function(aside){
 	group_open.hide();
 	group_closed.hide();
 	group_in_closed.hide();
+
+	flow.click(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		flow.toggleClass('active');
+		if (flow.hasClass('active')) {
+			var listli = app.data.listli_map[ flow.data('list_id') ];
+			if (listli) {
+				listli.find('> div div').focus();
+			}
+		}
+	});
+
+	app.data.flow_switch = flow;
 
 	app.on(form.find('span.btn[data-plus]'), 'click', function(e){
 		var plus = $(this).data('plus');
@@ -909,6 +933,8 @@ app.setup.aside = function(aside){
 	});
 
 	app.on(aside.find('.icon-edit').parent(), 'click', function(e){
+		e.preventDefault();
+		e.stopPropagation();
 		var task = aside.data('task');
 		app.modal.show('register-task', [task.list, task]);
 	});
@@ -974,6 +1000,27 @@ app.setup.aside = function(aside){
 	});
 
 	app.addListener('showTask', function(task){
+		if (! task) {
+			aside.data('task', null);
+			form.find('input[name="list_id"]').val('');
+			form.find('input[name="task_id"]').val('');
+			form.find('input[name="status"]').val('');
+			form.find('input[name="closed"]').val('');
+			name.text('');
+			due.text('-');
+			duration.text('-');
+			group_open.hide();
+			group_closed.hide();
+			group_in_closed.hide();
+			user.empty();
+			pin.empty();
+			comments.empty();
+			textarea.prop('disabled', true);
+			flow.data('task_id', '');
+			flow.data('list_id', '');
+			flow.removeClass('active');
+			return;
+		}
 		aside.data('task', task);
 		form.find('input[name="list_id"]').val(task.list.id);
 		form.find('input[name="task_id"]').val(task.id);
@@ -983,6 +1030,9 @@ app.setup.aside = function(aside){
 		due.text(task.due ? app.date.mdw(task.due_date) : '-');
 		duration.text(task.duration ? task.duration + ' days' : '-');
 		textarea.prop('disabled', false);
+		flow.data('task_id', task.id);
+		flow.data('list_id', task.list.id);
+		flow.removeClass('active');
 		// textarea.focus();
 
 		var mode = app.util.hasCloseParentTask(task) ? 2 : task.closed ? 1 : 0;
@@ -1075,25 +1125,25 @@ app.setup.aside = function(aside){
 			li.prependTo(comments);
 		});
 	});
-	app.addListener('clearList', function(list){
-		var task = aside.data('task');
-		if (!task || task.closed) {
-			form.find('input[name="list_id"]').val('');
-			form.find('input[name="task_id"]').val('');
-			form.find('input[name="status"]').val('');
-			form.find('input[name="closed"]').val('');
-			name.text('');
-			due.text('-');
-			duration.text('-');
-			group_open.hide();
-			group_closed.hide();
-			group_in_closed.hide();
-			user.empty();
-			pin.empty();
-			comments.empty();
-			textarea.prop('disabled', true);
-		}
-	});
+	// app.addListener('clearList', function(list){
+	// 	var task = aside.data('task');
+	// 	if (!task || task.closed) {
+	// 		form.find('input[name="list_id"]').val('');
+	// 		form.find('input[name="task_id"]').val('');
+	// 		form.find('input[name="status"]').val('');
+	// 		form.find('input[name="closed"]').val('');
+	// 		name.text('');
+	// 		due.text('-');
+	// 		duration.text('-');
+	// 		group_open.hide();
+	// 		group_closed.hide();
+	// 		group_in_closed.hide();
+	// 		user.empty();
+	// 		pin.empty();
+	// 		comments.empty();
+	// 		textarea.prop('disabled', true);
+	// 	}
+	// });
 };
 app.setup.gantt = function(ele){
 	var blank = ele.html();

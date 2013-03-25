@@ -242,11 +242,11 @@
       ],
       "code": 10003,
       "from": 10003,
-      "uid": "12f4ece88e46abd864e40b35e05b11cd",
+      "uid": "7b16b22168e762c88333f465da862098",
       "css": "ok",
       "orig_css": "ok",
       "orig_code": 10003,
-      "src": "fontawesome"
+      "src": "websymbols"
     },
     {
       "search": [
@@ -254,13 +254,13 @@
         "cancel",
         "reject"
       ],
-      "code": 10005,
+      "code": 59400,
       "from": 10005,
-      "uid": "5211af474d3a9848f67f945e2ccaf143",
+      "uid": "c709da589c923ba3c2ad48d9fc563e93",
       "css": "cancel",
       "orig_css": "cancel",
-      "orig_code": 10005,
-      "src": "fontawesome"
+      "orig_code": 59400,
+      "src": "entypo"
     },
     {
       "search": [
@@ -445,6 +445,20 @@
       "orig_css": "off",
       "orig_code": 59278,
       "src": "fontawesome"
+    },
+    {
+      "search": [
+        "flow",
+        "cascade",
+        "junction"
+      ],
+      "code": 59280,
+      "from": 59280,
+      "uid": "898ddc67cb7d9ae53dbd4cce78043e9e",
+      "css": "flow-cascade",
+      "orig_css": "flow-cascade",
+      "orig_code": 59280,
+      "src": "entypo"
     },
     {
       "search": [

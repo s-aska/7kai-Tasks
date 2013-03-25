@@ -41,6 +41,7 @@ app.setup.display = function(ele){
 	var body = $('body');
 	app.on(ele, 'click', function(e){
 		e.preventDefault();
+		e.stopPropagation();
 		if (ele.hasClass(active)) {
 			ele.removeClass(active);
 			body.removeClass(display);
@@ -94,6 +95,7 @@ app.setup.mode = function(ele){
 	var body = $('body');
 	app.on(ele, 'click', function(e){
 		e.preventDefault();
+		e.stopPropagation();
 		// 2回クリックしたら元に戻す
 		if (ele.hasClass(active)) {
 			var prev = body.data('mode-prev');
