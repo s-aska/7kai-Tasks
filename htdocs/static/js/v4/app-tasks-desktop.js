@@ -157,16 +157,16 @@ app.setup.home = function(section){
 	});
 
 	app.addListener('sortTask', function(tasks, column, reverse){
-		// for (var i = 0, max_i = tasks.length; i < max_i; i++) {
-		// 	var li = app.data.taskli_map[tasks[i].id];
-		// 	var parents = app.util.findParentTasks(tasks[i]);
-		// 	if (parents.length) {
-		// 		li.find('> div').css('paddingLeft', parents.length * 18 + 'px');
-		// 	} else {
-		// 		li.find('> div').css('paddingLeft', '0');
-		// 	}
-		// 	app.data.listli_map[tasks[i].list.id].find('> ul').append(li);
-		// }
+		for (var i = 0, max_i = tasks.length; i < max_i; i++) {
+			var tr = app.data.taskli_map[tasks[i].id];
+			var parents = app.util.findParentTasks(tasks[i]);
+			if (parents.length) {
+				tr.find('td.main > div').css('paddingLeft', parents.length * 16 + 'px');
+			} else {
+				tr.find('td.main > div').css('paddingLeft', '0');
+			}
+			app.data.listli_map[tasks[i].list.id].find('tbody').append(tr);
+		}
 	});
 
 	app.addListener('showTask', function(task){

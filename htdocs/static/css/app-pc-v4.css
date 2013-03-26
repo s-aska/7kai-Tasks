@@ -266,6 +266,11 @@ section > div.shortcut {
 	font-size: 12px;
 	color: white;
 	background-color: rgba(0, 0, 0, 0.8);
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
 }
 body.display-shortcut ul.list {
 	padding-bottom: 30px;
@@ -282,11 +287,11 @@ aside {
 	width: 280px;
 	padding: 10px 10px 0 10px;
 	background-color: rgba(0, 0, 0, 0.05);
-	-webkit-border-radius: 4px 0 0 0;
-	-moz-border-radius: 4px 0 0 0;
-	-ms-border-radius: 4px 0 0 0;
-	-o-border-radius: 4px 0 0 0;
-	border-radius: 4px 0 0 0;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	border-radius: 4px;
 	font-size: 13px;
 	line-height: 13px;
 }
@@ -405,7 +410,7 @@ ul.list > li > div > span.members img {
 	margin-top: 4px;
 	width: 16px;
 	height: 16px;
-	webkit-border-radius: 4px;
+	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-ms-border-radius: 4px;
 	-o-border-radius: 4px;
@@ -746,7 +751,7 @@ ul.comments img {
 	position: absolute;
 	width: 32px;
 	height: 32px;
-	webkit-border-radius: 4px;
+	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-ms-border-radius: 4px;
 	-o-border-radius: 4px;
@@ -1009,7 +1014,7 @@ section.tab-main-analysis ul.actions li span + span {
 	width: 16px;
 	height: 16px;
 	margin-right: 4px;
-	webkit-border-radius: 4px;
+	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-ms-border-radius: 4px;
 	-o-border-radius: 4px;
@@ -1038,7 +1043,7 @@ section.tab-main-analysis ul.actions li span + span {
 #settings img {
 	width: 16px;
 	height: 16px;
-	webkit-border-radius: 4px;
+	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-ms-border-radius: 4px;
 	-o-border-radius: 4px;
