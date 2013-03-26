@@ -614,12 +614,17 @@ app.setup.list = function(li){
 			} else if (e.keyCode === 27) { // ESC
 				e.preventDefault();
 				$(this).blur();
-			} else if (e.keyCode === 9) {
+			} else if (e.keyCode === 9) { // TAB
 				var next = li.next();
 				if (next.length) {
-
+					e.preventDefault();
+					// alert('next');
+					// $(this).blur();
+					next.find('> div div').focus();
 				} else {
 					e.preventDefault();
+					// alert('top');
+					// $(this).blur();
 					top_li = li.parent().find('> li:first');
 					top_li.find('> div div').focus();
 				}
@@ -687,7 +692,7 @@ app.setup.task = function(tr){
 			}
 			assign.append(icon);
 		}
-	} else {
+	} else if (task.list.members.length) {
 		var icon = $('<img/>').attr('src', app.util.getIconUrl(task.requester));
 		assign.append(icon);
 	}
