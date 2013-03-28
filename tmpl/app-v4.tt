@@ -70,54 +70,77 @@
 		<div class="pull-right">
 			<a
 					class="active btn btn-small"
-					data-setup="display"
+					data-setup="display,tooltip"
 					data-display="help"
+					data-text-ja="ラベルを消す"
+					data-text-en="hide label"
 			>
 				<i class="icon-help-circle"></i>
 				<span class="help" data-setup="localize" data-text-ja="ラベルを消す">hide label</span>
 			</a>
 			<a
 				class="active btn btn-small"
-				ddata-setup="tooltip"
 				data-setup="display,shortcut,tooltip"
 				data-display="shortcut"
 				data-shortcut-code="191"
-				data-text-ja="ショートカットキー ... [? or /]"
-				data-text-en="Display the shortcuts ... [? or /]"
+				data-text-ja="ショートカットキー"
+				data-text-en="Display the shortcuts"
 			>
 				<i class="icon-keyboard"></i>
 				<span class="shortcut">[?]</span>
 			</a>
 		</div>
 		<div class="btn-group">
-			<a class="btn btn-small active" data-setup="mode" data-mode="task">
+			<a
+				class="btn btn-small active"
+				data-setup="mode,tooltip"
+				data-mode="task"
+				data-text-ja="タスク"
+				data-text-en="Tasks"
+			>
 				<i class="icon-ok"></i>
-				<span class="help">タスク</span>
+				<span class="help" data-setup="localize" data-text-ja="タスク">Tasks</span>
 			</a>
 			<a
 				class="btn btn-small"
-				data-setup="mode,shortcut,tooltip"
+				data-setup="mode,tooltip"
 				data-mode="closed"
-				data-shortcut='{"code":67}'
-				data-text-ja="完了済 ... [C]"
-				data-text-en="Closed: Please confirm and clear. ... [C]"
+				data-text-ja="完了済"
+				data-text-en="Closed Tasks"
 			>
 				<i class="icon-trash"></i>
 				<span class="help">完了済</span>
 			</a>
-			<a class="btn btn-small" data-setup="mode" data-mode="gantt">
+			<a
+				class="btn btn-small"
+				data-setup="mode,tooltip"
+				data-mode="gantt"
+				data-text-ja="スケジューリング"
+				data-text-en="Schedule"
+			>
 				<i class="icon-calendar"></i>
-				<span class="help">スケジューリング</span>
+				<span class="help" data-setup="localize" data-text-ja="スケジューリング">Schedule</span>
 			</a>
-			<a class="btn btn-small" data-setup="mode" data-mode="list">
+			<a
+				class="btn btn-small"
+				data-setup="mode,tooltip"
+				data-mode="list"
+				data-text-ja="リスト"
+				data-text-en="List"
+			>
 				<i class="icon-th-list"></i>
-				<span class="help">リスト</span>
+				<span class="help" data-setup="localize" data-text-ja="リスト">List</span>
 			</a>
 		</div>
 		<div class="btn-group" data-mode-show="list">
-			<a class="btn btn-small btn-primary">
+			<a
+				class="btn btn-small btn-primary"
+				data-setup="tooltip"
+				data-text-ja="新しいリスト"
+				data-text-en="New List"
+			>
 				<i class="icon-plus"></i>
-				<span class="help">新しいリスト</span>
+				<span class="help" data-setup="localize" data-text-ja="新しいリスト">New List</span>
 			</a>
 		</div>
 		<div
@@ -133,17 +156,17 @@
 				data-text-en="Sort"
 			>
 				<i class="icon-sort"></i>
-				<span class="help">ソート</span>
+				<span class="help" data-setup="localize" data-text-ja="ソート">Sort</span>
 			</a>
 			<a
 				class="btn btn-small"
 				data-setup="sort,tooltip"
-				data-sort-column="name"
+				data-sort-column="status"
 				data-text-ja="進捗順"
 				data-text-en="Progress"
 			>
 				<i class="icon-ok"></i>
-				<span class="help">進捗順</span>
+				<span class="help" data-setup="localize" data-text-ja="進捗順">Progress</span>
 			</a>
 			<a
 				class="btn btn-small"
@@ -151,20 +174,20 @@
 				data-sort-column="rate"
 				data-sort-reverse="true"
 				data-text-ja="レート順"
-				data-text-en="Whose turn is it"
+				data-text-en="Rate"
 			>
 				<i class="icon-star"></i>
-				<span class="help">レート順</span>
+				<span class="help" data-setup="localize" data-text-ja="レート順">Rate</span>
 			</a>
 			<a
 				class="btn btn-small"
 				data-setup="sort,tooltip"
 				data-sort-column="person"
 				data-text-ja="担当順"
-				data-text-en="Whose turn is it"
+				data-text-en="Assignee"
 			>
 				<i class="icon-user"></i>
-				<span class="help">担当順</span>
+				<span class="help" data-setup="localize" data-text-ja="担当順">Assignee</span>
 			</a>
 			<a
 				class="btn btn-small"
@@ -174,7 +197,7 @@
 				data-text-en="Due"
 			>
 				<i class="icon-calendar"></i>
-				<span class="help">期日順</span>
+				<span class="help" data-setup="localize" data-text-ja="期日順">Due</span>
 			</a>
 		</div>
 		<div
@@ -190,44 +213,44 @@
 				data-text-en="Filter"
 			>
 				<i class="icon-filter"></i>
-				<span class="help">フィルター</span>
+				<span class="help" data-setup="localize" data-text-ja="フィルター">Filter</span>
 			</a>
 			<a
 				class="btn btn-small"
 				data-setup="shortcut,filter,tooltip"
 				data-shortcut='{"code":84}'
 				data-filter="inbox"
-				data-text-ja="自分のタスク ... [T]"
-				data-text-en="My TODO ... [T]"
+				data-text-ja="自分"
+				data-text-en="Inbox"
 			>
 				<i class="icon-inbox"></i>
-				<span class="help">自分</span>
+				<span class="help" data-setup="localize" data-text-ja="自分">Inbox</span>
 			</a>
 			<a
 				class="btn btn-small"
 				data-setup="shortcut,filter,tooltip"
 				data-shortcut='{"code":82}'
 				data-filter="sent"
-				data-text-ja="頼んだ ... [R]"
-				data-text-en="Request ... [R]"
+				data-text-ja="頼んだ"
+				data-text-en="Request"
 			>
 				<i class="icon-upload"></i>
 				<span
 					data-setup="localize"
 					data-text-ja=""
 				></span>
-				<span class="help">頼んだ</span>
+				<span class="help" data-setup="localize" data-text-ja="頼んだ">Request</span>
 			</a>
 			<a
 				class="btn btn-small"
 				data-setup="shortcut,filter,tooltip"
 				data-shortcut='{"code":86}'
 				data-filter="received"
-				data-text-ja="頼まれた ... [V]"
-				data-text-en="Waiting for your confirmation. ... [V]"
+				data-text-ja="頼まれた"
+				data-text-en="Received"
 			>
 				<i class="icon-download"></i>
-				<span class="help">頼まれた</span>
+				<span class="help" data-setup="localize" data-text-ja="頼まれた">Received</span>
 			</a>
 		</div>
 		<div
@@ -243,7 +266,7 @@
 				data-text-en="Display switching"
 			>
 				<i class="icon-eye"></i>
-				<span class="help">表示切替</span>
+				<span class="help" data-setup="localize" data-text-ja="表示切替">Display switching</span>
 			</a>
 			<a
 				class="btn btn-small active"
@@ -253,7 +276,7 @@
 				data-text-en="Recent Comment"
 			>
 				<i class="icon-chat"></i>
-				<span class="help">直近コメント</span>
+				<span class="help" data-setup="localize" data-text-ja="直近コメント">Recent Comment</span>
 			</a>
 			<a
 				class="btn btn-small"
@@ -263,15 +286,15 @@
 				data-text-en="Pinned Comments"
 			>
 				<i class="icon-pin"></i>
-				<span class="help">ピンコメント</span>
+				<span class="help" data-setup="localize" data-text-ja="ピンコメント">Pinned Comment</span>
 			</a>
 		</div>
 		<div
 			class="btn-group btn-group-tag"
 			data-setup="tags,tooltip"
 			data-mode-hide="list"
-			data-text-ja="選択した色のリストのみ表示 ... [1-4]"
-			data-text-en="Display the list of same colors. ... [1-4]"
+			data-text-ja="選択した色のリストのみ表示"
+			data-text-en="Display the list of same colors"
 		>
 			<a
 				class="btn btn-small"
@@ -442,7 +465,6 @@
 				<span class="duration">-</span>
 				<span class="user"><i class="icon-user"></i></span>
 			</div>
-
 			<form class="form-stacked" style="margin-bottom:0" method="post">
 				<input type="hidden" name="list_id" value="">
 				<input type="hidden" name="task_id" value="">
@@ -558,10 +580,10 @@
 	<article data-text-empty-en="no data." data-text-empty-ja="履歴はありません。">
 		<ul class="nav nav-tabs">
 			<li class="active">
-				<a data-setup="tab" data-tab="analysis-daily">日別</a>
+				<a data-setup="tab,localize" data-tab="analysis-daily" data-text-ja="日別">Daily</a>
 			</li>
-			<li><a data-setup="tab" data-tab="analysis-list">リスト別</a></li>
-			<li><a data-setup="tab" data-tab="analysis-user">ユーザー別</a></li>
+			<li><a data-setup="tab,localize" data-tab="analysis-list" data-text-ja="リスト別">List</a></li>
+			<li><a data-setup="tab,localize" data-tab="analysis-user" data-text-ja="ユーザー別">User</a></li>
 		</ul>
 		<div class="tab-analysis-daily" data-setup="stretch" data-stretch='{"padding":130}'>
 			<h2>2013/3/31</h2>
@@ -999,7 +1021,7 @@
 	</div>
 </form>
 <div class="modal-backdrop fade"></div>
-<div id="ui-tooltip" class="tooltip bottom" style="display: none;">
+<div id="tooltip" class="tooltip in bottom" style="display: none;">
 	<div class="tooltip-arrow"></div>
 	<div class="tooltip-inner"></div>
 </div>

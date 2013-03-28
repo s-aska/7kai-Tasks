@@ -1254,12 +1254,15 @@ app.setup.aside = function(aside){
 		flow.data('task_id', task.id);
 		flow.data('list_id', task.list.id);
 		flow.removeClass('active');
-		// textarea.focus();
 
 		var mode = app.util.hasCloseParentTask(task) ? 2 : task.closed ? 1 : 0;
 		group_open.toggle( mode === 0 );
 		group_closed.toggle( mode === 1 );
 		group_in_closed.toggle( mode === 2 );
+
+		form.find('span.btn[data-plus="start"]').attr('disabled', task.status !== 0);
+		form.find('span.btn[data-plus="fix"]').attr('disabled', task.status === 2);
+		form.find('span.btn[data-plus="revert"]').attr('disabled', task.status === 0);
 
 		user.empty();
 		if (task.assign.length) {
@@ -1405,13 +1408,13 @@ app.setup.gantt = function(ele){
 			} else if (date.getDay() === 0 || date.getDay() === 6) {
 				day.addClass('holiday');
 			}
-			// var holiday = app.date.is_holiday(date);
-			// if (holiday) {
-			// 	day.addClass('holiday');
-			// 	var h2 = day.find('h2');
-			// 	h2.data('text-ja', app.date.is_holiday(date));
-			// 	app.setup.tooltip(h2);
-			// }
+			var holiday = app.date.is_holiday(date);
+			if (holiday) {
+				day.addClass('holiday');
+				var h2 = day.find('h2');
+				h2.data('text-ja', holiday);
+				app.setup.tooltip(h2);
+			}
 			date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
 			day_array.push(day);
 		}

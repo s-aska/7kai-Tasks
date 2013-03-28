@@ -163,5 +163,57 @@ app.setup.shortcut = function(ele){
 		}
 	});
 }
+app.setup.tooltip = function(ele){
+	var tooltip = $('#tooltip');
+	var text = app.util.text(ele);
+	var show = function(){
+		if (!ele.is(':visible')) {
+			return;
+		}
+		tooltip.removeClass('in');
+		tooltip
+			.find('.tooltip-inner')
+			.text(text);
+		tooltip
+			.remove()
+			.css({ top: 0, left: 0, display: 'block' })
+			.appendTo(d.body);
+		var pos = ele.offset();
+		pos.width = ele.get(0).offsetWidth;
+		pos.height = ele.get(0).offsetHeight;
+		var left = pos.left + pos.width / 2 - tooltip.get(0).offsetWidth / 2;
+		var max = win.width() - tooltip.width() - 10;
+		if (left > max) {
+			tooltip.find('.tooltip-arrow').css({marginLeft: left - max - 5 + 'px'});
+			left = max;
+		} else {
+			tooltip.find('.tooltip-arrow').css({marginLeft: ''});
+		}
+		var css = {
+			top: pos.top + pos.height,
+			left: (left > 0 ? left : 0)
+		};
+		tooltip.css(css);
+		tooltip.addClass('in');
+	};
+	var timer;
+	ele.hover(function(){
+		if (timer) {
+			clearTimeout(timer);
+		}
+		timer = setTimeout(function(){
+			show();
+			timer = null;
+		}, 800);
+	}, function(){
+		if (timer) {
+			clearTimeout(timer);
+			timer = null;
+			tooltip.hide();
+		} else {
+			tooltip.hide();
+		}
+	});
+}
 
 })(this, window, document, jQuery);
