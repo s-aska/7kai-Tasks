@@ -43,7 +43,7 @@ app.setup.nav = function(ele){
 		e.stopPropagation();
 		app.modal.show('feedback');
 	});
-	ele.find('.about').click(function(e){
+	ele.find('.logo, .about').click(function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		app.modal.show('about');
