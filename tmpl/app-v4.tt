@@ -72,8 +72,8 @@
 					class="active btn btn-small"
 					data-setup="display,tooltip"
 					data-display="help"
-					data-text-ja="ラベルを消す"
-					data-text-en="hide label"
+					data-text-ja="ラベル表示切替"
+					data-text-en="Display the label"
 			>
 				<i class="icon-help-circle"></i>
 				<span class="help" data-setup="localize" data-text-ja="ラベルを消す">hide label</span>
@@ -83,7 +83,7 @@
 				data-setup="display,shortcut,tooltip"
 				data-display="shortcut"
 				data-shortcut-code="191"
-				data-text-ja="ショートカットキー"
+				data-text-ja="ショートカットキー表示切替"
 				data-text-en="Display the shortcuts"
 			>
 				<i class="icon-keyboard"></i>
