@@ -109,7 +109,7 @@
 				data-text-en="Closed Tasks"
 			>
 				<i class="icon-trash"></i>
-				<span class="help">完了済</span>
+				<span class="help" data-setup="localize" data-text-ja="完了済">Closed</span>
 			</a>
 			<a
 				class="btn btn-small"
