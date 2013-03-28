@@ -85,13 +85,6 @@ ul.unstyled li {
 	margin-top: 5px;
 }
 
-/*
- * 画面端に表示するときにテキストをズラす
- */
-.tooltip-inner {
-
-}
-
 /******************************
  *
  *  基本調整
@@ -109,6 +102,16 @@ body {
 
 [draggable=true] {
   -khtml-user-drag: element;
+}
+
+/*
+ * 真ん中に堂々と
+ */
+.navbar-fixed-top .logo {
+	position: absolute;
+	left: 50%;
+	margin-left: -16px;
+	top: 5px;
 }
 
 /*
