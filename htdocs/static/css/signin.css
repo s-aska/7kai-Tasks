@@ -1,59 +1,70 @@
-.language-select {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+/*
+ * fontello.com 使ってるのでBootstrapのcss打ち消しとく
+ */
+[class^="icon-"],
+[class*=" icon-"],
+.btn-mini [class^="icon-"],
+.btn-mini [class*=" icon-"],
+.navbar-inverse .nav > .active > a > [class^="icon-"] {
+  background: none;
+  width: auto;
+  height: auto;
+  line-height: inherit;
+  vertical-align: inherit;
+  display: inline;
+  margin-top: inherit;
+}
+.btn {
+  padding: 4px 8px 4px 4px;
+  width: 190px;
+}
+.btn i {
+  margin-right: 2px;
+}
+body {
+  border-top: 5px solid black;
+}
+.container {
+  max-width: 940px;
+  margin: 0 auto;
+  text-align: auto;
 }
 header {
-    border-top: 5px solid black;
-    background: url(/static/img/header-en.gif) no-repeat center 83px;
-    margin-bottom: 60px;
-    text-align: center;
-}
-header p {
-    padding-top: 48px;
-    font-size: 24px;
+  margin: 80px 0 120px 0;
+  text-align: center;
 }
 header h1 {
-    padding-top: 162px;
-    margin-bottom: 84px;
-    font-size: 24px;
-    font-weight: 200;
-    text-shadow: 0px 1px 0px gray;
-    letter-spacing: 0.05em;
+  font-size: 96px;
+  line-height: 116px;
+  padding-left: 102px;
+  background-image: url(/static/ico/logo-192.png);
+  background-size: 96px 96px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  display: inline-block;
 }
-article {
-    margin-bottom: 50px;
+header p {
+  font-size: 18px;
+  margin-bottom: 80px;
 }
-article > ul {
-    border-top: 2px solid black;
-    border-bottom: 2px solid black;
+a {
+  cursor: pointer;
 }
-article > ul > li {
-    background: url(/static/img/list-mark.png) no-repeat 6px 10px;
-    border-bottom: 1px solid #C6C6C6;
-    overflow: hidden;
+form {
+  margin: 5px 0 20px;
 }
-article > ul > li:hover {
-	background-color: #f7f7f7;
+section {
+  margin-bottom: 120px;
+  padding: 0 5px;
 }
-article > ul > li:last-child {
-	border-bottom: none;
-}
-article > ul > li > div {
-    padding: 16px 0 16px 50px;
-}
-article > ul > li > div a {
-    float: right;
-    padding-right: 10px;
-}
-article > ul > li > div > span {
-    font-size: 18px;
-}
-th {
-    width: 40%;
-}
-a, button, label {
-    cursor: pointer;
+section h2 {
+  font-size: 18px;
+  line-height: 1em;
+  margin: 0;
+  padding: 10px 10px 0 0;
+  font-weight: bold;
+  color: #333;
+  text-align: right;
 }
 footer {
     border-top:3px solid #000000;
@@ -61,56 +72,28 @@ footer {
     padding: 20px;
     background-color: #F7F7F6;
 }
-footer a {
+dl {
+  margin-top: 0;
+}
+.share li {
+  margin-top: 2px;
+}
+@media (max-width: 767px) {
+  header {
+    margin: 10px 0 20px 0;
+  }
+  h1 {
+    font-size: 64px;
+    line-height: 82px;
+    margin-bottom: 10px;
+    padding-left: 70px;
+    background-image: url(/static/ico/logo-192.png);
+    background-size: 64px 64px;
+    background-repeat: no-repeat;
+    background-position: 0 0;
     display: inline-block;
-    margin-right: 6px;
-}
-.span4 h2 {
-	margin: 10px 0;
-}
-.document {
-    
-}
-.document h1 {
-    
-}
-.document h2 {
-}
-.document h3 {
-    margin: 20px 0 10px;
-}
-.document h4 {
-    margin: 20px 0 10px;
-}
-.document hr {
-    margin-top: 80px;
-}
-.document .thumbnail {
-    margin-bottom: 20px;
-}
-.document .permalink {
-    position: relative;
-}
-.document .permalink a {
-    position: absolute;
-    top: -60px;
-    right: 0;
-    padding-top: 60px;
-}
-.document ul.qa li {
-    margin-bottom: 40px;
-}
-.modal {
-    display: none;
-}
-.clearfix {
-    zoom: 1;
-}
-.clearfix:before,
-.clearfix:after {
-    display:table;
-    content:"";
-}
-.clearfix:after {
-    clear:both;
+  }
+  header p {
+    font-size: 12px;
+  }
 }

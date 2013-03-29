@@ -8,6 +8,7 @@ sub get($;$$) { connect_with_method('GET', @_) }
 sub post($;$$) { connect_with_method('POST', @_) }
 
 get  '/' => 'Root#index';
+get  '/v3' => 'Root#v3';
 get  '/v4' => 'Root#v4';
 get  '/mock' => 'Root#mock';
 get  '/staff' => 'Root#staff';

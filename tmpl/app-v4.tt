@@ -74,18 +74,18 @@
 					data-setup="display,tooltip"
 					data-display="help"
 					data-text-ja="ラベル表示切替"
-					data-text-en="Display the label"
+					data-text-en="Label"
 			>
 				<i class="icon-help-circle"></i>
-				<span class="help" data-setup="localize" data-text-ja="ラベルを消す">hide label</span>
+				<span class="help" data-setup="localize" data-text-ja="ラベル">Label</span>
 			</a>
 			<a
 				class="active btn btn-small"
 				data-setup="display,shortcut,tooltip"
 				data-display="shortcut"
 				data-shortcut-code="191"
-				data-text-ja="ショートカットキー表示切替"
-				data-text-en="Display the shortcuts"
+				data-text-ja="ショートカットキー表示"
+				data-text-en="Shortcut Key"
 			>
 				<i class="icon-keyboard"></i>
 				<span class="shortcut">[?]</span>
@@ -264,10 +264,10 @@
 				data-display="switch"
 				data-display-active="disabled"
 				data-text-ja="表示切替"
-				data-text-en="Display switching"
+				data-text-en="Display"
 			>
 				<i class="icon-eye"></i>
-				<span class="help" data-setup="localize" data-text-ja="表示切替">Display switching</span>
+				<span class="help" data-setup="localize" data-text-ja="表示切替">Display</span>
 			</a>
 			<a
 				class="btn btn-small active"
@@ -340,11 +340,41 @@
 			<li data-setup="list">
 				<header class="clearfix">
 					<i class="icon-folder-open" data-mode-hide="list"></i>
-					<i class="icon-sort" data-mode-show="list"></i>
+					<i class="icon-sort" data-mode-show="list" data-setup="tooltip" data-text-en="Sort" data-text-ja="並び替え"></i>
 					<span class="name">7kai Tasks</span>
 					<span data-mode-show="tasks">
 						<i class="icon-info-circle"></i>
 					</span>
+					<div class="menu" data-mode-show="tasks">
+						<i class="icon-menu"></i>
+						<ul class="dropdown-menu pull-right">
+							<li>
+								<a>
+									<i class="icon-users"></i>
+									<span data-setup="localize" data-text-ja="メンバー管理">Member</span>
+								</a>
+							</li>
+							<li>
+								<a>
+									<i class="icon-upload"></i>
+									<span data-setup="localize" data-text-ja="エクスポート">Export</span>
+								</a>
+								</a>
+							<li>
+								<a>
+									<i class="icon-edit"></i>
+									<span data-setup="localize" data-text-ja="編集">Edit</span>
+								</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a>
+									<i class="icon-cancel"></i>
+									<span data-setup="localize" data-text-ja="削除">Delete</span>
+								</a>
+							</li>
+						</ul>
+					</div>
 					<span class="pull-right btn btn-mini btn-danger" data-mode-show="closed">
 						<i class="icon-trash"></i>
 						<span class="help" data-setup="localize" data-text-ja="空にする">Clear Closed Task</span>
@@ -355,7 +385,7 @@
 						<a class="btn btn-mini btn-warning" data-tag="warning"><i class="icon-tag"></i></a>
 						<a class="btn btn-mini btn-danger" data-tag="danger"><i class="icon-tag"></i></a>
 					</div>
-					<div class="pull-right btn-group" data-mode-show="list">
+					<!-- <div class="pull-right btn-group" data-mode-show="list">
 						<span class="btn btn-mini">
 							<i class="icon-users"></i>
 							<span class="help" data-setup="localize" data-text-ja="メンバー管理">Member</span>
@@ -372,7 +402,7 @@
 							<i class="icon-cancel"></i>
 							<span class="help" data-setup="localize" data-text-ja="削除">Delete</span>
 						</span>
-					</div>
+					</div> -->
 					<div class="description" data-mode-show="tasks"></div>
 				</header>
 				<table class="task" data-mode-hide="list">
@@ -991,8 +1021,6 @@
 	</div>
 	<div class="modal-body">
 		<dl>
-			<dt data-setup="localize" data-text-ja="デベロッパー">Developer</dt>
-			<dd>Shinichiro Aska</dd>
 			<dt data-setup="localize" data-text-ja="サポート">Support</dt>
 			<dd>
 				<ul class="unstyled">
@@ -1011,6 +1039,8 @@
 			</dd>
 			<dt data-setup="localize" data-text-ja="統計・歴史">Statistics / History ...etc</dt>
 			<dd><a href="/staff" target="_blank" data-setup="localize" data-text-ja="スタッフルーム">Staff Room</a></dd>
+			<dt data-setup="localize" data-text-ja="開発者">Developer</dt>
+			<dd>Shinichiro Aska</dd>
 		</dl>
 	</div>
 	<div class="modal-footer">

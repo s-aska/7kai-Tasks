@@ -405,6 +405,16 @@ ul.list > li > header > .name {
 ul.list > li > header i.icon-info-circle {
 	cursor: pointer;
 }
+ul.list > li > header .menu {
+	float: right;
+	position: relative;
+	padding: 5px;
+	cursor: pointer;
+}
+ul.list > li > header .menu .dropdown-menu {
+
+
+}
 ul.list > li > div {
 	position: relative;
 }
@@ -1085,6 +1095,7 @@ section.tab-main-analysis ul.actions li span + span {
 	-o-transition-duration: 0.2s;
 	transition-duration: 0.2s;
 }
+div:hover > .dropdown-menu,
 li:hover > .dropdown-menu {
 	visibility: visible;
 	opacity: 1;

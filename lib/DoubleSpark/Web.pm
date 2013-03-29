@@ -84,6 +84,7 @@ __PACKAGE__->add_trigger(
         # return if $c->req->path =~ m|^/api/1/proxy/|;
         return if $c->req->path =~ m|^/public/|;
         return if $c->req->path eq '/manual';
+        return if $c->req->path eq '/developer/docs/api';
 
         if ($c->req->headers->header('Authorization') or $c->req->param('oauth_consumer_key')) {
             my $oauth = DoubleSpark::OAuth->new;
@@ -113,7 +114,7 @@ __PACKAGE__->add_trigger(
             if ($c->req->path !~ m|^/api/|) {
                 $c->session->set('next_url', $c->req->uri);
             }
-            return $c->render('signin.tt');
+            return $c->render('index.tt');
             # return $c->res_401();
         }
 

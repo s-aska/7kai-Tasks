@@ -1,117 +1,146 @@
 <!DOCTYPE html>
 <html xmlns:og="http://ogp.me/ns#" xmlns:fb="http://www.facebook.com/2008/fbml">
 <head>
+<title>7kai Tasks</title>
 <meta charset="utf-8">
-<meta name="keywords" content="Task,Management,Twitter,Facebook,タスク管理,タスク共有">
-<meta property="fb:admins" content="272550092773416">
+<meta id="keywords" content="Task,Management,Twitter,Facebook,タスク管理,タスク共有">
+<meta id="description" content="The web-based task management software.">
+<meta property="fb:app_id" content="272550092773416">
 <meta property="og:title" content="7kai Tasks">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://tasks.7kai.org/">
-<meta property="og:image" content="https://tasks.7kai.org/static/img/logo-128.png">
+<meta property="og:image" content="https://tasks.7kai.org/static/ico/256x256.png">
 <meta property="og:site_name" content="7kai Tasks">
-<meta property="og:description" content="High Speed Social Task Management Service">
-<title>7kai Tasks</title>
-<link rel="stylesheet" href="/static/css/bootstrap-1.3.0.min.css">
+<meta property="og:description" content="The web-based task management software.">
+<link rel="stylesheet" href="/static/css/bootstrap-2.3.1.min.css">
+<link rel="stylesheet" href="/static/css/bootstrap-responsive-2.3.1.min.css">
+<link rel="stylesheet" href="/static/css/fontello.css">
 <link rel="stylesheet" href="/static/css/signin.css" media="all">
-<script src="/static/js/jquery-1.7.1.min.js"></script>
-<script src="/static/js/jquery-ui-1.8.13.js"></script>
-<script src="/static/js/app-core.js"></script>
-<script src="/static/js/app-base.js"></script>
-<script src="/static/js/app-base-signin.js"></script>
+<script src="/static/js/jquery-1.9.1.min.js"></script>
+<script>
+(function(ns, w, d, $){
+$(d).ready(function(){
+  $('a.start').click(function(e){
+    $('.modal').addClass('in');
+  });
+  $('.close').click(function(e){
+    e.preventDefault();
+    $('.modal').removeClass('in');
+  })
+})
+})(this, window, document, jQuery)
+</script>
 </head>
-<body id="index-page">
-<div class="topbar">
-  <div class="fill">
-    <div class="container">
-      <h3><a href="/">7kai Tasks</a></h3>
-    </div>
-  </div>
+<body>
+<div class="container">
+  <header>
+    <h1>7kai Tasks</h1>
+    <p>The web-based task management software.</p>
+    <a class="start"><img src="/static/img/button-start.gif"></a>
+  </header>
+  <section>
+    <div><img src="/static/img/home-1b.png" class="img-rounded"></div>
+    <h2>Tasks</h2>
+  </section>
+  <section>
+    <div><img src="/static/img/home-2.png" class="img-rounded"></div>
+    <h2>Scheduling with Gantt chart</h2>
+  </section>
+  <section>
+    <div><img src="/static/img/home-3.png" class="img-rounded"></div>
+    <h2>Analysis</h2>
+  </section>
+  <p class="text-center"><a class="start"><img src="/static/img/button-start.gif"></a></p>
 </div>
-<div class="row" style="width: 840px;">
-  <div class="container" style="width: 840px; text-align: center;">
-    <h1>Fastest For You</h1>
-    <h2>High Speed Social Task Management Service</h2>
-    <div style="margin-bottom: 20px;">
-      <a
-        class="btn large primary"
-        data-setup="hide,show"
-        data-hide='{"id":"movie"}'
-        data-show='{"id":"signin"}'
-      >Start Task Management</a>
-    </div>
-  </div>
-  <div class="columns" style="width: 420px;">
-    <div
-      data-setup="showable"
-      data-showable='{"id":"movie","hide":{"effect":"none"}}'
-    ><iframe width="420" height="315" src="https://www.youtube.com/embed/tJOxEoFsbXM" frameborder="0" allowfullscreen></iframe></div>&nbsp;
-  </div>
-  <div class="span6 columns">
+<footer class="row">
+  <div class="span4">
     <dl>
-      <dt>1. Shortcut Keys</dt>
-      <dd
-        data-setup="localize"
-        data-text-ja="多くのショートカットキーに対応しています。"
-      >Support the many Shortcut Keys.</dd>
-      <dt>2. Anywhere</dt>
-      <dd
-        data-setup="localize"
-        data-text-ja="iPhoneやiPad、その他のスマートフォンに対応しています。"
-      >Support the iPhone, iPad, and other smartphone.</dd>
-      <dt>3. Offline</dt>
-      <dd
-        data-setup="localize"
-        data-text-ja="電車の中等突然回線が切れてもそのまま操作でき、疎通時にリカバリーされます。"
-      >If disconnected during the operation are recovery when connected.</dd>
-      <dt>4. Share</dt>
-      <dd
-        data-setup="localize"
-        data-text-ja="FacebookやTwitterのフレンドとタスクを共有出来ます。"
-      >Share with your facebook and twitter friends.</dd>
+      <dt>Document</dt>
+      <dd>
+        <ul class="unstyled">
+          <li><a href="/static/tos.html">Terms</a></li>
+          <li><a href="/static/privacy.html">Privacy</a></li>
+          <li><a href="/manual">Manual</a></li>
+          <li><a href="/developer/docs/api">OAuth API</a></li>
+        </ul>
+      </dd>
     </dl>
   </div>
-</div>
-<footer class="footer">
-  <div class="container">
-    <p class="social">
-      <a href="/static/tos.html">Terms</a>
-      <a href="/static/privacy.html">Privacy</a>
-      <a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank">Support(facebook page)</a>
-      <a href="https://github.com/s-aska/7kai-Tasks" target="_blank">Github</a>
-      <a href="https://twitter.com/#!/su_aska" target="_blank">Author</a>
-      <a href="https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Ftasks.7kai.org%2F&source=tweetbutton&text=7kai+Tasks&url=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Share(twitter)</a>
-      <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftasks.7kai.org%2F" target="_blank">Share(facebook)</a>
-    </p>
+  <div class="span4">
+    <dl>
+      <dt>Support</dt>
+      <dd>
+        <ul class="unstyled">
+          <li><a href="mailto:s.aska.org@gmail.com"><i class="icon-mail"></i> E-mail</a></li>
+          <li><a href="https://twitter.com/su_aska" target="_blank"><i class="icon-twitter"></i> Twitter</a></li>
+          <li><a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank"><i class="icon-facebook"></i> Facebook Page</a></li>
+          <li><a href="https://github.com/s-aska/7kai-Tasks/issues" target="_blank"><i class="icon-github"></i> Github</a></li>
+        </ul>
+      </dd>
+    </dl>
   </div>
+  <div class="span4 share">
+    <dl>
+      <dt>Share</dt>
+      <dd>
+        <ul class="unstyled">
+          <li><a href="https://twitter.com/share" class="twitter-share-button" data-text="7kai Tasks - The web-based task management software" data-url="https://tasks.7kai.org/">Tweet</a></li>
+          <li><div class="fb-like" data-href="https://tasks.7kai.org/" data-send="true" data-layout="button_count" data-width="120" data-show-faces="false"></div></li>
+        </ul>
+      </dd>
+    </dl>
+  </div>
+
 </footer>
-<div id="fb-root"></div>
-<div
-  class="modal"
-  data-setup="showable"
-  data-showable='{"id":"signin","show":{"effect":"fade"},"hide":{"effect":"fade"}}'
->
+<div class="modal fade">
   <div class="modal-header">
-    <h3>Sign In</h3>
-    <a
-      class="close"
-      data-setup="hide"
-      data-hide='{"id":"signin"}'
-    >×</a>
+    <a class="close">×</a>
+    <h3>Sign In / Sign Up</h3>
   </div>
   <div class="modal-body">
-    <div
-      style="text-align: center;"
-      data-setup="tab.content"
-      data-tab='{"id":"social","group":"signin"}'
-    >
+    <div class="text-center">
       <form method="post" action="/signin/twitter/signin">
-        <div><button class="btn large primary"style="width: 190px;">Connect with Twitter</button></div>
+        <button class="btn"><i class="icon-twitter"></i>Connect with Twitter</button>
       </form>
       <form method="post" action="/signin/facebook/signin">
-        <div><button class="btn large primary">Connect with Facebook</button></div>
+        <button class="btn"><i class="icon-facebook"></i>Connect with Facebook</button>
       </form>
+      <form method="post" action="/signin/google/signin">
+        <button class="btn"><i class="icon-google"></i>Connect with Google</button>
+      </form>
+      <div class="alert alert-info" style="margin-bottom:0">
+        By signing up, you accept 7kai Tasks's <a href="/static/tos.html">terms</a> of use and <a href="/static/privacy.html">privacy policy</a>.
+      </div>
     </div>
   </div>
 </div>
+<div id="fb-root"></div>
+<script>
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+</script>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=272550092773416";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-11100870-4']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
 </body>
 </html>
