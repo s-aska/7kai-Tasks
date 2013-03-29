@@ -21,11 +21,17 @@
 (function(ns, w, d, $){
 $(d).ready(function(){
   $('a.start').click(function(e){
-    $('.modal').addClass('in');
+    $('.modal, .modal-backdrop').show();
+    setTimeout(function(){
+      $('.modal, .modal-backdrop').addClass('in');
+    }, 0);
   });
-  $('.close').click(function(e){
+  $('.close, .modal-backdrop').click(function(e){
     e.preventDefault();
-    $('.modal').removeClass('in');
+    $('.modal, .modal-backdrop').removeClass('in');
+    setTimeout(function(){
+      $('.modal, .modal-backdrop').hide();
+    }, 500);
   })
 })
 })(this, window, document, jQuery)
@@ -92,7 +98,7 @@ $(d).ready(function(){
   </div>
 
 </footer>
-<div class="modal fade">
+<div class="modal fade" style="display:none">
   <div class="modal-header">
     <a class="close">×</a>
     <h3>Sign In / Sign Up</h3>
@@ -114,6 +120,7 @@ $(d).ready(function(){
     </div>
   </div>
 </div>
+<div class="modal-backdrop fade" style="display:none"></div>
 <div id="fb-root"></div>
 <script>
 !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");

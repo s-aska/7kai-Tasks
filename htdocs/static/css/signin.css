@@ -62,7 +62,7 @@ section h2 {
 	position: absolute;
 	bottom: 10px;
 	right: 20px;
-	font-size: 18px;
+	font-size: 24px;
 	line-height: 1em;
 	margin: 0;
 	font-weight: bold;
@@ -86,7 +86,7 @@ dl {
 	header {
 		margin: 10px 0 20px 0;
 	}
-	h1 {
+	header h1 {
 		font-size: 64px;
 		line-height: 82px;
 		margin-bottom: 10px;
@@ -99,5 +99,24 @@ dl {
 	}
 	header p {
 		font-size: 12px;
+	}
+	h2 {
+		font-size: 18px;
+	}
+}
+@media (max-width: 480px) {
+	header h1 {
+		font-size: 32px;
+		line-height: 41px;
+		margin-bottom: 10px;
+		padding-left: 35px;
+		background-image: url(/static/ico/logo-192.png);
+		background-size: 32px 32px;
+		background-repeat: no-repeat;
+		background-position: 0 0;
+		display: inline-block;
+	}
+	header p {
+		margin-bottom: 20px;
 	}
 }
