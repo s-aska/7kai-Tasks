@@ -6,94 +6,98 @@
 .btn-mini [class^="icon-"],
 .btn-mini [class*=" icon-"],
 .navbar-inverse .nav > .active > a > [class^="icon-"] {
-  background: none;
-  width: auto;
-  height: auto;
-  line-height: inherit;
-  vertical-align: inherit;
-  display: inline;
-  margin-top: inherit;
+	background: none;
+	width: auto;
+	height: auto;
+	line-height: inherit;
+	vertical-align: inherit;
+	display: inline;
+	margin-top: inherit;
 }
 .btn {
-  padding: 4px 8px 4px 4px;
-  width: 190px;
+	padding: 4px 8px 4px 4px;
+	width: 190px;
 }
 .btn i {
-  margin-right: 2px;
+	margin-right: 2px;
 }
 body {
-  border-top: 5px solid black;
+	border-top: 5px solid black;
 }
 .container {
-  max-width: 940px;
-  margin: 0 auto;
-  text-align: auto;
+	max-width: 940px;
+	margin: 0 auto;
+	text-align: auto;
 }
 header {
-  margin: 80px 0 120px 0;
-  text-align: center;
+	margin: 80px 0 120px 0;
+	text-align: center;
 }
 header h1 {
-  font-size: 96px;
-  line-height: 116px;
-  padding-left: 102px;
-  background-image: url(/static/ico/logo-192.png);
-  background-size: 96px 96px;
-  background-repeat: no-repeat;
-  background-position: 0 0;
-  display: inline-block;
+	font-size: 96px;
+	line-height: 116px;
+	padding-left: 102px;
+	background-image: url(/static/ico/logo-192.png);
+	background-size: 96px 96px;
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	display: inline-block;
 }
 header p {
-  font-size: 18px;
-  margin-bottom: 80px;
+	font-size: 18px;
+	margin-bottom: 80px;
 }
 a {
-  cursor: pointer;
+	cursor: pointer;
 }
 form {
-  margin: 5px 0 20px;
+	margin: 5px 0 20px;
 }
 section {
-  margin-bottom: 120px;
-  padding: 0 5px;
+	margin-bottom: 160px;
+	padding: 0 5px;
+	position: relative;
 }
 section h2 {
-  font-size: 18px;
-  line-height: 1em;
-  margin: 0;
-  padding: 10px 10px 0 0;
-  font-weight: bold;
-  color: #333;
-  text-align: right;
+	position: absolute;
+	bottom: 10px;
+	right: 20px;
+	font-size: 18px;
+	line-height: 1em;
+	margin: 0;
+	font-weight: bold;
+	color: #333;
+	opacity: 0.6;
+	font-style: italic;
 }
 footer {
-    border-top:3px solid #000000;
-    margin-top: 40px;
-    padding: 20px;
-    background-color: #F7F7F6;
+	border-top:3px solid #000000;
+	margin-top: 160px;
+	padding: 20px;
+	background-color: #F7F7F6;
 }
 dl {
-  margin-top: 0;
+	margin-top: 0;
 }
 .share li {
-  margin-top: 2px;
+	margin-top: 2px;
 }
 @media (max-width: 767px) {
-  header {
-    margin: 10px 0 20px 0;
-  }
-  h1 {
-    font-size: 64px;
-    line-height: 82px;
-    margin-bottom: 10px;
-    padding-left: 70px;
-    background-image: url(/static/ico/logo-192.png);
-    background-size: 64px 64px;
-    background-repeat: no-repeat;
-    background-position: 0 0;
-    display: inline-block;
-  }
-  header p {
-    font-size: 12px;
-  }
+	header {
+		margin: 10px 0 20px 0;
+	}
+	h1 {
+		font-size: 64px;
+		line-height: 82px;
+		margin-bottom: 10px;
+		padding-left: 70px;
+		background-image: url(/static/ico/logo-192.png);
+		background-size: 64px 64px;
+		background-repeat: no-repeat;
+		background-position: 0 0;
+		display: inline-block;
+	}
+	header p {
+		font-size: 12px;
+	}
 }
