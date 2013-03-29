@@ -385,24 +385,6 @@
 						<a class="btn btn-mini btn-warning" data-tag="warning"><i class="icon-tag"></i></a>
 						<a class="btn btn-mini btn-danger" data-tag="danger"><i class="icon-tag"></i></a>
 					</div>
-					<!-- <div class="pull-right btn-group" data-mode-show="list">
-						<span class="btn btn-mini">
-							<i class="icon-users"></i>
-							<span class="help" data-setup="localize" data-text-ja="メンバー管理">Member</span>
-						</span>
-						<span class="btn btn-mini">
-							<i class="icon-upload"></i>
-							<span class="help" data-setup="localize" data-text-ja="エクスポート">Export</span>
-						</span>
-						<span class="btn btn-mini">
-							<i class="icon-edit"></i>
-							<span class="help" data-setup="localize" data-text-ja="編集">Edit</span>
-						</span>
-						<span class="btn btn-mini btn-danger">
-							<i class="icon-cancel"></i>
-							<span class="help" data-setup="localize" data-text-ja="削除">Delete</span>
-						</span>
-					</div> -->
 					<div class="description" data-mode-show="tasks"></div>
 				</header>
 				<table class="task" data-mode-hide="list">
@@ -460,36 +442,38 @@
 			</li>
 		</ul>
 		<aside data-mode-hide="list,gantt" data-setup="aside">
-			<div class="clearfix">
-				<span class="pull-right">
-					<span
-						class="btn btn-small edit"
-						data-setup="shortcut"
-						data-shortcut-code="69"
-					>
-						<i class="icon-edit"></i>
+			<div>
+				<div class="clearfix">
+					<span class="pull-right">
 						<span
-							class="help"
-							data-setup="localize"
-							data-text-ja="編集"
-						>Edit</span>
-						<span class="shortcut">[e]</span>
-					</span>
-					<span
-						class="btn btn-small tree"
-						data-setup="shortcut"
-						data-shortcut-code="78"
-					>
-						<i class="icon-flow-cascade"></i>
+							class="btn btn-small edit"
+							data-setup="shortcut"
+							data-shortcut-code="69"
+						>
+							<i class="icon-edit"></i>
+							<span
+								class="help"
+								data-setup="localize"
+								data-text-ja="編集"
+							>Edit</span>
+							<span class="shortcut">[e]</span>
+						</span>
 						<span
-							class="help"
-							data-setup="localize"
-							data-text-ja="子タスク"
-						>Child</span>
-						<span class="shortcut">[n]</span>
+							class="btn btn-small tree"
+							data-setup="shortcut"
+							data-shortcut-code="78"
+						>
+							<i class="icon-flow-cascade"></i>
+							<span
+								class="help"
+								data-setup="localize"
+								data-text-ja="子タスク"
+							>Child</span>
+							<span class="shortcut">[n]</span>
+						</span>
 					</span>
-				</span>
-				<p><strong></strong></p>
+					<p><strong></strong></p>
+				</div>
 				<i class="icon-calendar"></i>
 				<span class="due">-</span>
 				<i class="icon-clock"></i>

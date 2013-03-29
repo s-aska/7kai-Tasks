@@ -521,7 +521,7 @@ table.task td.main div.name {
 }
 table.task td.main div.name {
 	outline: none;
-	height: 13px;
+	min-height: 13px;
 }
 table.task tr.selected td.main div.name {
 	cursor: text;
@@ -719,7 +719,10 @@ table.task .rate > span > i {
 /*
  * コメントフォーム
  */
-aside > div > p {
+aside > div > div {
+	margin-bottom: 10px;
+}
+aside > div > div > p {
 	max-width: 250px;
 	word-wrap: break-word;
 	word-break: break-all;

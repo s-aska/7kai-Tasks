@@ -1090,7 +1090,7 @@ app.setup.task = function(tr){
 	});
 };
 app.setup.aside = function(aside){
-	var name            = aside.find('> div > p > strong');
+	var name            = aside.find('> div > div > p > strong');
 	var due             = aside.find('> div > .due');
 	var duration        = aside.find('> div > .duration');
 	var user            = aside.find('> div > .user');
