@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <title>7kai Tasks</title>
-<link rel="stylesheet" href="/static/css/bootstrap-2.2.2.min.css">
-<link rel="stylesheet" href="/static/css/fontello.css">
-<link rel="stylesheet" href="/static/css/app-pc-v4.css">
-<script src="/static/js/jquery-1.9.1.min.js"></script>
-<script src="/static/js/v4/app-core.js"></script>
-<script src="/static/js/v4/app-date.js"></script>
-<script src="/static/js/v4/app-util.js"></script>
-<script src="/static/js/v4/app-api.js"></script>
-<script src="/static/js/v4/app-setup.js"></script>
-<script src="/static/js/v4/app-support.js"></script>
-<script src="/static/js/v4/app-modal.js"></script>
-<script src="/static/js/v4/app-draggable.js"></script>
-<script src="/static/js/v4/app-tab.js"></script>
-<script src="/static/js/v4/app-tasks.js"></script>
-<script src="/static/js/v4/app-tasks-desktop.js"></script>
+<link rel="stylesheet" href="[% static_file('/static/css/bootstrap-2.2.2.min.css') %]">
+<link rel="stylesheet" href="[% static_file('/static/css/fontello.css') %]">
+<link rel="stylesheet" href="[% static_file('/static/css/app-pc-v4.css') %]">
+<script src="[% static_file('/static/js/jquery-1.9.1.min.js') %]"></script>
+<script src="[% static_file('/static/js/v4/app-core.js') %]"></script>
+<script src="[% static_file('/static/js/v4/app-date.js') %]"></script>
+<script src="[% static_file('/static/js/v4/app-util.js') %]"></script>
+<script src="[% static_file('/static/js/v4/app-api.js') %]"></script>
+<script src="[% static_file('/static/js/v4/app-setup.js') %]"></script>
+<script src="[% static_file('/static/js/v4/app-support.js') %]"></script>
+<script src="[% static_file('/static/js/v4/app-modal.js') %]"></script>
+<script src="[% static_file('/static/js/v4/app-draggable.js') %]"></script>
+<script src="[% static_file('/static/js/v4/app-tab.js') %]"></script>
+<script src="[% static_file('/static/js/v4/app-tasks.js') %]"></script>
+<script src="[% static_file('/static/js/v4/app-tasks-desktop.js') %]"></script>
 </head>
 <body class="tab-main-home tab-task-basic tab-analysis-daily tab-settings-name">
 <div class="navbar navbar-inverse navbar-fixed-top" data-setup="nav">

@@ -14,8 +14,8 @@
 <meta property="og:description" content="The web-based task management software.">
 <link rel="stylesheet" href="/static/css/bootstrap-2.3.1.min.css">
 <link rel="stylesheet" href="/static/css/bootstrap-responsive-2.3.1.min.css">
-<link rel="stylesheet" href="/static/css/fontello.css">
-<link rel="stylesheet" href="/static/css/signin.css" media="all">
+<link rel="stylesheet" href="[% static_file('/static/css/fontello.css') %]">
+<link rel="stylesheet" href="[% static_file('/static/css/signin.css') %]" media="all">
 <script src="/static/js/jquery-1.9.1.min.js"></script>
 <script>
 (function(ns, w, d, $){
