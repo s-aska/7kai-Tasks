@@ -118,7 +118,7 @@ dl {
 }
 @media (max-width: 480px) {
 	header {
-		margin: 10px 0 80px 0;
+		margin: 10px 0 40px 0;
 	}
 	header h1 {
 		font-size: 32px;
@@ -132,12 +132,12 @@ dl {
 		display: inline-block;
 	}
 	header p {
-		margin-bottom: 20px;
+		margin-bottom: 30px;
 	}
 	section {
-		margin-bottom: 160px;
+		margin-bottom: 60px;
 	}
 	footer {
-		margin-top: 160px;
+		margin-top: 60px;
 	}
 }
