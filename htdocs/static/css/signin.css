@@ -89,7 +89,7 @@ dl {
 }
 @media (max-width: 767px) {
 	header {
-		margin: 10px 0 80px 0;
+		margin: 40px 0 80px 0;
 	}
 	header h1 {
 		font-size: 64px;
@@ -104,10 +104,16 @@ dl {
 	}
 	header p {
 		font-size: 12px;
-		margin-bottom: 70px;
+		margin-bottom: 60px;
+	}
+	section {
+		margin-bottom: 160px;
 	}
 	section h2 {
 		font-size: 18px;
+	}
+	footer {
+		margin-top: 160px;
 	}
 }
 @media (max-width: 480px) {
