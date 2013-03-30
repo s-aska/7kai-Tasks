@@ -54,8 +54,7 @@ form {
 	margin: 5px 0 20px;
 }
 section {
-	margin-bottom: 160px;
-	padding: 0 5px;
+	margin-bottom: 320px;
 	position: relative;
 }
 section h2 {
@@ -72,9 +71,12 @@ section h2 {
 }
 footer {
 	border-top:3px solid #000000;
-	margin-top: 160px;
+	margin-top: 320px;
 	padding: 20px;
 	background-color: #F7F7F6;
+}
+footer .pull-left {
+	width: 160px;
 }
 dl {
 	margin-top: 0;
@@ -101,13 +103,13 @@ dl {
 		font-size: 12px;
 		margin-bottom: 70px;
 	}
-	h2 {
+	section h2 {
 		font-size: 18px;
 	}
 }
 @media (max-width: 480px) {
 	header {
-		margin: 10px 0 20px 0;
+		margin: 10px 0 80px 0;
 	}
 	header h1 {
 		font-size: 32px;
@@ -122,5 +124,11 @@ dl {
 	}
 	header p {
 		margin-bottom: 20px;
+	}
+	section {
+		margin-bottom: 160px;
+	}
+	footer {
+		margin-top: 160px;
 	}
 }

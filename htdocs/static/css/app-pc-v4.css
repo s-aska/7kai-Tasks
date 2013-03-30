@@ -719,13 +719,17 @@ table.task .rate > span > i {
 /*
  * コメントフォーム
  */
-aside > div > div {
+aside > div > div > p,
+aside > div > div > span {
 	margin-bottom: 5px;
 }
 aside > div > div > p {
 	max-width: 250px;
 	word-wrap: break-word;
 	word-break: break-all;
+}
+aside > div > div > span {
+	margin-left: 5px;
 }
 aside > div > .user img {
 	width: 14px;

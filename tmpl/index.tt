@@ -45,7 +45,7 @@ $(d).ready(function(){
     <a class="start"><img src="/static/img/button-start.gif"></a>
   </header>
   <section>
-    <div><img src="/static/img/home-1b.png" class="img-rounded"></div>
+    <div><img src="/static/img/home-1.png" class="img-rounded"></div>
     <h2>Tasks</h2>
   </section>
   <section>
@@ -58,45 +58,48 @@ $(d).ready(function(){
   </section>
   <p class="text-center"><a class="start"><img src="/static/img/button-start.gif"></a></p>
 </div>
-<footer class="row">
-  <div class="span4">
-    <dl>
-      <dt>Document</dt>
-      <dd>
-        <ul class="unstyled">
-          <li><a href="/static/tos.html">Terms</a></li>
-          <li><a href="/static/privacy.html">Privacy</a></li>
-          <li><a href="/manual">Manual</a></li>
-          <li><a href="/developer/docs/api">OAuth API</a></li>
-        </ul>
-      </dd>
-    </dl>
+<footer>
+  <div class="container">
+    <div class="clearfix">
+      <div class="pull-left">
+        <dl>
+          <dt>Document</dt>
+          <dd>
+            <ul class="unstyled">
+              <li><a href="/static/tos.html">Terms</a></li>
+              <li><a href="/static/privacy.html">Privacy</a></li>
+              <li><a href="/manual">Manual</a></li>
+              <li><a href="/developer/docs/api">OAuth API</a></li>
+            </ul>
+          </dd>
+        </dl>
+      </div>
+      <div class="pull-left">
+        <dl>
+          <dt>Support</dt>
+          <dd>
+            <ul class="unstyled">
+              <li><a href="mailto:s.aska.org@gmail.com"><i class="icon-mail"></i> E-mail</a></li>
+              <li><a href="https://twitter.com/su_aska" target="_blank"><i class="icon-twitter"></i> Twitter</a></li>
+              <li><a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank"><i class="icon-facebook"></i> Facebook Page</a></li>
+              <li><a href="https://github.com/s-aska/7kai-Tasks/issues" target="_blank"><i class="icon-github"></i> Github</a></li>
+            </ul>
+          </dd>
+        </dl>
+      </div>
+      <div class="pull-left share">
+        <dl>
+          <dt>Share</dt>
+          <dd>
+            <ul class="unstyled">
+              <li><a href="https://twitter.com/share" class="twitter-share-button" data-text="7kai Tasks - The web-based task management software" data-url="https://tasks.7kai.org/">Tweet</a></li>
+              <li><div class="fb-like" data-href="https://tasks.7kai.org/" data-send="true" data-layout="button_count" data-width="120" data-show-faces="false"></div></li>
+            </ul>
+          </dd>
+        </dl>
+      </div>
+    </div>
   </div>
-  <div class="span4">
-    <dl>
-      <dt>Support</dt>
-      <dd>
-        <ul class="unstyled">
-          <li><a href="mailto:s.aska.org@gmail.com"><i class="icon-mail"></i> E-mail</a></li>
-          <li><a href="https://twitter.com/su_aska" target="_blank"><i class="icon-twitter"></i> Twitter</a></li>
-          <li><a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank"><i class="icon-facebook"></i> Facebook Page</a></li>
-          <li><a href="https://github.com/s-aska/7kai-Tasks/issues" target="_blank"><i class="icon-github"></i> Github</a></li>
-        </ul>
-      </dd>
-    </dl>
-  </div>
-  <div class="span4 share">
-    <dl>
-      <dt>Share</dt>
-      <dd>
-        <ul class="unstyled">
-          <li><a href="https://twitter.com/share" class="twitter-share-button" data-text="7kai Tasks - The web-based task management software" data-url="https://tasks.7kai.org/">Tweet</a></li>
-          <li><div class="fb-like" data-href="https://tasks.7kai.org/" data-send="true" data-layout="button_count" data-width="120" data-show-faces="false"></div></li>
-        </ul>
-      </dd>
-    </dl>
-  </div>
-
 </footer>
 <div class="modal fade" style="display:none">
   <div class="modal-header">
