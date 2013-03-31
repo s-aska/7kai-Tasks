@@ -68,7 +68,7 @@ $(d).ready(function(){
             <ul class="unstyled">
               <li><a href="/static/tos.html">Terms</a></li>
               <li><a href="/static/privacy.html">Privacy</a></li>
-              <li><a href="/manual">Manual</a></li>
+              <!-- <li><a href="/manual">Manual</a></li> -->
               <li><a href="/developer/docs/api">OAuth API</a></li>
             </ul>
           </dd>
