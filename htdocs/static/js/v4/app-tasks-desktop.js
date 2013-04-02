@@ -615,7 +615,7 @@ app.setup.list = function(li){
 				e.preventDefault();
 				$(this).blur();
 			} else if (e.keyCode === 9) { // TAB
-				var next = li.next();
+				var next = li.nextAll(':not(.closed):visible:first');
 				if (next.length) {
 					e.preventDefault();
 					// alert('next');
@@ -625,7 +625,7 @@ app.setup.list = function(li){
 					e.preventDefault();
 					// alert('top');
 					// $(this).blur();
-					top_li = li.parent().find('> li:first');
+					top_li = li.parent().find('> li:not(.closed):visible:first');
 					top_li.find('> div div').focus();
 				}
 			}
