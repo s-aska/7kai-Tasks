@@ -547,6 +547,7 @@ table.task td.assign i.icon-right {
 }
 table.task td.rate {
 	width: 98px;
+	padding-right: 4px;
 	white-space: nowrap;
 }
 table.task td.due {
