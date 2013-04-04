@@ -1932,5 +1932,22 @@ app.setup.about = function(form){
 			'','left='+H+',top='+G+',width='+D+',height='+A+',personalbar=0,toolbar=0,scrollbars=1,resizable=1');
 	});
 };
+app.setup.invite = function(form){
+	form.on('show', function(e, invite){
+		form.find('strong').text(invite.list_name);
+		form.find('input[name="list_id"]').val(invite.list_id);
+		form.find('input[name="invite_code"]').val(invite.invite_code);
+		form.find('textarea').focus();
+	});
+	form.submit(function(e){
+		e.preventDefault();
+		var list_id = form.find('input[name="list_id"]').val();
+		var invite_code = form.find('input[name="invite_code"]').val();
+		app.api.list.join(list_id, invite_code).done(function(data){
+			app.load();
+			app.modal.hide();
+		});
+	});
+};
 
 })(this, window, document, jQuery);

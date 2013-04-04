@@ -178,6 +178,10 @@ app.load = function(option){
 				// app.util.sortTaskView('created_on');
 			});
 
+			if (data.invite) {
+				app.modal.show('invite', data.invite);
+			}
+
 			app.fireEvent('receiveMe', data, option);
 		} else {
 			console.log('[load] 304 Not Modified');
