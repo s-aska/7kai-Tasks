@@ -129,7 +129,7 @@ var loadId;
 app.load = function(option){
 	if (!option) { option = {} }
 	console.log('[load] me: ' + app.data.if_modified_lists + ' ' + app.data.if_modified_since);
-	app.api.account.me({
+	return app.api.account.me({
 		data: {
 			if_modified_since: app.data.if_modified_since,
 			if_modified_lists: app.data.if_modified_lists

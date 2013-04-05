@@ -15,7 +15,10 @@ app.data.flow_switch = null;
 var editableFix = $('<input style="width:1px;height:1px;border:none;margin:0;padding:0;position:absolute;" tabIndex="-1">').appendTo('html');
 
 app.addEvents('initGanttchart');
-
+app.addEvents('clickNotification');
+app.addListener('clickNotification', function(option){
+	app.load(option);
+});
 app.addListener('showTask', function(task, is_notification){
 	if (is_notification) {
 		app.tab.show('main-home');
@@ -23,11 +26,11 @@ app.addListener('showTask', function(task, is_notification){
 		body.trigger(task.closed ? 'app-mode-closed' : 'app-mode-task');
 		// TODO: 表示条件との確認
 		if (body.attr('data-filter')) {
-			$('header [data-filter].active').click();
+			$('section.tab-main-home > header [data-filter].active').click();
 		}
 		// TODO: 表示条件との確認
 		if (body.attr('data-tag')) {
-			$('header [data-tag].active').click();
+			$('section.tab-main-home > header [data-tag].active').click();
 		}
 	}
 });
@@ -1948,6 +1951,12 @@ app.setup.invite = function(form){
 			app.modal.hide();
 		});
 	});
+};
+app.setup.receiver = function(ele){
+	ele.get(0).addEventListener('extentionsEvent', function() {
+		var data = JSON.parse(ele.text());
+		app.fireEvent(data.event, data.option);
+	}, false);
 };
 
 })(this, window, document, jQuery);
