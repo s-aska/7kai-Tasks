@@ -23,7 +23,7 @@
 <div class="navbar navbar-inverse navbar-fixed-top" data-setup="nav">
 	<div class="navbar-inner">
 		<div class="fluid-container">
-			<img class="logo" src="/static/img/logo-gray-64.png" width="32" height="32">
+			<img class="logo" src="/static/img/logo-gray-64.png">
 			<ul class="nav">
 				<li class="active">
 					<a data-setup="tab" data-tab="main-home">

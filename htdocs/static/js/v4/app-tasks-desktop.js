@@ -345,11 +345,8 @@ app.setup.home = function(section){
 				due: due
 			});
 		} else if (e.keyCode === 9) { // TAB
-			// var next = li.nextAll(':not(.closed):visible:first');
 			var tr = ul.find('tr.selected');
 			if (tr.length) {
-				// e.stopPropagation();
-				// e.preventDefault();
 				var div = tr.parent().parent().parent().find('> div > div');
 				div.focus();
 			} else {
