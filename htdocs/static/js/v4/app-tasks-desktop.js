@@ -786,7 +786,6 @@ app.setup.task = function(tr){
 
 	tr.find('div.name')
 		.on('focus', function(e){
-			console.log('focus');
 			tr.addClass('editing');
 			var ele = $(this);
 			if (ele.text() === '-') {
@@ -794,7 +793,6 @@ app.setup.task = function(tr){
 			}
 		})
 		.on('blur', function(e){
-			console.log('blur');
 			editableFix[0].setSelectionRange(0, 0);
 			editableFix.blur();
 			tr.removeClass('editing');
@@ -1706,7 +1704,9 @@ app.setup.registerTask = function(form){
 		if (list.tasks.length) {
 			parent_id.append(new Option('', ''));
 			for (var i = 0, max_i = list.tasks.length; i < max_i; i++) {
-				if (!task || !app.util.isChildTask(task, list.tasks[i])) {
+				if (!task ||
+					(task.id !== list.tasks[i].id && !app.util.isChildTask(task, list.tasks[i]))
+				) {
 					parent_id.append(new Option(list.tasks[i].name, list.tasks[i].id));
 				}
 			}

@@ -128,7 +128,7 @@ app.addListener('registerSubAccount', function(sub_account){
 var loadId;
 app.load = function(option){
 	if (!option) { option = {} }
-	console.log('[load] me: ' + app.data.if_modified_lists + ' ' + app.data.if_modified_since);
+	// console.log('[load] me: ' + app.data.if_modified_lists + ' ' + app.data.if_modified_since);
 	return app.api.account.me({
 		data: {
 			if_modified_since: app.data.if_modified_since,
@@ -141,7 +141,7 @@ app.load = function(option){
 		loadId = setTimeout(app.load, 300000);
 
 		if (data) {
-			console.log('[load] 200');
+			// console.log('[load] 200');
 			app.env.token = data.token;
 			app.data.sign = data.sign;
 			app.data.state = data.account.state;
@@ -184,7 +184,7 @@ app.load = function(option){
 
 			app.fireEvent('receiveMe', data, option);
 		} else {
-			console.log('[load] 304 Not Modified');
+			// console.log('[load] 304 Not Modified');
 		}
 
 		/*
@@ -307,6 +307,10 @@ app.task.update_without_action = function(params, list){
 	var is_closed = app.util.findQuery(params, 'closed');
 	return app.api.task.update(params).done(function(data){
 		if (data.success === 1) {
+			var old_task = app.data.task_map[data.task.id];
+			if (old_task.parent_id === data.task.parent_id) {
+				is_move = false;
+			}
 			app.fireEvent('registerTask', data.task, list, is_move);
 			if (is_move || is_closed) {
 				app.util.findChildTasks(data.task, function(task){
