@@ -344,6 +344,17 @@ app.setup.home = function(section){
 				task_id: task.id,
 				due: due
 			});
+		} else if (e.keyCode === 9) { // TAB
+			// var next = li.nextAll(':not(.closed):visible:first');
+			var tr = ul.find('tr.selected');
+			if (tr.length) {
+				// e.stopPropagation();
+				// e.preventDefault();
+				var div = tr.parent().parent().parent().find('> div > div');
+				div.focus();
+			} else {
+				return;
+			}
 		} else if (e.keyCode === 8) { // Delete
 			var tr = ul.find('tr.selected');
 			if (tr.length) {
@@ -617,6 +628,10 @@ app.setup.list = function(li){
 			} else if (e.keyCode === 27) { // ESC
 				e.preventDefault();
 				$(this).blur();
+				var tr = li.find('tr:visible:last');
+				if (tr.length) {
+					app.fireEvent('showTask', tr.data('task'));
+				}
 			} else if (e.keyCode === 9) { // TAB
 				var next = li.nextAll(':not(.closed):visible:first');
 				if (next.length) {
