@@ -183,6 +183,8 @@ app.setup.home = function(section){
 			.attr('draggable', 'false')
 			.find('td.main div.name')
 				.attr('contenteditable', 'true');
+
+		app.util.scrollTopFix(ul, app.data.taskli_map[task.id]);
 	});
 
 	app.addListener('initGanttchart', function(){

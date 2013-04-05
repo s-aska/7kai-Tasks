@@ -407,5 +407,17 @@ app.util.text = function(ele, key){
 		return ele.data('text-' + app.env.lang);
 	}
 }
+app.util.scrollTopFix = function(wrapper, target, forceTop){
+	if (target.is(':first-child') || forceTop) {
+		target = target.parent().parent();
+	}
+	var top           = wrapper.scrollTop();
+	var bottom        = top + wrapper.height();
+	var target_top    = top + target.offset().top - wrapper.offset().top;
+	var target_bottom = target_top + target.height();
+	if (target_top < top || target_bottom > bottom || forceTop) {
+		wrapper.scrollTop(target_top);
+	}
+}
 
 })(this, window, document, jQuery);
