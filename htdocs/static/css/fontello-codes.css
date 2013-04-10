@@ -23,6 +23,7 @@
 .icon-cancel:before { content: '\e808'; } /* '' */
 .icon-right:before { content: '\27a1'; } /* '➡' */
 .icon-ccw:before { content: '\27f2'; } /* '⟲' */
+.icon-left:before { content: '\2b05'; } /* '⬅' */
 .icon-mail:before { content: '\e0eb'; } /* '' */
 .icon-help-circle:before { content: '\e704'; } /* '' */
 .icon-info-circle:before { content: '\e705'; } /* '' */

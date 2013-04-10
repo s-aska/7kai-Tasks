@@ -514,8 +514,11 @@ table.task td.main {
 	position: relative;
 	padding-left: 4px;
 }
-table.task td.main div.action-ok {
+table.task td.main div.icons {
 	position: absolute;
+}
+body:not([data-mode="gantt"]) table.task td.main div.icons img:first-child {
+	margin-left: 4px;
 }
 table.task td.main div.guard {
 	position: absolute;
@@ -527,8 +530,6 @@ table.task td.main div.name {
 	margin-left: 17px;
 	word-wrap: break-word;
 	word-break: break-all;
-}
-table.task td.main div.name {
 	outline: none;
 	min-height: 13px;
 }
@@ -557,7 +558,7 @@ table.task td.due {
 	width: 70px;
 	white-space: nowrap;
 }
-table.task td.action-ok {
+table.task td.icons {
 	padding-left: 4px;
 	padding-right: 0;
 	width: 15px;
@@ -627,9 +628,9 @@ table.task tr .center {
 	line-height: 20px;
 	overflow: hidden;
 }
-table.task td.assign img {
-	width: 16px;
-	height: 16px;
+table.task span.user img {
+	width: 13px;
+	height: 13px;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-ms-border-radius: 4px;
@@ -637,36 +638,49 @@ table.task td.assign img {
 	border-radius: 4px;
 	vertical-align: top;
 }
+body[data-mode="gantt"] table.task span.user img {
+	width: 16px;
+	height: 16px;
+}
+table.task span.user i {
+	font-size: 12px;
+}
 table.task tr .center > span:first-child {
 	margin-right: 4px;
 }
 body[data-mode="gantt"] table.task tr {
 	position: relative;
 }
-body[data-mode="gantt"] table.task td.assign {
+body[data-mode="gantt"] table.task td.main div.name {
+	margin-left: 17px !important;
 }
-body[data-mode="gantt"] table.task td.assign > span {
+body[data-mode="gantt"] table.task td.main .icons {
+}
+body[data-mode="gantt"] table.task td.main .icons > span {
 	position: absolute;
-	left: 400px;
+	left: 396px;
+	top: -2px;
 }
-body[data-mode="gantt"] table.task td.assign .user {
+body[data-mode="gantt"] table.task td.main .icons .user {
 	position: absolute;
+	z-index: 2;
 }
-body[data-mode="gantt"] table.task td.assign .draggable .back {
+body[data-mode="gantt"] table.task td.main .icons .draggable .back {
 	position: absolute;
 	border: 2px solid #9eca3d;
 	background-color: #edfcce;
 	height: 12px;
 	width: 0;
 	border-radius: 3px;
+	z-index: 1;
 }
-body[data-mode="gantt"] table.task td.assign .draggable .handle {
+body[data-mode="gantt"] table.task td.main .icons .draggable .handle {
 	position: absolute;
 	cursor: col-resize;
 	right: -6px;
 	width: 12px;
 	height: 16px;
-	z-index: 1;
+	z-index: 3;
 }
 table.task tr .center img + img {
 	margin-left: 4px;
@@ -880,20 +894,11 @@ body[data-mode="gantt"] ul.task > li .left {
 body[data-mode="gantt"] ul.task > li .center i {
 	display: none;
 }
-body[data-mode="gantt"] table.task td.assign {
-	width: auto;
-}
 
-/*ul.task > li:nth-child(even) {
-	background-color: rgba(0, 0, 0, 0.025);
-}*/
 .sheet {
 	position: absolute;
 	left: 300px;
-	/*width: 600px;*/
 	margin-top: -34px;
-	/*overflow-x: auto;*/
-	/*height: 300px;*/
 }
 .sheet div {
 	height: 100%;

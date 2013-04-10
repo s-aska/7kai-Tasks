@@ -392,7 +392,7 @@
 						<tr data-setup="task" draggable="true">
 							<td class="main">
 								<div>
-									<div class="action-ok"><i class="icon-ok"></i></div>
+									<div class="icons"><i class="icon-ok"></i><span><span class="back"><span class="handle"></span></span><span class="user"></span></span></div>
 									<div class="guard"></div>
 									<div class="name" contenteditable="false" tabindex="-1"></div>
 									<ul class="unstyled pin" data-mode-hide="gantt">
@@ -423,7 +423,6 @@
 									</span>
 								</span>
 							</td>
-							<td class="assign"><span><span class="back"><span class="handle"></span></span><span class="user"></span></span></td>
 							<td class="due" data-mode-hide="gantt">12/31 (金)</td>
 							<td class="action-close" data-mode-hide="gantt">
 								<i class="icon-cancel" data-mode-hide="gantt,closed"></i>

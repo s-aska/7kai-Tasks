@@ -685,34 +685,39 @@ app.setup.task = function(tr){
 	}
 
 	// task status
-	tr.find('.action-ok i').attr('class',
+	tr.find('.icons > i').attr('class',
 		task.status === 0 ? 'icon-ok open' :
 		task.status === 1 ? 'icon-play' : 'icon-ok'
 	);
 
-	// task name
-	tr.find('td.main div.name').text(task.name);
+	var left = 17;
 
 	// assign
-	var assign = tr.find('td.assign span.user');
+	var assign = tr.find('td.main span.user');
 	assign.empty();
 	if (task.assign.length) {
 		assign.append(
 			$('<img/>').attr('src', app.util.getIconUrl(task.requester)).attr('data-mode-hide', 'gantt')
-		).append(
-			$('<i class="icon-right"></i>').attr('data-mode-hide', 'gantt')
+		).prepend(
+			$('<i class="icon-left"></i>').attr('data-mode-hide', 'gantt')
 		);
+		left += 29;
 		for (var i = 0, max_i = task.assign.length; i < max_i; i++) {
 			var icon = $('<img/>').attr('src', app.util.getIconUrl(task.assign[i]));
 			if (i > 0) {
 				icon.attr('data-mode-hide', 'gantt');
 			}
-			assign.append(icon);
+			assign.prepend(icon);
+			left += 13;
 		}
 	} else if (task.list.members.length) {
 		var icon = $('<img/>').attr('src', app.util.getIconUrl(task.requester));
 		assign.append(icon);
+		left += 16;
 	}
+
+	// task name
+	tr.find('td.main div.name').text(task.name).css('marginLeft', left + 'px');
 
 	// task due
 	if (task.due) {
@@ -884,7 +889,7 @@ app.setup.task = function(tr){
 	/*
 	 * アイコン位置調整
 	 */
-	var due_span = tr.find('td.assign > span');
+	var due_span = tr.find('td.main div.icons > span');
 	tr.on('app.resize.gantt', function(e, due_date){
 		var task = tr.data('task');
 		if (task.due || due_date) {
@@ -893,17 +898,17 @@ app.setup.task = function(tr){
 				if (task.duration > 1) {
 					days = days - ( task.duration - 1 );
 				}
-				due_span.css('left', 303 + days * 21 + 'px');
+				due_span.css('left', 299 + days * 21 + 'px');
 				due_span.addClass('draggable');
 			} else if (days > 0) {
-				due_span.css('left', 303 + (app.data.gantt_width + 1) * 21 + 'px');
+				due_span.css('left', 299 + (app.data.gantt_width + 1) * 21 + 'px');
 				due_span.removeClass('draggable');
 			} else {
-				due_span.css('left', '303px');
+				due_span.css('left', '299px');
 				due_span.removeClass('draggable');
 			}
 		} else {
-			due_span.css('left', '303px');
+			due_span.css('left', '299px');
 		}
 	});
 	tr.trigger('app.resize.gantt');
@@ -971,7 +976,7 @@ app.setup.task = function(tr){
 	 * D&Dによる期日変更
 	 */
 	var bar = due_span;
-	bar.mousedown(function(e){
+	bar.on('mousedown', function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		var task  = tr.data('task');
@@ -1066,7 +1071,7 @@ app.setup.task = function(tr){
 		e.stopPropagation();
 		app.modal.show('register-task', [tr.data('task').list, tr.data('task')]);
 	});
-	app.on(tr.find('.action-ok'), 'click dblclick', function(e){
+	app.on(tr.find('.icons > i'), 'click dblclick', function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		var task = tr.data('task');

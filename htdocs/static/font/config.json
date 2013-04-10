@@ -291,6 +291,19 @@
     },
     {
       "search": [
+        "arrow",
+        "left"
+      ],
+      "code": 11013,
+      "uid": "6acd5cf005d48f96787350e72bd45688",
+      "css": "left",
+      "orig_css": "left",
+      "orig_code": 11013,
+      "src": "entypo",
+      "from": 11013
+    },
+    {
+      "search": [
         "mail",
         "email",
         "envelope"
