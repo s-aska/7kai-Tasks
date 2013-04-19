@@ -882,13 +882,10 @@ app.setup.task = function(tr){
 		}, app.data.dragtask.list);
 	}, false);
 
-
-
-
-
 	/*
 	 * アイコン位置調整
 	 */
+	var due_left = 303;
 	var due_span = tr.find('td.main div.icons > span');
 	tr.on('app.resize.gantt', function(e, due_date){
 		var task = tr.data('task');
@@ -898,17 +895,17 @@ app.setup.task = function(tr){
 				if (task.duration > 1) {
 					days = days - ( task.duration - 1 );
 				}
-				due_span.css('left', 299 + days * 21 + 'px');
+				due_span.css('left', due_left + days * 21 + 'px');
 				due_span.addClass('draggable');
 			} else if (days > 0) {
-				due_span.css('left', 299 + (app.data.gantt_width + 1) * 21 + 'px');
+				due_span.css('left', due_left + (app.data.gantt_width + 1) * 21 + 'px');
 				due_span.removeClass('draggable');
 			} else {
-				due_span.css('left', '299px');
+				due_span.css('left', due_left + 'px');
 				due_span.removeClass('draggable');
 			}
 		} else {
-			due_span.css('left', '299px');
+			due_span.css('left', due_left + 'px');
 		}
 	});
 	tr.trigger('app.resize.gantt');
