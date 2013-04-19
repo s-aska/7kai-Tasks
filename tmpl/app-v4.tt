@@ -200,6 +200,16 @@
 				<i class="icon-calendar"></i>
 				<span class="help" data-setup="localize" data-text-ja="期日順">Due</span>
 			</a>
+			<a
+				class="btn btn-small"
+				data-setup="sort,tooltip"
+				data-sort-column="name"
+				data-text-ja="名前順"
+				data-text-en="Due"
+			>
+				<i class="icon-font"></i>
+				<span class="help" data-setup="localize" data-text-ja="名前順">Name</span>
+			</a>
 		</div>
 		<div
 			class="btn-group btn-group-filter"
