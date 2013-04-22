@@ -553,6 +553,7 @@
 								data-setup="localize"
 								data-text-ja="完了"
 							>Close</span>
+							<span class="shortcut">[0]</span>
 						</span>
 					</div>
 					<div class="btn-group pull-left btn-group-closed">
@@ -591,11 +592,11 @@
 		</aside>
 	</div>
 	<div class="shortcut">
-		[TAB] <span data-setup="localize" data-text-ja="タスク登録">Register Task</span>
-		[ESC] <span data-setup="localize" data-text-ja="キャンセル">Cancel</span>
+		[Tab] <span data-setup="localize" data-text-ja="タスク登録">Register Task</span>
+		[Esc] <span data-setup="localize" data-text-ja="キャンセル">Cancel</span>
 		[Up/Down j/k] <span data-setup="localize" data-text-ja="タスク選択">Select Task</span>
 		[Space] <span data-setup="localize" data-text-ja="進捗">Progress</span>
-		[Enter] <span data-setup="localize" data-text-ja="完了">Closed</span>
+		[c] <span data-setup="localize" data-text-ja="完了">Closed</span>
 		[r] <span data-setup="localize" data-text-ja="レート">Rate</span>
 		[Left/Right h/l] <span data-setup="localize" data-text-ja="期日">Due</span>
 	</div>

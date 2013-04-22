@@ -381,7 +381,7 @@ app.setup.home = function(section){
 				task_id: task.id,
 				status: status
 			});
-		} else if (e.keyCode === 13) { // Enter
+		} else if (e.keyCode === 67) { // c
 			var task = ul.find('tr.selected').data('task');
 			if (! task) { return }
 			var closed = task.closed ? 0 : 1;
