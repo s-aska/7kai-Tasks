@@ -885,7 +885,7 @@ app.setup.task = function(tr){
 	/*
 	 * アイコン位置調整
 	 */
-	var due_left = 303;
+	var due_left = 299;
 	var due_span = tr.find('td.main div.icons > span');
 	tr.on('app.resize.gantt', function(e, due_date){
 		var task = tr.data('task');

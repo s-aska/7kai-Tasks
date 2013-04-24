@@ -514,8 +514,13 @@ table.task td.main {
 	position: relative;
 	padding-left: 4px;
 }
+table.task td.main > div {
+	position: relative;
+}
 body:not([data-mode="gantt"]) table.task td.main div.icons {
 	position: absolute;
+	top: 0;
+	left: 0;
 }
 body[data-mode="gantt"] table.task td.main div.icons > i {
 	position: absolute;
@@ -662,7 +667,7 @@ body[data-mode="gantt"] table.task td.main .icons {
 body[data-mode="gantt"] table.task td.main .icons > span {
 	position: absolute;
 	left: 396px;
-	top: 2px;
+	top: 0;
 }
 body[data-mode="gantt"] table.task td.main .icons .user {
 	position: absolute;
