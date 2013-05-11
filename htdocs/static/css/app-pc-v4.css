@@ -663,6 +663,7 @@ body[data-mode="gantt"] table.task td.main div.name {
 	margin-left: 17px !important;
 }
 body[data-mode="gantt"] table.task td.main .icons {
+	padding-left: 0 !important;
 }
 body[data-mode="gantt"] table.task td.main .icons > span {
 	position: absolute;

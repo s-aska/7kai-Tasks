@@ -164,9 +164,9 @@ app.setup.home = function(section){
 			var tr = app.data.taskli_map[tasks[i].id];
 			var parents = app.util.findParentTasks(tasks[i]);
 			if (parents.length) {
-				tr.find('td.main > div').css('paddingLeft', parents.length * 16 + 'px');
+				tr.find('td.main > div, td.main > div > .icons').css('paddingLeft', parents.length * 16 + 'px');
 			} else {
-				tr.find('td.main > div').css('paddingLeft', '0');
+				tr.find('td.main > div, td.main > div > .icons').css('paddingLeft', '0');
 			}
 			app.data.listli_map[tasks[i].list.id].find('tbody').append(tr);
 		}
@@ -772,10 +772,10 @@ app.setup.task = function(tr){
 
 	if (task.parent_id in app.data.taskli_map) {
 		var paddingLeft = parseInt(app.data.taskli_map[task.parent_id].find('td.main > div').css('paddingLeft'), 10);
-		tr.find('td.main > div').css('paddingLeft', (paddingLeft + 16) + 'px');
+		tr.find('td.main > div, td.main > div > .icons').css('paddingLeft', (paddingLeft + 16) + 'px');
 		// app.data.taskli_map[task.parent_id].after(tr);
 	} else {
-		tr.find('td.main > div').css('paddingLeft', '');
+		tr.find('td.main > div, td.main > div > .icons').css('paddingLeft', '');
 	}
 
 	tr.trigger('app.resize');

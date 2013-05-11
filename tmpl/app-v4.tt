@@ -39,6 +39,11 @@
 				</li>
 			</ul>
 			<ul class="nav pull-right">
+				<li id="get-the-extensions">
+					<a href="https://chrome.google.com/webstore/detail/7kai-tasks-checker/dolhpjcchfcnkcanamhgcgbnmcogdank" target="_blank">
+						<i class="icon-chrome"></i>
+					</a>
+				</li>
 				<li>
 					<a class="feedback">
 						<i class="icon-megaphone"></i>
@@ -1014,28 +1019,46 @@
 		<h3 data-setup="localize" data-text-ja="7kai Tasksについて">About 7kai Tasks</h3>
 	</div>
 	<div class="modal-body">
-		<dl>
-			<dt data-setup="localize" data-text-ja="サポート">Support</dt>
-			<dd>
-				<ul class="unstyled">
-					<li><a href="mailto:s.aska.org@gmail.com"><i class="icon-mail"></i> E-mail</a></li>
-					<li><a href="https://twitter.com/su_aska" target="_blank"><i class="icon-twitter"></i> Twitter</a></li>
-					<li><a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank"><i class="icon-facebook"></i> Facebook Page</a></li>
-					<li><a href="https://github.com/s-aska/7kai-Tasks/issues" target="_blank"><i class="icon-github"></i> Github</a></li>
-				</ul>
-			</dd>
-			<dt data-setup="localize" data-text-ja="共有">Share</dt>
-			<dd>
-				<ul class="unstyled">
-					<li><a class="tweet"><i class="icon-twitter"></i> Tweet</a></li>
-					<li><a class="share"><i class="icon-facebook"></i> Share</a></li>
-				</ul>
-			</dd>
-			<dt data-setup="localize" data-text-ja="統計・歴史">Statistics / History ...etc</dt>
-			<dd><a href="/staff" target="_blank" data-setup="localize" data-text-ja="スタッフルーム">Staff Room</a></dd>
-			<dt data-setup="localize" data-text-ja="開発者">Developer</dt>
-			<dd>Shinichiro Aska</dd>
-		</dl>
+		<div class="row">
+			<div class="span3">
+				<dl>
+					<dt data-setup="localize" data-text-ja="サポート">Support</dt>
+					<dd>
+						<ul class="unstyled">
+							<li><a href="mailto:s.aska.org@gmail.com"><i class="icon-mail"></i> E-mail</a></li>
+							<li><a href="https://twitter.com/su_aska" target="_blank"><i class="icon-twitter"></i> Twitter</a></li>
+							<li><a href="https://www.facebook.com/pages/7kai-Tasks/189391624444427" target="_blank"><i class="icon-facebook"></i> Facebook Page</a></li>
+							<li><a href="https://github.com/s-aska/7kai-Tasks/issues" target="_blank"><i class="icon-github"></i> Github</a></li>
+						</ul>
+					</dd>
+					<dt data-setup="localize" data-text-ja="共有">Share</dt>
+					<dd>
+						<ul class="unstyled">
+							<li><a class="tweet"><i class="icon-twitter"></i> Tweet</a></li>
+							<li><a class="share"><i class="icon-facebook"></i> Share</a></li>
+						</ul>
+					</dd>
+					<dt data-setup="localize" data-text-ja="統計・歴史">Statistics / History ...etc</dt>
+					<dd><a href="/staff" target="_blank" data-setup="localize" data-text-ja="スタッフルーム">Staff Room</a></dd>
+					<dt data-setup="localize" data-text-ja="開発者">Developer</dt>
+					<dd>Shinichiro Aska</dd>
+				</dl>
+			</div>
+			<div class="span3">
+				<dl>
+					<dt data-setup="localize" data-text-ja="アイコン">Icon</dt>
+					<dd>
+						<ul class="unstyled">
+							<li><a href="http://fontello.com/" target="_blank"><i class="icon-home"></i> Fontelico</a></li>
+							<li><a href="http://www.entypo.com/" target="_blank"><i class="icon-home"></i> Entypo</a></li>
+							<li><a href="http://fortawesome.github.io/Font-Awesome/" target="_blank"><i class="icon-home"></i> Font Awesome</a></li>
+							<li><a href="http://typicons.com/" target="_blank"><i class="icon-home"></i> Typicons</a></li>
+							<li><a href="http://zocial.smcllns.com/" target="_blank"><i class="icon-home"></i> Zocial</a></li>
+						</ul>
+					</dd>
+				</dl>
+			</div>
+		</div>
 	</div>
 	<div class="modal-footer">
 		<span
