@@ -1,42 +1,42 @@
 <html>
 <head>
 <meta charset="utf-8">
-<script type="text/javascript" src="jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="jquery-2.0.0.min.js"></script>
 <script>
 $(document).ready(function() {
-    var bg = chrome.extension.getBackgroundPage();
-    bg.app.data.notifyWindow = window;
-    bg.app.dom.setup(document.body);
+	var bg = chrome.extension.getBackgroundPage();
+	bg.app.data.notifyWindow = window;
+	bg.app.dom.setup(document.body);
 });
 </script>
 <style>
 body, h1, p {
-    margin: 0;
-    padding: 0;
+	margin: 0;
+	padding: 0;
 }
 body {
-    padding: 10px;
-    font-family: arial, sans-serif;
-    cursor: pointer;
+	padding: 10px;
+	font-family: arial, sans-serif;
+	cursor: pointer;
 }
 img {
-    float: left;
-    margin-right: 6px;
-    width: 32px;
-    height: 32px;
-    vertical-align: top;
+	float: left;
+	margin-right: 6px;
+	width: 32px;
+	height: 32px;
+	vertical-align: top;
 }
 h1 {
-    font-size: 13px;
-    line-height: 1;
+	font-size: 13px;
+	line-height: 1;
 }
 p {
-    font-size: 12px;
-    line-height: 1.2;
-    color: #191919;
+	font-size: 12px;
+	line-height: 1.2;
+	color: #191919;
 }
 body:hover {
-    background-color: #fdf4b4;
+	background-color: #fdf4b4;
 }
 </style>
 </head>
@@ -45,10 +45,10 @@ body:hover {
 <img src="http://a3.twimg.com/profile_images/1196259408/askaorg_normal.png">
 <h1>7kai Tasks Notification</h1>
 <p>
-  <span class="screen_name">su_aska</span>
-  <span class="action">update the task of the</span>
-  <span class="list">7kai Tasks</span>
-  <span class="date">(12 secs ago)</span>
+<span class="screen_name">su_aska</span>
+<span class="action">update the task of the</span>
+<span class="list">7kai Tasks</span>
+<span class="date">(12 secs ago)</span>
 </p>
 </div>
 </body>

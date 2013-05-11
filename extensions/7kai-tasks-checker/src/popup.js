@@ -1,0 +1,9 @@
+(function(ns, w, d, $) {
+
+$(d).ready(function() {
+	var bg = chrome.extension.getBackgroundPage();
+	bg.app.data.popupWindow = w;
+	bg.app.dom.setup(d.body);
+});
+
+})(this, window, document, jQuery);

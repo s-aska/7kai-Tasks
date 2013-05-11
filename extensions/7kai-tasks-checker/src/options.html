@@ -3,42 +3,35 @@
 <meta charset="utf-8">
 <title>7kai Tasks Checker Options</title>
 <link rel="stylesheet" type="text/css" href="style.css" media="screen">
-<script src="jquery-1.6.4.min.js"></script>
-<script>
-var bg;
-$(document).ready(function() {
-    bg = chrome.extension.getBackgroundPage();
-    bg.app.data.optionWindow = window;
-    bg.app.dom.setup(document.body);
-});
-</script>
+<script src="jquery-2.0.0.min.js"></script>
+<script src="options.js"></script>
 </head>
 <body id="option-page">
 <div data-setup="option">
 <h1>7kai Tasks Checker Options.</h2>
 <h2
-  data-setup="localize"
-  data-text-ja="通知設定"
+	data-setup="localize"
+	data-text-ja="通知設定"
 >Notification</h2>
 <ul>
 <li>
 <label>
 <input type="checkbox" name="notification-off" value="1">
 <span
-  data-setup="localize"
-  data-text-ja="通知OFF"
+	data-setup="localize"
+	data-text-ja="通知OFF"
 >Notification off.</span>
 </label>
 </li>
 <li>
 <span
-  data-setup="localize"
-  data-text-ja="通知を"
+	data-setup="localize"
+	data-text-ja="通知を"
 >Auto close Notification after </span>
 <input type="number" min="0" max="60" name="notification-auto-close" value="">
 <span
-  data-setup="localize"
-  data-text-ja="秒後に閉じる（0秒場合、自動的に閉じない）"
+	data-setup="localize"
+	data-text-ja="秒後に閉じる（0秒場合、自動的に閉じない）"
 >sec. (0 is no auto close.)</span>
 </li>
 <li><button data-setup="click,localize" data-click="save" data-text-ja="保存して閉じる">save and close</button></li>

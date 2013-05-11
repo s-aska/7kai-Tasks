@@ -1,29 +1,36 @@
 {
-  "name":"7kai Tasks Checker",
-  "version":"3.0.6",
-  "description": "7kai Tasks Checker",
-  "browser_action":{
-  	"default_icon":"icon-19.png",
-  	"default_title":"7kai Tasks Checker",
-  	"popup": "popup.html"
-  },
-  "icons": { 
-    "19": "icon-19.png",
-    "32": "icon-32.png",
-    "48": "icon-48.png",
-    "128": "icon-128.png"
-  },
-  "background_page": "background.html",
-  "options_page": "options.html",
-  "content_scripts": [
-    {
-      "matches": ["https://tasks.7kai.org/", "https://tasks.7kai.org/#*"],
-      "js": ["content.js"]
-    }
-  ],
-  "permissions": [
-  	"tabs",
-  	"notifications",
-  	"https://tasks.7kai.org/"
-  ]
+	"name":"7kai Tasks Checker",
+	"version":"3.0.8",
+	"manifest_version": 2,
+	"description": "7kai Tasks Checker",
+	"browser_action":{
+		"default_icon": {
+			"19": "icon-19.png",
+			"38": "icon-38.png"
+		},
+		"default_title": "7kai Tasks Checker",
+		"default_popup": "popup.html"
+	},
+	"icons": {
+		"48": "icon-48.png",
+		"128": "icon-128.png"
+	},
+	"background": {
+		"scripts": ["jquery-2.0.0.min.js", "app.js", "background.js"]
+	},
+	"options_page": "options.html",
+	"content_scripts": [
+		{
+			"matches": ["https://tasks.7kai.org/", "https://tasks.7kai.org/#*"],
+			"js": ["content.js"]
+		}
+	],
+	"permissions": [
+		"tabs",
+		"notifications",
+		"https://tasks.7kai.org/"
+	],
+	"web_accessible_resources": [
+		"icon-128.png"
+	]
 }

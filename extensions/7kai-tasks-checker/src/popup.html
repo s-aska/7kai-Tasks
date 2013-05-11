@@ -3,14 +3,8 @@
 <meta charset="utf-8">
 <title>7kai Tasks Checker</title>
 <link rel="stylesheet" type="text/css" href="style.css" media="screen">
-<script type="text/javascript" src="jquery-1.6.4.min.js"></script>
-<script>
-$(document).ready(function() {
-    var bg = chrome.extension.getBackgroundPage();
-    bg.app.data.popupWindow = window;
-    bg.app.dom.setup(document.body);
-});
-</script>
+<script type="text/javascript" src="jquery-2.0.0.min.js"></script>
+<script type="text/javascript" src="popup.js"></script>
 </head>
 <body id="popup-page">
 <div data-setup="popup">
