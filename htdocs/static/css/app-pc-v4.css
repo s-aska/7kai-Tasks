@@ -240,8 +240,8 @@ body:not(.display-sort) .btn-group-sort a:nth-child(n+2),
 body:not(.display-filter) .btn-group-filter a:nth-child(n+2),
 body:not(.display-switch) .btn-group-switch a:nth-child(n+2),
 body:not(.display-tag) .btn-group-tag a:nth-child(n+2),
-body:not(.display-comment) ul.task ul.comment,
-body:not(.display-pin) ul.task ul.pin {
+body:not(.display-comment) table.task ul.comment,
+body:not(.display-pin) table.task ul.pin {
 	display: none;
 }
 body:not(.display-sort) .btn-group-sort a:first-child,
