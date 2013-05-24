@@ -468,6 +468,7 @@ body:not([data-mode="list"]) ul.list > li.closed > header > .name {
 ul.list > li.closed ul.task,
 ul.list > li.closed [data-mode-show="task"],
 ul.list > li.closed [data-mode-show="task,gantt"],
+ul.list > li.closed [data-mode-show="task,gantt,closed"],
 ul.list > li.closed [data-mode-show="closed"] {
 	display: none;
 }
