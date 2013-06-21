@@ -10,7 +10,7 @@ sub create {
 
     my $res = DoubleSpark::Validator->validate($c, $req,
         list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
-        name       => [qw/NOT_NULL/, [qw/LENGTH 1 50/]],
+        name       => [qw/NOT_NULL/, [qw/LENGTH 1 200/]],
         requester  => [qw/MEMBER/],
         due        => [qw/DATE_LOOSE/],
         { assign => [qw/assign/] }, [qw/MEMBERS/],
@@ -66,7 +66,7 @@ sub update {
     my $res = DoubleSpark::Validator->validate($c, $req,
         list_id    => [qw/NOT_NULL LIST_ROLE_MEMBER/],
         task_id    => [qw/NOT_NULL/],
-        name       => [[qw/LENGTH 1 50/]],
+        name       => [[qw/LENGTH 1 200/]],
         requester  => [qw/MEMBER/],
         due        => [qw/DATE_LOOSE/],
         { assign => [qw/assign/] }, [qw/MEMBERS/],
