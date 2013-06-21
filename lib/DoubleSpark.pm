@@ -8,7 +8,7 @@ use 5.008001;
 use DoubleSpark::DB;
 use Facebook::Graph;
 use JSON::XS;
-use Net::Twitter::Lite;
+use Net::Twitter::Lite::WithAPIv1_1;
 use Path::Class;
 
 __PACKAGE__->load_plugin(qw/Web::JSON/);
@@ -37,7 +37,7 @@ sub twitter {
     die "not found twitter consumer secret $secret_file" unless -f $secret_file;
     $conf->{consumer_key} = $key_file->slurp;
     $conf->{consumer_secret} = $secret_file->slurp;
-    return Net::Twitter::Lite->new(%{$conf});
+    return Net::Twitter::Lite::WithAPIv1_1->new(%{$conf});
 }
 
 sub facebook {

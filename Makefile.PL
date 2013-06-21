@@ -21,7 +21,7 @@ WriteMakefile(
         'Log::Minimal'                        => '0.08',
         'Module::Find'                        => '0.11',
         'Net::OpenID::Consumer::Lite'         => '0.03',
-        'Net::Twitter::Lite'                  => '0.10004',
+        'Net::Twitter::Lite'                  => '0.12004',
         'OAuth::Lite'                         => '1.31',
         'Path::Class'                         => '0.24',
         'Plack::Middleware::Log::Minimal'     => '0.06',
