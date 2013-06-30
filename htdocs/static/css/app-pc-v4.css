@@ -1130,13 +1130,13 @@ section.tab-main-analysis ul.actions li span + span {
 div:hover > .dropdown-menu,
 li:hover > .dropdown-menu {
 	display: block;
-/*	opacity: 1;
+	/*opacity: 1;*/
 	-webkit-transform: translatey(-10px);
 	-moz-transform: translateY(-10px);
 	-ms-transform: translatey(-10px);
 	-o-transform: translatey(-10px);
 	transform: translatey(-10px);
-*/}
+}
 
 /******************************
  *
