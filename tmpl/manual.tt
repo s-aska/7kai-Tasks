@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="7kai Tasks">
 <meta property="og:description" content="The web-based task management software.">
 <link rel="stylesheet" href="/static/css/bootstrap.css">
-<link rel="stylesheet" href="/static/css/signin.css" media="all">
+<link rel="stylesheet" href="/static/css/manual.css">
 <script src="/static/js/jquery-1.7.1.min.js"></script>
 <script src="/static/js/jquery.easing.1.3.js"></script>
 <script src="/static/js/jquery-ui-1.8.13.js"></script>

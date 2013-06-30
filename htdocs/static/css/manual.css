@@ -1,0 +1,12 @@
+.permalink {
+
+}
+footer {
+	border-top:3px solid #000000;
+	margin-top: 320px;
+	padding: 20px;
+	background-color: #F7F7F6;
+}
+footer .pull-left {
+	width: 160px;
+}
