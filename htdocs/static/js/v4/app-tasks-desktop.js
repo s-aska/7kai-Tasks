@@ -1708,8 +1708,15 @@ app.setup.registerTask = function(form){
 		if (list.tasks.length) {
 			parent_id.append(new Option('', ''));
 			for (var i = 0, max_i = list.tasks.length; i < max_i; i++) {
-				if (!task ||
-					(task.id !== list.tasks[i].id && !app.util.isChildTask(task, list.tasks[i]))
+				if (
+					app.util.isCloseTask(list.tasks[i]) === false &&
+					(
+						!task ||
+						(
+							task.id !== list.tasks[i].id &&
+							!app.util.isChildTask(task, list.tasks[i])
+						)
+					)
 				) {
 					parent_id.append(new Option(list.tasks[i].name, list.tasks[i].id));
 				}
