@@ -127,6 +127,7 @@ sub rss {
 
     my $count = 0;
     for my $action (@actions) {
+        next unless exists $messages->{ $action->{action} . '-' . $lang };
         my $account_id = $action->{account_id};
         unless ($usermap->{ $account_id }) {
             my $account = $c->db->single('account', { account_id => $account_id });
