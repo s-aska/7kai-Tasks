@@ -5,11 +5,12 @@
 <title>7kai Tasks</title>
 <link rel="stylesheet" href="/static/css/bootstrap.css">
 <link rel="stylesheet" href="/static/css/public.css" media="all">
-<script src="/static/js/jquery-1.7.1.min.js"></script>
+<script src="/static/js/jquery-1.9.1.min.js"></script>
 <script src="/static/js/jquery.tablesorter.min.js"></script>
 <script src="/static/js/h5utils.js"></script>
 <script src="/static/js/spin.min.js"></script>
 <script src="/static/js/public.js"></script>
+<script src="/static/js/v4/app-util.js"></script>
 </head>
 <body>
 <div class="navbar navbar-fixed-top">
@@ -21,7 +22,7 @@
 </div>
 <div class="container">
   <h2 data-setup="listname">aska's list</h2>
-  
+
   <ul class="nav nav-tabs">
     <li class="active"><a>Open</a></li>
     <li><a>Closed</a></li>

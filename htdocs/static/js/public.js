@@ -11,7 +11,9 @@ var app = ns.app = {
     env: {
         lang: (/^ja/.test(navigator.language) ? 'ja' : 'en')
     },
-    data: {},
+    data: {
+        task_map: {}
+    },
     events: {},
     // Utility for native objects
     obj: {},
@@ -226,13 +228,21 @@ app.setup.tasks = function(tbody){
     tbody.empty();
     app.addListener('registerList', function(list){
         var users = list.users;
-        var tasks = list.tasks;
+        var tasks =list.tasks;
+        for (var i = 0, max_i = tasks.length; i < max_i; i++) {
+            app.data.task_map[tasks[i].id] = tasks[i];
+        }
+        tasks = app.util.sortTask(tasks, 'created_on');
         for (var i = 0, max_i = tasks.length; i < max_i; i++) {
             var task = tasks[i];
-            var tr = $(template);
+            var tr = $($.parseHTML(template));
             tr.find('.name').text(task.name);
             if (Boolean(task.closed) !== closed) {
                 continue;
+            }
+            var diff = app.util.findParentTasks(task).length;
+            if (diff > 0) {
+                tr.find('.name').css('paddingLeft', diff * 10 + 8 + 'px');
             }
             var comment = null
             for (var ii = 0, max_ii = task.actions.length; ii < max_ii; ii++) {
@@ -307,7 +317,7 @@ app.setup.tasks = function(tbody){
                         continue;
                     }
                     var user = users[account_id];
-                    var li = $(li_template);
+                    var li = $($.parseHTML(li_template));
                     li.find('img').attr('src', user.icon);
                     li.find('span').text(user.name);
                     li.appendTo(ul);
