@@ -2,13 +2,7 @@
 <head>
 <meta charset="utf-8">
 <script type="text/javascript" src="jquery-2.0.0.min.js"></script>
-<script>
-$(document).ready(function() {
-	var bg = chrome.extension.getBackgroundPage();
-	bg.app.data.notifyWindow = window;
-	bg.app.dom.setup(document.body);
-});
-</script>
+<script type="text/javascript" src="notify.js"></script>
 <style>
 body, h1, p {
 	margin: 0;

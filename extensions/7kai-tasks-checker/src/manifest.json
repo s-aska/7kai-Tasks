@@ -1,14 +1,14 @@
 {
-	"name":"7kai Tasks Checker",
-	"version":"3.0.8",
+	"name":"7kai Tasks Notifications",
+	"version":"3.0.10",
 	"manifest_version": 2,
-	"description": "7kai Tasks Checker",
+	"description": "Social Task Management Service",
 	"browser_action":{
 		"default_icon": {
 			"19": "icon-19.png",
 			"38": "icon-38.png"
 		},
-		"default_title": "7kai Tasks Checker",
+		"default_title": "7kai Tasks Notifications",
 		"default_popup": "popup.html"
 	},
 	"icons": {
