@@ -14,9 +14,10 @@ sub create {
     $data->{name} = $name;
     $data->{icon} = $icon;
     my $account = $c->db->insert('account', {
-        data       => $data,
-        created_on => \'now()',
-        updated_on => \'now()'
+        data        => $data,
+        created_on  => \'now()',
+        updated_on  => \'now()',
+        modified_on => 0,
     });
     $c->db->insert('list', {
         account_id => $account->account_id,
