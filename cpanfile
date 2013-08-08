@@ -13,6 +13,7 @@ requires 'HTTP::Session'                       => '0.48';
 requires 'JSON::XS'                            => '2.33';
 requires 'Log::Minimal'                        => '0.08';
 requires 'Module::Find'                        => '0.11';
+requires 'Net::OAuth'                          => '0.28';
 requires 'Net::OpenID::Consumer::Lite'         => '0.03';
 requires 'Net::Twitter::Lite'                  => '0.12004';
 requires 'OAuth::Lite'                         => '1.31';
