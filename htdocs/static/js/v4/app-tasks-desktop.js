@@ -1870,7 +1870,9 @@ app.setup.settings = function(form){
 				e.preventDefault();
 				e.stopPropagation();
 				if (confirm(app.util.text($(this), 'confirm'))) {
-					;
+					app.api.account.delete({code: sub_account.code}).done(function(){
+						location.reload();
+					});
 				}
 			});
 			app.setup.init(li_account).appendTo(ul_account);

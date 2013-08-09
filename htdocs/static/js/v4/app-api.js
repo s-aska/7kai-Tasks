@@ -60,6 +60,16 @@ app.api.account.update_profile = function(params){
 		loading: false
 	});
 }
+app.api.account.delete = function(params){
+	return app.ajax({
+		type: 'post',
+		url: '/api/1/account/delete',
+		data: params,
+		dataType: 'json',
+		salvage: false,
+		loading: false
+	});
+}
 app.api.list.create = function(data){
 	return app.ajax({
 		type: 'post',
