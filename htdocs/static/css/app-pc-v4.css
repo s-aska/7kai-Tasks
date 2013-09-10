@@ -525,6 +525,7 @@ body:not([data-mode="gantt"]) table.task td.main div.icons {
 }
 body[data-mode="gantt"] table.task td.main div.icons > i {
 	position: absolute;
+	z-index: 1;
 }
 body:not([data-mode="gantt"]) table.task td.main div.icons img:first-child {
 	margin-left: 4px;
