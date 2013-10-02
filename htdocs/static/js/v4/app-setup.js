@@ -136,18 +136,22 @@ app.setup.stretch = function(ele){
 	var callback = function(){
 		ele.height(
 			win.height()
-			- ele.offset().top
+			- parseInt(ele.offset().top, 10)
 			- parseInt(ele.css('paddingTop'), 10)
 			- parseInt(ele.css('paddingBottom'), 10)
 			- parseInt(ele.css('borderTop').match(/(\d+)px/) ? RegExp.$1 : 0, 10)
 			- parseInt(ele.css('borderBottom').match(/(\d+)px/) ? RegExp.$1 : 0, 10)
-			- padding
+			- parseInt(padding, 10)
 		);
 		if (ele.hasClass('list') && window.console) {
 			console.log('window: ' + win.height());
 			console.log('offset: ' + ele.offset().top);
 			console.log('padding: ' + padding);
 			console.log('height: ' + ele.height());
+			console.log('paddingTop: ' + parseInt(ele.css('paddingTop'), 10));
+			console.log('paddingBottom: ' + parseInt(ele.css('paddingBottom'), 10));
+			console.log('borderTop: ' + parseInt(ele.css('borderTop').match(/(\d+)px/) ? RegExp.$1 : 0, 10));
+			console.log('borderBottom: ' + parseInt(ele.css('borderBottom').match(/(\d+)px/) ? RegExp.$1 : 0, 10));
 			console.log('calc: ' + (win.height()
 			- ele.offset().top
 			- parseInt(ele.css('paddingTop'), 10)
