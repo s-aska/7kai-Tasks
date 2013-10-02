@@ -150,8 +150,9 @@ app.setup.stretch = function(ele){
 			console.log('height: ' + ele.height());
 			console.log('paddingTop: ' + parseInt(ele.css('paddingTop'), 10));
 			console.log('paddingBottom: ' + parseInt(ele.css('paddingBottom'), 10));
-			console.log('borderTop: ' + parseInt(ele.css('borderTop').match(/(\d+)px/) ? RegExp.$1 : 0, 10));
-			console.log('borderBottom: ' + parseInt(ele.css('borderBottom').match(/(\d+)px/) ? RegExp.$1 : 0, 10));
+			console.log('borderTop: ' + ele.css('borderTop').match(/(\d+)px/) ? RegExp.$1 : 0);
+			console.log('borderBottom: ' + ele.css('borderBottom'));
+			console.log('borderBottom: ' + ele.css('borderBottom').match(/(\d+)px/) ? RegExp.$1 : 0);
 			console.log('calc: ' + (win.height()
 			- ele.offset().top
 			- parseInt(ele.css('paddingTop'), 10)
