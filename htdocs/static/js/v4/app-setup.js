@@ -143,6 +143,19 @@ app.setup.stretch = function(ele){
 			- parseInt(ele.css('borderBottom').match(/(\d+)px/) ? RegExp.$1 : 0, 10)
 			- padding
 		);
+		if (ele.hasClass('list') && window.console) {
+			console.log('window: ' + win.height());
+			console.log('offset: ' + ele.offset().top);
+			console.log('padding: ' + padding);
+			console.log('height: ' + ele.height());
+			console.log('calc: ' + (win.height()
+			- ele.offset().top
+			- parseInt(ele.css('paddingTop'), 10)
+			- parseInt(ele.css('paddingBottom'), 10)
+			- parseInt(ele.css('borderTop').match(/(\d+)px/) ? RegExp.$1 : 0, 10)
+			- parseInt(ele.css('borderBottom').match(/(\d+)px/) ? RegExp.$1 : 0, 10)
+			- padding));
+		}
 	};
 	app.addListener('resize', callback);
 	callback.call();
