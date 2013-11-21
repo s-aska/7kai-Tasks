@@ -894,6 +894,8 @@ body[data-mode="gantt"] table.task td.main > div {
 	padding-top: 2px;
 }
 body[data-mode="gantt"] table.task td.main div.name {
+	position: relative;
+	z-index: 1;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow-x: hidden;
