@@ -21,6 +21,7 @@ sub new {
             }
         ],
         Twitter => {
+            ssl => 1,
             consumer_key_file => 'config/tw.key',
             consumer_secret_file => 'config/tw.secret',
             callback => "$args->{base_url}/signin/twitter/callback",
