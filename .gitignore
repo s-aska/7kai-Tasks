@@ -6,6 +6,7 @@ MANIFEST
 *.key
 *.secret
 *.crt
+*.id
 .carton
 MYMETA.*
 pm_to_blib

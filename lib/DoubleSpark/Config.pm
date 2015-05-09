@@ -44,6 +44,8 @@ sub new {
             callback_url => "$args->{base_url}/signin/dropbox/callback"
         },
         OpenID => {
+            client_id_file => 'config/google.id',
+            client_secret_file => 'config/google.secret',
             return_to => "$args->{base_url}/signin/google/callback",
             realm => "$args->{base_url}/"
         },
