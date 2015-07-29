@@ -52,8 +52,8 @@ app.support.cssAnimation = (app.support.transform3d || app.support.transform) &&
 app.support.touchstart = app.support.mspointer ? 'MSPointerDown' : app.support.touch ? 'touchstart' : 'mousedown';
 app.support.touchmove = app.support.mspointer ? 'MSPointerMove' : app.support.touch ? 'touchmove' : 'mousemove';
 app.support.touchend = app.support.mspointer ? 'MSPointerUp' : app.support.touch ? 'touchend' : 'mouseup';
-app.support.pageX = function(e){ return e.pageX || e.changedTouches[0].pageX };
-app.support.pageY = function(e){ return e.pageY || e.changedTouches[0].pageY };
+app.support.pageX = function(e){ return e.pageX || (e.changedTouches ? e.changedTouches[0].pageX : undefined) };
+app.support.pageY = function(e){ return e.pageY || (e.changedTouches ? e.changedTouches[0].pageY : undefined) };
 app.support.translate = app.support.transform3d
 	? function(x){ return 'translate3d(' + x + 'px, 0, 0)' }
 	: function(x){ return 'translate(' + x + 'px, 0)' };

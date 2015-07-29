@@ -1043,6 +1043,10 @@ app.setup.task = function(tr){
 		e.preventDefault();
 		e.stopPropagation();
 		if (body.attr('data-mode') === 'gantt') {
+			var pageX = app.support.pageX(e);
+			if (pageX == undefined) {
+				return;
+			}
 			var delta = parseInt((app.support.pageX(e) - 313) / 21) - 1;
 			if (delta >= 0 && delta < app.data.gantt_width) {
 				var date = app.date.add(app.data.gantt_start, delta);
