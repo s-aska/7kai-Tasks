@@ -1045,6 +1045,7 @@ app.setup.task = function(tr){
 		if (body.attr('data-mode') === 'gantt') {
 			var pageX = app.support.pageX(e);
 			if (pageX == undefined) {
+				app.fireEvent('showTask', tr.data('task'));
 				return;
 			}
 			var delta = parseInt((app.support.pageX(e) - 313) / 21) - 1;
