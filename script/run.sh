@@ -1,9 +1,9 @@
 #!/bin/sh
-
-exec /home/aska/perl5/perlbrew/perls/perl-5.14.2/bin/start_server \
+# eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
+exec /home/aska/7kai-Tasks/local/bin/start_server \
 --port=5007 \
 --interval=3 \
--- /home/aska/perl5/perlbrew/perls/perl-5.14.2/bin/plackup \
+-- /home/aska/7kai-Tasks/local/bin/plackup \
 -E deployment \
 -s Starlet \
 --max-workers=20 \
