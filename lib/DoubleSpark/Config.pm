@@ -9,7 +9,7 @@ sub new {
         ext_url => 'https://chrome.google.com/webstore/detail/dolhpjcchfcnkcanamhgcgbnmcogdank',
         DB => [
             'dbi:mysql:dbname=doublespark',
-            'root',
+            'www',
             '',
             +{
                 RaiseError         => 1,
