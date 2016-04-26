@@ -1,6 +1,6 @@
 #!/bin/sh
 # eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
-exec PERL5LIB=/home/aska/7kai-Tasks/local/lib/perl5 /home/aska/7kai-Tasks/local/bin/start_server \
+PERL5LIB=/home/aska/7kai-Tasks/local/lib/perl5 exec /home/aska/7kai-Tasks/local/bin/start_server \
 --port=5000 \
 --interval=3 \
 -- /home/aska/7kai-Tasks/local/bin/plackup \
