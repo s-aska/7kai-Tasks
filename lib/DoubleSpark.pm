@@ -22,6 +22,7 @@ sub db {
           or die "missing configuration for 'DB'";
         my $dbh = DBI->connect(@$conf) or die "con't connect db.";
         my $db = DoubleSpark::DB->new( dbh => $dbh );
+        $db->no_ping(1);
         $c->{db} = $db;
     }
     return $c->{db};
