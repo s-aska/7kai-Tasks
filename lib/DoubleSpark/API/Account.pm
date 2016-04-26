@@ -13,24 +13,27 @@ sub create {
     my $data = $c->config->{Skeleton}->{Account};
     $data->{name} = $name;
     $data->{icon} = $icon;
-    my $account = $c->db->insert('account', {
+    my $db = $c->db;
+    my $account = $db->insert('account', {
         data             => $data,
         created_on       => \'now()',
         updated_on       => \'now()',
         modified_on      => 0,
         authenticated_on => \'now()',
     });
-    $c->db->insert('list', {
-        account_id => $account->account_id,
-        data       => {
-            name     => "${name}'s list",
-            original => 1,
-            tasks    => []
-        },
-        actioned_on => int(Time::HiRes::time * 1000),
-        created_on => \'now()',
-        updated_on => \'now()'
-    });
+    if ($account) {
+        $db->insert('list', {
+            account_id => $account->account_id,
+            data       => {
+                name     => "${name}'s list",
+                original => 1,
+                tasks    => []
+            },
+            actioned_on => int(Time::HiRes::time * 1000),
+            created_on => \'now()',
+            updated_on => \'now()'
+        });
+    }
     return $account;
 }
 
