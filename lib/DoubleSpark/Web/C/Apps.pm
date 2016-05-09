@@ -7,7 +7,7 @@ sub index {
     my ($class, $c) = @_;
 
     my $apps = $c->db->search_by_sql(q/
-        SELECT DISTINCT app.app_id, app.*
+        SELECT DISTINCT app.app_id, app.*, access_token.access_token_id
         FROM access_token
         LEFT OUTER JOIN app USING(app_id)
         WHERE access_token.account_id = ?
