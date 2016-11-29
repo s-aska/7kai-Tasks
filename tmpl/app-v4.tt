@@ -346,6 +346,56 @@
 				data-tag="danger"
 			><i class="icon-tag icon-white"></i><span class="shortcut">[4]</span></a>
 		</div>
+		<div
+			class="btn-group btn-group-xxxx"
+			data-mode-show="gantt"
+		>
+			<a
+				class="btn btn-small"
+				data-setup="tooltip,ganttPrevMonth"
+				data-text-ja="前月"
+				data-text-en="Prev month"
+			>
+				<i class="icon-fast-backward"></i>
+				<span class="help" data-setup="localize" data-text-ja="前月">Prev month</span>
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="tooltip,ganttPrevWeek"
+				data-text-ja="前週"
+				data-text-en="Prev week"
+			>
+				<i class="icon-fast-backward"></i>
+				<span class="help" data-setup="localize" data-text-ja="前週">Prev week</span>
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="tooltip,ganttToday"
+				data-text-ja="今日"
+				data-text-en="Today"
+			>
+				<i class="icon-to-start"></i>
+				<span class="help" data-setup="localize" data-text-ja="今日">Today</span>
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="tooltip,ganttNextWeek"
+				data-text-ja="来週"
+				data-text-en="Next week"
+			>
+				<span class="help" data-setup="localize" data-text-ja="来週">Next week</span>
+				<i class="icon-fast-forward"></i>
+			</a>
+			<a
+				class="btn btn-small"
+				data-setup="tooltip,ganttNextMonth"
+				data-text-ja="来月"
+				data-text-en="Next month"
+			>
+				<span class="help" data-setup="localize" data-text-ja="来月">Next month</span>
+				<i class="icon-fast-forward"></i>
+			</a>
+		</div>
 	</header>
 	<div class="fluid-container">
 		<div class="sheet" data-setup="stretch,gantt" data-mode-show="gantt">

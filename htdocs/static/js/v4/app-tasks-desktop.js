@@ -1401,6 +1401,41 @@ app.setup.aside = function(aside){
 	// 	}
 	// });
 };
+app.setup.ganttPrevWeek = function(ele){
+	app.on(ele, 'click', function(e){
+		e.preventDefault();
+		app.data.gantt_start = new Date(app.data.gantt_start.getFullYear(), app.data.gantt_start.getMonth(), app.data.gantt_start.getDate() - 7);
+		app.fireEvent('initGanttchart');
+	});
+};
+app.setup.ganttPrevMonth = function(ele){
+	app.on(ele, 'click', function(e){
+		e.preventDefault();
+		app.data.gantt_start = new Date(app.data.gantt_start.getFullYear(), app.data.gantt_start.getMonth() - 1, app.data.gantt_start.getDate());
+		app.fireEvent('initGanttchart');
+	});
+};
+app.setup.ganttToday = function(ele){
+	app.on(ele, 'click', function(e){
+		e.preventDefault();
+		app.data.gantt_start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+		app.fireEvent('initGanttchart');
+	});
+};
+app.setup.ganttNextWeek = function(ele){
+	app.on(ele, 'click', function(e){
+		e.preventDefault();
+		app.data.gantt_start = new Date(app.data.gantt_start.getFullYear(), app.data.gantt_start.getMonth(), app.data.gantt_start.getDate() + 7);
+		app.fireEvent('initGanttchart');
+	});
+};
+app.setup.ganttNextMonth = function(ele){
+	app.on(ele, 'click', function(e){
+		e.preventDefault();
+		app.data.gantt_start = new Date(app.data.gantt_start.getFullYear(), app.data.gantt_start.getMonth() + 1, app.data.gantt_start.getDate());
+		app.fireEvent('initGanttchart');
+	});
+};
 app.setup.gantt = function(ele){
 	var blank = ele.html();
 	var now   = new Date();
