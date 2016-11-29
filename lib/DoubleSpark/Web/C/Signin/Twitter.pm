@@ -58,7 +58,7 @@ sub callback {
 
         my $user = $nt->show_user($user_id);
         my $code = "tw-$user_id";
-        my $icon = $user->{profile_image_url};
+        my $icon = $user->{profile_image_url_https};
 
         my $tw_account = $c->db->single('tw_account', { code => $code });
 
